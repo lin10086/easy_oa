@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口名称-->
+<mapper namespace="cn.gson.oasys.mappers.AttendanceMapper">
+    <!--type把结果中的每一行封装成什么类型的对象-->
+        <resultMap id="AttendanceEntityMap" type="cn.gson.oasys.model.entity.AttendanceEntity">
+            <!--column对应数据库列名,property对应属性名-->
+            <id column="attends_id" property="attendsId"/>
+            <result column="type_id" property="typeId"/>
+            <result column="status_id" property="statusId"/>
+            <result column="attends_time" property="attendsTime"/>
+            <result column="attends_hmtime" property="attendHmtime"/>
+            <result column="week_ofday" property="weekOfday"/>
+            <result column="attends_ip" property="attendsIp"/>
+            <result column="attends_remark" property="attendsRemark"/>
+            <result column="holiday_start" property="holidayStart"/>
+            <result column="holiday_days" property="holidayDays"/>
+            <result column="attends_user_id" property="attendsUserId"/>
+        </resultMap>
+    <select id="selectUserIds" resultMap="AttendanceEntityMap">
+        select type_id,status_id,attends_time,attend_hmtime,week_ofday
+        from aoa_attends_list where attends_user_id in
+        <foreach collection="list" item="attendsUserId" separator="," open="(" close=")">
+            #{attendsUserId}
+        </foreach>
+    </select>
+
+    <select id="selectUserId" resultMap="AttendanceEntityMap">
+        select type_id,status_id,attends_time,attend_hmtime,week_ofday
+        from aoa_attends_list where attends_user_id=#{attendsuserid};
+    </select>
+
+
+
+</mapper>

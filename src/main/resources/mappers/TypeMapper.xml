@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口名称-->
+<mapper namespace="cn.gson.oasys.mappers.TypeMapper">
+    <!--type把结果中的每一行封装成什么类型的对象-->
+        <resultMap id="TypeEntityMap" type="cn.gson.oasys.model.entity.TypeEntity">
+            <!--column对应数据库列名,property对应属性名-->
+            <id column="type_id" property="typeId"/>
+            <result column="type_color" property="typeColor"/>
+            <result column="type_color" property="typeModel"/>
+            <result column="type_name" property="typeName"/>
+            <result column="sort_value" property="sortValue"/>
+
+        </resultMap>
+    <select id="selectTypeId" resultMap="TypeEntityMap">
+        select type_name from aoa_type_list where type_id=#{typeId}
+    </select>
+
+
+
+</mapper>

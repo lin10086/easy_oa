@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口名称-->
+<mapper namespace="cn.gson.oasys.mappers.StatusMapper">
+    <!--type把结果中的每一行封装成什么类型的对象-->
+        <resultMap id="StatusEntityMap" type="cn.gson.oasys.model.entity.StatusEntity">
+            <!--column对应数据库列名,property对应属性名-->
+            <id column="status_id" property="statusId"/>
+            <result column="status_color" property="statusColor"/>
+            <result column="status_model" property="statusModel"/>
+            <result column="status_name" property="statusName"/>
+            <result column="sort_value" property="sortValue"/>
+            <result column="sort_precent" property="sortPrecent"/>
+        </resultMap>
+    <select id="selectStatusId" resultMap="StatusEntityMap">
+        select status_name from aoa_status_list where status_id=#{statusId}
+    </select>
+
+
+
+</mapper>
