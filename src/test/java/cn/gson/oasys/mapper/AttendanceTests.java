@@ -26,6 +26,7 @@ public class AttendanceTests {
     @Test
     public void selectUserId(){
         List<AttendanceEntity>list=attendanceMapper.selectUserId(14);
+
         System.out.println(list);
     }
     @Test

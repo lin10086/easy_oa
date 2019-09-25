@@ -16,7 +16,7 @@
             <result column="attends_remark" property="attendsRemark"/>
             <result column="holiday_start" property="holidayStart"/>
             <result column="holiday_days" property="holidayDays"/>
-            <result column="attends_user_id" property="attendsUserId"/>
+            <result column="attends_user_id" property="userEntities"/>
         </resultMap>
     <select id="selectUserIds" resultMap="AttendanceEntityMap">
         select type_id,status_id,attends_time,attend_hmtime,week_ofday

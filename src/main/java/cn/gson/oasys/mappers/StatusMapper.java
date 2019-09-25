@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface StatusMapper {
     StatusEntity selectStatusId(Integer statusId);
-
+    List<StatusEntity>selectStatusModel(String statusModel);
 
 }

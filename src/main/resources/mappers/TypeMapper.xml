@@ -16,7 +16,9 @@
     <select id="selectTypeId" resultMap="TypeEntityMap">
         select type_name from aoa_type_list where type_id=#{typeId}
     </select>
-
+    <select id="selectTypeModel" resultMap="TypeEntityMap">
+        select * from aoa_type_list where type_model=#{typeModel}
+    </select>
 
 
 </mapper>

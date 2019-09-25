@@ -18,7 +18,8 @@ public class AttendanceEntity {
     private String attendsRemark;  //考勤备注
     private Date holidayStart;//请假开始时间
     private Double holidayDays;//请假天数
-    private Integer attendsUserId;//考勤用户id
+    // private Integer attendsUserId;//考勤用户id
+    private UserEntity userEntities;
 
     public Integer getAttendsId() {
         return attendsId;
@@ -26,6 +27,14 @@ public class AttendanceEntity {
 
     public void setAttendsId(Integer attendsId) {
         this.attendsId = attendsId;
+    }
+
+    public UserEntity getUserEntities() {
+        return userEntities;
+    }
+
+    public void setUserEntities(UserEntity userEntities) {
+        this.userEntities = userEntities;
     }
 
     public Integer getTypeId() {
@@ -42,6 +51,23 @@ public class AttendanceEntity {
 
     public void setStatusId(Integer statusId) {
         this.statusId = statusId;
+    }
+
+    @Override
+    public String toString() {
+        return "AttendanceEntity{" +
+                "attendsId=" + attendsId +
+                ", typeId=" + typeId +
+                ", statusId=" + statusId +
+                ", attendsTime=" + attendsTime +
+                ", attendHmtime='" + attendHmtime + '\'' +
+                ", weekOfday='" + weekOfday + '\'' +
+                ", attendsIp='" + attendsIp + '\'' +
+                ", attendsRemark='" + attendsRemark + '\'' +
+                ", holidayStart=" + holidayStart +
+                ", holidayDays=" + holidayDays +
+                ", userEntities=" + userEntities +
+                '}';
     }
 
     public Date getAttendsTime() {
@@ -100,28 +126,12 @@ public class AttendanceEntity {
         this.holidayDays = holidayDays;
     }
 
-    public Integer getAttendsUserId() {
-        return attendsUserId;
-    }
+//    public Integer getAttendsUserId() {
+//        return attendsUserId;
+//    }
+//
+//    public void setAttendsUserId(Integer attendsUserId) {
+//        this.attendsUserId = attendsUserId;
+//    }
 
-    public void setAttendsUserId(Integer attendsUserId) {
-        this.attendsUserId = attendsUserId;
-    }
-
-    @Override
-    public String toString() {
-        return "AttendanceEntity{" +
-                "attendsId=" + attendsId +
-                ", typeId=" + typeId +
-                ", statusId=" + statusId +
-                ", attendsTime=" + attendsTime +
-                ", attendHmtime='" + attendHmtime + '\'' +
-                ", weekOfday='" + weekOfday + '\'' +
-                ", attendsIp='" + attendsIp + '\'' +
-                ", attendsRemark='" + attendsRemark + '\'' +
-                ", holidayStart=" + holidayStart +
-                ", holidayDays=" + holidayDays +
-                ", attendsUserId=" + attendsUserId +
-                '}';
-    }
 }

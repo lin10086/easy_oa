@@ -16,7 +16,9 @@
     <select id="selectStatusId" resultMap="StatusEntityMap">
         select status_name from aoa_status_list where status_id=#{statusId}
     </select>
-
+    <select id="selectStatusModel" resultMap="StatusEntityMap">
+        select * from aoa_status_list where status_model=#{type_model}
+    </select>
 
 
 </mapper>
