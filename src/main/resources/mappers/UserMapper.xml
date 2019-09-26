@@ -40,9 +40,11 @@
             <result column="holiday" property="holiday"/>
             <result column="pinyin" property="pinyin"/>
         </resultMap>
+    <!--// 根据上司ID查询下属用户（可能有多个）-->
     <select id="selectFatherUserIds" resultMap="UserEntityMap">
         select user_id,user_name from aoa_user where father_id=#{fatherid}
     </select>
+    <!--//根据用户信息查询用户信息-->
     <select id="selectFatherUserId" resultMap="UserEntityMap">
      select user_id,user_name from aoa_user where user_id=#{userId}
     </select>

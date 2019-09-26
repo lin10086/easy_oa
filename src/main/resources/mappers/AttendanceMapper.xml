@@ -18,6 +18,7 @@
             <result column="holiday_days" property="holidayDays"/>
             <result column="attends_user_id" property="userEntities"/>
         </resultMap>
+    <!--// 根据 用户们的ID查询用户们的考勤资料-->
     <select id="selectUserIds" resultMap="AttendanceEntityMap">
         select type_id,status_id,attends_time,attend_hmtime,week_ofday
         from aoa_attends_list where attends_user_id in
@@ -25,12 +26,10 @@
             #{attendsUserId}
         </foreach>
     </select>
-
+    <!--//根据用户ID查询用户考勤资料-->
     <select id="selectUserId" resultMap="AttendanceEntityMap">
         select type_id,status_id,attends_time,attend_hmtime,week_ofday
-        from aoa_attends_list where attends_user_id=#{attendsuserid};
+        from aoa_attends_list a where attends_user_id=#{a.user_id};
     </select>
-
-
 
 </mapper>

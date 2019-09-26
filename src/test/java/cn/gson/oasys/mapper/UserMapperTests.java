@@ -19,12 +19,22 @@ public class UserMapperTests {
 
 
     @Test
-    public void selectFatherUserId(){
+    public void selectFatherUserIds(){
         Integer fatherId=5;
-        List<UserEntity> users=userMapper.selectFatherUserId(5);
+        List<UserEntity> users=userMapper.selectFatherUserIds(fatherId);
 
         for(UserEntity user:users) {
             System.out.println(user);
         }
     }
+
+
+    @Test
+    public void selectFatherUserId(){
+        Integer fatherId=5;
+        UserEntity user=userMapper.selectFatherUserId(fatherId);
+            System.out.println(user);
+
+    }
+
 }
