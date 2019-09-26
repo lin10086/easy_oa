@@ -40,7 +40,7 @@ public class AttendanceTests {
 
 
     @Test
-    public void selectUserIdPO() {
+    public void selectAttendIdPO() {
         AttendsPO attendsPO = attendsPOMapper.selectByPrimaryKey(14L);
         log.info("selectUserIdPO: list={}", attendsPO);
     }

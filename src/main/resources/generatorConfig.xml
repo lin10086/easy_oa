@@ -39,11 +39,15 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
-        <!--表-->
+        <!--考勤表-->
         <table tableName="aoa_attends_list" domainObjectName="AttendsPO">
             <generatedKey column="attends_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="attends_id" javaType="Long"/>
         </table>
-
+        <!--用户表-->
+        <table tableName="aoa_user" domainObjectName="UserPO">
+            <generatedKey column="user_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="user_id" javaType="Long"/>
+        </table>
     </context>
 </generatorConfiguration>
