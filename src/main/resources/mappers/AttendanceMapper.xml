@@ -16,7 +16,7 @@
             <result column="attends_remark" property="attendsRemark"/>
             <result column="holiday_start" property="holidayStart"/>
             <result column="holiday_days" property="holidayDays"/>
-            <result column="attends_user_id" property="userEntities"/>
+            <result column="attends_user_id" property="attendsUserId"/>
         </resultMap>
     <!--// 根据 用户们的ID查询用户们的考勤资料-->
     <select id="selectUserIds" resultMap="AttendanceEntityMap">
@@ -32,4 +32,21 @@
         from aoa_attends_list a where attends_user_id=#{a.user_id};
     </select>
 
+    <!--根据用户ID对类型进行降序排列-->
+    <select id="selectByUserOrderByTypeIdDesc" resultMap="AttendanceEntityMap">
+        select type_id,status_id,attends_time,attend_hmtime,week_ofday
+        from aoa_attends_list a where attends_user_id in
+        <foreach collection="list" item="attendsUserId" separator="," open="(" close=")">
+            #{attendsUserId}
+        </foreach>
+        order by type_id desc;
+    </select>
+    <select id="selectByUserOrderByTypeIdAsc" resultMap="AttendanceEntityMap">
+        select type_id,status_id,attends_time,attend_hmtime,week_ofday
+        from aoa_attends_list a where attends_user_id in
+        <foreach collection="list" item="attendsUserId" separator="," open="(" close=")">
+            #{attendsUserId}
+        </foreach>
+        order by type_id;
+    </select>
 </mapper>

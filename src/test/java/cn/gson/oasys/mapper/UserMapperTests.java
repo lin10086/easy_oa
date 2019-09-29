@@ -5,6 +5,8 @@ import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.entity.UserEntity;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.model.po.UserPOExample;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
@@ -14,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -26,8 +28,8 @@ public class UserMapperTests {
     @Resource
     UserPOMapper userPOMapper;
 
-    UserPOExample userPOExample = new UserPOExample();
-    List<UserPO> list = null;
+
+//    List<UserPO> list = null;
 //    @Test
 //    public void selectFatherUserIds(){
 //        Integer fatherId=5;
@@ -53,12 +55,12 @@ public class UserMapperTests {
     }
 
     @Test
-    public void seletcFatherUserIds() {
-//        UserPOExample userPOExample = new UserPOExample();
+    public void selectFatherUserIds() {
+        UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andFatherIdEqualTo(5l);
 
         List<UserPO> list = userPOMapper.selectByExample(userPOExample);
-        log.info("seletcFatherUserIds: list={}", list);
+        log.info("selectFatherUserIds: list={}", list);
 
     }
 
@@ -69,30 +71,33 @@ public class UserMapperTests {
     }
 
     @Test
-    public void selectUsersidsIn() {
+    public void selectUsersIdsIn() {
+        UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserIdIn(Lists.newArrayList(14L, 15L, 16L, 26L));
-        list = userPOMapper.selectByExample(userPOExample);
-        log.info("list={}", list);
+        List<UserPO> list = userPOMapper.selectByExample(userPOExample);
+        log.info("selectUsersIdsIn: list={}", list);
     }
 
     @Test
-    public void selectUsersIdBwteen() {
+    public void selectUsersIdBetween() {
+        UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserIdBetween(14L, 15L);
-        list = userPOMapper.selectByExample(userPOExample);
-        log.info("list={}", list);
+        List<UserPO> list = userPOMapper.selectByExample(userPOExample);
+        log.info("selectUsersIdBetween: list={}", list);
     }
 
     @Test
-    public void selectUsersIdInAndBwteen() {
+    public void selectUsersIdInAndBetween() {
+        UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserIdIn(Lists.newArrayList(14L, 28L))
                 .andFatherIdBetween(5L, 7L);
-        list = userPOMapper.selectByExample(userPOExample);
+        List<UserPO> list = userPOMapper.selectByExample(userPOExample);
 
-        log.info("list={}", list);
+        log.info("selectUsersIdInAndBetween: list={}", list);
     }
 
     @Test
-    public void selectUsersIdInOrBwteen() {
+    public void selectUsersIdInOrBetweenPage() {
         UserPOExample userPOExample = new UserPOExample();
         //条件1
         userPOExample.createCriteria().andUserIdIn(Lists.newArrayList(14L, 28L));
@@ -102,8 +107,67 @@ public class UserMapperTests {
         //或关系
         userPOExample.or(criteria2);
 
+        PageHelper.startPage(1, 20);
         List<UserPO> list = userPOMapper.selectByExample(userPOExample);
-
-        log.info("list={}", list);
+        PageInfo pageInfo = new PageInfo(list);
+        log.info("total={}, pageInfo={},list={}", pageInfo.getTotal(), pageInfo, list);
     }
+
+    @Test
+    public void deleteUser() {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserIdEqualTo(40L);
+
+        Integer rows = userPOMapper.deleteByExample(userPOExample);
+        log.info("deleteUser: rows={}", rows);
+    }
+
+    @Test
+    public void insertUser() {
+        UserPO userPO = new UserPO();
+        userPO.setAddress("陕西西安");
+        userPO.setBank("新增用户2");
+        //支队设置的字段进行插入
+        Integer rows = userPOMapper.insertSelective(userPO);
+        log.info("insertUser:rows={}", rows);
+    }
+
+    //    updateByPrimaryKeySelective会对字段进行判断再更新(如果为Null就忽略更新)，如果你只想更新某一字段，可以用这个方法
+    @Test
+    public void updateByPrimaryKeySelective() {
+        UserPO userPO = new UserPO();
+        userPO.setUserId(37L);
+        userPO.setEamil("9999@qq.com");
+        userPO.setSalary(2222.2F);
+        userPO.setBank("更新的");
+        userPO.setAddress("西安");
+        //如果字段是null值则不能更新
+        Integer rows = userPOMapper.updateByPrimaryKeySelective(userPO);
+        log.info("updateByPrimaryKeySelective: rows={}", rows);
+    }
+
+    //    updateByPrimaryKey对你注入的字段全部更新，如果为字段不更新，数据库的值就为null
+    @Test
+    public void updateByPrimaryKey() {
+        UserPO userPO = new UserPO();
+//        userPO.setUserId(37L);
+        userPO.setEamil("5678@qq.com");
+        userPO.setBirth(new Date());
+        Integer rows = userPOMapper.updateByPrimaryKey(userPO);
+        log.info("updateByPrimaryKey: rows={}", rows);
+    }
+
+    @Test
+    public void updateByExampleSelective() {
+        //目标信息
+        UserPO userPO = new UserPO();
+        userPO.setBank("新的");
+        //条件
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andFatherIdEqualTo(7L);
+        Integer rows = userPOMapper.updateByExampleSelective(userPO, userPOExample);
+        log.info("updateByExampleSelective: rows={}", rows);
+    }
+
+
 }

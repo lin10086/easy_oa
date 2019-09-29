@@ -7,7 +7,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name="aoa_type_list")
 public class SystemTypeList {
-	
+	/*
+	类型表的实体类
+	 */
 	@Id
 	@Column(name="type_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

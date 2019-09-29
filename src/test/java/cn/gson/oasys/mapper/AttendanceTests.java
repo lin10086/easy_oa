@@ -5,6 +5,7 @@ import cn.gson.oasys.mappers.AttendsPOMapper;
 import cn.gson.oasys.model.entity.AttendanceEntity;
 import cn.gson.oasys.model.po.AttendsPO;
 import cn.gson.oasys.model.po.AttendsPOExample;
+import cn.gson.oasys.model.po.UserPOExample;
 import freemarker.template.utility.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -12,6 +13,9 @@ import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -102,6 +106,30 @@ public class AttendanceTests {
             System.out.println(attend);
         }
 
+    }
+//    @Test
+//    public void findByUserOrderByTypeIdDesc(){
+//        AttendsPOExample attendsPOExample = new AttendsPOExample();
+//        attendsPOExample.createCriteria().andAttendsUserIdIn(Lists.newArrayList(14L,15L,16L,26L));
+//
+//        attendsPOExample.createCriteria().
+//
+//    }
+
+
+
+
+    @Test
+    public void selectUserIdPOExampleOrderBy() {
+        AttendsPOExample attendsPOExample = new AttendsPOExample();
+
+        attendsPOExample.createCriteria()
+                .andAttendsUserIdIn(Lists.newArrayList(14L, 15L,16L,26L));
+
+        attendsPOExample.setOrderByClause("type_id");
+
+        List<AttendsPO> list = attendsPOMapper.selectByExample(attendsPOExample);
+        log.info("selectUserIdPOExampleOrderBy: list={}", list);
     }
 
 }

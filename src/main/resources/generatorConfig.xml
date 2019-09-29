@@ -49,5 +49,16 @@
             <generatedKey column="user_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="user_id" javaType="Long"/>
         </table>
+
+        <!--类型表-->
+        <table tableName="aoa_type_list" domainObjectName="TypePO">
+            <generatedKey column="type_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="type_id" javaType="Long"/>
+        </table>
+        <!--状态表-->
+        <table tableName="aoa_status_list" domainObjectName="StatusPO">
+            <generatedKey column="status_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status_id" javaType="Long"/>
+        </table>
     </context>
 </generatorConfiguration>
