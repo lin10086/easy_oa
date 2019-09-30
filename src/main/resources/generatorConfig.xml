@@ -60,5 +60,12 @@
             <generatedKey column="status_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="status_id" javaType="Long"/>
         </table>
+        <!--部门表-->
+        <table tableName="aoa_dept" domainObjectName="DeptPO">
+            <!--iddentity  自增-->
+            <generatedKey column="dept_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="dept_id" javaType="Long"/>
+        </table>
+
     </context>
 </generatorConfiguration>

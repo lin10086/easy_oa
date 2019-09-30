@@ -51,8 +51,9 @@ public class AttendanceServiceV2 {
         //创建Long类型的集合ids用于存放查询到的用户ID
         List<Long> ids = new ArrayList<>();
         //把类型状态列表设置到请求对象里面
-        queryAttendsBO.setAttendStatus(getAttendType());
-        queryAttendsBO.setAttendTypes(getAttendStatus());
+
+        queryAttendsBO.setAttendStatus(getAttendStatus());
+        queryAttendsBO.setAttendTypes(getAttendType());
         //根据下属用户ID，类型，状态，时间来分页查询，把结果放到考勤页面里面
         return queryPage(queryAttendsBO, pageBO);
     }

@@ -11,7 +11,6 @@ public class UserFactory {
 
     public static List<Long> createIds(List<User> userList) {
         List<Long> ids = new ArrayList<>();
-
         for (User user : userList) {
             ids.add(user.getUserId());
         }
@@ -45,16 +44,13 @@ public class UserFactory {
         user.setUserSign(userPO.getUserSign());
         user.setHireTime(userPO.getHireTime());
         user.setHoliday(userPO.getHoliday());
-
         return user;
     }
 
-
-    public static List<User> create(List<UserPO> userPO) {
-
-        List<User>userList = new ArrayList<>();
-        for(int i=0;i<=userPO.size();i++){
-            userList.add(UserFactory.create(userPO.get(i)));
+    public static List<User> create(List<UserPO> userPOList) {
+        List<User> userList = new ArrayList<>();
+        for (UserPO userPO : userPOList) {
+            userList.add(UserFactory.create(userPO));
         }
         return userList;
     }

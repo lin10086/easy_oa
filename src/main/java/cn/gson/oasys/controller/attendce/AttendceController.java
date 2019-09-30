@@ -246,7 +246,7 @@ public class AttendceController {
                            @RequestParam(value = "time", required = false) String time,
                            @RequestParam(value = "icon", required = false) String icon, Model model) {
         //莫管理下的所有考勤信息
-        allsortpaging(request, session, page, baseKey, type, status, time, icon, model);
+//        allsortpaging(request, session, page, baseKey, type, status, time, icon, model);
         attendceattPage(request, session, page, baseKey, type, status, time, icon, model);
         return "attendce/attendceview";
     }
@@ -356,10 +356,10 @@ public class AttendceController {
 
     // 状态类型方法
     private void typestatus(HttpServletRequest request) {
-        //获取模型里面的类型放到类型列表集合里面
+        //根据模型里面的表名查询到的类型列表，放到类型列表集合里面
         List<SystemTypeList> type = (List<SystemTypeList>) typeDao.findByTypeModel("aoa_attends_list");
 
-        //获取模型里面的状态放到状态列表集合里面
+        //根据模型里面的表名查询到的状态列表，放到状态列表集合里面
         List<SystemStatusList> status = (List<SystemStatusList>) statusDao.findByStatusModel("aoa_attends_list");
 
         request.setAttribute("typelist", type);
@@ -371,14 +371,14 @@ public class AttendceController {
         //获取模型里面的类型放到类型列表集合里面V2
         TypePOExample typePOExample = new TypePOExample();
         typePOExample.createCriteria().andTypeModelEqualTo("aoa_attends_list");
-        List<TypePO>typePOList = typePOMapper.selectByExample(typePOExample);
+        List<TypePO> typePOList = typePOMapper.selectByExample(typePOExample);
         List<SystemTypeList> systemTypeLists = TypeFactory.createTypes(typePOList);
 
         //获取模型里面的状态放到状态列表集合里面
         StatusPOExample statusPOExample = new StatusPOExample();
         statusPOExample.createCriteria().andStatusModelEqualTo("aoa_attends_list");
-        List<StatusPO>statusPOList =statusPOMapper.selectByExample(statusPOExample);
-        List<SystemStatusList>systemStatusLists = StatusFactory.createStatus(statusPOList);
+        List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
+        List<SystemStatusList> systemStatusLists = StatusFactory.createStatus(statusPOList);
 
         request.setAttribute("typelist", systemTypeLists);
         request.setAttribute("statuslist", systemStatusLists);
@@ -460,7 +460,7 @@ public class AttendceController {
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
 
         //把自己定义的下属用户转换为本身的下属用户
-        List<User>userList = UserFactory.create(userPOList);
+        List<User> userList = UserFactory.create(userPOList);
 
         //获取下属的用户ID
         List<Long> ids = UserFactory.createIds(userList);
@@ -469,11 +469,10 @@ public class AttendceController {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
         //把自己定义的下属用户转换为本身的下属用户
         User user = UserFactory.create(userPO);
-
         typestatusV2(request);
+
         QueryAttendsBO queryAttendsBO = new QueryAttendsBO();
         PageBO pageBO = new PageBO(page);
-        attendanceServiceV2.queryAttend(queryAttendsBO,pageBO);
 
         queryAttendsBO.setUserIds(ids);
         queryAttendsBO.setAttendDayStart(DateUtils.addYears(new Date(), -2));
@@ -481,7 +480,7 @@ public class AttendceController {
 
         List<AttendsPO> attendsPOList = attendanceServiceV2.queryAttend(queryAttendsBO, pageBO);
 
-        List<Attends> attendsList= AttendsFactory.create(userPOList,attendsPOList);
+        List<Attends> attendsList = AttendsFactory.create(userPOList, attendsPOList);
 
         //获取考勤页面的内容放到请求对象的alist里面
         request.setAttribute("alist", attendsList);
@@ -504,7 +503,7 @@ public class AttendceController {
         List<User> users = uDao.findByFatherId(userId);
         //遍历查询到的 下属用户
         for (User user : users) {
-            //获取下属用户的ID并添加到以创建的集合ids中
+            //获取下属用户的ID并添加到创建的集合ids中
             ids.add(user.getUserId());
         }
         //如果集合中的size为0说明没有用户，把0添加进去

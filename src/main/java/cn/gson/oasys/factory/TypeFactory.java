@@ -11,8 +11,7 @@ import java.util.List;
 
 public class TypeFactory {
 
-    public static SystemTypeList create(TypePO typePO){
-
+    public static SystemTypeList create(TypePO typePO) {
         SystemTypeList systemTypeList = new SystemTypeList();
         systemTypeList.setTypeId(typePO.getTypeId());
         systemTypeList.setTypeColor(typePO.getTypeColor());
@@ -22,11 +21,11 @@ public class TypeFactory {
         return systemTypeList;
     }
 
-    public static List<SystemTypeList> createTypes(List<TypePO> typePO){
-        List<SystemTypeList>systemTypeLists = new ArrayList<>();
-            for(int i=0;i<=systemTypeLists.size();i++){
-                systemTypeLists.add(TypeFactory.create(typePO.get(i)));
-            }
+    public static List<SystemTypeList> createTypes(List<TypePO> typePOList) {
+        List<SystemTypeList> systemTypeLists = new ArrayList<>();
+        for (TypePO typePO : typePOList) {
+            systemTypeLists.add(TypeFactory.create(typePO));
+        }
         return systemTypeLists;
     }
 }

@@ -81,6 +81,7 @@ public class AttendceService {
 
     // 分页
     public Page<Attends> paging(int page, String baseKey, List<Long> user, Object type, Object status, Object time) {
+        //第几页，size每一页的大小
         Pageable pa = new PageRequest(page, 10);
         if (!StringUtils.isEmpty(baseKey)) {
             // 模糊查询
