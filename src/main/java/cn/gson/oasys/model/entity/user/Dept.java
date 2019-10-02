@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.Date;
+
 /**
  * 部门实体类
  * @author Administrator
@@ -39,11 +42,27 @@ public class Dept {
 	
 	private Long deptmanager;
 	
-//	@Column(name = "start_time")
-//	private Date startTime;		//部门上班时间
+	@Column(name = "start_time")
+	private Date startTime;		//部门上班时间
 	
-//	@Column(name = "end_time")
-//	private Date endTime;		//部门下班时间
+	@Column(name = "end_time")
+	private Date endTime;		//部门下班时间
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 
 	public Dept() {
 

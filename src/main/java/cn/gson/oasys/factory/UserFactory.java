@@ -1,27 +1,33 @@
 package cn.gson.oasys.factory;
 
+import cn.gson.oasys.mappers.DeptPOMapper;
+import cn.gson.oasys.model.entity.attendce.Attends;
+import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.model.po.AttendsPO;
+import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.model.po.UserPOExample;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Resource;
+import java.util.*;
 
 public class UserFactory {
 
-    public static List<Long> createIds(List<User> userList) {
-        List<Long> ids = new ArrayList<>();
+    public static List<Long> getUserIds(List<User> userList) {
+        List<Long> userIds = new ArrayList<>();
         for (User user : userList) {
-            ids.add(user.getUserId());
+            userIds.add(user.getUserId());
         }
-        if (ids.size() == 0) {
-            ids.add(0L);
+        if (userIds.size() == 0) {
+            userIds.add(0L);
         }
-        return ids;
+        return userIds;
     }
 
     public static User create(UserPO userPO) {
         User user = new User();
+
         user.setUserName(userPO.getUserName());
         user.setUserId(userPO.getUserId());
         user.setEamil(userPO.getEamil());
@@ -47,6 +53,7 @@ public class UserFactory {
         return user;
     }
 
+
     public static List<User> create(List<UserPO> userPOList) {
         List<User> userList = new ArrayList<>();
         for (UserPO userPO : userPOList) {
@@ -54,6 +61,7 @@ public class UserFactory {
         }
         return userList;
     }
+
 }
 
 

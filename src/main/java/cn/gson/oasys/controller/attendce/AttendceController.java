@@ -16,25 +16,17 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import cn.gson.oasys.factory.AttendsFactory;
-import cn.gson.oasys.factory.StatusFactory;
-import cn.gson.oasys.factory.TypeFactory;
-import cn.gson.oasys.factory.UserFactory;
-import cn.gson.oasys.mappers.StatusPOMapper;
-import cn.gson.oasys.mappers.TypeMapper;
-import cn.gson.oasys.mappers.TypePOMapper;
-import cn.gson.oasys.mappers.UserPOMapper;
+import cn.gson.oasys.factory.*;
+import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.bo.QueryAttendsBO;
+import cn.gson.oasys.model.dao.user.UserServiceV2;
+import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.services.attendance.AttendanceServiceV2;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -62,17 +54,17 @@ public class AttendceController {
 
     Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
+    @Resource
     AttendceDao attenceDao;
-    @Autowired
+    @Resource
     AttendceService attendceService;
-    @Autowired
+    @Resource
     UserDao uDao;
-    @Autowired
+    @Resource
     UserService userService;
-    @Autowired
+    @Resource
     TypeDao typeDao;
-    @Autowired
+    @Resource
     StatusDao statusDao;
     @Resource
     AttendanceServiceV2 attendanceServiceV2;
@@ -82,6 +74,10 @@ public class AttendceController {
     TypePOMapper typePOMapper;
     @Resource
     StatusPOMapper statusPOMapper;
+    @Resource
+    UserServiceV2 userServiceV2;
+    @Resource
+    DeptPOMapper deptPOMapper;
 
     List<Attends> alist;
     List<User> uList;
@@ -260,7 +256,8 @@ public class AttendceController {
                         @RequestParam(value = "status", required = false) String status,
                         @RequestParam(value = "time", required = false) String time,
                         @RequestParam(value = "icon", required = false) String icon, Model model) {
-        allsortpaging(request, session, page, baseKey, type, status, time, icon, model);
+//        allsortpaging(request, session, page, baseKey, type, status, time, icon, model);
+        attendceattPage(request, session, page, baseKey, type, status, time, icon, model);
         return "attendce/attendcetable";
     }
 
@@ -296,15 +293,19 @@ public class AttendceController {
     public String test3(HttpServletRequest request, HttpSession session,
                         @RequestParam(value = "page", defaultValue = "0") int page,
                         @RequestParam(value = "baseKey", required = false) String baseKey) {
-        weektablepaging(request, session, page, baseKey);
+//        weektablepaging(request, session, page, baseKey);
+        weektablepagingV2(request, session, page, baseKey);
+
         return "attendce/weektable";
     }
+
 
     @RequestMapping("realweektable")
     public String dsaf(HttpServletRequest request, HttpSession session,
                        @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "baseKey", required = false) String baseKey) {
-        weektablepaging(request, session, page, baseKey);
+//        weektablepaging(request, session, page, baseKey);
+        weektablepagingV2(request, session, page, baseKey);
         return "attendce/realweektable";
 
     }
@@ -447,7 +448,7 @@ public class AttendceController {
         request.setAttribute("url", "attendcelisttable");
     }
 
-    //新增的方法（改管理下的用户）
+    //新增的方法（改管理下的所有所有用户）V2
     private void attendceattPage(HttpServletRequest request, HttpSession session, int page, String baseKey,
                                  String type, String status, String time, String icon, Model model) {
         setModelSomething(baseKey, type, status, time, icon, model);
@@ -463,11 +464,11 @@ public class AttendceController {
         List<User> userList = UserFactory.create(userPOList);
 
         //获取下属的用户ID
-        List<Long> ids = UserFactory.createIds(userList);
+        List<Long> ids = UserFactory.getUserIds(userList);
 
         //根据上司ID查询上司信息
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
-        //把自己定义的下属用户转换为本身的下属用户
+        //把自己定义的用户转换为本身的用户
         User user = UserFactory.create(userPO);
         typestatusV2(request);
 
@@ -475,8 +476,8 @@ public class AttendceController {
         PageBO pageBO = new PageBO(page);
 
         queryAttendsBO.setUserIds(ids);
-        queryAttendsBO.setAttendDayStart(DateUtils.addYears(new Date(), -2));
-        queryAttendsBO.setAttendDayEnd(new Date());
+//        queryAttendsBO.setAttendDayStart(DateUtils.addYears(new Date(), -2));
+//        queryAttendsBO.setAttendDayEnd(new Date());
 
         List<AttendsPO> attendsPOList = attendanceServiceV2.queryAttend(queryAttendsBO, pageBO);
 
@@ -526,6 +527,47 @@ public class AttendceController {
         request.setAttribute("url", "attendcetable");
     }
 
+    //新的考勤周报表分页V2
+    private void weektablepagingV2(HttpServletRequest request, HttpSession session, int page, String baseKey) {
+        String starttime = request.getParameter("starttime");
+        String endtime = request.getParameter("endtime");
+        // 格式转化
+        service.addConverter(new StringtoDate());
+        Date startdate = service.convert(starttime, Date.class);
+        Date enddate = service.convert(endtime, Date.class);
+        //获取上司用户的ID
+        Long fatherId = Long.parseLong(session.getAttribute("userId").toString());
+        //获取fatherId下的所有用户的信息并且分页,该UserPO里面只有用户部门的dept_id
+        List<UserPO> userPOList = userServiceV2.findUserAndPageByFatherId(page, fatherId);
+        //把自己定义的用户列表转换成人家的，用户的 dept为null
+        List<User> userList = UserFactory.create(userPOList);
+
+        Map<Long, Dept> map = userServiceV2.userAndDept(userPOList);
+            for (User user : userList) {
+                user.setDept(map.get(user.getUserId()));
+            }
+
+        //把一周的靠勤的考勤放到attendsList 里面,已经转换为本身的考勤列表
+        List<Attends> attendsList = attendanceServiceV2.findOneWeekV2(startdate,enddate,userList);
+        for (User user : userList) {
+            Set<Attends> attenceset = new HashSet<>();
+            for (Attends attence : attendsList) {
+                if (Objects.equals(attence.getUser().getUserId(), user.getUserId())) {
+                    //把一个用户的考勤拿出来放到set集合里面
+                    attenceset.add(attence);
+                }
+            }
+            // 把用户的考勤放到用户里面
+            user.setaSet(attenceset);
+        }
+        String[] weekday = {"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"};
+        request.setAttribute("ulist", userList);
+        request.setAttribute("page", userList);
+        request.setAttribute("weekday", weekday);
+        request.setAttribute("url", "realweektable");
+    }
+
+
     //考勤周报表分页
     private void weektablepaging(HttpServletRequest request, HttpSession session, int page, String baseKey) {
         //获取开始时间
@@ -564,16 +606,19 @@ public class AttendceController {
             startdate = start;
         enddate = end;
         System.out.println("再次获取" + startdate + "结束" + enddate);
-        //把一周的靠勤的考勤放到alist 里面
+        //把一周的靠勤的放到alist 里面
         List<Attends> alist = attenceDao.findoneweek(startdate, enddate, ids);
+
         for (User user : userspage) {
             Set<Attends> attenceset = new HashSet<>();
 
             for (Attends attence : alist) {
                 if (Objects.equals(attence.getUser().getUserId(), user.getUserId())) {
+                    //把一个用户的考勤拿出来放到set集合里面
                     attenceset.add(attence);
                 }
             }
+            // 把用户的考勤放到用户里面
             user.setaSet(attenceset);
         }
         String[] weekday = {"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"};
@@ -586,17 +631,22 @@ public class AttendceController {
     //月报表
     private void monthtablepaging(HttpServletRequest request, Model model,
                                   HttpSession session, int page, String baseKey) {
+//        offnum下班次数，上班次数toworknum
         Integer offnum, toworknum;
+        //获取到上司的ID
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
+        //定义集合用于存放下属用户ID
         List<Long> ids = new ArrayList<>();
         //找到该管理员下的所有用户并分页
         Page<User> userspage = userService.findmyemployuser(page, baseKey, userId);
+//        遍历下属用户信息获取下属用户ID
         for (User user : userspage) {
             ids.add(user.getUserId());
         }
         if (ids.size() == 0) {
             ids.add(0L);
         }
+//        获取月份
         String month = request.getParameter("month");
 
         if (month != null)
@@ -606,14 +656,13 @@ public class AttendceController {
 
         Map<String, List<Integer>> uMap = new HashMap<>();
         List<Integer> result = null;
-
         for (User user : userspage) {
             result = new ArrayList<>();
             //当月该用户下班次数
             offnum = attenceDao.countoffwork(month, user.getUserId());
             //当月该用户上班次数
             toworknum = attenceDao.counttowork(month, user.getUserId());
-            //10，正常；11，早退；12迟到
+            //10正常；11迟到；12早退
             for (long statusId = 10; statusId < 13; statusId++) {
                 //这里面记录了正常迟到早退等状态
                 if (statusId == 12)
@@ -645,7 +694,6 @@ public class AttendceController {
                     //上班次数
                     result.add(30 - 8 - offnum);
             }
-
             uMap.put(user.getUserName(), result);
         }
         model.addAttribute("uMap", uMap);

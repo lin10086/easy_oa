@@ -12,7 +12,9 @@ import cn.gson.oasys.model.po.UserPOExample;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AttendsFactory {
 
@@ -24,9 +26,9 @@ public class AttendsFactory {
      */
     public static Attends create(UserPO userPO, AttendsPO attendsPO) {
 
-
         Attends attends = new Attends();
         attends.setUser(UserFactory.create(userPO));
+
         attends.setTypeId(attendsPO.getTypeId());
         attends.setAttendsId(attendsPO.getAttendsId());
         //ftl 时间显示使用了Timestamp机制
@@ -42,25 +44,41 @@ public class AttendsFactory {
         attends.setWeekOfday(attendsPO.getWeekOfday());
         attends.setHolidayStart(attendsPO.getHolidayStart());
 
+
         return attends;
     }
 
     public static List<Attends> create(List<UserPO> userPOList, List<AttendsPO> attendsPOList) {
         List<Attends> attendsList = new ArrayList<>();
         for (AttendsPO attendsPO : attendsPOList) {
-            //拿到考勤的userId根据userId拿到集合里面拿到user
-            UserPO userPO = findUserByUserId(userPOList, attendsPO.getAttendsUserId());
-            attendsList.add(AttendsFactory.create(userPO, attendsPO));
+            for (UserPO userPO : userPOList) {
+                if (attendsPO.getAttendsUserId().equals(userPO.getUserId())) {
+                    attendsList.add(AttendsFactory.create(userPO, attendsPO));
+                }
+            }
         }
         return attendsList;
     }
 
-    private static UserPO findUserByUserId(List<UserPO> userPOList, Long attendsUserId) {
-        for (UserPO userPO : userPOList) {
-            if (userPO.getUserId().equals(attendsUserId)) {
-                return userPO;
+    //一个用户对应多个考勤
+    //在考勤列表里面取出属于用户自己的考勤
+    public static  List<User> createAttends(List<UserPO> userPOList, List<AttendsPO>attendsPOList) {
+        List<User>userList = UserFactory.create(userPOList);
+        List<Attends>attendsList = AttendsFactory.create(userPOList,attendsPOList);
+
+        for (User user : userList) {
+            //用户考勤
+            Set<Attends>attendsSet = new HashSet<>();
+            for (Attends attends : attendsList) {
+                if (user.getUserId().equals(attends.getUser().getUserId())) {
+                    attendsSet.add(attends);
+                }
             }
+            //把用户自己的考勤放到用户里面
+            user.setaSet(attendsSet);
         }
-        return null;
+
+        return userList;
     }
+
 }

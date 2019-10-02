@@ -135,7 +135,6 @@ public class User {
 	@ManyToOne()
 	@JoinColumn(name = "role_id")
 	private Role role;			//外键关联 角色表
-	
 
 	@ManyToMany(mappedBy = "users")//多对多
 	private List<ScheduleList> scheduleLists;

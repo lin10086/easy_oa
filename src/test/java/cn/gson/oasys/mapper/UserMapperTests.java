@@ -100,17 +100,26 @@ public class UserMapperTests {
     public void selectUsersIdInOrBetweenPage() {
         UserPOExample userPOExample = new UserPOExample();
         //条件1
-        userPOExample.createCriteria().andUserIdIn(Lists.newArrayList(14L, 28L));
+//        userPOExample.createCriteria().andUserIdIn(Lists.newArrayList(14L, 28L));
 
         //条件2
-        UserPOExample.Criteria criteria2 = userPOExample.createCriteria().andFatherIdBetween(5L, 7L);
+//        UserPOExample.Criteria criteria2 = userPOExample.createCriteria().andFatherIdBetween(5L, 7L);
         //或关系
-        userPOExample.or(criteria2);
+//        userPOExample.or(criteria2);
 
         PageHelper.startPage(1, 20);
         List<UserPO> list = userPOMapper.selectByExample(userPOExample);
-        PageInfo pageInfo = new PageInfo(list);
-        log.info("total={}, pageInfo={},list={}", pageInfo.getTotal(), pageInfo, list);
+
+
+        PageInfo<UserPO> pageInfo = new PageInfo<>(list);
+        List<Long> ids = new ArrayList<>();
+
+        for (UserPO userPO : list) {
+            ids.add(userPO.getUserId());
+        }
+        log.info("total={},list={}", pageInfo.getTotal(), list);
+        log.info("selectUsersIdInOrBetweenPage: ids={}", ids);
+        log.info("pageInfo.getList()={}", pageInfo.getList());
     }
 
     @Test

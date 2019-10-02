@@ -1,5 +1,7 @@
 package cn.gson.oasys.services.attendance;
 
+import cn.gson.oasys.factory.AttendsFactory;
+import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.bo.AttendsBO;
 import cn.gson.oasys.model.bo.PageBO;
@@ -85,6 +87,7 @@ public class AttendanceServiceV2 {
         log.info("total={}, pageInfo={},list={}", pageInfo.getTotal(), pageInfo, list);
         return list;
     }
+
     //
     private List<Long> getAttendStatus() {
         //TODO 获取考勤状态
@@ -99,6 +102,7 @@ public class AttendanceServiceV2 {
         }
         return statusList;
     }
+
     //根据考勤的模型获取考勤类型ID列表
     private List<Long> getAttendType() {
         //TODO 获取考勤类型
@@ -112,10 +116,12 @@ public class AttendanceServiceV2 {
         }
         return typeList;
     }
-//根据用户ID返回用户信息
+
+    //根据用户ID返回用户信息
     private UserPO getUserById(Long userId) {
         return userPOMapper.selectByPrimaryKey(userId);
     }
+
     //根据用户用上司的ID返回下属用户
     private List<UserPO> getUsersByFatherId(Long fatherUserId) {
         UserPOExample userPOExample = new UserPOExample();
@@ -125,5 +131,24 @@ public class AttendanceServiceV2 {
         return userPOMapper.selectByExample(userPOExample);
     }
 
+    //获取一周的考勤
+    public List<Attends> findOneWeekV2(Date startdate, Date enddate, List<User>userList) {
+        if(startdate==null&&enddate==null){
+            return  new ArrayList<>();
+        }
+
+        AttendsPOExample attendsPOExample = new AttendsPOExample();
+        attendsPOExample.createCriteria().andAttendsTimeBetween(startdate, enddate)
+                .andAttendsUserIdIn(UserFactory.getUserIds(userList));
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserIdIn(UserFactory.getUserIds(userList));
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        List<Attends> attendsList = AttendsFactory.create(userPOList, attendsPOList);
+
+        return attendsList;
+
+    }
 
 }
