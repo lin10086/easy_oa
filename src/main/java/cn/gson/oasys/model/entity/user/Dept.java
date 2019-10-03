@@ -30,8 +30,8 @@ public class Dept {
 	private String deptName;	//部门名字  非空 唯一
 	
 	@Column(name = "dept_tel")
-	private String deptTel;		//部门电话  
-	
+	private String deptTel;		//部门电话
+
 	@Column(name = "dept_fax")
 	private String deptFax;		//部门传真
 	
@@ -47,22 +47,6 @@ public class Dept {
 	
 	@Column(name = "end_time")
 	private Date endTime;		//部门下班时间
-
-	public Date getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-
-	public Date getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
 
 	public Dept() {
 
@@ -124,27 +108,42 @@ public class Dept {
 		this.deptmanager = deptmanager;
 	}
 
+//	@Override
+//	public String toString() {
+//		return "Dept [deptId=" + deptId + ", deptName=" + deptName + ", deptTel=" + deptTel + ", deptFax=" + deptFax
+//				+ ", email=" + email + ", deptAddr=" + deptAddr + ", deptmanager=" + deptmanager + "]";
+//	}
+
+
 	@Override
 	public String toString() {
-		return "Dept [deptId=" + deptId + ", deptName=" + deptName + ", deptTel=" + deptTel + ", deptFax=" + deptFax
-				+ ", email=" + email + ", deptAddr=" + deptAddr + ", deptmanager=" + deptmanager + "]";
+		return "Dept{" +
+				"deptId=" + deptId +
+				", deptName='" + deptName + '\'' +
+				", deptTel='" + deptTel + '\'' +
+				", deptFax='" + deptFax + '\'' +
+				", email='" + email + '\'' +
+				", deptAddr='" + deptAddr + '\'' +
+				", deptmanager=" + deptmanager +
+				", startTime=" + startTime +
+				", endTime=" + endTime +
+				'}';
 	}
 
-	
-//	public Date getStartTime() {
-//		return startTime;
-//	}
-//
-//	public void setStartTime(Date startTime) {
-//		this.startTime = startTime;
-//	}
+	public Date getStartTime() {
+		return startTime;
+	}
 
-//	public Date getEndTime() {
-//		return endTime;
-//	}
-//
-//	public void setEndTime(Date endTime) {
-//		this.endTime = endTime;
-//	}
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 	
 }

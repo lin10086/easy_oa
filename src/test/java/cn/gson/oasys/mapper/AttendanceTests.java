@@ -1,10 +1,13 @@
 package cn.gson.oasys.mapper;
 
+import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.AttendanceMapper;
 import cn.gson.oasys.mappers.AttendsPOMapper;
 import cn.gson.oasys.model.entity.AttendanceEntity;
+import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.AttendsPO;
 import cn.gson.oasys.model.po.AttendsPOExample;
+import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.model.po.UserPOExample;
 import freemarker.template.utility.DateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -117,19 +122,51 @@ public class AttendanceTests {
 //    }
 
 
-
-
     @Test
     public void selectUserIdPOExampleOrderBy() {
         AttendsPOExample attendsPOExample = new AttendsPOExample();
 
         attendsPOExample.createCriteria()
-                .andAttendsUserIdIn(Lists.newArrayList(14L, 15L,16L,26L));
+                .andAttendsUserIdIn(Lists.newArrayList(14L, 15L, 16L, 26L));
 
         attendsPOExample.setOrderByClause("type_id");
 
         List<AttendsPO> list = attendsPOMapper.selectByExample(attendsPOExample);
         log.info("selectUserIdPOExampleOrderBy: list={}", list);
+    }
+
+    //目的：查找当月（从数据库获取时间与页面获取到的时间比较）用户（ID）下班（类型）次数，
+    @Test
+    public void countMonthOffnumPO() {
+       /* Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+
+        String s = simpleDateFormat.format(date);
+        log.info("s={}", s);*/
+
+     /*   String s1 = new SimpleDateFormat("yyyy-MM").format(new Date());
+        log.info("s1={}",s1);*/
+
+        AttendsPOExample attendsPOExample = new AttendsPOExample();
+        attendsPOExample.createCriteria().andTypeIdEqualTo(9L)
+                .andAttendsUserIdEqualTo(14L);
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        log.info("attendsPOList={}", attendsPOList);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        String month = "2019-10";
+        int i = 0;
+        for (AttendsPO attendsPO : attendsPOList) {
+            Date date = attendsPO.getAttendsTime();
+            log.info("date={}", date);
+            String str = simpleDateFormat.format(date);
+            log.info("str={}", str);
+            if (month.equals(str)) {
+                i++;
+            }
+        }
+            log.info("i={}", i);
+
+
     }
 
 }

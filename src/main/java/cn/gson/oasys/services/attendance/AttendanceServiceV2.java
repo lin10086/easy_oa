@@ -2,34 +2,22 @@ package cn.gson.oasys.services.attendance;
 
 import cn.gson.oasys.factory.AttendsFactory;
 import cn.gson.oasys.factory.UserFactory;
-import cn.gson.oasys.mappers.*;
-import cn.gson.oasys.model.bo.AttendsBO;
+import cn.gson.oasys.mappers.AttendsPOMapper;
+import cn.gson.oasys.mappers.StatusPOMapper;
+import cn.gson.oasys.mappers.TypePOMapper;
+import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.bo.QueryAttendsBO;
-import cn.gson.oasys.model.entity.StatusEntity;
-import cn.gson.oasys.model.entity.TypeEntity;
-import cn.gson.oasys.model.entity.UserEntity;
 import cn.gson.oasys.model.entity.attendce.Attends;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import freemarker.template.utility.DateUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -132,9 +120,9 @@ public class AttendanceServiceV2 {
     }
 
     //获取一周的考勤
-    public List<Attends> findOneWeekV2(Date startdate, Date enddate, List<User>userList) {
-        if(startdate==null&&enddate==null){
-            return  new ArrayList<>();
+    public List<Attends> findOneWeekV2(Date startdate, Date enddate, List<User> userList) {
+        if (startdate == null && enddate == null) {
+            return new ArrayList<>();
         }
 
         AttendsPOExample attendsPOExample = new AttendsPOExample();
@@ -151,4 +139,87 @@ public class AttendanceServiceV2 {
 
     }
 
+    //获取单个用户的月下班次数
+    public Integer userCountOffWork(String month, Long userId) {
+        if (month == null) {
+            return 0;
+        }
+        AttendsPOExample attendsPOExample = new AttendsPOExample();
+        attendsPOExample.createCriteria().andTypeIdEqualTo(9L)
+                .andAttendsUserIdEqualTo(userId);
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        int i = 0;
+        for (AttendsPO attendsPO : attendsPOList) {
+            Date date = attendsPO.getAttendsTime();
+            String str = simpleDateFormat.format(date);
+            if (str.equals(month)) {
+                i++;
+            }
+        }
+        return i;
+    }
+
+    //获取单个用户的月上班次数
+    public Integer userCountToWork(String month, Long userId) {
+        if (month == null) {
+            return 0;
+        }
+        AttendsPOExample attendsPOExample = new AttendsPOExample();
+        attendsPOExample.createCriteria().andTypeIdEqualTo(8L)
+                .andAttendsUserIdEqualTo(userId);
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        int i = 0;
+        for (AttendsPO attendsPO : attendsPOList) {
+            Date date = attendsPO.getAttendsTime();
+            String str = simpleDateFormat.format(date);
+            if (str.equals(month)) {
+                i++;
+            }
+        }
+        return i;
+    }
+
+    //获取用户月上班正常，迟到，早退 的次数
+    public Integer userCountStatusNum(String month, Long statusId, Long userId) {
+        if (month == null) {
+            return 0;
+        }
+        AttendsPOExample attendsPOExample = new AttendsPOExample();
+        attendsPOExample.createCriteria().andStatusIdEqualTo(statusId)
+                .andAttendsUserIdEqualTo(userId);
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        int i = 0;
+        for (AttendsPO attendsPO : attendsPOList) {
+            Date date = attendsPO.getAttendsTime();
+            String str = simpleDateFormat.format(date);
+            if (str.equals(month)) {
+                i++;
+            }
+        }
+        return i;
+    }
+
+    //获取用户月请假，出差次数
+    public Integer userCountTypeNum(String month, Long typeId, Long userId) {
+        if (month == null) {
+            return 0;
+        }
+        AttendsPOExample attendsPOExample = new AttendsPOExample();
+        attendsPOExample.createCriteria().andTypeIdEqualTo(typeId)
+                .andAttendsUserIdEqualTo(userId);
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        int i = 0;
+        for (AttendsPO attendsPO : attendsPOList) {
+            Date date = attendsPO.getAttendsTime();
+            String str = simpleDateFormat.format(date);
+            if (str.equals(month)) {
+                i++;
+            }
+        }
+        return i;
+    }
 }

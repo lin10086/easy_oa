@@ -1,15 +1,10 @@
 package cn.gson.oasys.factory;
 
-import cn.gson.oasys.mappers.AttendsPOMapper;
-import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.entity.attendce.Attends;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.AttendsPO;
-import cn.gson.oasys.model.po.AttendsPOExample;
 import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.model.po.UserPOExample;
 
-import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,6 +42,7 @@ public class AttendsFactory {
 
         return attends;
     }
+
 
     public static List<Attends> create(List<UserPO> userPOList, List<AttendsPO> attendsPOList) {
         List<Attends> attendsList = new ArrayList<>();

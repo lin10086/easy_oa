@@ -78,6 +78,8 @@ public class AttendceController {
     UserServiceV2 userServiceV2;
     @Resource
     DeptPOMapper deptPOMapper;
+    @Resource
+    AttendsPOMapper attendsPOMapper;
 
     List<Attends> alist;
     List<User> uList;
@@ -275,7 +277,8 @@ public class AttendceController {
     public String test2(HttpServletRequest request, Model model, HttpSession session,
                         @RequestParam(value = "page", defaultValue = "0") int page,
                         @RequestParam(value = "baseKey", required = false) String baseKey) {
-        monthtablepaging(request, model, session, page, baseKey);
+//        monthtablepaging(request, model, session, page, baseKey);
+        monthtablepagingV2(request, model, session, page, baseKey);
         return "attendce/monthtable";
     }
 
@@ -283,10 +286,10 @@ public class AttendceController {
     public String dfshe(HttpServletRequest request, Model model, HttpSession session,
                         @RequestParam(value = "page", defaultValue = "0") int page,
                         @RequestParam(value = "baseKey", required = false) String baseKey) {
-        monthtablepaging(request, model, session, page, baseKey);
+//        monthtablepaging(request, model, session, page, baseKey);
+        monthtablepagingV2(request, model, session, page, baseKey);
         return "attendce/realmonthtable";
     }
-
 
     // 周报表
     @RequestMapping("attendceweek")
@@ -295,10 +298,8 @@ public class AttendceController {
                         @RequestParam(value = "baseKey", required = false) String baseKey) {
 //        weektablepaging(request, session, page, baseKey);
         weektablepagingV2(request, session, page, baseKey);
-
         return "attendce/weektable";
     }
-
 
     @RequestMapping("realweektable")
     public String dsaf(HttpServletRequest request, HttpSession session,
@@ -541,14 +542,12 @@ public class AttendceController {
         List<UserPO> userPOList = userServiceV2.findUserAndPageByFatherId(page, fatherId);
         //把自己定义的用户列表转换成人家的，用户的 dept为null
         List<User> userList = UserFactory.create(userPOList);
-
-        Map<Long, Dept> map = userServiceV2.userAndDept(userPOList);
-            for (User user : userList) {
-                user.setDept(map.get(user.getUserId()));
-            }
+        //把用户ID和部门对应起来
+        Map<Long, Dept> map = userServiceV2.userIdAndDept(userPOList);
 
         //把一周的靠勤的考勤放到attendsList 里面,已经转换为本身的考勤列表
-        List<Attends> attendsList = attendanceServiceV2.findOneWeekV2(startdate,enddate,userList);
+        List<Attends> attendsList = attendanceServiceV2.findOneWeekV2(startdate, enddate, userList);
+
         for (User user : userList) {
             Set<Attends> attenceset = new HashSet<>();
             for (Attends attence : attendsList) {
@@ -557,6 +556,8 @@ public class AttendceController {
                     attenceset.add(attence);
                 }
             }
+            // 把部门信息放到用户里面
+            user.setDept(map.get(user.getUserId()));
             // 把用户的考勤放到用户里面
             user.setaSet(attenceset);
         }
@@ -653,7 +654,7 @@ public class AttendceController {
             month_ = month;
         else
             month = month_;
-
+//用户名和天数
         Map<String, List<Integer>> uMap = new HashMap<>();
         List<Integer> result = null;
         for (User user : userspage) {
@@ -700,5 +701,69 @@ public class AttendceController {
         model.addAttribute("ulist", userspage.getContent());
         model.addAttribute("page", userspage);
         model.addAttribute("url", "realmonthtable");
+    }
+
+    //月报表V2
+    private void monthtablepagingV2(HttpServletRequest request, Model model,
+                                    HttpSession session, int page, String baseKey) {
+        Integer offnum, toworknum;
+        Long fatherId = Long.parseLong(session.getAttribute("userId").toString());
+        //获取fatherId下的所有用户的信息并且分页
+        List<UserPO> userPOList = userServiceV2.findUserAndPageByFatherId(page, fatherId);
+        List<User> userList = UserFactory.create(userPOList);
+//        获取月份
+        String month = request.getParameter("month");
+        Map<String, List<Integer>> uMap = new HashMap<>();
+        List<Integer> result = null;
+        //把用户ID和部门对应起来
+        Map<Long, Dept> map = userServiceV2.userIdAndDept(userPOList);
+        for (User user : userList) {
+            // 把部门信息放到用户里面
+            user.setDept(map.get(user.getUserId()));
+            result = new ArrayList<>();
+            //当月该用户下班次数
+            offnum = attendanceServiceV2.userCountOffWork(month, user.getUserId());
+            toworknum = attendanceServiceV2.userCountToWork(month, user.getUserId());
+            //10正常；11迟到；12早退
+            for (long statusId = 10; statusId < 13; statusId++) {
+                //这里面记录了正常迟到早退等状态
+                if (statusId == 12) {
+                    result.add(attendanceServiceV2.userCountStatusNum(month, statusId, user.getUserId()) + toworknum - offnum);
+                } else {
+                    result.add(attendanceServiceV2.userCountStatusNum(month, statusId, user.getUserId()));
+                }
+            }
+
+            if (attendanceServiceV2.userCountTypeNum(month, 46L, user.getUserId()) != null) {
+                result.add(attendanceServiceV2.userCountTypeNum(month, 46L, user.getUserId()));
+            } else {
+                result.add(0);
+            }
+            if (attendanceServiceV2.userCountTypeNum(month, 47L, user.getUserId()) != null) {
+                result.add(attendanceServiceV2.userCountTypeNum(month, 47L, user.getUserId()));
+            } else {
+                result.add(0);
+            }
+            //这里记录了旷工的次数 还有请假天数没有记录 旷工次数=30-8-请假次数-某天签到次数
+            //这里还有请假天数没有写
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            //当前的年月
+            String date_month = sdf.format(date);
+            if (month != null) {
+                //指定的数大于等于参数
+                if (month.compareTo(date_month) >= 0)
+                    result.add(0);
+                else
+                    //上班次数
+                    result.add(30 - 8 - offnum);
+            }
+            uMap.put(user.getUserName(), result);
+        }
+        model.addAttribute("uMap", uMap);
+        model.addAttribute("ulist", userList);
+        model.addAttribute("page", userList);
+        model.addAttribute("url", "realmonthtable");
+
     }
 }

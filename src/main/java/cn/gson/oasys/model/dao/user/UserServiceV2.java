@@ -1,11 +1,9 @@
 package cn.gson.oasys.model.dao.user;
 
 import cn.gson.oasys.factory.DeptFactory;
-import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.model.po.UserPOExample;
@@ -44,7 +42,7 @@ public class UserServiceV2 {
     }
 
     //把用户的ID和用户的部门对应起来放到map里面
-    public Map<Long, Dept> userAndDept(List<UserPO>userPOList) {
+    public Map<Long, Dept> userIdAndDept(List<UserPO>userPOList) {
         //获取用户们的ID
 
         //建立Map集合用于把用户ID和用户的部门对应起来
