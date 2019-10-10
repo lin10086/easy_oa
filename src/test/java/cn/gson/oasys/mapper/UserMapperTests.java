@@ -1,8 +1,13 @@
 package cn.gson.oasys.mapper;
 
+import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.UserMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
+import cn.gson.oasys.model.dao.user.DeptDao;
+import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.entity.UserEntity;
+import cn.gson.oasys.model.entity.user.Dept;
+import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.model.po.UserPOExample;
 import com.github.pagehelper.PageHelper;
@@ -11,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -28,6 +34,10 @@ public class UserMapperTests {
     @Resource
     UserPOMapper userPOMapper;
 
+    @Autowired
+    UserDao udao;
+    @Autowired
+    DeptDao deptdao;
 
 //    List<UserPO> list = null;
 //    @Test
@@ -135,7 +145,7 @@ public class UserMapperTests {
     public void insertUser() {
         UserPO userPO = new UserPO();
         userPO.setAddress("陕西西安");
-        userPO.setBank("新增用户2");
+        userPO.setBank("新增用户3");
         //支队设置的字段进行插入
         Integer rows = userPOMapper.insertSelective(userPO);
         log.info("insertUser:rows={}", rows);
@@ -145,7 +155,7 @@ public class UserMapperTests {
     @Test
     public void updateByPrimaryKeySelective() {
         UserPO userPO = new UserPO();
-        userPO.setUserId(37L);
+        userPO.setUserId(42L);
         userPO.setEamil("9999@qq.com");
         userPO.setSalary(2222.2F);
         userPO.setBank("更新的");
@@ -159,7 +169,7 @@ public class UserMapperTests {
     @Test
     public void updateByPrimaryKey() {
         UserPO userPO = new UserPO();
-//        userPO.setUserId(37L);
+        userPO.setUserId(42L);
         userPO.setEamil("5678@qq.com");
         userPO.setBirth(new Date());
         Integer rows = userPOMapper.updateByPrimaryKey(userPO);
@@ -177,6 +187,33 @@ public class UserMapperTests {
         Integer rows = userPOMapper.updateByExampleSelective(userPO, userPOExample);
         log.info("updateByExampleSelective: rows={}", rows);
     }
+     //.findOne测试
+    @Test
+    public void findOne(){
+
+        Long deptId =4L;
+        Dept dept = deptdao.findOne(deptId);
+        User deptmanage = udao.findOne(dept.getDeptmanager());
+        log.info("deptmanage={}",deptmanage);
+    }
 
 
+@Test
+    public void getUserByPO(){
+
+        UserPOExample userPOExample = new UserPOExample();
+        UserPO userPO = userPOMapper.selectByPrimaryKey(1l);
+        User user = UserFactory.create(userPO);
+        log.info("user={}",user);
+}
+@Test
+    public void getUser1(){
+        User user = udao.findOne(1L);
+        log.info("user={}",user);
+
+    Dept dept = deptdao.findOne(1l);
+    //根据部门查出来部门是相同的及部门ID相同
+    List<User> deptusers = udao.findByDept(dept);
+    log.info("deptusers={}",deptusers);
+}
 }

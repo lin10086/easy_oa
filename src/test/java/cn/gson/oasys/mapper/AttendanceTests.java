@@ -129,10 +129,12 @@ public class AttendanceTests {
         attendsPOExample.createCriteria()
                 .andAttendsUserIdIn(Lists.newArrayList(14L, 15L, 16L, 26L));
 
-        attendsPOExample.setOrderByClause("type_id");
+        attendsPOExample.setOrderByClause("type_id DESC");
 
         List<AttendsPO> list = attendsPOMapper.selectByExample(attendsPOExample);
-        log.info("selectUserIdPOExampleOrderBy: list={}", list);
+        AttendsPO attendsPO = list.get(0);
+        log.info("attendsPo={}",attendsPO);
+//        log.info("selectUserIdPOExampleOrderBy: list={}", list);
     }
 
     //目的：查找当月（从数据库获取时间与页面获取到的时间比较）用户（ID）下班（类型）次数，
@@ -168,5 +170,6 @@ public class AttendanceTests {
 
 
     }
+
 
 }

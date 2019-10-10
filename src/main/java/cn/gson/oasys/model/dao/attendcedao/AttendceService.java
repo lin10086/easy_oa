@@ -57,7 +57,7 @@ public class AttendceService {
         return attendceDao.delete(aid);
     }
 
-    // 更改考勤时间
+    // 更改考勤时间（根据考勤表ID修改考勤时间，考勤时分，考勤状态ID）
     public Integer updatetime(Date date, String hourmin, Long statusIdlong, long attid) {
         return attendceDao.updateatttime(date, hourmin, statusIdlong, attid);
     }

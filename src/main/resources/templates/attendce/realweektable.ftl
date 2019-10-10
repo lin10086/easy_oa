@@ -11,10 +11,11 @@
 						<th>星期六</th>
 						<th>星期日</th>
 					</tr>
-		
+		<#-- 如果ulist 存在就执行-->
 			<#if ulist??>
 				<#list ulist as user>
 				    <tr>
+						<#--获取-->
 						<td>${user.dept.deptName}</td>
 						<td>${user.userName}</td>
 						<#list weekday as wd>

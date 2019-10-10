@@ -1,9 +1,11 @@
-package cn.gson.oasys.model.dao.user;
+package cn.gson.oasys.ServiceV2;
 
 import cn.gson.oasys.factory.DeptFactory;
+import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.entity.user.Dept;
+import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.model.po.UserPOExample;
@@ -41,10 +43,9 @@ public class UserServiceV2 {
         return userPOList;
     }
 
+
     //把用户的ID和用户的部门对应起来放到map里面
     public Map<Long, Dept> userIdAndDept(List<UserPO>userPOList) {
-        //获取用户们的ID
-
         //建立Map集合用于把用户ID和用户的部门对应起来
         Map<Long, Dept> map = new HashMap<>();
         //遍历自己定义的用户，从中获取用户所在的部门ID
@@ -57,6 +58,48 @@ public class UserServiceV2 {
             map.put(userPO.getUserId(), dept);
         }
         return map;
+    }
+
+
+
+    //根据用户ID获取userPO
+    public UserPO getUserPOByUserId(Long userId){
+        UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
+        return userPO;
+    }
+    //根据用户信息查找用户信息并转换为本身的用户
+    public User getUserByUserId(Long userId){
+        UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
+        User user = UserFactory.create(userPO);
+        return user;
+    }
+
+    //更新用户信息（把刚设置的信息保存到用户里面)
+    public void updateUser(UserPO userPO){
+
+        UserPOExample userPOExample = new UserPOExample();
+        userPOMapper.updateByExampleSelective(userPO,userPOExample);
+
+    }
+    //根据部门表里的deptmanager（实际上是用户ID）查找用户信息
+    public User getUserBydeptManager(Dept dept){
+
+        UserPO userPO = userPOMapper.selectByPrimaryKey(dept.getDeptmanager());
+        User user = UserFactory.create(userPO);
+        return user;
+    }
+
+    /**
+     * 根据部门获取用户列表
+     * @param dept
+     * @return userPOList
+     */
+    public List<UserPO> getUserByDeptId(Dept dept){
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andDeptIdEqualTo(dept.getDeptId());
+        List<UserPO>userPOList = userPOMapper.selectByExample(userPOExample);
+
+        return userPOList;
     }
 
 }

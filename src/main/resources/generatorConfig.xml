@@ -66,6 +66,10 @@
             <generatedKey column="dept_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="dept_id" javaType="Long"/>
         </table>
-
+        <!--职位表 -->
+        <table tableName="aoa_position" domainObjectName="PositionPO">
+            <generatedKey column="position_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="position_id" javaType="Long"/>
+        </table>
     </context>
 </generatorConfiguration>

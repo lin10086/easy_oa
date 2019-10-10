@@ -3,6 +3,9 @@ package cn.gson.oasys.factory;
 import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.po.DeptPO;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DeptFactory {
     //把自己的部门DeptPO转换成本身的部门Dept
     public static Dept create(DeptPO deptPO){
@@ -18,6 +21,14 @@ public class DeptFactory {
         dept.setStartTime(deptPO.getStartTime());
         dept.setEndTime(deptPO.getEndTime());
         return dept;
+    }
+
+    public static List<Dept> create(List<DeptPO>deptPOList){
+        List<Dept>deptList = new ArrayList<>();
+        for(DeptPO deptPO : deptPOList){
+            deptList.add(DeptFactory.create(deptPO));
+        }
+        return deptList;
     }
 
 }

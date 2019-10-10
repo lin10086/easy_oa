@@ -1,9 +1,11 @@
 package cn.gson.oasys;
 
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ import cn.gson.oasys.mappers.NoticeMapper;
 import cn.gson.oasys.model.dao.attendcedao.AttendceService;
 import cn.gson.oasys.model.dao.processdao.NotepaperDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-
+@Slf4j
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class Test1 {
@@ -57,8 +59,42 @@ public class Test1 {
 		}
 	}
 	
-	
-	
+	@Test
+	public void tests(){
+
+		Date date = new Date();
+		log.info("date={}",date);
+		Long time = date.getTime();
+		log.info("time={}",time);
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("w");
+		String str= simpleDateFormat.format(date);
+		log.info("str={}",str);
+
+	}
+	@Test
+	public void dateTest(){
+		Date date = new Date();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String str = simpleDateFormat.format(date);
+		log.info("date={},str={}",date,str);
+
+		Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int day = calendar.get(Calendar.DATE);
+		log.info("year={},month={},day={}",year,month,day);
+
+		Date time = calendar.getTime();
+		log.info("time={}",time);
+	}
+	@Test
+	public void dateTest01(){
+
+		Date date = new Date();
+		System.out.println(date.toString());
+		log.info("date={}",date);
+	}
 	
 
 }
