@@ -49,4 +49,26 @@ public class PositionServiceV2 {
 //        positionPOMapper.selectByPrimaryKey(user.)
 //    }
 
+    //查找所有的职位列表
+    public List<Position> getPositionList(){
+        PositionPOExample positionPOExample = new PositionPOExample();
+        List<PositionPO>positionPOList = positionPOMapper.selectByExample(positionPOExample);
+        List<Position>positionList = PositionFactory.create(positionPOList);
+        return positionList;
+    }
+    //插入一个职位
+    public Integer insertPosition(Position position){
+
+        PositionPO positionPO = positionPOMapper.selectByPrimaryKey(position.getId());
+
+        Integer rows =positionPOMapper.insert(positionPO);
+        return rows;
+    }
+    //更新职位
+    public Integer updatePosition(Position position){
+        PositionPO positionPO = positionPOMapper.selectByPrimaryKey(position.getId());
+        PositionPOExample positionPOExample = new PositionPOExample();
+        Integer rows = positionPOMapper.updateByExampleSelective(positionPO,positionPOExample);
+        return rows;
+    }
 }

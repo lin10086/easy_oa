@@ -17,6 +17,7 @@ import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.UserPO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +32,7 @@ import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.Position;
 import cn.gson.oasys.model.entity.user.User;
-
+@Slf4j
 @Controller
 @RequestMapping("/")
 public class DeptController {
@@ -45,7 +46,7 @@ public class DeptController {
     @Resource
     private DeptPOMapper deptPOMapper;
     @Resource
-    private  UserPOMapper userPOMapper;
+    private UserPOMapper userPOMapper;
     @Resource
     private PositionPOMapper positionPOMapper;
     @Resource
@@ -55,12 +56,9 @@ public class DeptController {
     @Resource
     private UserServiceV2 userServiceV2;
 
-    /**
-     * 第一次进入部门管理页面
-     *
-     * @return
-     */
-	/*
+    /*
+	//已完成部分--------------------√
+	//第一次进入用户管理》部门管理
 	@RequestMapping("deptmanage")
 	public String deptmanage(Model model) {
 		List<Dept> depts = (List<Dept>) deptdao.findAll();
@@ -68,17 +66,36 @@ public class DeptController {
 		model.addAttribute("depts",depts);
 		return "user/deptmanage";
 	}
-*/
-    //自己写的，第一次进入部门管理
-    @RequestMapping("deptmanage")
-    public String deptmanage(Model model) {
-        List<Dept>deptList = deptServiceV2.getDeptList();
-        model.addAttribute("depts", deptList);
-        return "user/deptmanage";
+
+	 //用户管理》部门管理》删除
+    @RequestMapping("deletdept")
+    public String deletdept(@RequestParam("deletedeptid") Long deletedeptid) {
+        //根据部门ID获取部门信息
+        Dept dept = deptdao.findOne(deletedeptid);
+        //根据部门ID获取职位信息
+        List<Position> ps = pdao.findByDeptid(deletedeptid);
+        for (Position position : ps) {
+            System.out.println(position);
+            pdao.delete(position);
+        }
+        deptdao.delete(dept);
+        return "/deptmanage";
+
     }
 
-    //用户管理》部门管理》新增，修改
-
+    //这段代码注释后修改页面不出来，负责获取修改页面信息的，跳转到修改信息页面只需要get请求
+    @RequestMapping(value = "deptedit", method = RequestMethod.GET)
+    public String changedept(@RequestParam(value = "dept", required = false) Long deptId, Model model) {
+        if (deptId != null) {
+            Dept dept = deptdao.findOne(deptId);
+            model.addAttribute("dept", dept);
+        }
+        return "user/deptedit";
+    }
+*/
+/*
+    //正在改的部分
+    //用户管理》部门管理》新增,修改。1.获取修改后的信息进行保存
     @RequestMapping(value = "deptedit", method = RequestMethod.POST)
     public String adddept(@Valid Dept dept, @RequestParam("xg") String xg, BindingResult br, Model model) {
         System.out.println(br.hasErrors());
@@ -108,27 +125,10 @@ public class DeptController {
         return "user/deptedit";
     }
 
-/*
-    @RequestMapping(value = "deptedit", method = RequestMethod.GET)
-    public String changedept(@RequestParam(value = "dept", required = false) Long deptId, Model model) {
-        if (deptId != null) {
-            Dept dept = deptdao.findOne(deptId);
-            model.addAttribute("dept", dept);
-        }
-        return "user/deptedit";
-    }
 */
 
-//自己写的，通过部门ID获取部门信息
-    @RequestMapping(value = "deptedit", method = RequestMethod.GET)
-    public String changedept(@RequestParam(value = "dept", required = false) Long deptId, Model model) {
-        if (deptId != null) {
-            Dept dept = deptServiceV2.getDeptbyDeptId(deptId);
-            model.addAttribute("dept", dept);
-        }
-        return "user/deptedit";
-    }
 /*
+    //暂时未用到的代码
     @RequestMapping("readdept")
     public String readdept(@RequestParam(value = "deptid") Long deptId, Model model) {
         Dept dept = deptdao.findOne(deptId);
@@ -146,7 +146,7 @@ public class DeptController {
         List<User> deptusers = udao.findByDept(dept);
 
         for (User deptuser : deptusers) {
-        //从用户里面获取用户的职位信息
+            //从用户里面获取用户的职位信息
             Position position = deptuser.getPosition();
             System.out.println(deptuser.getRealName() + ":" + position.getName());
             if (!position.getName().endsWith("经理")) {
@@ -164,47 +164,7 @@ public class DeptController {
         return "user/deptread";
 
     }
-  */
 
-//自己的，人事调动
-
-    @RequestMapping("readdept")
-    public String readdept(@RequestParam(value = "deptid") Long deptId, Model model) {
-        Dept dept = deptServiceV2.getDeptbyDeptId(deptId);
-
-        User deptManage = null;
-        if (dept.getDeptmanager() != null) {
-            //获取到的用户信息没有部门，职位信息
-            deptManage = userServiceV2.getUserBydeptManager(dept);
-            model.addAttribute("deptmanage", deptManage);
-        }
-        List<Dept>deptList = deptServiceV2.getDeptList();
-        List<Position>positionList = positionServiceV2.getPositionListByDeptIdAndNameLike();
-
-        List<User> formaluser = new ArrayList<>();
-        List<UserPO>userPOList = userServiceV2.getUserByDeptId(dept);
-
-        for (UserPO deptuserPO : userPOList) {
-            Position position = positionServiceV2.getPositionByPositionId(deptuserPO.getPositionId());
-            System.out.println(deptuserPO.getRealName() + ":" + position.getName());
-            User deptuser = UserFactory.create(deptuserPO);
-            if (!position.getName().endsWith("经理")) {
-
-                formaluser.add(deptuser);
-            }
-        }
-
-        model.addAttribute("positions", positionList);
-        model.addAttribute("depts", deptList);
-        model.addAttribute("deptuser", formaluser);
-        model.addAttribute("dept", dept);
-        model.addAttribute("isread", 1);
-
-        return "user/deptread";
-
-    }
-
-/*
     @RequestMapping("deptandpositionchange")
     public String deptandpositionchange(@RequestParam("positionid") Long positionid,
                                         @RequestParam("changedeptid") Long changedeptid,
@@ -224,58 +184,7 @@ public class DeptController {
         model.addAttribute("deptid", deptid);
         return "/readdept";
     }
-*/
-    //自己写的
-    @RequestMapping("deptandpositionchange")
-    public String deptandpositionchange(@RequestParam("positionid") Long positionId,
-                                        @RequestParam("changedeptid") Long changedeptId,
-                                        @RequestParam("userid") Long userId,
-                                        @RequestParam("deptid") Long deptId,
-                                        Model model) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-        User user = userServiceV2.getUserByUserId(userId);
-        Dept changeDept =deptServiceV2.getDeptbyDeptId(changedeptId);
-        Position position =positionServiceV2.getPositionByPositionId(positionId);
-        user.setDept(changeDept);
-        user.setPosition(position);
-        userServiceV2.updateUser(userPO);
-        model.addAttribute("deptid", deptId);
-        return "/readdept";
-    }
 
-
-    /*
-    //删除部门
-    @RequestMapping("deletdept")
-    public String deletdept(@RequestParam("deletedeptid") Long deletedeptid) {
-        //根据部门ID获取部门信息
-        Dept dept = deptdao.findOne(deletedeptid);
-        //根据部门ID获取职位信息
-        List<Position> ps = pdao.findByDeptid(deletedeptid);
-        for (Position position : ps) {
-            System.out.println(position);
-            pdao.delete(position);
-        }
-        deptdao.delete(dept);
-        return "/deptmanage";
-
-    }
-*/
-
-    //自己写的
-    @RequestMapping("deletdept")
-    public String deletdept(@RequestParam("deletedeptid") Long deletedeptid) {
-        Dept dept = deptServiceV2.getDeptbyDeptId(deletedeptid);
-        List<Position> positionList = positionServiceV2.getPositionByDeptId(deletedeptid);
-        for (Position position : positionList) {
-            positionPOMapper.deleteByPrimaryKey(position.getId());
-        }
-        deptPOMapper.deleteByPrimaryKey(dept.getDeptId());
-        return "/deptmanage";
-
-    }
-
-/*
     @RequestMapping("deptmanagerchange")
     public String deptmanagerchange(@RequestParam(value = "positionid", required = false) Long positionid,
                                     @RequestParam(value = "changedeptid", required = false) Long changedeptid,
@@ -315,5 +224,122 @@ public class DeptController {
         model.addAttribute("deptid", deptid);
         return "/readdept";
     }
-    */
+*/
+
+//============================================================
+
+//自己写的部分
+    @RequestMapping("deptmanage")
+    public String deptmanage(Model model) {
+        List<Dept> deptList = deptServiceV2.getDeptList();
+        model.addAttribute("depts", deptList);
+        return "user/deptmanage";
+    }
+
+
+    @RequestMapping("deletdept")
+    public String deletdept(@RequestParam("deletedeptid") Long deletedeptid) {
+        Dept dept = deptServiceV2.getDeptbyDeptId(deletedeptid);
+        List<Position> positionList = positionServiceV2.getPositionByDeptId(deletedeptid);
+        for (Position position : positionList) {
+            positionPOMapper.deleteByPrimaryKey(position.getId());
+        }
+        deptPOMapper.deleteByPrimaryKey(dept.getDeptId());
+        return "/deptmanage";
+    }
+
+    @RequestMapping(value = "deptedit", method = RequestMethod.GET)
+    public String changedept(@RequestParam(value = "dept", required = false) Long deptId, Model model) {
+        if (deptId != null) {
+            Dept dept = deptServiceV2.getDeptbyDeptId(deptId);
+            model.addAttribute("dept", dept);
+        }
+        return "user/deptedit";
+    }
+
+    @RequestMapping(value = "deptedit", method = RequestMethod.POST)
+    public String adddept(@Valid Dept dept, @RequestParam("xg") String xg, BindingResult br, Model model) {
+        System.out.println("======"+br.hasErrors());
+        System.out.println("-------"+br.getFieldError());
+        if (!br.hasErrors()) {
+            System.out.println("没有错误");
+            Dept adddept = deptServiceV2.updateDept(dept);
+//          看不懂这部分的作用
+//            if ("add".equals(xg)) {
+//                System.out.println("新增拉");
+//                Position jinli = new Position();
+//                jinli.setDeptid(adddept.getDeptId());
+//                jinli.setName("经理");
+//                Position wenyuan = new Position();
+//                wenyuan.setDeptid(adddept.getDeptId());
+//                wenyuan.setName("文员");
+//                pdao.save(jinli);
+//                pdao.save(wenyuan);
+//            }
+            if (adddept != null) {
+                log.info("adddept",adddept);
+                model.addAttribute("success", 1);
+                return "/deptmanage";
+            }
+        }
+        System.out.println("有错误");
+        model.addAttribute("errormess", "错误！~");
+        return "user/deptedit";
+    }
+
+/*
+   未用到的代码
+        //自己的，人事调动
+    @RequestMapping("readdept")
+    public String readdept(@RequestParam(value = "deptid") Long deptId, Model model) {
+        Dept dept = deptServiceV2.getDeptbyDeptId(deptId);
+
+        User deptManage = null;
+        if (dept.getDeptmanager() != null) {
+            //获取到的用户信息没有部门，职位信息
+            deptManage = userServiceV2.getUserBydeptManager(dept);
+            model.addAttribute("deptmanage", deptManage);
+        }
+        List<Dept>deptList = deptServiceV2.getDeptList();
+        List<Position>positionList = positionServiceV2.getPositionListByDeptIdAndNameLike();
+
+        List<User> formaluser = new ArrayList<>();
+        List<UserPO>userPOList = userServiceV2.getUserByDeptId(dept);
+        for (UserPO deptuserPO : userPOList) {
+            Position position = positionServiceV2.getPositionByPositionId(deptuserPO.getPositionId());
+            System.out.println(deptuserPO.getRealName() + ":" + position.getName());
+            User deptuser = UserFactory.create(deptuserPO);
+            if (!position.getName().endsWith("经理")) {
+
+                formaluser.add(deptuser);
+            }
+        }
+        model.addAttribute("positions", positionList);
+        model.addAttribute("depts", deptList);
+        model.addAttribute("deptuser", formaluser);
+        model.addAttribute("dept", dept);
+        model.addAttribute("isread", 1);
+
+        return "user/deptread";
+    }
+
+    @RequestMapping("deptandpositionchange")
+    public String deptandpositionchange(@RequestParam("positionid") Long positionId,
+                                        @RequestParam("changedeptid") Long changedeptId,
+                                        @RequestParam("userid") Long userId,
+                                        @RequestParam("deptid") Long deptId,
+                                        Model model) {
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        User user = userServiceV2.getUserByUserId(userId);
+        Dept changeDept =deptServiceV2.getDeptbyDeptId(changedeptId);
+        Position position =positionServiceV2.getPositionByPositionId(positionId);
+        user.setDept(changeDept);
+        user.setPosition(position);
+        userServiceV2.updateUser(userPO);
+        model.addAttribute("deptid", deptId);
+        return "/readdept";
+    }
+
+*/
+
 }

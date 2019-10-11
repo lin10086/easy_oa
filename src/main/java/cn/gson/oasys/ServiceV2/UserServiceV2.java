@@ -60,6 +60,14 @@ public class UserServiceV2 {
         return map;
     }
 
+    //把用户和部门对应起来（一个用户对应一个部门）
+    public Map<Long,Dept> userIdAndDept(UserPO userPO){
+        Map<Long,Dept> map = new HashMap<>();
+        DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+        Dept dept = DeptFactory.create(deptPO);
+        map.put(userPO.getUserId(),dept);
+        return map;
+    }
 
 
     //根据用户ID获取userPO
