@@ -34,21 +34,22 @@ public class DeptServiceV2 {
     }
 
     //  更新或插入部门信息
-    public Dept updateDept(Dept dept) {
+    public Integer updateDept(Dept oldDept) {
         DeptPO deptPO = new DeptPO();
-        deptPO.setDeptId(dept.getDeptId());
-        deptPO.setDeptName(dept.getDeptName());
-        deptPO.setDeptTel(dept.getDeptTel());
-        deptPO.setDeptFax(dept.getDeptFax());
-        deptPO.setEmail(dept.getEmail());
-        deptPO.setDeptAddr(dept.getDeptAddr());
-        if (dept.getDeptId() != null) {
-            deptPOMapper.updateByPrimaryKeySelective(deptPO);
+        deptPO.setDeptId(oldDept.getDeptId());
+        deptPO.setDeptName(oldDept.getDeptName());
+        deptPO.setDeptTel(oldDept.getDeptTel());
+        deptPO.setDeptFax(oldDept.getDeptFax());
+        deptPO.setEmail(oldDept.getEmail());
+        deptPO.setDeptAddr(oldDept.getDeptAddr());
+        Integer rows;
+        if (oldDept.getDeptId() != null) {
+           rows = deptPOMapper.updateByPrimaryKeySelective(deptPO);
         } else {
-            deptPOMapper.insert(deptPO);
+           rows = deptPOMapper.insert(deptPO);
         }
-        Dept dept1 = DeptFactory.create(deptPO);
-        return dept1;
+        Dept newDept = DeptFactory.create(deptPO);
+        return rows;
     }
 
 }

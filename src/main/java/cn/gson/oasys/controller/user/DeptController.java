@@ -273,21 +273,8 @@ public class DeptController {
         System.out.println("-------" + br.getFieldError());
         if (!br.hasErrors()) {
             System.out.println("没有错误");
-            Dept adddept = deptServiceV2.updateDept(dept);
-//          看不懂这部分的作用
-//            if ("add".equals(xg)) {
-//                System.out.println("新增拉");
-//                Position jinli = new Position();
-//                jinli.setDeptid(adddept.getDeptId());
-//                jinli.setName("经理");
-//                Position wenyuan = new Position();
-//                wenyuan.setDeptid(adddept.getDeptId());
-//                wenyuan.setName("文员");
-//                pdao.save(jinli);
-//                pdao.save(wenyuan);
-//            }
-            if (adddept != null) {
-                log.info("adddept", adddept);
+            Integer rows = deptServiceV2.updateDept(dept);
+            if (rows==1) {
                 model.addAttribute("success", 1);
                 return "/deptmanage";
             }

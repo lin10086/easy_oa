@@ -32,7 +32,7 @@ public class PossionController {
 
     @Resource
     private DeptServiceV2 deptServiceV2;
-
+/*
     //第一次进入，用户管理》职位管理（职位列表）
     @RequestMapping("positionmanage")
     public String positionmanage(Model model) {
@@ -46,11 +46,11 @@ public class PossionController {
 
 
 
-        //用户管理》职位管理》修改
+        //点击增加修改进入增加修改页面
     @RequestMapping(value = "positionedit", method = RequestMethod.GET)
     public String positioneditget(@RequestParam(value = "positionid", required = false) Long positionid, Model model) {
         if (positionid != null) {
-            //根据职位ID获取职位信息
+            //根据职位ID获取职位信息（就是修改）
             Position position = pdao.findOne(positionid);
             System.out.println(position);
             //根据职位里面的部门ID获取部门信息
@@ -65,8 +65,7 @@ public class PossionController {
         return "user/positionedit";
     }
 
-//用户管理》职位管理》增加
-
+//用户管理》职位管理》增加，修改（
     @RequestMapping(value = "positionedit", method = RequestMethod.POST)
     public String positioneditpost(Position position, Model model) {
         System.out.println(position);
@@ -78,7 +77,7 @@ public class PossionController {
         model.addAttribute("errormess", "数据插入失败");
         return "user/positionedit";
     }
-
+*/
 
 /*
        //未用到
@@ -92,15 +91,15 @@ public class PossionController {
 
     //=====================================
 
-/*
+
     @RequestMapping("positionmanage")
     public String positionmanage(Model model) {
         List<Position> positionList = positionServiceV2.getPositionList();
         model.addAttribute("positions", positionList);
         return "user/positionmanage";
     }
-    */
-/*
+
+
      @RequestMapping(value = "positionedit", method = RequestMethod.GET)
     public String positioneditget(@RequestParam(value = "positionid", required = false) Long positionId, Model model) {
         if (positionId != null) {
@@ -113,6 +112,7 @@ public class PossionController {
         model.addAttribute("depts", deptList);
         return "user/positionedit";
     }
+
 
      @RequestMapping(value = "positionedit", method = RequestMethod.POST)
     public String positioneditpost(Position position, Model model) {
@@ -130,5 +130,5 @@ public class PossionController {
         model.addAttribute("errormess", "数据插入失败");
         return "user/positionedit";
     }
-    */
+
 }
