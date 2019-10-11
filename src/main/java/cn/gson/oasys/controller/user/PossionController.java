@@ -33,7 +33,7 @@ public class PossionController {
     @Resource
     private DeptServiceV2 deptServiceV2;
 
-    //用户管理》职位管理
+    //第一次进入，用户管理》职位管理（职位列表）
     @RequestMapping("positionmanage")
     public String positionmanage(Model model) {
 
@@ -43,16 +43,9 @@ public class PossionController {
 
         return "user/positionmanage";
     }
-/*
-    //修改过的
-    @RequestMapping("positionmanage")
-    public String positionmanage(Model model) {
-        List<Position> positionList = positionServiceV2.getPositionList();
-        model.addAttribute("positions", positionList);
-        return "user/positionmanage";
-    }
-    */
-    /*
+
+
+
         //用户管理》职位管理》修改
     @RequestMapping(value = "positionedit", method = RequestMethod.GET)
     public String positioneditget(@RequestParam(value = "positionid", required = false) Long positionid, Model model) {
@@ -71,8 +64,44 @@ public class PossionController {
         model.addAttribute("depts", depts);
         return "user/positionedit";
     }
+
+//用户管理》职位管理》增加
+
+    @RequestMapping(value = "positionedit", method = RequestMethod.POST)
+    public String positioneditpost(Position position, Model model) {
+        System.out.println(position);
+        Position psition2 = pdao.save(position);
+        if (psition2 != null) {
+            model.addAttribute("success", 1);
+            return "/positionmanage";
+        }
+        model.addAttribute("errormess", "数据插入失败");
+        return "user/positionedit";
+    }
+
+
+/*
+       //未用到
+    @RequestMapping("removeposition")
+    public String removeposition(@RequestParam("positionid") Long positionid, Model model) {
+        pdao.delete(positionid);
+        model.addAttribute("success", 1);
+        return "/positionmanage";
+    }
 */
-    @RequestMapping(value = "positionedit", method = RequestMethod.GET)
+
+    //=====================================
+
+/*
+    @RequestMapping("positionmanage")
+    public String positionmanage(Model model) {
+        List<Position> positionList = positionServiceV2.getPositionList();
+        model.addAttribute("positions", positionList);
+        return "user/positionmanage";
+    }
+    */
+/*
+     @RequestMapping(value = "positionedit", method = RequestMethod.GET)
     public String positioneditget(@RequestParam(value = "positionid", required = false) Long positionId, Model model) {
         if (positionId != null) {
             Position position = positionServiceV2.getPositionByPositionId(positionId);
@@ -85,25 +114,7 @@ public class PossionController {
         return "user/positionedit";
     }
 
-    /*
-//用户管理》职位管理》增加
-
-    @RequestMapping(value = "positionedit", method = RequestMethod.POST)
-    public String positioneditpost(Position position, Model model) {
-        System.out.println(position);
-
-        Position psition2 = pdao.save(position);
-
-        if (psition2 != null) {
-            model.addAttribute("success", 1);
-            return "/positionmanage";
-        }
-
-        model.addAttribute("errormess", "数据插入失败");
-        return "user/positionedit";
-    }
-*/
-    @RequestMapping(value = "positionedit", method = RequestMethod.POST)
+     @RequestMapping(value = "positionedit", method = RequestMethod.POST)
     public String positioneditpost(Position position, Model model) {
         Integer rows ;
         if(position.getId()==null) {
@@ -119,13 +130,5 @@ public class PossionController {
         model.addAttribute("errormess", "数据插入失败");
         return "user/positionedit";
     }
-
-    @RequestMapping("removeposition")
-    public String removeposition(@RequestParam("positionid") Long positionid, Model model) {
-        pdao.delete(positionid);
-        model.addAttribute("success", 1);
-        return "/positionmanage";
-    }
-
-
+    */
 }

@@ -1,12 +1,16 @@
 package cn.gson.oasys.ServiceV2;
 
 import cn.gson.oasys.factory.DeptFactory;
+import cn.gson.oasys.factory.PositionFactory;
 import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.DeptPOMapper;
+import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.entity.user.Dept;
+import cn.gson.oasys.model.entity.user.Position;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.DeptPO;
+import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.model.po.UserPOExample;
 import com.github.pagehelper.PageHelper;
@@ -22,9 +26,11 @@ import java.util.Map;
 @Service
 public class UserServiceV2 {
     @Resource
-    UserPOMapper userPOMapper;
+   private UserPOMapper userPOMapper;
     @Resource
-    DeptPOMapper deptPOMapper;
+    private DeptPOMapper deptPOMapper;
+    @Resource
+    private PositionPOMapper positionPOMapper;
 
     //找到该管理员下面的所有用户并且分页
     public List<UserPO> findUserAndPageByFatherId(int page, long fatherId) {
@@ -60,15 +66,21 @@ public class UserServiceV2 {
         return map;
     }
 
-    //把用户和部门对应起来（一个用户对应一个部门）
-    public Map<Long,Dept> userIdAndDept(UserPO userPO){
-        Map<Long,Dept> map = new HashMap<>();
-        DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
-        Dept dept = DeptFactory.create(deptPO);
-        map.put(userPO.getUserId(),dept);
+    //把用户的ID和用户的职位对应起来放到map里面
+    public Map<Long, Position> userIdAndPosition(List<UserPO>userPOList) {
+        //建立Map集合用于把用户ID和用户的职位对应起来
+        Map<Long, Position> map = new HashMap<>();
+        //遍历自己定义的用户，从中获取用户所在的职位ID
+        for (UserPO userPO:userPOList) {
+            //根据用户里面的部门ID查询用户的部门信息
+            PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
+            //把自己定义的用户职位的信息转换成人家的用户职位信息
+            Position position = PositionFactory.create(positionPO);
+            //把用户ID和职位对应起来
+            map.put(userPO.getUserId(), position);
+        }
         return map;
     }
-
 
     //根据用户ID获取userPO
     public UserPO getUserPOByUserId(Long userId){
@@ -82,12 +94,15 @@ public class UserServiceV2 {
         return user;
     }
 
-    //更新用户信息（把刚设置的信息保存到用户里面)
-    public void updateUser(UserPO userPO){
+    //更新用户信息（把刚用户的部门和职位的信息保存到用户里面)
+    public void updateUser(Long userId,Dept dept,Position position){
 
+        UserPO userPO = new UserPO();
+        userPO.setDeptId(dept.getDeptId());
+        userPO.setPositionId(position.getId());
         UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserIdEqualTo(userId);
         userPOMapper.updateByExampleSelective(userPO,userPOExample);
-
     }
     //根据部门表里的deptmanager（实际上是用户ID）查找用户信息
     public User getUserBydeptManager(Dept dept){
