@@ -71,5 +71,10 @@
             <generatedKey column="position_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="position_id" javaType="Long"/>
         </table>
+        <!--在线用户表 -->
+        <table tableName="aoa_user_login_record" domainObjectName="UserLoginRecordPO">
+            <generatedKey column="record_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="record_id" javaType="Long"/>
+        </table>
     </context>
 </generatorConfiguration>

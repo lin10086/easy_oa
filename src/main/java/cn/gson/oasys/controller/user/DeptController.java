@@ -168,31 +168,31 @@ public class DeptController {
     }
 */
 
-/*
+    /*
 
-    //人事调动里面的人事调动，部门和职位的改变，（6）
-    @RequestMapping("deptandpositionchange")
-    public String deptandpositionchange(@RequestParam("positionid") Long positionid,
-                                        @RequestParam("changedeptid") Long changedeptid,
-                                        @RequestParam("userid") Long userid,
-                                        @RequestParam("deptid") Long deptid,
-                                        Model model) {
-        //根据用户信息查找用户信息（原先的职位，原先的部门）
-        User user = udao.findOne(userid);
-        //改变后的部门信息
-        Dept changedept = deptdao.findOne(changedeptid);
-        //根据职位ID获取职位信息
-        Position position = pdao.findOne(positionid);
-        user.setDept(changedept);
-        user.setPosition(position);
-        //更新user,保存设置的信息(更新用户的部门和职位信息）
-        udao.save(user);
-        System.out.println(deptid);
-        model.addAttribute("deptid", deptid);
-        return "/readdept";
-    }
-*/
-    //以下为暂时未用到的代码
+        //人事调动里面的人事调动，部门和职位的改变，（6）
+        @RequestMapping("deptandpositionchange")
+        public String deptandpositionchange(@RequestParam("positionid") Long positionid,
+                                            @RequestParam("changedeptid") Long changedeptid,
+                                            @RequestParam("userid") Long userid,
+                                            @RequestParam("deptid") Long deptid,
+                                            Model model) {
+            //根据用户信息查找用户信息（原先的职位，原先的部门）
+            User user = udao.findOne(userid);
+            //改变后的部门信息
+            Dept changedept = deptdao.findOne(changedeptid);
+            //根据职位ID获取职位信息
+            Position position = pdao.findOne(positionid);
+            user.setDept(changedept);
+            user.setPosition(position);
+            //更新user,保存设置的信息(更新用户的部门和职位信息）
+            udao.save(user);
+            System.out.println(deptid);
+            model.addAttribute("deptid", deptid);
+            return "/readdept";
+        }
+    */
+    //以下为暂时未完成的代码
     // 人事调动里面的部门经理的更换(7)
     @RequestMapping("deptmanagerchange")
     public String deptmanagerchange(@RequestParam(value = "positionid", required = false) Long positionid,
@@ -201,13 +201,15 @@ public class DeptController {
                                     @RequestParam(value = "newmanageid", required = false) Long newmanageid,
                                     @RequestParam("deptid") Long deptid,
                                     Model model) {
+        //positionid职位ID changedeptid要去的部门ID  oldmanageid老经理的ID newmanageid 新经理的ID deptid部门ID
         System.out.println("oldmanageid:" + oldmanageid);
         System.out.println("newmanageid:" + newmanageid);
+        //根据部门的ID查询部门的信息
         Dept deptnow = deptdao.findOne(deptid);
-        if (oldmanageid != null) {
-            User oldmanage = udao.findOne(oldmanageid);
-            Position namage = oldmanage.getPosition();
-            Dept changedept = deptdao.findOne(changedeptid);
+        if (oldmanageid != null) {//如果老领导存在
+            User oldmanage = udao.findOne(oldmanageid);//根据老领导的ID获取老领导的信息
+            Position namage = oldmanage.getPosition();//在老领导信息里面获取获取老领导的职位信息
+            Dept changedept = deptdao.findOne(changedeptid);//根据要去的部门ID获取要去的部门信息
             Position changeposition = pdao.findOne(positionid);
             oldmanage.setDept(changedept);
             oldmanage.setPosition(changeposition);
@@ -223,11 +225,14 @@ public class DeptController {
                 deptdao.save(deptnow);
             }
         } else {
+            //没有老领导，根据新领导ID查询新领导信息
             User newmanage = udao.findOne(newmanageid);
+            //根据部门id和职位里面含有经理的的第一个职位
             Position manage = pdao.findByDeptidAndNameLike(deptid, "%经理").get(0);
-            newmanage.setPosition(manage);
-            deptnow.setDeptmanager(newmanageid);
-            deptdao.save(deptnow);
+            newmanage.setPosition(manage);//更改用户里面的职位
+            deptnow.setDeptmanager(newmanageid);//设置部门里面的部门领导
+            deptdao.save(deptnow);//更新部门信息
+            //更新用户信息
             udao.save(newmanage);
         }
         model.addAttribute("deptid", deptid);
@@ -274,7 +279,7 @@ public class DeptController {
         if (!br.hasErrors()) {
             System.out.println("没有错误");
             Integer rows = deptServiceV2.updateDept(dept);
-            if (rows==1) {
+            if (rows == 1) {
                 model.addAttribute("success", 1);
                 return "/deptmanage";
             }
@@ -341,7 +346,7 @@ public class DeptController {
         user.setDept(changeDept);
         user.setPosition(position);
 //把user信息在数据库更新不会
-        userServiceV2.updateUser(userId,changeDept,position);
+        userServiceV2.updateUser(userId, changeDept, position);
 
         model.addAttribute("deptid", deptId);
         return "/readdept";

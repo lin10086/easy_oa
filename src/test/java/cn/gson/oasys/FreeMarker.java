@@ -20,7 +20,7 @@ import java.util.Map;
 @Slf4j
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class freemarker {
+public class FreeMarker {
 
     @Test
     public void testFreeMarker() throws Exception {

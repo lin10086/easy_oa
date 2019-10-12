@@ -82,17 +82,19 @@ public class UserServiceV2 {
         return map;
     }
 
+
     //根据用户ID获取userPO
     public UserPO getUserPOByUserId(Long userId){
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
         return userPO;
     }
-    //根据用户信息查找用户信息并转换为本身的用户
+    //根据用户ID查找用户信息并转换为本身的用户
     public User getUserByUserId(Long userId){
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
         User user = UserFactory.create(userPO);
         return user;
     }
+
 
     //更新用户信息（把刚用户的部门和职位的信息保存到用户里面)
     public void updateUser(Long userId,Dept dept,Position position){
