@@ -18,6 +18,14 @@ public class PositionServiceV2 {
     @Resource
     PositionPOMapper positionPOMapper;
 
+    //获取所有的职位列表
+    public List<Position> getPositionList() {
+        PositionPOExample positionPOExample = new PositionPOExample();
+        List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
+        List<Position> positionList = PositionFactory.create(positionPOList);
+        return positionList;
+    }
+
     //根据部门ID获取职位信息(并转换成本身的职位信息）
     public List<Position> getPositionByDeptId(Long deptId) {
 
@@ -51,13 +59,6 @@ public class PositionServiceV2 {
 //        positionPOMapper.selectByPrimaryKey(user.)
 //    }
 
-    //查找所有的职位列表
-    public List<Position> getPositionList() {
-        PositionPOExample positionPOExample = new PositionPOExample();
-        List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
-        List<Position> positionList = PositionFactory.create(positionPOList);
-        return positionList;
-    }
 
     //插入一个职位
     public Integer insertPosition(Position position) {

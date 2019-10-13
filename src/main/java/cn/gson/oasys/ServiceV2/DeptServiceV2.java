@@ -16,14 +16,7 @@ import java.util.List;
 @Service
 public class DeptServiceV2 {
     @Resource
-    DeptPOMapper deptPOMapper;
-
-    //通过部门ID查找部门信息,并返回本身的部门
-    public Dept getDeptbyDeptId(Long deptId) {
-        DeptPO deptPO = deptPOMapper.selectByPrimaryKey(deptId);
-        Dept dept = DeptFactory.create(deptPO);
-        return dept;
-    }
+    private DeptPOMapper deptPOMapper;
 
     //获取所有的部门信息（部门列表）
     public List<Dept> getDeptList() {
@@ -32,6 +25,14 @@ public class DeptServiceV2 {
         List<Dept> deptList = DeptFactory.create(deptPOList);
         return deptList;
     }
+
+    //通过部门ID查找部门信息,并返回本身的部门
+    public Dept getDeptbyDeptId(Long deptId) {
+        DeptPO deptPO = deptPOMapper.selectByPrimaryKey(deptId);
+        Dept dept = DeptFactory.create(deptPO);
+        return dept;
+    }
+
 
     //  更新或插入部门信息
     public Integer updateDept(Dept oldDept) {
@@ -44,9 +45,9 @@ public class DeptServiceV2 {
         deptPO.setDeptAddr(oldDept.getDeptAddr());
         Integer rows;
         if (oldDept.getDeptId() != null) {
-           rows = deptPOMapper.updateByPrimaryKeySelective(deptPO);
+            rows = deptPOMapper.updateByPrimaryKeySelective(deptPO);
         } else {
-           rows = deptPOMapper.insert(deptPO);
+            rows = deptPOMapper.insert(deptPO);
         }
         Dept newDept = DeptFactory.create(deptPO);
         return rows;

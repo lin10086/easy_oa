@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AttendanceServiceTests {
+public class AttendanceServiceTest {
 
     @Resource
     AttendanceServiceV2 attendanceServiceV2;

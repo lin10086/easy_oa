@@ -76,5 +76,10 @@
             <generatedKey column="record_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="record_id" javaType="Long"/>
         </table>
+        <!--角色表 -->
+        <table tableName="aoa_role_" domainObjectName="RolePO">
+            <generatedKey column="role_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="role_id" javaType="Long"/>
+        </table>
     </context>
 </generatorConfiguration>

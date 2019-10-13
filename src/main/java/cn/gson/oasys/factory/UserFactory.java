@@ -23,6 +23,7 @@ public class UserFactory {
         return userIds;
     }
 
+    //把userPO转换为user
     public static User create(UserPO userPO) {
         User user = new User();
 
@@ -49,10 +50,9 @@ public class UserFactory {
         user.setHireTime(userPO.getHireTime());
         user.setHoliday(userPO.getHoliday());
 
-
+        user.setSalary((userPO.getSalary().intValue())+"");
         return user;
     }
-
 
     public static List<User> create(List<UserPO> userPOList) {
         List<User> userList = new ArrayList<>();
@@ -62,6 +62,39 @@ public class UserFactory {
         return userList;
     }
 
+    public static UserPO create(User user) {
+        UserPO userPO = new UserPO();
+        userPO.setUserIdcard(user.getIdCard());
+        userPO.setUserSchool(user.getSchool());
+        userPO.setUserTel(user.getUserTel());
+        userPO.setPassword(user.getPassword());
+        userPO.setPinyin(user.getPinyin());
+        userPO.setUserName(user.getUserName());
+        userPO.setUserId(user.getUserId());
+        userPO.setEamil(user.getEamil());
+        userPO.setBank(user.getBank());
+        userPO.setPassword(user.getPassword());
+        userPO.setAddress(user.getAddress());
+        userPO.setUserIdcard(user.getIdCard());
+        userPO.setRealName(user.getRealName());
+        userPO.setFatherId(user.getFatherId());
+        userPO.setUserSchool(user.getSchool());
+        userPO.setThemeSkin(user.getThemeSkin());
+        userPO.setUserEdu(user.getUserEdu());
+        userPO.setUserTel(user.getUserTel());
+        userPO.setBirth(user.getBirth());
+        userPO.setImgPath(user.getImgPath());
+        userPO.setBirth(user.getBirth());
+        userPO.setIsLock(user.getIsLock());
+        userPO.setPinyin(user.getPinyin());
+        userPO.setSex(user.getSex());
+        userPO.setUserSign(user.getUserSign());
+        userPO.setHireTime(user.getHireTime());
+        userPO.setHoliday(user.getHoliday());
+        userPO.setSalary(Float.valueOf(user.getSalary()));
+        userPO.setSuperman(user.getSuperman()==false?0:1);
+        return userPO;
+    }
 
 }
 

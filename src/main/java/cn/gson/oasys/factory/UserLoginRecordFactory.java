@@ -20,6 +20,7 @@ public class UserLoginRecordFactory {
         loginRecord.setBrowser(userLoginRecordPO.getBrowser());
         //时间格式问题
         loginRecord.setLoginTime(new Timestamp(userLoginRecordPO.getLoginTime().getTime()));
+//        loginRecord.setLoginTime(userLoginRecordPO.getLoginTime());
         loginRecord.setSessionId(userLoginRecordPO.getSessionId());
         return loginRecord;
     }
