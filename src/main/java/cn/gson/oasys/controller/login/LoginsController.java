@@ -1,20 +1,19 @@
 package cn.gson.oasys.controller.login;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Random;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import cn.gson.oasys.ServiceV2.UserServiceV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,42 +26,49 @@ import eu.bitwalker.useragentutils.UserAgent;
 import eu.bitwalker.useragentutils.Version;
 
 
-
 @Controller
 @RequestMapping("/")
 public class LoginsController {
-	
-	@Autowired
-	private UserDao uDao;
-	@Autowired
-	UserLongRecordService ulService;
-	
-	public static final String CAPTCHA_KEY = "session_captcha";
 
-	private Random rnd = new Random();
-	
-	/**
-	 * 登录界面的显示
-	 * @return
-	 */
-	@RequestMapping(value="logins",method=RequestMethod.GET)
-	public String login(){
-		return "login/login";
-	}
-	
-	@RequestMapping("loginout")
-	public String loginout(HttpSession session){
-		session.removeAttribute("userId");
-		return "redirect:/logins";
-	}
-	
-	/**
-	 * 登录检查；
-	 * 1、根据(用户名或电话号码)+密码进行查找
-	 * 2、判断使用是否被冻结；
-	 * @return
-	 * @throws UnknownHostException 
-	 */
+    @Autowired
+    private UserDao uDao;
+    @Autowired
+    UserLongRecordService ulService;
+    @Resource
+    private UserServiceV2 userServiceV2;
+
+    public static final String CAPTCHA_KEY = "session_captcha";
+
+    private Random rnd = new Random();
+
+    /**
+     * 登录界面的显示
+     *
+     * @return
+     */
+
+    @RequestMapping(value = "logins", method = RequestMethod.GET)
+    public String login() {
+        return "login/login";
+    }
+
+    //在session里面取出userId
+    @RequestMapping("loginout")
+    public String loginout(HttpSession session) {
+        session.removeAttribute("userId");
+        return "redirect:/logins";
+    }
+
+    /**
+     * 登录检查；
+     * 1、根据(用户名或电话号码)+密码进行查找
+     * 2、判断使用是否被冻结；
+     *
+     * @return
+     * @throws UnknownHostException
+     */
+/*
+//(1)
 	@RequestMapping(value="logins",method = RequestMethod.POST)
 	public String loginCheck(HttpSession session,HttpServletRequest req,Model model) throws UnknownHostException{
 		String userName=req.getParameter("userName").trim();
@@ -76,9 +82,7 @@ public class LoginsController {
 			req.setAttribute("errormess","验证码输入错误!");
 			return "login/login";
 		}
-		/*
-		 * 将用户名分开查找；用户名或者电话号码；
-		 * */
+//		 将用户名分开查找；用户名或者电话号码；
 		User user=uDao.findOneUser(userName, password);
 		if(Objects.isNull(user)){
 			System.out.println(user);
@@ -105,12 +109,12 @@ public class LoginsController {
 			Version version = browser.getVersion(req.getHeader("User-Agent"));
 			String info = browser.getName() + "/" + version.getVersion();
 			String ip=InetAddress.getLocalHost().getHostAddress();
-			/*新增登录记录*/
+//			新增登录记录
 			ulService.save(new LoginRecord(ip, new Date(), info, user));
 		}
 		return "redirect:/index";
 	}
-	
+
 	@RequestMapping("handlehas")
 	public String handleHas(HttpSession session){
 		if(!StringUtils.isEmpty(session.getAttribute("thisuser"))){
@@ -144,6 +148,59 @@ public class LoginsController {
 		// 将验证码存储在session以便登录时校验
 		session.setAttribute(CAPTCHA_KEY, verifyCode.toLowerCase());
 	}
-	
+*/
+    //===========================================
+    //(1)
+    @RequestMapping(value = "logins", method = RequestMethod.POST)
+    public String loginCheck(HttpSession session, HttpServletRequest request, Model model) throws UnknownHostException {
+        String userName = request.getParameter("userName").trim();
+        String password = request.getParameter("password");
+        String ca = request.getParameter("code").toLowerCase();
+        //获取后台的验证码
+        String sesionCode = (String) request.getSession().getAttribute(CAPTCHA_KEY);
+        model.addAttribute("userName", userName);
+        if (!ca.equals(sesionCode.toLowerCase())) {
+            System.out.println("验证码输入错误!");
+            model.addAttribute("errormess", "验证码输入错误!");
+            request.setAttribute("errormess", "验证码输入错误!");
+            return "login/login";
+        }
+//		 将用户名分开查找；用户名或者电话号码；
+        User user = userServiceV2.checkUserByUsernameAndPassword(userName,password);//没有根据手机号
 
+        if (Objects.isNull(user)) {
+            System.out.println(user);
+            System.out.println("账号或密码错误!");
+            model.addAttribute("errormess", "账号或密码错误!");
+            return "login/login";
+        }
+        System.out.println("是否被锁：" + user.getIsLock());
+        if (user.getIsLock() == 1) {
+            System.out.println("账号已被冻结!");
+            model.addAttribute("errormess", "账号已被冻结!");
+            return "login/login";
+        }
+
+        Object sessionId = session.getAttribute("userId");
+        if (sessionId == user.getUserId()) {
+            System.out.println("当前用户已经登录了；不能重复登录");
+            model.addAttribute("hasmess", "当前用户已经登录了；不能重复登录");
+            session.setAttribute("thisuser", user);
+            return "login/login";
+        } else {
+            session.setAttribute("userId", user.getUserId());
+//            UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
+//            Browser browser = userAgent.getBrowser();
+//            OperatingSystem os = userAgent.getOperatingSystem();
+
+            Browser browser = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getBrowser();
+            Version version = browser.getVersion(request.getHeader("User-Agent"));
+            String info = browser.getName() + "/" + version.getVersion();
+            String ip = InetAddress.getLocalHost().getHostAddress();
+//			新增登录记录（在aoa_user_login_record 登录记录表中插入一条记录）
+            ulService.save(new LoginRecord(ip, new Date(), info, user));
+
+        }
+        return "redirect:/index";
+    }
 }

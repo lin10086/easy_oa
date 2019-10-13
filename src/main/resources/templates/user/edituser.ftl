@@ -143,8 +143,8 @@ a:hover {
 								</div>
 							</#if>
 							<!-- <div class="col-md-6 form-group">
-								<label class="control-label">生日</label> <input
-									name="birth" class="form-control" id="start" onclick="WdatePicker()" value="${(user.birth)!''}"/>
+								<label class="control-label">生日</label>
+								<#--<input name="birth" class="form-control" id="start" onclick="WdatePicker()" value="${(user.birth)!''}"/>-->
 							</div> -->
 							<div class="col-md-6 form-group">
 								<label class="control-label"> <span>皮肤</span>

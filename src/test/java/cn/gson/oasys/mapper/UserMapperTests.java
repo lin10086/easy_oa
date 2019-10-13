@@ -187,33 +187,45 @@ public class UserMapperTests {
         Integer rows = userPOMapper.updateByExampleSelective(userPO, userPOExample);
         log.info("updateByExampleSelective: rows={}", rows);
     }
-     //.findOne测试
-    @Test
-    public void findOne(){
 
-        Long deptId =4L;
+    //.findOne测试
+    @Test
+    public void findOne() {
+
+        Long deptId = 4L;
         Dept dept = deptdao.findOne(deptId);
         User deptmanage = udao.findOne(dept.getDeptmanager());
-        log.info("deptmanage={}",deptmanage);
+        log.info("deptmanage={}", deptmanage);
     }
 
 
-@Test
-    public void getUserByPO(){
+    @Test
+    public void getUserByPO() {
 
         UserPOExample userPOExample = new UserPOExample();
         UserPO userPO = userPOMapper.selectByPrimaryKey(1l);
         User user = UserFactory.create(userPO);
-        log.info("user={}",user);
-}
-@Test
-    public void getUser1(){
-        User user = udao.findOne(1L);
-        log.info("user={}",user);
+        log.info("user={}", user);
+    }
 
-    Dept dept = deptdao.findOne(1l);
-    //根据部门查出来部门是相同的及部门ID相同
-    List<User> deptusers = udao.findByDept(dept);
-    log.info("deptusers={}",deptusers);
-}
+    @Test
+    public void getUser1() {
+        User user = udao.findOne(1L);
+        log.info("user={}", user);
+
+        Dept dept = deptdao.findOne(1l);
+        //根据部门查出来部门是相同的及部门ID相同
+        List<User> deptusers = udao.findByDept(dept);
+        log.info("deptusers={}", deptusers);
+    }
+
+    @Test
+    public void userCheck() {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserNameEqualTo("soli").andPasswordEqualTo("123456");
+        UserPOExample.Criteria criteria = userPOExample.createCriteria().andUserTelEqualTo("666666").andPasswordEqualTo("123456");
+        userPOExample.or(criteria);
+        List<UserPO> userPOList =userPOMapper.selectByExample(userPOExample);
+        log.info("userPoList={}",userPOList);
+    }
 }

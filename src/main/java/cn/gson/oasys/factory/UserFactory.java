@@ -5,6 +5,7 @@ import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.UserPO;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,8 @@ public class UserFactory {
         user.setUserTel(userPO.getUserTel());
         user.setBirth(userPO.getBirth());
         user.setImgPath(userPO.getImgPath());
-        user.setBirth(userPO.getBirth());
+//        user.setBirth(userPO.getBirth());
+        user.setBirth(new Timestamp(userPO.getBirth().getTime()));
         user.setIsLock(userPO.getIsLock());
         user.setPinyin(userPO.getPinyin());
         user.setSex(userPO.getSex());

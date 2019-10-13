@@ -186,7 +186,7 @@ public class UserServiceV2 {
     }
 
     //更新 部门，职位，角色
-    public void insertUserAll( UserPO userPO,Dept dept, Position position, Role role, Long fatherId, String pinyin, String password) {
+    public void insertUserAll(UserPO userPO, Dept dept, Position position, Role role, Long fatherId, String pinyin, String password) {
 
         userPO.setDeptId(dept.getDeptId());
         userPO.setPositionId(position.getId());
@@ -198,10 +198,10 @@ public class UserServiceV2 {
         userPOMapper.insertSelective(userPO);
 
 
-
     }
+
     //更新用户信息
-    public void updateUserAll1(User user,boolean isbackpassword,Dept dept,Role role,Position position){
+    public void updateUserAll1(User user, boolean isbackpassword, Dept dept, Role role, Position position) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(user.getUserId());
 
         userPO.setUserId(user.getUserId());
@@ -224,5 +224,31 @@ public class UserServiceV2 {
         userPO.setRoleId(role.getRoleId());
         userPO.setPositionId(position.getId());
         userPOMapper.updateByPrimaryKeySelective(userPO);
+    }
+
+    public User checkUser(String userName, String password, String userTel) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserNameEqualTo(userName).andPasswordEqualTo(password);
+        UserPOExample.Criteria criteria = userPOExample.createCriteria().andUserTelEqualTo(userTel).andPasswordEqualTo(password);
+        userPOExample.or(criteria);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        List<User> userList = UserFactory.create(userPOList);
+
+        if (userList != null && userList.size() >= 1) {
+            return userList.get(0);
+        }
+        return null;
+    }
+
+    public User checkUserByUsernameAndPassword(String userName, String password) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andPasswordEqualTo(password)
+                .andUserNameEqualTo(userName);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        List<User>userList = UserFactory.create(userPOList);
+        if(userList!=null&&userList.size()>=1){
+            return userList.get(0);
+        }
+        return null;
     }
 }

@@ -100,24 +100,24 @@ public class UserController {
         }
 */
 
-  /*  //点击修改，增加跳转的页面(3)
-    @RequestMapping(value = "useredit", method = RequestMethod.GET)
-    public String usereditget(@RequestParam(value = "userid", required = false) Long userid, Model model) {
-        if (userid != null) {
-            //有userID代表修改
-            User user = udao.findOne(userid);
-            model.addAttribute("where", "xg");
-            model.addAttribute("user", user);
-        }
-        //没有获取到userID代表新增
-        List<Dept> depts = (List<Dept>) ddao.findAll();
-        List<Position> positions = (List<Position>) pdao.findAll();
-        List<Role> roles = (List<Role>) rdao.findAll();
-        model.addAttribute("depts", depts);
-        model.addAttribute("positions", positions);
-        model.addAttribute("roles", roles);
-        return "user/edituser";
-    }*/
+//    //点击修改，增加跳转的页面(3)
+//    @RequestMapping(value = "useredit", method = RequestMethod.GET)
+//    public String usereditget(@RequestParam(value = "userid", required = false) Long userid, Model model) {
+//        if (userid != null) {
+//            //有userID代表修改
+//            User user = udao.findOne(userid);
+//            model.addAttribute("where", "xg");
+//            model.addAttribute("user", user);
+//        }
+//        //没有获取到userID代表新增
+//        List<Dept> depts = (List<Dept>) ddao.findAll();
+//        List<Position> positions = (List<Position>) pdao.findAll();
+//        List<Role> roles = (List<Role>) rdao.findAll();
+//        model.addAttribute("depts", depts);
+//        model.addAttribute("positions", positions);
+//        model.addAttribute("roles", roles);
+//        return "user/edituser";
+//    }
 
      /*   //(4)
         @RequestMapping(value = "useredit", method = RequestMethod.POST)
@@ -165,7 +165,7 @@ public class UserController {
         }
 */
 
-        //目前未用到
+    //目前未用到
        /* @RequestMapping("userlogmanage")
         public String userlogmanage() {
             return "user/userlogmanage";

@@ -5,11 +5,16 @@ import java.util.*;
 import java.util.logging.SimpleFormatter;
 
 
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
+import eu.bitwalker.useragentutils.Version;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.pagehelper.PageHelper;
@@ -22,6 +27,8 @@ import cn.gson.oasys.mappers.NoticeMapper;
 import cn.gson.oasys.model.dao.attendcedao.AttendceService;
 import cn.gson.oasys.model.dao.processdao.NotepaperDao;
 import cn.gson.oasys.model.dao.user.UserDao;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @SpringBootTest
@@ -123,6 +130,25 @@ public class Test1 {
 //        }
         log.info("i={}", i);
 
+    }
+
+    //User-Agent 信息
+    @Test
+    public void UserAgent() {
+
+//        String str = UserAgent.parseUserAgentString(request.getHeader("User-Agent"))
+//        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36"
+        UserAgent userAgent = UserAgent.parseUserAgentString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36");
+        Browser browser = userAgent.getBrowser();
+        OperatingSystem operatingSystem = userAgent.getOperatingSystem();
+        log.info("browser={},operatingSystem={}", browser, operatingSystem);
+        Version version = browser.getVersion("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36");
+        log.info("version={}", version);
+        String browserName = browser.getName();
+        String str = version.getVersion();
+        log.info("browserName={},str={}" + browserName, str);
+        OperatingSystem os = userAgent.getOperatingSystem();
+        log.info("os={}", os);
     }
 
 
