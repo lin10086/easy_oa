@@ -1,23 +1,13 @@
-package cn.gson.oasys.vo.factoryvo;
+package cn.gson.oasys.vo;
 
-import cn.gson.oasys.model.entity.attendce.Attends;
-import cn.gson.oasys.model.entity.discuss.Discuss;
-import cn.gson.oasys.model.entity.discuss.Reply;
-import cn.gson.oasys.model.entity.note.Note;
 import cn.gson.oasys.model.entity.role.Role;
-import cn.gson.oasys.model.entity.schedule.ScheduleList;
 import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.Position;
 import lombok.Data;
 import lombok.ToString;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
-import javax.validation.constraints.Pattern;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
+
 @ToString
 @Data
 public class UserVO {
@@ -26,7 +16,7 @@ public class UserVO {
     private String userTel;		//用户电话
     private String realName;    //真实姓名
     private String pinyin;      //用户名的拼音
-    private String userEamil;		//邮件
+    private String userEmail;		//邮件
     private String userAddress;		//地址
     private String userEdu;		//用户学历
     private Boolean superman=false;//是否是超人，默认不是
@@ -48,9 +38,9 @@ public class UserVO {
     private Long modifyUserId;	//最后修改此用户的用户id
     private Long fatherId;		//上司id
     private Integer holiday;   //请假天数
-    private Position position;	//外键关联 职位表
-    private Dept dept;			//外键关联 部门表
-    private Role role;			//外键关联 角色表
+    private PositionVO positionVO;	//外键关联 职位表
+    private DeptVO deptVO;			//外键关联 部门表
+    private RoleVO roleVO;			//外键关联 角色表
 //    private List<ScheduleList> scheduleLists;
 //    private List<Reply> replys;
 //    private List<Discuss> discuss;
@@ -58,3 +48,4 @@ public class UserVO {
 //    private Set<Attends> aSet;
 
 }
+

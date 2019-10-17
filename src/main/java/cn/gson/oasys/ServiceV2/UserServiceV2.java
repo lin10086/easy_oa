@@ -13,6 +13,7 @@ import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.Position;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.vo.RoleVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -75,6 +76,19 @@ public class UserServiceV2 {
         }
         return map;
     }
+    //把用户的ID和用户的部门对应起来放到map里面
+    public Map<Long, DeptPO> userIdAndDeptPO(List<UserPO> userPOList) {
+        //建立Map集合用于把用户ID和用户的部门对应起来
+        Map<Long, DeptPO> map = new HashMap<>();
+        //遍历自己定义的用户，从中获取用户所在的部门ID
+        for (UserPO userPO : userPOList) {
+            //根据用户里面的部门ID查询用户的部门信息
+            DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+            //把用户ID和部门对应起来
+            map.put(userPO.getUserId(), deptPO);
+        }
+        return map;
+    }
 
     //把用户的ID和用户的职位对应起来放到map里面
     public Map<Long, Position> userIdAndPosition(List<UserPO> userPOList) {
@@ -104,6 +118,19 @@ public class UserServiceV2 {
             Role role = RoleFactory.create(rolePO);
             //把用户ID和角色对应起来
             map.put(userPO.getUserId(), role);
+        }
+        return map;
+    }
+    //把用户的ID和用户的角色对应起来放到map里面
+    public Map<Long, RolePO> userIdAndRolePO(List<UserPO> userPOList) {
+        //建立Map集合用于把用户ID和用户的角色对应起来
+        Map<Long, RolePO> map = new HashMap<>();
+        //遍历自己定义的用户，从中获取用户所在的角色ID
+        for (UserPO userPO : userPOList) {
+            //根据用户里面的角色ID查询用户的角色信息
+            RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
+            //把用户ID和角色对应起来
+            map.put(userPO.getUserId(), rolePO);
         }
         return map;
     }

@@ -7,34 +7,20 @@ import cn.gson.oasys.ServiceV2.DeptServiceV2;
 import cn.gson.oasys.ServiceV2.PositionServiceV2;
 import cn.gson.oasys.ServiceV2.RoleServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
-import cn.gson.oasys.factory.DeptFactory;
-import cn.gson.oasys.factory.PositionFactory;
-import cn.gson.oasys.factory.RoleFactory;
-import cn.gson.oasys.factory.UserFactory;
-import cn.gson.oasys.mappers.UserPOSqlProvider;
 import cn.gson.oasys.model.po.DeptPO;
-import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.RolePO;
 import cn.gson.oasys.model.po.UserPO;
-import org.apache.ibatis.annotations.Param;
+import cn.gson.oasys.vo.DeptVO;
+import cn.gson.oasys.vo.RoleVO;
+import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
+import cn.gson.oasys.vo.factoryvo.RoleFactoryVO;
+import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.github.pagehelper.util.StringUtil;
-import com.github.stuxuhai.jpinyin.PinyinException;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
 
 import cn.gson.oasys.model.dao.roledao.RoleDao;
 import cn.gson.oasys.model.dao.user.DeptDao;
@@ -42,8 +28,6 @@ import cn.gson.oasys.model.dao.user.PositionDao;
 import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.entity.role.Role;
 import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.entity.user.Position;
-import cn.gson.oasys.model.entity.user.User;
 
 import javax.annotation.Resource;
 
@@ -69,22 +53,24 @@ public class UserController {
     @Resource
     private RoleServiceV2 roleServiceV2;
 
-    /*
-        //第一次进入用户管理》用户管理显示的页面(1)
-        @RequestMapping("usermanage")
-        public String usermanage(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-                                 @RequestParam(value = "size", defaultValue = "10") int size) {
-              //先排序在分页
-            Sort sort = new Sort(new Order(Direction.ASC, "dept"));
-            Pageable pa = new PageRequest(page, size, sort);
-            Page<User> userspage = udao.findByIsLock(0, pa);
-            List<User> users = userspage.getContent();
-            model.addAttribute("users", users);
-            model.addAttribute("page", userspage);
-            model.addAttribute("url", "usermanagepaging");
-            return "user/usermanage";
-        }
 
+//        //第一次进入用户管理》用户管理显示的页面(1)
+//        @RequestMapping("usermanage")
+//        public String usermanage(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+//                                 @RequestParam(value = "size", defaultValue = "10") int size) {
+//              //先排序在分页
+//            Sort sort = new Sort(new Order(Direction.ASC, "dept"));
+//            Pageable pa = new PageRequest(page, size, sort);
+//            Page<User> userspage = udao.findByIsLock(0, pa);
+//            List<User> users = userspage.getContent();
+//            model.addAttribute("users", users);
+//            model.addAttribute("page", userspage);
+//            model.addAttribute("url", "usermanagepaging");
+//            return "user/usermanage";
+//        }
+
+
+/*
          //删除用户（2）
         @RequestMapping("deleteuser")
         public String deleteuser(@RequestParam("userid") Long userid, Model model) {
@@ -214,8 +200,9 @@ public class UserController {
     */
 //=====================================================
 
+ /*
     //(1)
-    @RequestMapping("usermanage")
+   @RequestMapping("usermanage")
     public String usermanage(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                              @RequestParam(value = "size", defaultValue = "10") int size) {
         //根据部门升序分页，可用的用户
@@ -231,8 +218,30 @@ public class UserController {
         model.addAttribute("page", userList);
         model.addAttribute("url", "usermanagepaging");
         return "user/usermanage";
-    }
+    } */
+    //第二次修改（1）
+    @RequestMapping("usermanage")
+    public String usermanage(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+                             @RequestParam(value = "size", defaultValue = "10") int size) {
+        //根据部门升序分页，可用的用户
+        List<UserPO> userPOList = userServiceV2.ASCDeptIsLock(page, size);
+        List<UserVO>userVOList = UserFactoryVO.createUserVOList(userPOList);
 
+        Map<Long, RolePO> longRolePOMap = userServiceV2.userIdAndRolePO(userPOList);
+
+        Map<Long, DeptPO>longDeptPOMap = userServiceV2.userIdAndDeptPO(userPOList);
+        for (UserVO userVO : userVOList) {
+        RoleVO roleVO = RoleFactoryVO.createRoleVO(longRolePOMap.get(userVO.getUserId()));
+        DeptVO deptVO = DeptFactoryVO.createDeptVO(longDeptPOMap.get(userVO.getUserId()));
+            userVO.setRoleVO(roleVO);
+            userVO.setDeptVO(deptVO);
+        }
+        model.addAttribute("users", userVOList);
+        model.addAttribute("page", userVOList);
+        model.addAttribute("url", "usermanagepaging");
+        return "user/usermanage";
+    }
+/*
     //（2）
     @RequestMapping("deleteuser")
     public String deleteuser(@RequestParam("userid") Long userId, Model model) {
@@ -284,5 +293,5 @@ public class UserController {
         model.addAttribute("success", 1);
         return "/usermanage";
     }
-
+*/
 }
