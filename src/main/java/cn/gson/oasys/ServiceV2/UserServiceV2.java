@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,12 @@ public class UserServiceV2 {
         return userPOList;
     }
 
+    //查询所有用户
+    public List<UserPO> getUserAll() {
+        UserPOExample userPOExample = new UserPOExample();
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
 
     //把用户的ID和用户的部门对应起来放到map里面
     public Map<Long, Dept> userIdAndDept(List<UserPO> userPOList) {
@@ -114,7 +121,13 @@ public class UserServiceV2 {
         User user = UserFactory.create(userPO);
         return user;
     }
-
+//通过用户名查找用户
+    public UserPO getUserByUsername(String username){
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserNameEqualTo(username);
+        List<UserPO>userPOList  =userPOMapper.selectByExample(userPOExample);
+        return userPOList.get(0);
+    }
 
     //更新用户部门ID和职位ID（把刚用户的部门和职位的信息保存到用户里面)
     public void updateUser(Long userId, Dept dept, Position position) {
@@ -240,15 +253,17 @@ public class UserServiceV2 {
         return null;
     }
 
-    public User checkUserByUsernameAndPassword(String userName, String password) {
+    public UserPO checkUserByUsernameAndPassword(String userName, String password) {
         UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andPasswordEqualTo(password)
                 .andUserNameEqualTo(userName);
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
-        List<User>userList = UserFactory.create(userPOList);
-        if(userList!=null&&userList.size()>=1){
-            return userList.get(0);
+//        List<User>userList = UserFactory.create(userPOList);
+        if (userPOList != null && userPOList.size() >= 1) {
+            return userPOList.get(0);
         }
         return null;
     }
+
+
 }

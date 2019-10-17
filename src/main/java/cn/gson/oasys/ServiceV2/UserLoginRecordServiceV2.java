@@ -3,11 +3,13 @@ package cn.gson.oasys.ServiceV2;
 import cn.gson.oasys.mappers.UserLoginRecordPOMapper;
 import cn.gson.oasys.model.po.UserLoginRecordPO;
 import cn.gson.oasys.model.po.UserLoginRecordPOExample;
+import cn.gson.oasys.model.po.UserPO;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,6 +29,16 @@ public class UserLoginRecordServiceV2 {
         List<UserLoginRecordPO> userLoginRecordPOList = userLoginRecordPOMapper.selectByExample(userLoginRecordPOExample);
 
         return userLoginRecordPOList;
+
+    }
+
+    public void insertUserLoginRecord(String ip, String info, Date date, Long userPOId){
+        UserLoginRecordPO userLoginRecordPO = new UserLoginRecordPO();
+        userLoginRecordPO.setBrowser(info);
+        userLoginRecordPO.setIpAddr(ip);
+        userLoginRecordPO.setLoginTime(date);
+        userLoginRecordPO.setUserId(userPOId);
+        userLoginRecordPOMapper.insertSelective(userLoginRecordPO);
 
     }
 }

@@ -14,6 +14,7 @@ import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -70,9 +71,9 @@ public class AttendanceServiceV2 {
             criteria.andAttendsUserIdIn(queryAttendsBO.getUserIds());
         }
         List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
-//        PageInfo pageInfo = new PageInfo(list);
-//        pageBO.setTotalCount(pageInfo.getTotal());
-//        log.info("total={}, pageInfo={},list={}", pageInfo.getTotal(), pageInfo, list);
+        PageInfo pageInfo = new PageInfo(attendsPOList);
+        pageBO.setTotalCount(pageInfo.getTotal());
+        log.info("total={}, pageInfo={},list={}", pageInfo.getTotal(), pageInfo, attendsPOList);
         return attendsPOList;
     }
 

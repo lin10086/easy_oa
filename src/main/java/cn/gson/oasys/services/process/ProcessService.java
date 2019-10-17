@@ -284,7 +284,7 @@ public class ProcessService {
 	 * 公用
 	 */
 	public void  index6(Model model,Long id,int page,int size){
-		User lu=udao.findOne(id);//申请人
+		User lu=udao.findOne(id);//根据申请人ID查询申请人信息
 		Pageable pa=new PageRequest(page, size);
 		List<SystemTypeList> harrylist=tydao.findByTypeModel("aoa_process_list");
 		//查看用户并分页
@@ -294,6 +294,7 @@ public class ProcessService {
 		Iterable<Dept> deptlist = ddao.findAll();
 		// 查职位表
 		Iterable<Position> poslist = pdao.findAll();
+
 		model.addAttribute("page", pageuser);
 		model.addAttribute("emplist", userlist);
 		model.addAttribute("deptlist", deptlist);

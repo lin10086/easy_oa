@@ -61,7 +61,10 @@ public class AttendanceTests {
         attendsPOExample.createCriteria()
                 .andAttendsIdEqualTo(14L);
         List<AttendsPO> list = attendsPOMapper.selectByExample(attendsPOExample);
+//       AttendsPO attendsPO = attendsPOMapper.selectByPrimaryKey(14L);
+
         log.info("selectUserIdPO: list={}", list);
+//        log.info("selectUserIdPO: attendPO={}", attendsPO);
     }
 
     @Test
@@ -78,7 +81,6 @@ public class AttendanceTests {
         List<AttendsPO> list = attendsPOMapper.selectByExample(attendsPOExample);
         log.info("selectUserIdPO: list={}", list);
     }
-
 
     @Test
     public void selectUserIdPOExampleIn() {

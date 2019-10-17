@@ -81,5 +81,37 @@
             <generatedKey column="role_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="role_id" javaType="Long"/>
         </table>
+        <!--登录记录表 -->
+        <table tableName="aoa_user_login_record" domainObjectName="UserLoginRecordPO">
+            <generatedKey column="record_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="record_id" javaType="Long"/>
+        </table>
+
+        <!--费用科目明细表 -->
+        <table tableName="aoa_subject" domainObjectName="SubjectPO">
+            <generatedKey column="subject_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="subject_id" javaType="Long"/>
+        </table>
+
+        <!--费用报销表 -->
+        <table tableName="aoa_bursement" domainObjectName="BursementPO">
+            <generatedKey column="bursement_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="bursement_id" javaType="Long"/>
+        </table>
+        <!--费用报销明细表 -->
+        <table tableName="aoa_detailsburse" domainObjectName="DetailsbursePO">
+            <generatedKey column="detailsburse_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="detailsburse_id" javaType="Long"/>
+        </table>
+        <!--流程主表 -->
+        <table tableName="aoa_ProcessList" domainObjectName="ProcessListPO">
+            <generatedKey column="process_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="process_id" javaType="Long"/>
+        </table>
+        <!--附件表 -->
+        <table tableName="aoa_attachment_list" domainObjectName="AttachmentListPO">
+            <generatedKey column="attachment_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="attachment_id" javaType="Long"/>
+        </table>
     </context>
 </generatorConfiguration>

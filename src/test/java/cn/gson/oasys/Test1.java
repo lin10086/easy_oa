@@ -112,29 +112,28 @@ public class Test1 {
     public void numberFoemat() {
 //		float f=2000.0f;
 //		String i = (int)f+"";
-//
 //		Float ff = 1000f;
 //		String s = ff.intValue()+"";
 //		log.info("s={}",s);
-
 //		String s =
 //		int i =Integer.parseInt((1000.1/1)+"");
 
         //把Boolean类型转换为Integer类型
-        Boolean b = true;
-        Integer i = b == false ? 0 : 1;
+//        Boolean b = true;
+//        Integer i = b == false ? 0 : 1;
 //        if(b==false){
 //            i=0;
 //        }else {
 //            i=1;
 //        }
-        log.info("i={}", i);
+//        log.info("i={}", i);
+        //把false改为true
 
     }
 
     //User-Agent 信息
     @Test
-    public void UserAgent() {
+    public void userAgent() {
 
 //        String str = UserAgent.parseUserAgentString(request.getHeader("User-Agent"))
 //        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36"
@@ -149,6 +148,17 @@ public class Test1 {
         log.info("browserName={},str={}" + browserName, str);
         OperatingSystem os = userAgent.getOperatingSystem();
         log.info("os={}", os);
+    }
+
+    @Test
+    public void stringBuilder() {
+        String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder(5);
+        for (int i = 0; i<5; i++){
+            stringBuilder.append(str.charAt(random.nextInt(str.length()-1)));
+        }
+        log.info("stringBuilder={}",stringBuilder);
     }
 
 
