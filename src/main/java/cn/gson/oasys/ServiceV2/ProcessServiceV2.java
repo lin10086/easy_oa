@@ -73,12 +73,12 @@ public class ProcessServiceV2 {
             user.setRole(longRoleMap.get(user.getUserId()));
         }
         List<SystemTypeList> systemTypeLists = typeServiceV2.getSystemTypeListByTypeModel("aoa_process_list");
-        List<Dept> deptList = deptServiceV2.getDeptList();
-        List<Position> positionList = positionServiceV2.getPositionList();
+//        List<Dept> deptList = deptServiceV2.getDeptList();
+//        List<Position> positionList = positionServiceV2.getPositionList();
         model.addAttribute("page",page);
         model.addAttribute("emplist", userList);
-        model.addAttribute("deptlist", deptList);
-        model.addAttribute("poslist", positionList);
+//        model.addAttribute("deptlist", deptList);
+//        model.addAttribute("poslist", positionList);
         model.addAttribute("url", "names");
         model.addAttribute("username", userPO.getUserName());
         model.addAttribute("harrylist", systemTypeLists);

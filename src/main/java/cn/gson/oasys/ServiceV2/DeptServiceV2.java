@@ -19,18 +19,17 @@ public class DeptServiceV2 {
     private DeptPOMapper deptPOMapper;
 
     //获取所有的部门信息（部门列表）
-    public List<Dept> getDeptList() {
+    public List<DeptPO> getDeptList() {
         DeptPOExample deptPOExample = new DeptPOExample();
         List<DeptPO> deptPOList = deptPOMapper.selectByExample(deptPOExample);
-        List<Dept> deptList = DeptFactory.create(deptPOList);
-        return deptList;
+        return deptPOList;
     }
 
     //通过部门ID查找部门信息,并返回本身的部门
-    public Dept getDeptbyDeptId(Long deptId) {
+    public DeptPO getDeptbyDeptId(Long deptId) {
         DeptPO deptPO = deptPOMapper.selectByPrimaryKey(deptId);
-        Dept dept = DeptFactory.create(deptPO);
-        return dept;
+
+        return deptPO;
     }
 
 

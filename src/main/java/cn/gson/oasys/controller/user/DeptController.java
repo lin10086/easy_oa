@@ -19,6 +19,8 @@ import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.vo.DeptVO;
+import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -244,11 +246,13 @@ public class DeptController {
     //自己写的部分(1)
     @RequestMapping("deptmanage")
     public String deptmanage(Model model) {
-        List<Dept> deptList = deptServiceV2.getDeptList();
-        model.addAttribute("depts", deptList);
+        List<DeptPO> deptPOList = deptServiceV2.getDeptList();
+        List<DeptVO> deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
+        model.addAttribute("depts", deptVOList);
         return "user/deptmanage";
     }
 
+/*
     //(2)
     @RequestMapping("deletdept")
     public String deletdept(@RequestParam("deletedeptid") Long deletedeptid) {
@@ -391,6 +395,5 @@ public class DeptController {
         model.addAttribute("deptid", deptid);
         return "/readdept";
     }
-
 */
 }

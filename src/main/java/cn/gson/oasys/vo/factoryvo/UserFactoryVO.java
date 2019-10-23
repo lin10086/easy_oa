@@ -26,7 +26,7 @@ public class UserFactoryVO {
         userVO.setUserTel(userPO.getUserTel());
         userVO.setBirth(userPO.getBirth());
         userVO.setImgPath(userPO.getImgPath());
-        userVO.setBirth(new Timestamp(userPO.getBirth().getTime()));
+        userVO.setBirth(userPO.getBirth());
         userVO.setIsLock(userPO.getIsLock());
         userVO.setPinyin(userPO.getPinyin());
         userVO.setSex(userPO.getSex());
@@ -45,6 +45,38 @@ public class UserFactoryVO {
         return userVOList;
     }
 
+//把VO转换为PO
+    public static UserPO createUserPO(UserVO userVO) {
+        UserPO userPO = new UserPO();
+        userPO.setUserIdcard(userVO.getUserIdCard());
+        userPO.setUserSchool(userVO.getUserSchool());
+        userPO.setUserTel(userVO.getUserTel());
+        userPO.setPassword(userVO.getPassword());
+        userPO.setPinyin(userVO.getPinyin());
+        userPO.setUserName(userVO.getUserName());
+        userPO.setUserId(userVO.getUserId());
+        userPO.setEamil(userVO.getUserEmail());
+        userPO.setBank(userVO.getBank());
+        userPO.setPassword(userVO.getPassword());
+        userPO.setAddress(userVO.getUserAddress());
+        userPO.setRealName(userVO.getRealName());
+        userPO.setFatherId(userVO.getFatherId());
+        userPO.setThemeSkin(userVO.getThemeSkin());
+        userPO.setUserEdu(userVO.getUserEdu());
+        userPO.setUserTel(userVO.getUserTel());
+        userPO.setBirth(userVO.getBirth());
+        userPO.setImgPath(userVO.getImgPath());
+        userPO.setBirth(userVO.getBirth());
+        userPO.setIsLock(userVO.getIsLock());
+        userPO.setPinyin(userVO.getPinyin());
+        userPO.setSex(userVO.getSex());
+        userPO.setUserSign(userVO.getUserSign());
+        userPO.setHireTime(userVO.getHireTime());
+        userPO.setHoliday(userVO.getHoliday());
+        userPO.setSalary(Float.valueOf(userVO.getSalary()));
+        userPO.setSuperman(userVO.getSuperman()==false?0:1);
+        return userPO;
+    }
 
 }
 

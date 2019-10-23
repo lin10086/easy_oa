@@ -7,16 +7,25 @@ import cn.gson.oasys.ServiceV2.DeptServiceV2;
 import cn.gson.oasys.ServiceV2.PositionServiceV2;
 import cn.gson.oasys.ServiceV2.RoleServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.factory.UserFactory;
+import cn.gson.oasys.model.entity.user.Position;
+import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.DeptPO;
+import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.RolePO;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.DeptVO;
+import cn.gson.oasys.vo.PositionVO;
 import cn.gson.oasys.vo.RoleVO;
 import cn.gson.oasys.vo.UserVO;
 import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
+import cn.gson.oasys.vo.factoryvo.PositionFactoryVO;
 import cn.gson.oasys.vo.factoryvo.RoleFactoryVO;
 import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
 import com.github.pagehelper.PageInfo;
+import com.github.stuxuhai.jpinyin.PinyinException;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +33,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.gson.oasys.model.dao.roledao.RoleDao;
@@ -58,20 +68,20 @@ public class UserController {
     private RoleServiceV2 roleServiceV2;
 
 
-//        //第一次进入用户管理》用户管理显示的页面(1)
-//        @RequestMapping("usermanage")
-//        public String usermanage(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-//                                 @RequestParam(value = "size", defaultValue = "10") int size) {
-//              //先排序在分页
-//            Sort sort = new Sort(new Order(Direction.ASC, "dept"));
-//            Pageable pa = new PageRequest(page, size, sort);
-//            Page<User> userspage = udao.findByIsLock(0, pa);
-//            List<User> users = userspage.getContent();
-//            model.addAttribute("users", users);
-//            model.addAttribute("page", userspage);
-//            model.addAttribute("url", "usermanagepaging");
-//            return "user/usermanage";
-//        }
+      /*  //第一次进入用户管理》用户管理显示的页面(1)
+        @RequestMapping("usermanage")
+        public String usermanage(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+                                 @RequestParam(value = "size", defaultValue = "10") int size) {
+              //先排序在分页
+            Sort sort = new Sort(new Order(Direction.ASC, "dept"));
+            Pageable pa = new PageRequest(page, size, sort);
+            Page<User> userspage = udao.findByIsLock(0, pa);
+            List<User> users = userspage.getContent();
+            model.addAttribute("users", users);
+            model.addAttribute("page", userspage);
+            model.addAttribute("url", "usermanagepaging");
+            return "user/usermanage";
+        }*/
 
 
 /*
@@ -90,24 +100,24 @@ public class UserController {
         }
 */
 
-//    //点击修改，增加跳转的页面(3)
-//    @RequestMapping(value = "useredit", method = RequestMethod.GET)
-//    public String usereditget(@RequestParam(value = "userid", required = false) Long userid, Model model) {
-//        if (userid != null) {
-//            //有userID代表修改
-//            User user = udao.findOne(userid);
-//            model.addAttribute("where", "xg");
-//            model.addAttribute("user", user);
-//        }
-//        //没有获取到userID代表新增
-//        List<Dept> depts = (List<Dept>) ddao.findAll();
-//        List<Position> positions = (List<Position>) pdao.findAll();
-//        List<Role> roles = (List<Role>) rdao.findAll();
-//        model.addAttribute("depts", depts);
-//        model.addAttribute("positions", positions);
-//        model.addAttribute("roles", roles);
-//        return "user/edituser";
-//    }
+   /* //点击修改，增加跳转的页面(3)
+    @RequestMapping(value = "useredit", method = RequestMethod.GET)
+    public String usereditget(@RequestParam(value = "userid", required = false) Long userid, Model model) {
+        if (userid != null) {
+            //有userID代表修改
+            User user = udao.findOne(userid);
+            model.addAttribute("where", "xg");
+            model.addAttribute("user", user);
+        }
+        //没有获取到userID代表新增
+        List<Dept> depts = (List<Dept>) ddao.findAll();
+        List<Position> positions = (List<Position>) pdao.findAll();
+        List<Role> roles = (List<Role>) rdao.findAll();
+        model.addAttribute("depts", depts);
+        model.addAttribute("positions", positions);
+        model.addAttribute("roles", roles);
+        return "user/edituser";
+    }*/
 
      /*   //(4)
         @RequestMapping(value = "useredit", method = RequestMethod.POST)
@@ -204,14 +214,14 @@ public class UserController {
     */
 //=====================================================
 
- /*
     //(1)
-   @RequestMapping("usermanage")
+ /*  @RequestMapping("usermanage")
     public String usermanage(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                              @RequestParam(value = "size", defaultValue = "10") int size) {
         //根据部门升序分页，可用的用户
         List<UserPO> userPOList = userServiceV2.ASCDeptIsLock(page, size);
         List<User> userList = UserFactory.create(userPOList);
+
         Map<Long, Role> longRoleMap = userServiceV2.userIdAndRole(userPOList);
         Map<Long, Dept> longDeptMap = userServiceV2.userIdAndDept(userPOList);
         for (User user : userList) {
@@ -231,8 +241,8 @@ public class UserController {
         List<UserPO> userPOList = userServiceV2.ASCDeptIsLock(page, size);
         List<UserVO>userVOList = UserFactoryVO.createUserVOList(userPOList);
         PageInfo pageInfo = new PageInfo(userVOList);
-        Map<Long, RolePO> longRolePOMap = userServiceV2.userIdAndRolePO(userPOList);
 
+        Map<Long, RolePO> longRolePOMap = userServiceV2.userIdAndRolePO(userPOList);
         Map<Long, DeptPO>longDeptPOMap = userServiceV2.userIdAndDeptPO(userPOList);
         for (UserVO userVO : userVOList) {
         RoleVO roleVO = RoleFactoryVO.createRoleVO(longRolePOMap.get(userVO.getUserId()));
@@ -244,21 +254,18 @@ public class UserController {
         model.addAttribute("page", pageInfo);
         model.addAttribute("url", "usermanagepaging");
         return "user/usermanage";
-
-
-
     }
-/*
+
     //（2）
     @RequestMapping("deleteuser")
     public String deleteuser(@RequestParam("userid") Long userId, Model model) {
         userServiceV2.updateUserIsLock(userId);
         model.addAttribute("success", 1);
         return "/usermanage";
-
     }
 
-    //(3)
+
+  /*  //(3)
     @RequestMapping(value = "useredit", method = RequestMethod.GET)
     public String usereditget(@RequestParam(value = "userid", required = false) Long userId, Model model) {
         if (userId != null) {
@@ -276,10 +283,34 @@ public class UserController {
         model.addAttribute("positions", positionList);
         model.addAttribute("roles", roleList);
         return "user/edituser";
+    } */
+    //第二次修改，改为VO类(3)
+    @RequestMapping(value = "useredit", method = RequestMethod.GET)
+    public String usereditget(@RequestParam(value = "userid", required = false) Long userId, Model model) {
+        if (userId != null) {
+            //有userID代表修改
+            UserVO userVO = userServiceV2.findUserVOByUserId(userId);
+            model.addAttribute("where", "xg");
+            model.addAttribute("user", userVO);
+        }
+
+        List<DeptPO> deptPOList = deptServiceV2.getDeptList();
+        List<DeptVO>deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
+
+        List<PositionPO> positionPOList = positionServiceV2.getPositionList();
+        List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
+
+        List<RolePO> rolePOList = roleServiceV2.getRoleList();
+        List<RoleVO> roleVOList = RoleFactoryVO.createRoleVOList(rolePOList);
+
+        model.addAttribute("depts", deptVOList);
+        model.addAttribute("positions", positionVOList);
+        model.addAttribute("roles", roleVOList);
+        return "user/edituser";
     }
 
 
-    //处理修改页面（4）
+   /* //处理修改页面（4）
     @RequestMapping(value = "useredit", method = RequestMethod.POST)
     public String usereditpost(User user,
                                @RequestParam("deptid") Long deptId,
@@ -299,6 +330,32 @@ public class UserController {
         }
         model.addAttribute("success", 1);
         return "/usermanage";
+    }*/
+    //第二次修改，处理修改页面（4）
+    @RequestMapping(value = "useredit", method = RequestMethod.POST)
+    public String usereditpost(UserVO userVO,
+                               @RequestParam("deptid") Long deptId,
+                               @RequestParam("positionid") Long positionId,
+                               @RequestParam("roleid") Long roleId,
+                               @RequestParam(value = "isbackpassword", required = false) boolean isbackpassword,
+                               Model model) throws PinyinException {
+        DeptPO deptPO = deptServiceV2.getDeptbyDeptId(deptId);
+        DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+        PositionPO positionPO = positionServiceV2.getPositionByPositionId(positionId);
+        PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);
+        RolePO rolePO = roleServiceV2.getRoleByRoleId(roleId);
+        RoleVO roleVO = RoleFactoryVO.createRoleVO(rolePO);
+
+        if (userVO.getUserId() == null) {
+            String pinyin = PinyinHelper.convertToPinyinString(userVO.getUserName(), "", PinyinFormat.WITHOUT_TONE);
+            UserPO userPO = UserFactoryVO.createUserPO(userVO);
+
+            userServiceV2.insertUserAll(userPO, deptVO, positionVO, roleVO, deptVO.getDeptManager(), pinyin, "123456");
+        } else {
+            userServiceV2.updateUserVOAll(userVO, isbackpassword, deptVO, roleVO, positionVO);
+        }
+        model.addAttribute("success", 1);
+        return "/usermanage";
     }
-*/
+
 }

@@ -94,8 +94,8 @@ public class PossionController {
 
     @RequestMapping("positionmanage")
     public String positionmanage(Model model) {
-        List<Position> positionList = positionServiceV2.getPositionList();
-        model.addAttribute("positions", positionList);
+//        List<Position> positionList = positionServiceV2.getPositionList();
+//        model.addAttribute("positions", positionList);
         return "user/positionmanage";
     }
 
@@ -103,13 +103,13 @@ public class PossionController {
      @RequestMapping(value = "positionedit", method = RequestMethod.GET)
     public String positioneditget(@RequestParam(value = "positionid", required = false) Long positionId, Model model) {
         if (positionId != null) {
-            Position position = positionServiceV2.getPositionByPositionId(positionId);
-            Dept dept = deptServiceV2.getDeptbyDeptId(position.getDeptid());
-            model.addAttribute("positiondept", dept);
-            model.addAttribute("position", position);
+//            Position position = positionServiceV2.getPositionByPositionId(positionId);
+//            Dept dept = deptServiceV2.getDeptbyDeptId(position.getDeptid());
+//            model.addAttribute("positiondept", dept);
+//            model.addAttribute("position", position);
         }
-        List<Dept>deptList = deptServiceV2.getDeptList();
-        model.addAttribute("depts", deptList);
+//        List<Dept>deptList = deptServiceV2.getDeptList();
+//        model.addAttribute("depts", deptList);
         return "user/positionedit";
     }
 

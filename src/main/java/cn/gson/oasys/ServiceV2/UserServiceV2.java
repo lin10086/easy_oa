@@ -13,7 +13,14 @@ import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.Position;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.vo.DeptVO;
+import cn.gson.oasys.vo.PositionVO;
 import cn.gson.oasys.vo.RoleVO;
+import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
+import cn.gson.oasys.vo.factoryvo.PositionFactoryVO;
+import cn.gson.oasys.vo.factoryvo.RoleFactoryVO;
+import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -207,7 +214,7 @@ public class UserServiceV2 {
         return userPOList;
     }
 
-    //根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
+   /* //根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
     public User findUserByUserId(Long userId) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
 
@@ -223,14 +230,30 @@ public class UserServiceV2 {
         user.setPosition(position);
         user.setRole(role);
         return user;
+    }*/
+    //二次修改：根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
+    public UserVO findUserVOByUserId(Long userId) {
+        UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
+
+        DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+        DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+        PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
+        PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);
+        RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
+        RoleVO roleVO = RoleFactoryVO.createRoleVO(rolePO);
+
+        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+        userVO.setDeptVO(deptVO);
+        userVO.setPositionVO(positionVO);
+        userVO.setRoleVO(roleVO);
+        return userVO;
     }
 
-    //更新 部门，职位，角色
-    public void insertUserAll(UserPO userPO, Dept dept, Position position, Role role, Long fatherId, String pinyin, String password) {
-
-        userPO.setDeptId(dept.getDeptId());
-        userPO.setPositionId(position.getId());
-        userPO.setRoleId(role.getRoleId());
+    //插入 部门，职位，角色
+    public void insertUserAll(UserPO userPO, DeptVO deptVO, PositionVO positionVO, RoleVO roleVO, Long fatherId, String pinyin, String password) {
+        userPO.setDeptId(deptVO.getDeptId());
+        userPO.setPositionId(positionVO.getPositionId());
+        userPO.setRoleId(roleVO.getRoleId());
         userPO.setFatherId(fatherId);
         userPO.setPinyin(pinyin);
         userPO.setPassword(password);
@@ -241,28 +264,28 @@ public class UserServiceV2 {
     }
 
     //更新用户信息
-    public void updateUserAll1(User user, boolean isbackpassword, Dept dept, Role role, Position position) {
-        UserPO userPO = userPOMapper.selectByPrimaryKey(user.getUserId());
+    public void updateUserVOAll(UserVO userVO, boolean isbackpassword, DeptVO deptVO, RoleVO roleVO, PositionVO positionVO) {
+        UserPO userPO = userPOMapper.selectByPrimaryKey(userVO.getUserId());
 
-        userPO.setUserId(user.getUserId());
-        userPO.setUserTel(user.getUserTel());
-        userPO.setUserTel(user.getUserTel());
-        userPO.setRealName(user.getRealName());
-        userPO.setEamil(user.getEamil());
-        userPO.setAddress(user.getAddress());
-        userPO.setUserEdu(user.getUserEdu());
-        userPO.setUserSchool(user.getSchool());
-        userPO.setUserIdcard(user.getIdCard());
-        userPO.setBank(user.getBank());
-        userPO.setThemeSkin(user.getThemeSkin());
-        userPO.setSalary(Float.valueOf(user.getSalary()));
-        userPO.setFatherId(dept.getDeptmanager());
+        userPO.setUserId(userVO.getUserId());
+        userPO.setUserTel(userVO.getUserTel());
+        userPO.setUserTel(userVO.getUserTel());
+        userPO.setRealName(userVO.getRealName());
+        userPO.setEamil(userVO.getUserEmail());
+        userPO.setAddress(userVO.getUserAddress());
+        userPO.setUserEdu(userVO.getUserEdu());
+        userPO.setUserSchool(userVO.getUserSchool());
+        userPO.setUserIdcard(userVO.getUserIdCard());
+        userPO.setBank(userVO.getBank());
+        userPO.setThemeSkin(userVO.getThemeSkin());
+        userPO.setSalary(Float.valueOf(userVO.getSalary()));
+        userPO.setFatherId(deptVO.getDeptManager());
         if (isbackpassword) {
             userPO.setPassword("123456");
         }
-        userPO.setDeptId(dept.getDeptId());
-        userPO.setRoleId(role.getRoleId());
-        userPO.setPositionId(position.getId());
+        userPO.setDeptId(deptVO.getDeptId());
+        userPO.setRoleId(roleVO.getRoleId());
+        userPO.setPositionId(positionVO.getPositionId());
         userPOMapper.updateByPrimaryKeySelective(userPO);
     }
 

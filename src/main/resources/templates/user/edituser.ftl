@@ -92,7 +92,7 @@ a:hover {
 								<label class="control-label"> <span>部门</span></label> 
 								<select class="deptselect form-control" name="deptid">
 									<#if user??>
-										<option value="${(user.dept.deptId)!''}">${user.dept.deptName}</option>
+										<option value="${(user.deptVO.deptId)!''}">${user.deptVO.deptName}</option>
 									</#if>
 									<#list depts as dept>
 										<option value="${dept.deptId}">${dept.deptName}</option>
@@ -110,10 +110,10 @@ a:hover {
 								<label class="control-label"> <span>职位</span></label> 
 								<select class="positionselect form-control" name="positionid">
 									<#if user??>
-										<option value="${(user.position.id)!''}">${user.position.name}</option>
+										<option value="${(user.positionVO.positionId)!''}">${user.positionVO.positionName}</option>
 									</#if>
 									<#list positions as position>
-										<option value="${position.id}">${position.name}</option>
+										<option value="${position.positionId}">${position.positionName}</option>
 									</#list>
 								</select>
 							</div>
@@ -121,7 +121,7 @@ a:hover {
 								<label class="control-label"> <span>角色</span>
 								</label> <select class="form-control" name="roleid">
 									<#if user??>
-										<option value="${(user.role.roleId)!''}">${user.role.roleName}</option>
+										<option value="${(user.roleVO.roleId)!''}">${user.roleVO.roleName}</option>
 									</#if>
 									<#list roles as role>
 										<option value="${role.roleId}">${role.roleName}</option>
