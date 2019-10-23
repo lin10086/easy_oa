@@ -16,7 +16,11 @@ import cn.gson.oasys.vo.UserVO;
 import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
 import cn.gson.oasys.vo.factoryvo.RoleFactoryVO;
 import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -226,7 +230,7 @@ public class UserController {
         //根据部门升序分页，可用的用户
         List<UserPO> userPOList = userServiceV2.ASCDeptIsLock(page, size);
         List<UserVO>userVOList = UserFactoryVO.createUserVOList(userPOList);
-
+        PageInfo pageInfo = new PageInfo(userVOList);
         Map<Long, RolePO> longRolePOMap = userServiceV2.userIdAndRolePO(userPOList);
 
         Map<Long, DeptPO>longDeptPOMap = userServiceV2.userIdAndDeptPO(userPOList);
@@ -237,9 +241,12 @@ public class UserController {
             userVO.setDeptVO(deptVO);
         }
         model.addAttribute("users", userVOList);
-        model.addAttribute("page", userVOList);
+        model.addAttribute("page", pageInfo);
         model.addAttribute("url", "usermanagepaging");
         return "user/usermanage";
+
+
+
     }
 /*
     //（2）

@@ -51,10 +51,10 @@
 									src="images/timg.jpg" alt="images"/>
 							</#if>
 						</td>
-						<td><span>${(user.dept.deptName)!''}</span></td>
+						<td><span>${(user.deptVO.deptName)!''}</span></td>
 						<td><span>${(user.realName)!''}</span></td>
 						<td><span>${(user.userName)!''}</span></td>
-						<td><span>${(user.role.roleName)!''}</span></td>
+						<td><span>${(user.roleVO.roleName)!''}</span></td>
 						<td><span>${(user.userTel)!''}</span></td>
 						<td><span>${(user.salary)!''}</span></td>
 						<td><a  href="useredit?userid=${user.userId}" class="label xiugai"><span
