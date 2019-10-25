@@ -55,17 +55,17 @@ a:hover {
 							<div class="row">
 								<div class="col-md-6 form-group">
 									<label class="control-label"><span>名称</span></label> <input
-										name="name" class="form-control" value="${(position.name)!''}"/>
+										name="positionName" class="form-control" value="${(position.positionName)!''}"/>
 								</div>
 								<div class="col-md-6 form-group">
 									<label class="control-label"><span>层级</span></label> <input
-										name="level" class="form-control" value="${(position.level)!''}"/>
+										name="positionLevel" class="form-control" value="${(position.positionLevel)!''}"/>
 								</div>
 								<div class="col-md-6 form-group">
 									<label class="control-label"><span>部门</span></label> 
-									<select class="deptselect form-control" name="deptid">
-										<#if positiondept??>
-											<option value="${(positiondept.deptId)!''}">${positiondept.deptName}</option>
+									<select class="deptselect form-control" name="deptId">
+										<#if positionDept??>
+											<option value="${(positionDept.deptId)!''}">${positionDept.deptName}</option>
 										</#if>
 										<#list depts as dept>
 											<option value="${dept.deptId}">${dept.deptName}</option>
@@ -74,9 +74,9 @@ a:hover {
 								</div>
 								<div class="col-md-6 form-group">
 									<label class="control-label"><span>描述</span></label>
-									<textarea rows="5" cols="20" name="describtion"  class="form-control" style="margin: 0px -0.5px 0px 0px; height: 114px; width: 507px;">${(position.describtion)!''}</textarea>
+									<textarea rows="5" cols="20" name="positionDescription"  class="form-control" style="margin: 0px -0.5px 0px 0px; height: 114px; width: 507px;">${(position.positionDescription)!''}</textarea>
 								</div>
-								<input type="hidden" name="id" value="${(position.id)!''}"/>
+								<input type="hidden" name="positionId" value="${(position.positionId)!''}"/>
 							</div>
 						</div>
 					</div>

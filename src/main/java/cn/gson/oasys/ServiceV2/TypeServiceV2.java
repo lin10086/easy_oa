@@ -18,12 +18,11 @@ public class TypeServiceV2 {
     private TypePOMapper typePOMapper;
 
     //根据类型模型找类型列表
-    public List<SystemTypeList> getSystemTypeListByTypeModel(String typeModel){
+    public List<TypePO> getSystemTypeListByTypeModel(String typeModel){
         TypePOExample typePOExample = new TypePOExample();
         typePOExample.createCriteria().andTypeModelEqualTo(typeModel);
         List<TypePO>typePOList = typePOMapper.selectByExample(typePOExample);
-        List<SystemTypeList>systemTypeLists = TypeFactory.createTypes(typePOList);
-        return systemTypeLists;
+        return typePOList;
     }
 
 

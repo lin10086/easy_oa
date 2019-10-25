@@ -68,21 +68,7 @@ public class UserServiceV2 {
         return userPOList;
     }
 
-    //把用户的ID和用户的部门对应起来放到map里面
-    public Map<Long, Dept> userIdAndDept(List<UserPO> userPOList) {
-        //建立Map集合用于把用户ID和用户的部门对应起来
-        Map<Long, Dept> map = new HashMap<>();
-        //遍历自己定义的用户，从中获取用户所在的部门ID
-        for (UserPO userPO : userPOList) {
-            //根据用户里面的部门ID查询用户的部门信息
-            DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
-            //把自己定义的用户部门的信息转换成人家的用户部门信息
-            Dept dept = DeptFactory.create(deptPO);
-            //把用户ID和部门对应起来
-            map.put(userPO.getUserId(), dept);
-        }
-        return map;
-    }
+
     //把用户的ID和用户的部门对应起来放到map里面
     public Map<Long, DeptPO> userIdAndDeptPO(List<UserPO> userPOList) {
         //建立Map集合用于把用户ID和用户的部门对应起来
@@ -97,23 +83,23 @@ public class UserServiceV2 {
         return map;
     }
 
-    //把用户的ID和用户的职位对应起来放到map里面
-    public Map<Long, Position> userIdAndPosition(List<UserPO> userPOList) {
-        //建立Map集合用于把用户ID和用户的职位对应起来
-        Map<Long, Position> map = new HashMap<>();
-        //遍历自己定义的用户，从中获取用户所在的职位ID
+    //把用户的ID和用户的部门对应起来放到map里面
+    public Map<Long, Dept> userIdAndDept(List<UserPO> userPOList) {
+        Map<Long, Dept> map = new HashMap<>();
         for (UserPO userPO : userPOList) {
-            //根据用户里面的部门ID查询用户的部门信息
-            PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
-            //把自己定义的用户职位的信息转换成人家的用户职位信息
-            Position position = PositionFactory.create(positionPO);
-            //把用户ID和职位对应起来
-            map.put(userPO.getUserId(), position);
+            DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+            Dept dept = DeptFactory.create(deptPO);
+            map.put(userPO.getUserId(), dept);
         }
         return map;
     }
+
+
+    //把用户的ID和用户的职位对应起来放到map里面
     public Map<Long, PositionPO> userIdAndPositionPO(List<UserPO> userPOList) {
+        //建立Map集合用于把用户ID和用户的职位对应起来
         Map<Long, PositionPO> map = new HashMap<>();
+        //遍历自己定义的用户，从中获取用户所在的职位ID
         for (UserPO userPO : userPOList) {
             PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
             map.put(userPO.getUserId(), positionPO);
@@ -121,21 +107,6 @@ public class UserServiceV2 {
         return map;
     }
 
-    //把用户的ID和用户的角色对应起来放到map里面
-    public Map<Long, Role> userIdAndRole(List<UserPO> userPOList) {
-        //建立Map集合用于把用户ID和用户的角色对应起来
-        Map<Long, Role> map = new HashMap<>();
-        //遍历自己定义的用户，从中获取用户所在的角色ID
-        for (UserPO userPO : userPOList) {
-            //根据用户里面的角色ID查询用户的角色信息
-            RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
-            //把自己定义的用户角色的信息转换成人家的用户角色信息
-            Role role = RoleFactory.create(rolePO);
-            //把用户ID和角色对应起来
-            map.put(userPO.getUserId(), role);
-        }
-        return map;
-    }
     //把用户的ID和用户的角色对应起来放到map里面
     public Map<Long, RolePO> userIdAndRolePO(List<UserPO> userPOList) {
         //建立Map集合用于把用户ID和用户的角色对应起来
@@ -157,16 +128,16 @@ public class UserServiceV2 {
         return userPO;
     }
 
-//通过用户名查找用户
-    public UserPO getUserByUsername(String username){
+    //通过用户名查找用户
+    public UserPO getUserByUsername(String username) {
         UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserNameEqualTo(username);
-        List<UserPO>userPOList  =userPOMapper.selectByExample(userPOExample);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
         return userPOList.get(0);
     }
 
     //更新userPO里面的，部门ID和职位ID
-    public void updateUserPO(Long userId, Long deptVOId,long positionVOId) {
+    public void updateUserPO(Long userId, Long deptVOId, long positionVOId) {
         UserPO userPO = new UserPO();
         userPO.setDeptId(deptVOId);
         userPO.setPositionId(positionVOId);
@@ -174,13 +145,15 @@ public class UserServiceV2 {
         userPOExample.createCriteria().andUserIdEqualTo(userId);
         userPOMapper.updateByExampleSelective(userPO, userPOExample);
     }
-//更新用户的职位信息
-    public void updateUserPOPositionId(Long userPOId,Long positionId){
+
+    //更新用户的职位信息
+    public void updateUserPOPositionId(Long userPOId, Long positionId) {
         UserPO userPO = new UserPO();
         userPO.setUserId(userPOId);
         userPO.setPositionId(positionId);
         userPOMapper.updateByPrimaryKeySelective(userPO);
     }
+
     //更新用户isLock字段
     public void updateUserIsLock(Long userId) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
@@ -218,23 +191,23 @@ public class UserServiceV2 {
         return userPOList;
     }
 
-   /* //根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
-    public User findUserByUserId(Long userId) {
-        UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
+    /* //根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
+     public User findUserByUserId(Long userId) {
+         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
 
-        DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
-        Dept dept = DeptFactory.create(deptPO);
-        PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
-        Position position = PositionFactory.create(positionPO);
-        RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
-        Role role = RoleFactory.create(rolePO);
+         DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+         Dept dept = DeptFactory.create(deptPO);
+         PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
+         Position position = PositionFactory.create(positionPO);
+         RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
+         Role role = RoleFactory.create(rolePO);
 
-        User user = UserFactory.create(userPO);
-        user.setDept(dept);
-        user.setPosition(position);
-        user.setRole(role);
-        return user;
-    }*/
+         User user = UserFactory.create(userPO);
+         user.setDept(dept);
+         user.setPosition(position);
+         user.setRole(role);
+         return user;
+     }*/
     //二次修改：根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
     public UserVO findUserVOByUserId(Long userId) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);

@@ -7,6 +7,7 @@ import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.PositionPOExample;
+import cn.gson.oasys.vo.PositionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class PositionServiceV2 {
         return positionPOList;
     }
 
-    //根据职位ID获取职位信息并转换为本身的职位信息
+    //根据职位ID获取职位信息
     public PositionPO getPositionByPositionId(Long positionId) {
         PositionPO positionPO = positionPOMapper.selectByPrimaryKey(positionId);
         return positionPO;
@@ -56,27 +57,16 @@ public class PositionServiceV2 {
         return positionPOList;
     }
 
-    //插入一个职位
-    public Integer insertPosition(Position position) {
-        PositionPO positionPO = new PositionPO();
-        positionPO.setPositionId(position.getId());
-        positionPO.setName(position.getName());
-        positionPO.setLevel(position.getLevel());
-        positionPO.setDeptid(position.getDeptid());
-        positionPO.setDescribtion(position.getDescribtion());
-        Integer rows = positionPOMapper.insert(positionPO);
+    //插入或更新一个职位
+    public Integer insertOrUpdatePositionPO(PositionPO positionPO) {
+        Integer rows = null;
+        if (positionPO.getPositionId() == null) {
+            rows = positionPOMapper.insert(positionPO);
+        } else {
+            rows = positionPOMapper.updateByPrimaryKeySelective(positionPO);
+        }
         return rows;
     }
 
-    //更新职位（知道职位的ID更改职位信息）
-    public Integer updatePosition(Position position) {
-        PositionPO positionPO = new PositionPO();
-        positionPO.setPositionId(position.getId());
-        positionPO.setName(position.getName());
-        positionPO.setLevel(position.getLevel());
-        positionPO.setDeptid(position.getDeptid());
-        positionPO.setDescribtion(position.getDescribtion());
-        Integer rows = positionPOMapper.updateByPrimaryKeySelective(positionPO);
-        return rows;
-    }
+
 }

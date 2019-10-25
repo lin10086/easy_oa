@@ -4,7 +4,12 @@ import java.util.List;
 
 import cn.gson.oasys.ServiceV2.DeptServiceV2;
 import cn.gson.oasys.ServiceV2.PositionServiceV2;
-import cn.gson.oasys.factory.PositionFactory;
+import cn.gson.oasys.model.po.DeptPO;
+import cn.gson.oasys.model.po.PositionPO;
+import cn.gson.oasys.vo.DeptVO;
+import cn.gson.oasys.vo.PositionVO;
+import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
+import cn.gson.oasys.vo.factoryvo.PositionFactoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.PositionDao;
-import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.entity.user.Position;
 
 import javax.annotation.Resource;
 
@@ -94,39 +97,39 @@ public class PossionController {
 
     @RequestMapping("positionmanage")
     public String positionmanage(Model model) {
-//        List<Position> positionList = positionServiceV2.getPositionList();
-//        model.addAttribute("positions", positionList);
+        List<PositionPO> positionPOList = positionServiceV2.getPositionList();
+        List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
+        model.addAttribute("positions", positionVOList);
         return "user/positionmanage";
     }
 
 
-     @RequestMapping(value = "positionedit", method = RequestMethod.GET)
-    public String positioneditget(@RequestParam(value = "positionid", required = false) Long positionId, Model model) {
+    @RequestMapping(value = "positionedit", method = RequestMethod.GET)
+    public String positionEditGet(@RequestParam(value = "positionId", required = false) Long positionId, Model model) {
         if (positionId != null) {
-//            Position position = positionServiceV2.getPositionByPositionId(positionId);
-//            Dept dept = deptServiceV2.getDeptbyDeptId(position.getDeptid());
-//            model.addAttribute("positiondept", dept);
-//            model.addAttribute("position", position);
+            PositionPO positionPO = positionServiceV2.getPositionByPositionId(positionId);
+            PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);
+
+            DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(positionPO.getDeptid());
+            DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+
+            model.addAttribute("positionDept", deptVO);
+            model.addAttribute("position", positionVO);
         }
-//        List<Dept>deptList = deptServiceV2.getDeptList();
-//        model.addAttribute("depts", deptList);
+        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
+        model.addAttribute("depts", deptPOList);
         return "user/positionedit";
     }
 
 
-     @RequestMapping(value = "positionedit", method = RequestMethod.POST)
-    public String positioneditpost(Position position, Model model) {
-        Integer rows ;
-        if(position.getId()==null) {
-             rows = positionServiceV2.insertPosition(position);
-        }else {
-             rows =positionServiceV2.updatePosition(position);
-        }
+    @RequestMapping(value = "positionedit", method = RequestMethod.POST)
+    public String positionEditPost(PositionVO positionVO, Model model) {
+        PositionPO positionPO = PositionFactoryVO.createPositionPO(positionVO);
+        Integer rows = positionServiceV2.insertOrUpdatePositionPO(positionPO);
         if (rows == 1) {
             model.addAttribute("success", 1);
             return "/positionmanage";
         }
-
         model.addAttribute("errormess", "数据插入失败");
         return "user/positionedit";
     }

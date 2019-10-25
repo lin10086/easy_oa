@@ -66,11 +66,11 @@ a:hover {
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span>Email</span></label> <input
-									name="eamil" class="form-control" value="${(user.eamil)!''}"/>
+									name="userEmail" class="form-control" value="${(user.userEmail)!''}"/>
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span>地址</span></label> <input
-									name="address" class="form-control" value="${(user.address)!''}"/>
+									name="userAddress" class="form-control" value="${(user.userAddress)!''}"/>
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span>学历</span></label> <input
@@ -78,11 +78,11 @@ a:hover {
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span>毕业院校</span></label> <input
-									name="school" class="form-control" value="${(user.school)!''}"/>
+									name="userSchool" class="form-control" value="${(user.userSchool)!''}"/>
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span>身份证号</span></label> <input
-									name="idCard" class="form-control" value="${(user.idCard)!''}"/>
+									name="userIdCard" class="form-control" value="${(user.userIdCard)!''}"/>
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span>银行账号</span></label> <input
@@ -90,7 +90,7 @@ a:hover {
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"> <span>部门</span></label> 
-								<select class="deptselect form-control" name="deptid">
+								<select class="deptselect form-control" name="deptId">
 									<#if user??>
 										<option value="${(user.deptVO.deptId)!''}">${user.deptVO.deptName}</option>
 									</#if>
@@ -108,7 +108,7 @@ a:hover {
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"> <span>职位</span></label> 
-								<select class="positionselect form-control" name="positionid">
+								<select class="positionselect form-control" name="positionId">
 									<#if user??>
 										<option value="${(user.positionVO.positionId)!''}">${user.positionVO.positionName}</option>
 									</#if>
@@ -119,7 +119,7 @@ a:hover {
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"> <span>角色</span>
-								</label> <select class="form-control" name="roleid">
+								</label> <select class="form-control" name="roleId">
 									<#if user??>
 										<option value="${(user.roleVO.roleId)!''}">${user.roleVO.roleName}</option>
 									</#if>
@@ -177,7 +177,7 @@ a:hover {
 								</div> -->
 								<div class="col-md-6">
 									<label class="control-label"><span>重置密码</span></label> <br>
-									<span class="labels"><label><input name="isbackpassword" type="checkbox"><i>✓</i></label></span>
+									<span class="labels"><label><input name="isBackPassword" type="checkbox"><i>✓</i></label></span>
 								</div>
 							</div>
 						</#if>

@@ -334,10 +334,10 @@ public class UserController {
     //第二次修改，处理修改页面（4）
     @RequestMapping(value = "useredit", method = RequestMethod.POST)
     public String usereditpost(UserVO userVO,
-                               @RequestParam("deptid") Long deptId,
-                               @RequestParam("positionid") Long positionId,
-                               @RequestParam("roleid") Long roleId,
-                               @RequestParam(value = "isbackpassword", required = false) boolean isbackpassword,
+                               @RequestParam("deptId") Long deptId,
+                               @RequestParam("positionId") Long positionId,
+                               @RequestParam("roleId") Long roleId,
+                               @RequestParam(value = "isBackPassword", required = false) boolean isBackPassword,
                                Model model) throws PinyinException {
         DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(deptId);
         DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
@@ -352,7 +352,7 @@ public class UserController {
 
             userServiceV2.insertUserAll(userPO, deptVO, positionVO, roleVO, deptVO.getDeptManager(), pinyin, "123456");
         } else {
-            userServiceV2.updateUserVOAll(userVO, isbackpassword, deptVO, roleVO, positionVO);
+            userServiceV2.updateUserVOAll(userVO, isBackPassword, deptVO, roleVO, positionVO);
         }
         model.addAttribute("success", 1);
         return "/usermanage";

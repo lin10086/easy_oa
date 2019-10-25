@@ -25,4 +25,14 @@ public class PositionFactoryVO {
         }
         return positionVOList;
     }
+    //把V转换为PO
+    public static PositionPO createPositionPO(PositionVO positionVO){
+        PositionPO positionPO = new PositionPO();
+        positionPO.setPositionId(positionVO.getPositionId());
+        positionPO.setDeptid(positionVO.getDeptId());
+        positionPO.setLevel(positionVO.getPositionLevel());
+        positionPO.setName(positionVO.getPositionName());
+        positionPO.setDescribtion(positionVO.getPositionDescription());
+        return positionPO;
+    }
 }

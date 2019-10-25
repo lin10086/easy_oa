@@ -13,8 +13,12 @@ import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.entity.process.*;
 import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.model.po.SubjectPO;
+import cn.gson.oasys.model.po.TypePO;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.services.process.ProcessService;
+import cn.gson.oasys.vo.TypeVO;
+import cn.gson.oasys.vo.factoryvo.TypeFactoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -103,9 +107,9 @@ public class ProcedureController {
         return "process/procedure";
     }
     //------------------------------------
-/*
+
     //费用报销表单（1）
-    @RequestMapping("burse")
+   /* @RequestMapping("burse")
     public String bursement(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -120,17 +124,16 @@ public class ProcedureController {
         model.addAttribute("sublist", sublist);
         model.addAttribute("uplist", uplist);
         return "process/bursement";
-    }
-*/
- /**
+    }*/
+
+    /**
      * 费用表单接收
-     *
      * @return
      * @throws IOException
      * @throws IllegalStateException
      */
 //   @Valid Bursement bursement 直接将页面传过来的bursement对象中的信息封装到里面去了
-    @RequestMapping("apply")
+   /* @RequestMapping("apply")
     public String apply(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Bursement bu, BindingResult br,
                         @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
         User lu = udao.findOne(userId);//申请人
@@ -163,10 +166,10 @@ public class ProcedureController {
             return "common/proce";
         }
         return "redirect:/xinxeng";
-    }
+    }*/
 
-/*
-    //出差申请单（2）
+
+   /* //出差申请单（2）
     @RequestMapping("evection")
     public String evection(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                            @RequestParam(value = "page", defaultValue = "0") int page,
@@ -218,8 +221,8 @@ public class ProcedureController {
                          @RequestParam(value = "size", defaultValue = "10") int size) {
         proservice.index6(model, userId, page, size);
         return "process/resign";
-    }
-*/
+    }*/
+
 //----------------------------------
 
 
@@ -980,12 +983,13 @@ public class ProcedureController {
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
-        List<SystemTypeList> systemTypeLists = typeServicev2.getSystemTypeListByTypeModel("aoa_bursement");
+        List<TypePO> typePOList = typeServicev2.getSystemTypeListByTypeModel("aoa_bursement");
+        List<TypeVO>typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
         //查找费用科目生成树
-        List<Subject> second = processServiceV2.getSubjectByParentId(1L);
-        List<Subject> sublist = processServiceV2.getSubjectByParentIdNot(1L);
-        processServiceV2.index6(model, userId, page, size);
-        model.addAttribute("uplist", systemTypeLists);
+        List<SubjectPO> second = processServiceV2.getSubjectByParentId(1L);
+        List<SubjectPO> sublist = processServiceV2.getSubjectByParentIdNot(1L);
+        processServiceV2.publicX6(model, userId, page, size);
+        model.addAttribute("uplist", typeVOList);
         model.addAttribute("second", second);
         model.addAttribute("sublist", sublist);
         return "process/bursement";
@@ -1043,7 +1047,7 @@ public class ProcedureController {
         return "redirect:/xinxeng";
     }
 */
-    /*
+
 
     //出差申请单（2）
     @RequestMapping("evection")
@@ -1051,9 +1055,10 @@ public class ProcedureController {
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型
-        List<SystemTypeList> systemTypeLists = typeServicev2.getSystemTypeListByTypeModel("aoa_evection");
-        processServiceV2.index6(model, userId, page, size);
-        model.addAttribute("outtype", systemTypeLists);
+        List<TypePO> typePOList = typeServicev2.getSystemTypeListByTypeModel("aoa_evection");
+        List<TypeVO>typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+        processServiceV2.publicX6(model, userId, page, size);
+        model.addAttribute("outtype", typeVOList);
         return "process/evection";
     }
 
@@ -1063,9 +1068,10 @@ public class ProcedureController {
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型
-        List<SystemTypeList> overtype = typeServicev2.getSystemTypeListByTypeModel("aoa_overtime");
-        processServiceV2.index6(model, userId, page, size);
-        model.addAttribute("overtype", overtype);
+        List<TypePO> typePOList = typeServicev2.getSystemTypeListByTypeModel("aoa_overtime");
+        List<TypeVO>typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+        processServiceV2.publicX6(model, userId, page, size);
+        model.addAttribute("overtype", typeVOList);
         return "process/overtime";
     }
 
@@ -1074,7 +1080,7 @@ public class ProcedureController {
     public String regular(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                           @RequestParam(value = "page", defaultValue = "0") int page,
                           @RequestParam(value = "size", defaultValue = "10") int size) {
-        processServiceV2.index6(model, userId, page, size);
+        processServiceV2.publicX6(model, userId, page, size);
         return "process/regular";
     }
 
@@ -1084,9 +1090,10 @@ public class ProcedureController {
                           @RequestParam(value = "page", defaultValue = "0") int page,
                           @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型
-        List<SystemTypeList> overtype = typeServicev2.getSystemTypeListByTypeModel("aoa_holiday");
-        processServiceV2.index6(model, userId, page, size);
-        model.addAttribute("overtype", overtype);
+        List<TypePO> typePOList = typeServicev2.getSystemTypeListByTypeModel("aoa_holiday");
+        List<TypeVO>typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+        processServiceV2.publicX6(model, userId, page, size);
+        model.addAttribute("overtype", typeVOList);
         return "process/holiday";
     }
 
@@ -1095,9 +1102,9 @@ public class ProcedureController {
     public String resign(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                          @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size) {
-        processServiceV2.index6(model, userId, page, size);
+        processServiceV2.publicX6(model, userId, page, size);
         return "process/resign";
     }
-*/
+
 
 }
