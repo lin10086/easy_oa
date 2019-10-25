@@ -4,6 +4,7 @@ import cn.gson.oasys.factory.PositionFactory;
 import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.model.entity.user.Position;
 import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.PositionPOExample;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +26,12 @@ public class PositionServiceV2 {
         return positionPOList;
     }
 
-    //根据部门ID获取职位信息(并转换成本身的职位信息）
-    public List<Position> getPositionByDeptId(Long deptId) {
-
+    //根据部门ID获取职位信息
+    public List<PositionPO> getPositionPOByDeptId(Long deptId) {
         PositionPOExample positionPOExample = new PositionPOExample();
         positionPOExample.createCriteria().andDeptidEqualTo(deptId);
         List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
-        List<Position> positionList = PositionFactory.create(positionPOList);
-        return positionList;
+        return positionPOList;
     }
 
     //根据职位ID获取职位信息并转换为本身的职位信息
@@ -41,21 +40,21 @@ public class PositionServiceV2 {
         return positionPO;
     }
 
-    //根据部门ID（1L)和职位名name是以经理结尾的（返回职位列表）
-    public List<Position> getPositionListByDeptIdAndNameLike() {
+    //职位名name不是以经理结尾的（返回职位列表）
+    public List<PositionPO> getPositionPOListByDeptIdAndNameNotLike() {
         PositionPOExample positionPOExample = new PositionPOExample();
-        positionPOExample.createCriteria().andDeptidEqualTo(1L)
-                .andNameLike("%经理");
+        positionPOExample.createCriteria().andNameNotLike("%经理");
         List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
-        List<Position> positionList = PositionFactory.create(positionPOList);
-        return positionList;
+        return positionPOList;
     }
-    //已知用户查找用户的职位信息
-//    public Position getPositionByUser(User user){
-//        PositionPOExample positionPOExample = new PositionPOExample();
-//        positionPOMapper.selectByPrimaryKey(user.)
-//    }
 
+    // 根据部门ID（1L)和职位名name不是以经理结尾的（返回职位列表）
+    public List<PositionPO> getPositionPOListByDeptIdAndNameLike(Long deptId) {
+        PositionPOExample positionPOExample = new PositionPOExample();
+        positionPOExample.createCriteria().andNameNotLike("%经理").andDeptidEqualTo(deptId);
+        List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
+        return positionPOList;
+    }
 
     //插入一个职位
     public Integer insertPosition(Position position) {

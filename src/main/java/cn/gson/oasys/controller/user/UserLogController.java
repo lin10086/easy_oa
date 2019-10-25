@@ -66,7 +66,7 @@ public class UserLogController {
     private UserLoginRecordServiceV2 userLoginRecordServiceV2;
     @Resource
     private UserServiceV2 userServiceV2;
-/*
+
     //显示本周的每天的记录
     @RequestMapping("countweeklogin")
     public String dfsa(HttpServletResponse response) throws IOException {
@@ -151,7 +151,7 @@ public class UserLogController {
         response.getWriter().write(json);
         return null;
     }
-*/
+
 
     //用来查找用户记录(用户管理》在线用户
     @RequestMapping("morelogrecord")
@@ -198,7 +198,7 @@ public class UserLogController {
     //自己写的在线用户列表
     public void getUserLoginRecord(int page, HttpSession session, Model model, String basekey, String time,
                                    String icon) {
-        long userid = Long.valueOf(session.getAttribute("userId").toString());
+        long userid = Long.valueOf(session.getAttribute("userId")+"");
         setTwo(model, basekey, time, icon);
         // 把用户根据时间降序并分页
         List<UserLoginRecordPO> userLoginRecordPOList = userLoginRecordServiceV2.userLoginPage(page, userid, time);

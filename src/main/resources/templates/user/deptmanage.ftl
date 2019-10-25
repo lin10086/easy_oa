@@ -1,5 +1,5 @@
 <#include "/common/commoncss.ftl">
-<#include "/common/modalTip.ftl"/> 
+<#include "/common/modalTip.ftl"/>
 <style type="text/css">
 a {
 	color: black;
@@ -59,15 +59,17 @@ a:hover {
 							<tr>
 								<td><span>${dept.deptName}</span></td>
 								<td><span>${dept.deptTel}</span></td>
-								<td><span>${dept.email}</span></td>
-								<td><span>${dept.deptAddr}</span></td>
+								<#--<td><span>${dept.email}</span></td>-->
+								<td><span>${dept.deptEmail}</span></td>
+								<td><span>${dept.deptAddress}</span></td>
+								<#--<td><span>${dept.deptAddr}</span></td>-->
 								<td>
-									<a href="deptedit?dept=${dept.deptId}" class="label xiugai">
-									<span class="glyphicon glyphicon-edit"></span> 修改</a> 
-									<a href="readdept?deptid=${dept.deptId}" class="label xiugai">
+									<a href="deptedit?deptId=${dept.deptId}" class="label xiugai">
+									<span class="glyphicon glyphicon-edit"></span> 修改</a>
+									<a href="readDept?deptId=${dept.deptId}" class="label xiugai">
 										<span class="glyphicon glyphicon-search"></span> 人事调动
 									</a>
-									<a href="readdept?deptid=${dept.deptId}" class="label shanchu"><span
+									<a href="deleteDept?deleteDeptId=${dept.deptId}" class="label shanchu"><span
 										class="glyphicon glyphicon-remove"></span> 删除</a></td>
 							</tr>
 						</#list>

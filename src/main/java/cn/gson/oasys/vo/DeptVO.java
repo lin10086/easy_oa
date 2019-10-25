@@ -12,7 +12,7 @@ public class DeptVO {
     private String deptName;	//部门名字  非空 唯一
     private String deptTel;		//部门电话
     private String deptFax;		//部门传真
-    private String email;		//部门email
+    private String deptEmail;		//部门email
     private String deptAddress;	//部门地址
     private Long deptManager;   //部门领导ID
     private Date startTime;		//部门上班时间

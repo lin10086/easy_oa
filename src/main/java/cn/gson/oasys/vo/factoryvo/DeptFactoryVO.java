@@ -16,7 +16,7 @@ public class DeptFactoryVO {
         deptVO.setDeptFax(deptPO.getDeptFax());
         deptVO.setDeptName(deptPO.getDeptName());
         deptVO.setDeptTel(deptPO.getDeptTel());
-        deptVO.setEmail(deptPO.getEmail());
+        deptVO.setDeptEmail(deptPO.getEmail());
         deptVO.setStartTime(deptPO.getStartTime());
         deptVO.setEndTime(deptPO.getEndTime());
         return deptVO;

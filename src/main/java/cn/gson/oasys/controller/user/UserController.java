@@ -294,7 +294,7 @@ public class UserController {
             model.addAttribute("user", userVO);
         }
 
-        List<DeptPO> deptPOList = deptServiceV2.getDeptList();
+        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
         List<DeptVO>deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
 
         List<PositionPO> positionPOList = positionServiceV2.getPositionList();
@@ -339,7 +339,7 @@ public class UserController {
                                @RequestParam("roleid") Long roleId,
                                @RequestParam(value = "isbackpassword", required = false) boolean isbackpassword,
                                Model model) throws PinyinException {
-        DeptPO deptPO = deptServiceV2.getDeptbyDeptId(deptId);
+        DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(deptId);
         DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
         PositionPO positionPO = positionServiceV2.getPositionByPositionId(positionId);
         PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);

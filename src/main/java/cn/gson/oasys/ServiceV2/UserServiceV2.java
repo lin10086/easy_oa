@@ -112,6 +112,14 @@ public class UserServiceV2 {
         }
         return map;
     }
+    public Map<Long, PositionPO> userIdAndPositionPO(List<UserPO> userPOList) {
+        Map<Long, PositionPO> map = new HashMap<>();
+        for (UserPO userPO : userPOList) {
+            PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
+            map.put(userPO.getUserId(), positionPO);
+        }
+        return map;
+    }
 
     //把用户的ID和用户的角色对应起来放到map里面
     public Map<Long, Role> userIdAndRole(List<UserPO> userPOList) {
@@ -149,12 +157,6 @@ public class UserServiceV2 {
         return userPO;
     }
 
-    //根据用户ID查找用户信息并转换为本身的用户
-    public User getUserByUserId(Long userId) {
-        UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
-        User user = UserFactory.create(userPO);
-        return user;
-    }
 //通过用户名查找用户
     public UserPO getUserByUsername(String username){
         UserPOExample userPOExample = new UserPOExample();
@@ -163,17 +165,22 @@ public class UserServiceV2 {
         return userPOList.get(0);
     }
 
-    //更新用户部门ID和职位ID（把刚用户的部门和职位的信息保存到用户里面)
-    public void updateUser(Long userId, Dept dept, Position position) {
-
+    //更新userPO里面的，部门ID和职位ID
+    public void updateUserPO(Long userId, Long deptVOId,long positionVOId) {
         UserPO userPO = new UserPO();
-        userPO.setDeptId(dept.getDeptId());
-        userPO.setPositionId(position.getId());
+        userPO.setDeptId(deptVOId);
+        userPO.setPositionId(positionVOId);
         UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserIdEqualTo(userId);
         userPOMapper.updateByExampleSelective(userPO, userPOExample);
     }
-
+//更新用户的职位信息
+    public void updateUserPOPositionId(Long userPOId,Long positionId){
+        UserPO userPO = new UserPO();
+        userPO.setUserId(userPOId);
+        userPO.setPositionId(positionId);
+        userPOMapper.updateByPrimaryKeySelective(userPO);
+    }
     //更新用户isLock字段
     public void updateUserIsLock(Long userId) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
@@ -183,11 +190,9 @@ public class UserServiceV2 {
     }
 
     //根据部门表里的deptmanager（实际上是用户ID）查找用户信息
-    public User getUserBydeptManager(Dept dept) {
-
-        UserPO userPO = userPOMapper.selectByPrimaryKey(dept.getDeptmanager());
-        User user = UserFactory.create(userPO);
-        return user;
+    public UserPO getUserBydeptManager(Long deptManager) {
+        UserPO userPO = userPOMapper.selectByPrimaryKey(deptManager);
+        return userPO;
     }
 
     /**
@@ -196,11 +201,10 @@ public class UserServiceV2 {
      * @param dept
      * @return userPOList
      */
-    public List<UserPO> getUserByDeptId(Dept dept) {
+    public List<UserPO> getUserByDeptId(Long deptId) {
         UserPOExample userPOExample = new UserPOExample();
-        userPOExample.createCriteria().andDeptIdEqualTo(dept.getDeptId());
+        userPOExample.createCriteria().andDeptIdEqualTo(deptId);
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
-
         return userPOList;
     }
 
