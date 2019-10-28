@@ -3,11 +3,13 @@ package cn.gson.oasys.ServiceV2;
 import cn.gson.oasys.factory.DeptFactory;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.PositionPOMapper;
+import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.po.DeptPO;
 
 import cn.gson.oasys.model.po.DeptPOExample;
 import cn.gson.oasys.model.po.PositionPO;
+import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.DeptVO;
 import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,8 @@ public class DeptServiceV2 {
     private DeptPOMapper deptPOMapper;
     @Resource
     private PositionPOMapper positionPOMapper;
+    @Resource
+    private UserPOMapper userPOMapper;
 
     //获取所有的部门信息（部门列表）
     public List<DeptPO> getDeptPOList() {
@@ -63,12 +67,26 @@ public class DeptServiceV2 {
         }
         deptPOMapper.deleteByPrimaryKey(deleteDeptId);
     }
+
     //更新部门领导信息
-    public void updateDeptManage(Long deptPOId,Long newManageId){
+    public void updateDeptManage(Long deptPOId, Long newManageId) {
         DeptPO deptPO = new DeptPO();
         deptPO.setDeptId(deptPOId);
         deptPO.setDeptmanager(newManageId);
         deptPOMapper.updateByPrimaryKeySelective(deptPO);
+    }
+
+    /**
+     * 根据用户ID找部门名
+     *
+     * @param userId
+     * @return
+     */
+    public String getDeptNameByUserId(Long userId) {
+        UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
+        DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+        String deptName = deptPO.getDeptName();
+        return deptName;
     }
 }
 

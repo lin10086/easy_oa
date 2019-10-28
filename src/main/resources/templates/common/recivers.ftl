@@ -17,17 +17,17 @@
 											</tr>
 										</thead>
 										<tbody>
-											<#list emplist as emp>
+											<#list userVOList as userVO>
 											<tr class="row">
 												<td class=" col-xs-1">
 													<span class="labels"><label><input name="id" type="checkbox"><i>✓</i></label></span>
 												</td>
 												<td class=" col-xs-1">
 													<span class="imgs center-block">
-														<#if emp.imgPath?? && emp.imgPath!=''  >
+														<#if userVO.imgPath?? && userVO.imgPath!=''  >
 														<img style="width: 30px;height: 30px;"
 															class="profile-user-img img-responsive img-circle"
-															src="/image/${emp.imgPath}" />
+															src="/image/${userVO.imgPath}" />
 														<#else>
 														<img style="width: 30px;height: 30px;"
 															class="profile-user-img img-responsive img-circle"
@@ -36,19 +36,19 @@
 														</#if>	
 															</span>
 												</td>
-												<#list deptlist as dept>
-												<#if emp.dept.deptId==dept.deptId>
-												<td class="col-xs-2">${dept.deptName}</td>
+												<#list deptVOList as deptVO>
+												<#if userVO.deptVO.deptId==deptVO.deptId>
+												<td class="col-xs-2">${deptVO.deptName}</td>
 												</#if>
 												</#list>
-												<td class=" col-xs-2">${emp.realName} </td>
-												<td class="col-xs-2 na">${emp.userName}</td>
-												<#list poslist as pos>
-												<#if emp.position.id==pos.id>
-												<td class=" col-xs-2">${pos.name}</td>
+												<td class=" col-xs-2">${userVO.realName} </td>
+												<td class="col-xs-2 na">${userVO.userName}</td>
+												<#list positionVOList as positionVO>
+												<#if userVO.positionVO.positionId==positionVO.positionId>
+												<td class=" col-xs-2">${positionVO.positionName}</td>
 												</#if>
 												</#list>
-												<td class=" col-xs-2">${emp.userTel}</td>
+												<td class=" col-xs-2">${userVO.userTel}</td>
 
 											</tr>
 											</#list>

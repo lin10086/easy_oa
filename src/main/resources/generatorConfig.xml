@@ -104,7 +104,7 @@
             <columnOverride column="detailsburse_id" javaType="Long"/>
         </table>
         <!--流程主表 -->
-        <table tableName="aoa_ProcessList" domainObjectName="ProcessListPO">
+        <table tableName="aoa_process_list" domainObjectName="ProcessListPO">
             <generatedKey column="process_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="process_id" javaType="Long"/>
         </table>
@@ -113,5 +113,11 @@
             <generatedKey column="attachment_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="attachment_id" javaType="Long"/>
         </table>
+        <!--审核表 -->
+        <table tableName="aoa_reviewed" domainObjectName="ReviewedPO">
+            <generatedKey column="reviewed_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="reviewed_id" javaType="Long"/>
+        </table>
+
     </context>
 </generatorConfiguration>

@@ -111,13 +111,13 @@ cursor: pointer;
 				</tr>
 				<tr >
 					<td class="title"><label class="control-label">标题</label></td>
-					<td  colspan="6"><input type="text" class="form-control inpu" name="proId.processName"/></td>
+					<td  colspan="6"><input type="text" class="form-control inpu" name="processListVO.processName"/></td>
 					
 					<td class="title"><span >紧急程度</span></td>
 					<td colspan="6">
-						<select class="form-control inpu" name="proId.deeply">
-							<#list harrylist as harry>
-							<option value="${harry.typeId}">${harry.typeName}</option>
+						<select class="form-control inpu" name="processListVO.deeplyId">
+							<#list typeVOList as type>
+							<option value="${type.typeId}">${type.typeName}</option>
 							</#list>
 						</select>
 					</td>
@@ -129,7 +129,7 @@ cursor: pointer;
 					readonly="readonly" style="background-color:#fff;" value="${username}"/></td>
 					<td class="title" ><label class="control-label">证明人</label></td>
 					<td  colspan="6"><input type="text" class="form-control inpu cheng" 
-					readonly="readonly" style="background-color:#fff;" name="namemoney"/>
+					readonly="readonly" style="background-color:#fff;" name="nameMoney"/>
 						<div class="reciver">
 						<span class="label label-success glyphicon glyphicon-plus"
 					>通讯录</span>
@@ -143,7 +143,7 @@ cursor: pointer;
 					<td class="title" ><label class="control-label">报销方式</label></td>
 					<td colspan="6">
 					<select class="form-control inpu" name="typeId">
-					<#list uplist as list>
+					<#list typeVOList as list>
 					<option value="${list.typeId}">${list.typeName}</option>
 					</#list>
 					</select>
@@ -152,7 +152,7 @@ cursor: pointer;
 				<tr >
 				<td class="title" ><label class="control-label">审核人员</label></td>
 					<td  colspan="6"><input type="text" class="form-control inpu shen"
-					 readonly="readonly" style="background-color:#fff;" name="username"placeholder="请选自己的上级"/>
+					 readonly="readonly" style="background-color:#fff;" name="auditName"placeholder="请选自己的上级"/>
 					<div class="reciver">
 						<span class="label label-success glyphicon glyphicon-plus">通讯录</span>
 					</div>
@@ -168,7 +168,7 @@ cursor: pointer;
 				</tr>
 				<tr >
 					<td class="title" ><label class="control-label">报销事由</label></td>
-					<td  colspan="6"><textarea class="form-control text" name="proId.processDescribe"></textarea></td>
+					<td  colspan="6"><textarea class="form-control text" name="processListVO.processDescribe"></textarea></td>
 				</tr>
 				<tr >
 					<td class="title"><label class="control-label">报销明细</label></td>
@@ -193,17 +193,17 @@ cursor: pointer;
 							<tbody class="tbody">
 							<tr class="tr">
 									<td class="chebox" colspan="2"><span class="labels"><label><input type="checkbox" name="items" class="val" ><i>✓</i></label></span></td>
-									<td colspan="2"><input type="text" class="form-control inpu shijian" name="details[0].produceTime" /></td>
+									<td colspan="2"><input type="text" class="form-control inpu shijian" name="detailsBurseVOList[0].produceTime" /></td>
 									<td colspan="2">
-										<input type="text" class="form-control inpu" name="details[0].subject"
+										<input type="text" class="form-control inpu" name="detailsBurseVOList[0].subject"
 										readonly="readonly" style="background-color:#fff;"/>
 										<div class="sub">
 											<i class="glyphicon glyphicon-search"></i>
 										</div>
 									</td>
-									<td colspan="2"><input type="text" class="form-control inpu" name="details[0].descript"/></td>
-									<td colspan="2"><input type="text" class="form-control inpu" name="details[0].invoices"/></td>
-									<td colspan="2" class="tdrig"><input type="text" class="form-control inpu"	name="details[0].detailmoney"/></td>
+									<td colspan="2"><input type="text" class="form-control inpu" name="detailsBurseVOList[0].descript"/></td>
+									<td colspan="2"><input type="text" class="form-control inpu" name="detailsBurseVOList[0].invoices"/></td>
+									<td colspan="2" class="tdrig"><input type="text" class="form-control inpu"	name="detailsBurseVOList[0].detailMoney"/></td>
 									
 								</tr>
 								

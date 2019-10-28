@@ -1,8 +1,6 @@
 package cn.gson.oasys.controller.process;
 
-import cn.gson.oasys.ServiceV2.ProcessServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.*;
 import cn.gson.oasys.model.dao.attendcedao.AttendceDao;
 import cn.gson.oasys.model.dao.notedao.AttachmentDao;
 import cn.gson.oasys.model.dao.plandao.TrafficDao;
@@ -10,16 +8,24 @@ import cn.gson.oasys.model.dao.processdao.*;
 import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.UserDao;
+import cn.gson.oasys.model.entity.attendce.Attends;
+import cn.gson.oasys.model.entity.note.Attachment;
 import cn.gson.oasys.model.entity.process.*;
+import cn.gson.oasys.model.entity.system.SystemStatusList;
 import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.User;
-import cn.gson.oasys.model.po.SubjectPO;
-import cn.gson.oasys.model.po.TypePO;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.services.process.ProcessService;
-import cn.gson.oasys.vo.TypeVO;
+import cn.gson.oasys.vo.*;
+import cn.gson.oasys.vo.factoryvo.ProcessListFactoryVO;
+import cn.gson.oasys.vo.factoryvo.StatusFactoryVO;
 import cn.gson.oasys.vo.factoryvo.TypeFactoryVO;
+import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
+import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ResourceUtils;
@@ -28,12 +34,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.*;
 
 @Controller
@@ -85,6 +97,10 @@ public class ProcedureController {
     private ProcessServiceV2 processServiceV2;
     @Resource
     private UserServiceV2 userServiceV2;
+    @Resource
+    private RoleServiceV2 roleServiceV2;
+    @Resource
+    private StatusServiceV2 statusServiceV2;
 
     //	@Value("${attachment.roopath}")
     private String rootpath;
@@ -108,8 +124,8 @@ public class ProcedureController {
     }
     //------------------------------------
 
-    //费用报销表单（1）
-   /* @RequestMapping("burse")
+   /* //费用报销表单（1）
+    @RequestMapping("burse")
     public String bursement(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -124,41 +140,46 @@ public class ProcedureController {
         model.addAttribute("sublist", sublist);
         model.addAttribute("uplist", uplist);
         return "process/bursement";
-    }*/
+    }
 
-    /**
+    *//**
      * 费用表单接收
      * @return
      * @throws IOException
      * @throws IllegalStateException
-     */
-//   @Valid Bursement bursement 直接将页面传过来的bursement对象中的信息封装到里面去了
-   /* @RequestMapping("apply")
+     *//*
+
+//   @Valid Bursement bursement 直接将页面传过来的bursement对象中的信息封装到里面去了(1-1)
+    @RequestMapping("apply")
     public String apply(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Bursement bu, BindingResult br,
                         @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
         User lu = udao.findOne(userId);//申请人
         User reuser = udao.findByUserName(bu.getUsername());//审核人(从费用报销表里获取审核人员名）
         User zhuti = udao.findByUserName(bu.getNamemoney());//证明人
-        Integer allinvoice = 0;
-        Double allmoney = 0.0;
+        Integer allinvoice = 0;//票据总数
+        Double allmoney = 0.0;//总计金额
         Long roleid = lu.getRole().getRoleId();//申请人角色id
         Long fatherid = lu.getFatherId();//申请人上司id
-        Long userid = reuser.getUserId();//审核人userid
+        Long userid = reuser.getUserId();//审核人userd
         String val = req.getParameter("val");
+        //角色ID大于等于3，申请人的上司ID和审核人ID
         if (roleid >= 3L && Objects.equals(fatherid, userid)) {
-            List<DetailsBurse> mm = bu.getDetails();
+
+            List<DetailsBurse> mm = bu.getDetails();//获取费用报销明细
             for (DetailsBurse detailsBurse : mm) {
-                allinvoice += detailsBurse.getInvoices();
-                allmoney += detailsBurse.getDetailmoney();
-                detailsBurse.setBurs(bu);
+                allinvoice += detailsBurse.getInvoices();//获取票据总数
+                allmoney += detailsBurse.getDetailmoney();//报销金额
+                detailsBurse.setBurs(bu);//设置报销明细表里的费用报销
             }
-            //在报销费用表里面set票据总数和总金额
+            //在报销费用表里面set票据总数和总金额，证明人
             bu.setAllinvoices(allinvoice);
             bu.setAllMoney(allmoney);
             bu.setUsermoney(zhuti);
             //set主表
-            ProcessList pro = bu.getProId();
+            ProcessList pro = bu.getProId();//从报销表里获取主表
+            //主表，费用报销，申请人，上传的票据路径，审核人的用户名
             proservice.index5(pro, val, lu, filePath, reuser.getUserName());
+            //更新费用报销表
             budao.save(bu);
             //存审核表
             proservice.index7(reuser, pro);
@@ -166,10 +187,10 @@ public class ProcedureController {
             return "common/proce";
         }
         return "redirect:/xinxeng";
-    }*/
+    }
 
 
-   /* //出差申请单（2）
+    //出差申请单（2）
     @RequestMapping("evection")
     public String evection(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                            @RequestParam(value = "page", defaultValue = "0") int page,
@@ -223,6 +244,7 @@ public class ProcedureController {
         return "process/resign";
     }*/
 
+
 //----------------------------------
 
 
@@ -230,8 +252,8 @@ public class ProcedureController {
      * 查找出自己的申请
      *
      * @return
-     *//*
-    @RequestMapping("flowmanage")
+     */
+  /*  @RequestMapping("flowmanage")
     public String flowManage(@SessionAttribute("userId") Long userId, Model model,
                              @RequestParam(value = "page", defaultValue = "0") int page,
                              @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -248,10 +270,11 @@ public class ProcedureController {
         model.addAttribute("url", "shenser");
         return "process/flowmanage";
     }
+*/
 
-    *//**
+    /**
      * 申请人查看流程条件查询
-     *//*
+     */
     @RequestMapping("shenser")
     public String ser(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
                       @RequestParam(value = "page", defaultValue = "0") int page,
@@ -261,7 +284,7 @@ public class ProcedureController {
         if (!StringUtil.isEmpty(req.getParameter("val"))) {
             val = req.getParameter("val");
         }
-        Page<ProcessList> pagelist = null;
+        org.springframework.data.domain.Page<ProcessList> pagelist = null;
         List<ProcessList> prolist = null;
         SystemStatusList status = sdao.findByStatusModelAndStatusName("aoa_process_list", val);
         if (StringUtil.isEmpty(val)) {
@@ -288,17 +311,17 @@ public class ProcedureController {
         return "process/managetable";
     }
 
-    *//**
+    /**
      * 流程审核
      *
      * @return
-     *//*
+     */
     @RequestMapping("audit")
     public String auding(@SessionAttribute("userId") Long userId, Model model,
                          @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size) {
         User user = udao.findOne(userId);
-        Page<AubUser> pagelist = proservice.index(user, page, size, null, model);
+        org.springframework.data.domain.Page<AubUser> pagelist = proservice.index(user, page, size, null, model);
         List<Map<String, Object>> prolist = proservice.index2(pagelist, user);
         model.addAttribute("page", pagelist);
         model.addAttribute("prolist", prolist);
@@ -307,11 +330,11 @@ public class ProcedureController {
         return "process/auditing";
     }
 
-    *//**
+    /**
      * 流程审核条件查询
      *
      * @return
-     *//*
+     */
     @RequestMapping("serch")
     public String serch(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
                         @RequestParam(value = "page", defaultValue = "0") int page,
@@ -332,7 +355,7 @@ public class ProcedureController {
     }
 
 
-    *//**
+    /* *//**
      * 查看详细
      *
      * @return
@@ -429,12 +452,13 @@ public class ProcedureController {
 
         return "process/serch";
     }
+*/
 
-    *//**
+    /**
      * 进入审核页面
      *
      * @return
-     *//*
+     */
     @RequestMapping("auditing")
     public String auditing(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
                            @RequestParam(value = "page", defaultValue = "0") int page,
@@ -475,11 +499,11 @@ public class ProcedureController {
 
     }
 
-    *//**
+    /**
      * 审核确定的页面
      *
      * @return
-     *//*
+     */
     @RequestMapping("susave")
     public String save(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req, Reviewed reviewed) {
         User u = udao.findOne(userId);
@@ -652,7 +676,7 @@ public class ProcedureController {
         return "process/evectionmoney";
     }
 
-    *//**
+    /**
      * 出差费用表单接收
      *
      * @param model
@@ -661,7 +685,7 @@ public class ProcedureController {
      * @param page
      * @param size
      * @return
-     *//*
+     */
     @RequestMapping("moneyeve")
     public String moneyeve(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid EvectionMoney eve, BindingResult br,
                            @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
@@ -706,8 +730,7 @@ public class ProcedureController {
     }
 
 
-
-    *//**
+    /**
      * 出差申请表单接收
      *
      * @param model
@@ -718,7 +741,7 @@ public class ProcedureController {
      * @return
      * @throws IOException
      * @throws IllegalStateException
-     *//*
+     */
     @RequestMapping("evec")
     public String evec(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Evection eve, BindingResult br,
                        @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
@@ -743,8 +766,7 @@ public class ProcedureController {
     }
 
 
-
-    *//**
+    /**
      * 加班申请接收
      *
      * @param model
@@ -753,7 +775,7 @@ public class ProcedureController {
      * @param page
      * @param size
      * @return
-     *//*
+     */
     @RequestMapping("over")
     public String over(HttpServletRequest req, @Valid Overtime eve, BindingResult br,
                        @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
@@ -779,8 +801,7 @@ public class ProcedureController {
     }
 
 
-
-    *//**
+    /**
      * 请假申请接收
      *
      * @param model
@@ -789,7 +810,7 @@ public class ProcedureController {
      * @param page
      * @param size
      * @return
-     *//*
+     */
     @RequestMapping("holi")
     public String holi(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Holiday eve, BindingResult br,
                        @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
@@ -832,7 +853,7 @@ public class ProcedureController {
     }
 
 
-    *//**
+    /**
      * 转正申请接收
      *
      * @param model
@@ -841,7 +862,7 @@ public class ProcedureController {
      * @param page
      * @param size
      * @return
-     *//*
+     */
     @RequestMapping("regu")
     public String regu(HttpServletRequest req, @Valid Regular eve, BindingResult br,
                        @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
@@ -873,8 +894,7 @@ public class ProcedureController {
     }
 
 
-
-    *//**
+    /**
      * 离职申请接收
      *
      * @param model
@@ -883,7 +903,7 @@ public class ProcedureController {
      * @param page
      * @param size
      * @return
-     *//*
+     */
     @RequestMapping("res")
     public String res(HttpServletRequest req, @Valid Resign eve, BindingResult br,
                       @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
@@ -909,9 +929,9 @@ public class ProcedureController {
 
     }
 
-    *//**
+    /**
      * 删除
-     *//*
+     */
     @RequestMapping("sdelete")
     public String dele(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model) {
         User lu = udao.findOne(userId);//审核人
@@ -927,12 +947,12 @@ public class ProcedureController {
 
     }
 
-    *//**
+    /**
      * 下载文件
      *
      * @param response
      * @param fileid
-     *//*
+     */
     @RequestMapping("file")
     public void downFile(HttpServletResponse response, @RequestParam("fileid") Long fileid) {
         try {
@@ -947,14 +967,12 @@ public class ProcedureController {
         }
     }
 
-    */
-
     /**
      * 图片预览
      *
      * @param response
      * @param fileid
-     *//*
+     */
     @RequestMapping("show/**")
     public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
             throws IOException {
@@ -968,85 +986,104 @@ public class ProcedureController {
         ServletOutputStream sos = response.getOutputStream();
         FileInputStream input = new FileInputStream(f.getPath());
         byte[] data = new byte[(int) f.length()];
-        IOUtils.readFully(input, data);
+//        IOUtils.readFully(input, data);
         // 将文件流输出到浏览器
-        IOUtils.write(data, sos);
+//        IOUtils.write(data, sos);
         input.close();
         sos.close();
     }
-*/
+
     //		================================================================
 
-//费用报销表单(1)
+    //费用报销表单(1)
     @RequestMapping("burse")
     public String bursement(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
-        List<TypePO> typePOList = typeServicev2.getSystemTypeListByTypeModel("aoa_bursement");
-        List<TypeVO>typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_bursement");
+        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
         //查找费用科目生成树
         List<SubjectPO> second = processServiceV2.getSubjectByParentId(1L);
         List<SubjectPO> sublist = processServiceV2.getSubjectByParentIdNot(1L);
         processServiceV2.publicX6(model, userId, page, size);
-        model.addAttribute("uplist", typeVOList);
+        model.addAttribute("typeVOList", typeVOList);
         model.addAttribute("second", second);
         model.addAttribute("sublist", sublist);
         return "process/bursement";
     }
-/*
+
 //    费用表单接收(1-1)
+
+    /**
+     * 费用表单接收
+     *
+     * @return
+     * @throws IOException
+     * @throws IllegalStateException
+     */
+//   @Valid Bursement bursement 直接将页面传过来的bursement对象中的信息封装到里面去了(1-1)
     @RequestMapping("apply")
-    public String apply(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Bursement bu, BindingResult br,
+    public String apply(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid BursementVO bu, BindingResult br,
                         @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
-        UserPO lu = userServiceV2.getUserPOByUserId(userId);//根据用户ID查询用户信息
-        UserPO checkUser = userServiceV2.getUserByUsername(bu.getUsername());//根据审核人名查询审核人信息
-        UserPO voucher = userServiceV2.getUserByUsername(bu.getNamemoney());//根据证明人名查询证明人信息
-        Integer allinvoice = 0;
-        Double allmoney = 0.0;
-        Long roleId =lu.getRoleId();//获取申请人的角色ID
-        Long luFfatherId = lu.getFatherId();//获取申请人的上司ID
-        Long checkUserId = checkUser.getUserId();//获取审核人ID
-        String val = req.getParameter("val");
-        //roleId:1是超级管理员2是CEO
-        if(roleId>=3L&&Objects.equals(luFfatherId,checkUserId)){
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
 
-
-        }
-//        User user = userServiceV2.getUserByUserId(userId);
+//        RolePO rolePO = roleServiceV2.getRoleByRoleId(userPO.getRoleId());
+//        RoleVO roleVO = RoleFactoryVO.createRoleVO(rolePO);
+        UserVO lu = UserFactoryVO.createUserVO(userPO);
+//        lu.setRoleVO(roleVO);
 
 //        User lu = udao.findOne(userId);//申请人
-//        User reuser = udao.findByUserName(bu.getUsername());//审核人
-//        User zhuti = udao.findByUserName(bu.getNamemoney());//证明人
 
-        Long roleid = lu.getRole().getRoleId();//申请人角色id
-        Long fatherid = lu.getFatherId();//申请人父id
-        Long userid = reuser.getUserId();//审核人userid
+        UserPO reUserPO = userServiceV2.getUserPOByUsername(bu.getAuditName());
+        UserVO reuser = UserFactoryVO.createUserVO(reUserPO);
+//        User reuser = udao.findByUserName(bu.getUsername());//审核人(从费用报销表里获取审核人员名）
+
+        UserPO zhutiPO = userServiceV2.getUserPOByUsername(bu.getNameMoney());
+        UserVO zhuti = UserFactoryVO.createUserVO(zhutiPO);
+//        User zhuti = udao.findByUserName(bu.getNameMoney());//证明人
+
+        Integer allinvoice = 0;//票据总数
+        Double allmoney = 0.0;//总计金额
+        Long roleId = userPO.getRoleId();
+//        Long roleid = lu.getRole().getRoleId();//申请人角色id
+        Long fatherId = lu.getFatherId();
+//        Long fatherid = lu.getFatherId();//申请人上司id
+
+        Long reUserVOId = reuser.getUserId();
+//        Long userid = reuser.getUserId();//审核人userid
         String val = req.getParameter("val");
-        //角色ID》=3，申请人上司ID，审核人ID
-        if (roleid >= 3L && Objects.equals(fatherid, userid)) {
-            List<DetailsBurse> mm = bu.getDetails();
-            for (DetailsBurse detailsBurse : mm) {
-                allinvoice += detailsBurse.getInvoices();
-                allmoney += detailsBurse.getDetailmoney();
-                detailsBurse.setBurs(bu);
+        //角色ID大于等于3，申请人的上司ID和审核人ID
+        if (roleId >= 3L && Objects.equals(fatherId, reUserVOId)) {
+            List<DetailsBurseVO> detailsBurseVOList = bu.getDetailsBurseVOList();
+//            List<DetailsBurse> mm = bu.getDetails();//获取费用报销明细
+            for (DetailsBurseVO detailsBurseVO : detailsBurseVOList) {
+                allinvoice += detailsBurseVO.getInvoices();//获取票据总数
+                allmoney += detailsBurseVO.getDetailMoney();//报销金额
+                detailsBurseVO.setBursementVO(bu);//设置报销明细表里的费用报销
             }
-            //在报销费用表里面set票据总数和总金额
+            //在报销费用表里面set票据总数和总金额，证明人
             bu.setAllinvoices(allinvoice);
             bu.setAllMoney(allmoney);
-            bu.setUsermoney(zhuti);
+            bu.setUserVOMoney(zhuti);
             //set主表
-            ProcessList pro = bu.getProId();
-            proservice.index5(pro, val, lu, filePath, reuser.getUserName());
-            budao.save(bu);
+            ProcessListVO pro = bu.getProcessListVO();//从报销表里获取主表
+
+            //主表，费用报销，申请人，上传的票据路径，审核人的用户名
+//            proservice.index5(pro, val, lu, filePath, reuser.getUserName());
+            processServiceV2.publicX5(pro, val, lu, filePath, reuser.getUserName());
+            //存费用报销表
+            processServiceV2.insertBursementVO(pro, zhuti, bu, allinvoice, allmoney, lu);
+//            budao.save(bu);
             //存审核表
-            proservice.index7(reuser, pro);
+            processServiceV2.insertReviewedVO(reuser, pro);
+//            proservice.index7(reuser, pro);
         } else {
             return "common/proce";
         }
+        //主表没有插入数据库
         return "redirect:/xinxeng";
     }
-*/
 
 
     //出差申请单（2）
@@ -1055,8 +1092,8 @@ public class ProcedureController {
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型
-        List<TypePO> typePOList = typeServicev2.getSystemTypeListByTypeModel("aoa_evection");
-        List<TypeVO>typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_evection");
+        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
         processServiceV2.publicX6(model, userId, page, size);
         model.addAttribute("outtype", typeVOList);
         return "process/evection";
@@ -1068,8 +1105,8 @@ public class ProcedureController {
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型
-        List<TypePO> typePOList = typeServicev2.getSystemTypeListByTypeModel("aoa_overtime");
-        List<TypeVO>typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_overtime");
+        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
         processServiceV2.publicX6(model, userId, page, size);
         model.addAttribute("overtype", typeVOList);
         return "process/overtime";
@@ -1090,8 +1127,8 @@ public class ProcedureController {
                           @RequestParam(value = "page", defaultValue = "0") int page,
                           @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型
-        List<TypePO> typePOList = typeServicev2.getSystemTypeListByTypeModel("aoa_holiday");
-        List<TypeVO>typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_holiday");
+        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
         processServiceV2.publicX6(model, userId, page, size);
         model.addAttribute("overtype", typeVOList);
         return "process/holiday";
@@ -1104,6 +1141,151 @@ public class ProcedureController {
                          @RequestParam(value = "size", defaultValue = "10") int size) {
         processServiceV2.publicX6(model, userId, page, size);
         return "process/resign";
+    }
+
+
+    /**
+     * 流程管理》我的申请,查找出自己的申请
+     *
+     * @param userId 流程申请人ID
+     * @param model
+     * @param page
+     * @param size
+     * @return
+     */
+    @RequestMapping("flowmanage")
+    public String flowManage(@SessionAttribute("userId") Long userId, Model model,
+                             @RequestParam(value = "page", defaultValue = "0") int page,
+                             @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<ProcessListPO> processListPOList = processServiceV2.getProcessListPOListByUserId(userId, page, size);
+
+        List<ProcessListVO> processListVOList = ProcessListFactoryVO.createProcessListVOList(processListPOList);
+
+        PageInfo<ProcessListPO> pageInfo = new PageInfo<>(processListPOList);
+
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_process_list");
+        List<StatusVO> statusVOList = StatusFactoryVO.createStatusVOList(statusPOList);
+
+        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_process_list");
+        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("processListVOList", processListVOList);
+        model.addAttribute("statusVOList", statusVOList);
+        model.addAttribute("typeVOList", typeVOList);
+        model.addAttribute("url", "shenser");
+        return "process/flowmanage";
+    }
+
+    /**
+     * 流程申请》我的查看》操作（查看）
+     * @param userId 申请人ID
+     * @param model
+     * @param req
+     * @return
+     */
+    @RequestMapping("particular")
+    public String particular(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req) {
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+//        User user = udao.findOne(userId);//审核人或者申请人
+
+        UserVO finallyAudit = null;
+//        User audit = null;//最终审核人
+
+        Long processId = Long.parseLong(req.getParameter("processId"));
+//        String id = req.getParameter("id");
+//        Long proId = Long.parseLong(id);
+        String typeName = req.getParameter("typeName");//获取主表里面的类型名称
+//        String typename = req.getParameter("typename");//类型名称
+        String name = null;
+
+        Map<String, Object> map = new HashMap<>();
+        ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);
+        ProcessListVO processListVO = ProcessListFactoryVO.createProcessListVO(processListPO);
+//        ProcessList process = prodao.findOne(proid);//查看该条申请
+
+        Boolean flag = processListPO.getProcessUserId().equals(userId);//判断是申请人还是审核人
+//        Boolean flag = process.getUserId().getUserId().equals(userId);
+        if (!flag) {
+            name = "审核";
+        } else {
+            name = "申请";
+        }
+
+        map = proservice.index3(name, user, typename, process);
+        if (("费用报销").equals(typename)) {
+            Bursement bu = budao.findByProId(process);
+            User prove = udao.findOne(bu.getUsermoney().getUserId());//证明人
+            if (!Objects.isNull(bu.getOperation())) {
+                audit = udao.findOne(bu.getOperation().getUserId());//最终审核人
+            }
+            List<DetailsBurse> detaillist = dedao.findByBurs(bu);
+            String type = tydao.findname(bu.getTypeId());
+            String money = ProcessService.numbertocn(bu.getAllMoney());
+            model.addAttribute("prove", prove);
+            model.addAttribute("audit", audit);
+            model.addAttribute("type", type);
+            model.addAttribute("bu", bu);
+            model.addAttribute("money", money);
+            model.addAttribute("detaillist", detaillist);
+            model.addAttribute("map", map);
+            return "process/serch";
+        } else if (("出差费用").equals(typename)) {
+            Double staymoney = 0.0;
+            Double tramoney = 0.0;
+            EvectionMoney emoney = emdao.findByProId(process);
+
+            String money = ProcessService.numbertocn(emoney.getMoney());
+            List<Stay> staylist = sadao.findByEvemoney(emoney);
+            for (Stay stay : staylist) {
+                staymoney += stay.getStayMoney();
+            }
+            List<Traffic> tralist = tdao.findByEvection(emoney);
+            for (Traffic traffic : tralist) {
+                tramoney += traffic.getTrafficMoney();
+            }
+            model.addAttribute("staymoney", staymoney);
+            model.addAttribute("tramoney", tramoney);
+            model.addAttribute("allmoney", money);
+            model.addAttribute("emoney", emoney);
+            model.addAttribute("staylist", staylist);
+            model.addAttribute("tralist", tralist);
+            model.addAttribute("map", map);
+            return "process/evemonserch";
+        } else if (("出差申请").equals(typename)) {
+            Evection eve = edao.findByProId(process);
+            model.addAttribute("eve", eve);
+            model.addAttribute("map", map);
+            return "process/eveserach";
+        } else if (("加班申请").equals(typename)) {
+            Overtime eve = odao.findByProId(process);
+            String type = tydao.findname(eve.getTypeId());
+            model.addAttribute("eve", eve);
+            model.addAttribute("map", map);
+            model.addAttribute("type", type);
+            return "process/overserch";
+        } else if (("请假申请").equals(typename)) {
+            Holiday eve = hdao.findByProId(process);
+            String type = tydao.findname(eve.getTypeId());
+            model.addAttribute("eve", eve);
+            model.addAttribute("map", map);
+            model.addAttribute("type", type);
+            return "process/holiserch";
+        } else if (("转正申请").equals(typename)) {
+            Regular eve = rgdao.findByProId(process);
+            model.addAttribute("eve", eve);
+            model.addAttribute("map", map);
+            return "process/reguserch";
+        } else if (("离职申请").equals(typename)) {
+            Resign eve = rsdao.findByProId(process);
+            model.addAttribute("eve", eve);
+            model.addAttribute("map", map);
+            return "process/resserch";
+        }
+
+
+        return "process/serch";
     }
 
 

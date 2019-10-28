@@ -129,7 +129,7 @@ public class UserServiceV2 {
     }
 
     //通过用户名查找用户
-    public UserPO getUserByUsername(String username) {
+    public UserPO getUserPOByUsername(String username) {
         UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserNameEqualTo(username);
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
@@ -293,4 +293,16 @@ public class UserServiceV2 {
     }
 
 
+    /**
+     * 根据用户ID找用户名
+     *
+     * @param userId 用户名
+     * @return
+     */
+    public String getUsernameByUserId(Long userId) {
+        UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
+        String username = userPO.getUserName();
+        return username;
+
+    }
 }

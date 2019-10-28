@@ -30,24 +30,24 @@
 							<th scope="col">状态</th>
 							<th scope="col">操作</th>
 						</tr>
-						<#list prolist as pro>
+						<#list processListVOList as pro>
 						<tr>
-							<td>${(pro.typeNmae)!''}</td>
+							<td>${(pro.typeName)!''}</td>
 							<td><span>${(pro.processName)!''}</span></td>
 							<td><span>${(pro.applyTime)!''}</span></td>
 							<td><span>${(pro.shenuser)!''}</span></td>
-							<#list typename as type>
-								<#if type.typeId==pro.deeply>
+							<#list typeVOList as type>
+								<#if type.typeId==pro.deeplyId>
 								<td><span>${type.typeName}</span></td>
 								</#if>
 							</#list>
-							<#list statusname as status>
+							<#list statusVOList as status>
 								<#if status.statusId==pro.statusId>
 								<td><span class="label ${status.statusColor}">${status.statusName}</span></td>
 								</#if>
 							</#list>
 							
-							<td> <a href="particular?id=${pro.processId}&typename=${(pro.typeNmae)!''}" class="label xiugai"><span
+							<td> <a href="particular?processId=${pro.processId}&typeName=${(pro.typeName)!''}" class="label xiugai"><span
 									class="glyphicon glyphicon-search"></span> 查看</a> 
 							</td>
 						</tr>
