@@ -119,5 +119,46 @@
             <columnOverride column="reviewed_id" javaType="Long"/>
         </table>
 
+        <!--出差费用申请表-->
+        <table tableName="aoa_evectionmoney" domainObjectName="EvectionMoneyPO">
+            <generatedKey column="evectionmoney_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="evectionmoney_id" javaType="Long"/>
+        </table>
+        <!--交通费用明细表-->
+        <table tableName="aoa_traffic" domainObjectName="TrafficPO">
+            <generatedKey column="traffic_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="traffic_id" javaType="Long"/>
+        </table>
+        <!--住宿申请表-->
+        <table tableName="aoa_stay" domainObjectName="StayPO">
+            <generatedKey column="stay_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="stay_id" javaType="Long"/>
+        </table>
+        <!--出差表-->
+        <table tableName="aoa_evection" domainObjectName="EvectionPO">
+            <generatedKey column="evection_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="evection_id" javaType="Long"/>
+        </table>
+        <!--加班表-->
+        <table tableName="aoa_overtime" domainObjectName="OvertimePO">
+            <generatedKey column="overtime_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="overtime_id" javaType="Long"/>
+        </table>
+        <!--请假表-->
+        <table tableName="aoa_holiday" domainObjectName="HolidayPO">
+            <generatedKey column="holiday_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="holiday_id" javaType="Long"/>
+        </table>
+        <!--转正表-->
+        <table tableName="aoa_regular" domainObjectName="RegularPO">
+            <generatedKey column="regular_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="regular_id" javaType="Long"/>
+        </table>
+        <!--离职表-->
+        <table tableName="aoa_resign" domainObjectName="ResignPO">
+            <generatedKey column="resign_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="resign_id" javaType="Long"/>
+        </table>
+
     </context>
 </generatorConfiguration>

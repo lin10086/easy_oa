@@ -15,13 +15,13 @@ public class BursementVO {
 
     private Long bursementId;
 
-    private UserVO userVOMoney;//证明人
+    private UserVO userVOMoney;//证明人(数据库名称用户ID）user_name
 
     private String name;//相关客户
 
     private Long typeId;//报销方式（银行卡，现金，其他）
 
-    private User operation;//报销人员
+    private User operation;//报销人员(数据库名称用户ID)operation_name
 
     private Date burseTime;//报销日期
 

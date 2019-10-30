@@ -1,6 +1,9 @@
 package cn.gson.oasys.controller.process;
 
 import cn.gson.oasys.ServiceV2.*;
+import cn.gson.oasys.ServiceV2.processV2.ByProcessPOIdServiceV2;
+import cn.gson.oasys.ServiceV2.processV2.DetailsburseServiceV2;
+import cn.gson.oasys.ServiceV2.processV2.EvectionMoneyServiceV2;
 import cn.gson.oasys.model.dao.attendcedao.AttendceDao;
 import cn.gson.oasys.model.dao.notedao.AttachmentDao;
 import cn.gson.oasys.model.dao.plandao.TrafficDao;
@@ -17,10 +20,9 @@ import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.services.process.ProcessService;
 import cn.gson.oasys.vo.*;
-import cn.gson.oasys.vo.factoryvo.ProcessListFactoryVO;
-import cn.gson.oasys.vo.factoryvo.StatusFactoryVO;
-import cn.gson.oasys.vo.factoryvo.TypeFactoryVO;
-import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
+import cn.gson.oasys.vo.factoryvo.*;
+import cn.gson.oasys.vo.factoryvo.processfactory.*;
+import cn.gson.oasys.vo.processVO.*;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +103,12 @@ public class ProcedureController {
     private RoleServiceV2 roleServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
+    @Resource
+    private ByProcessPOIdServiceV2 byProcessPOIdServiceV2;
+    @Resource
+    private DetailsburseServiceV2 detailsburseServiceV2;
+    @Resource
+    private EvectionMoneyServiceV2 evectionMoneyServiceV2;
 
     //	@Value("${attachment.roopath}")
     private String rootpath;
@@ -316,7 +324,7 @@ public class ProcedureController {
      *
      * @return
      */
-    @RequestMapping("audit")
+ /*   @RequestMapping("audit")
     public String auding(@SessionAttribute("userId") Long userId, Model model,
                          @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -328,7 +336,7 @@ public class ProcedureController {
         model.addAttribute("url", "serch");
 
         return "process/auditing";
-    }
+    }*/
 
     /**
      * 流程审核条件查询
@@ -1179,6 +1187,7 @@ public class ProcedureController {
 
     /**
      * 流程申请》我的查看》操作（查看）
+     *
      * @param userId 申请人ID
      * @param model
      * @param req
@@ -1190,7 +1199,7 @@ public class ProcedureController {
         UserVO userVO = UserFactoryVO.createUserVO(userPO);
 //        User user = udao.findOne(userId);//审核人或者申请人
 
-        UserVO finallyAudit = null;
+        UserPO finallyAudit = null;
 //        User audit = null;//最终审核人
 
         Long processId = Long.parseLong(req.getParameter("processId"));
@@ -1213,73 +1222,103 @@ public class ProcedureController {
             name = "申请";
         }
 
-        map = proservice.index3(name, user, typename, process);
-        if (("费用报销").equals(typename)) {
-            Bursement bu = budao.findByProId(process);
-            User prove = udao.findOne(bu.getUsermoney().getUserId());//证明人
-            if (!Objects.isNull(bu.getOperation())) {
-                audit = udao.findOne(bu.getOperation().getUserId());//最终审核人
+        map = processServiceV2.resultMap(name, userPO, processListPO);
+//        map = proservice.index3(name, user, typename, process);
+        if (("费用报销").equals(typeName)) {
+            BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);
+            BursementVO bursementVO = BursementFactoryVO.createBursementVO(bursementPO);
+//            Bursement bu = budao.findByProId(process);
+            UserPO provePO = userServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
+            UserVO prove = UserFactoryVO.createUserVO(provePO);
+//            User prove = udao.findOne(bu.getUsermoney().getUserId());//证明人
+
+            if (!Objects.isNull(bursementPO.getOperationName())) {
+                finallyAudit = userServiceV2.getUserPOByUserId(bursementPO.getOperationName());
+//                audit = udao.findOne(bu.getOperation().getUserId());//最终审核人
             }
-            List<DetailsBurse> detaillist = dedao.findByBurs(bu);
-            String type = tydao.findname(bu.getTypeId());
-            String money = ProcessService.numbertocn(bu.getAllMoney());
+            List<DetailsbursePO> detailsbursePOList = detailsburseServiceV2.getDetailsbursePOListByBusementId(bursementPO.getBursementId());
+            List<DetailsBurseVO> detailsBurseVOList = DetailsBurseFactoryVO.createDetailsBurseVOList(detailsbursePOList);
+//            List<DetailsBurse> detaillist = dedao.findByBurs(bu);
+            String type = typeServicev2.getTypeNameByTypeId(bursementPO.getTypeId());
+//            String type = tydao.findname(bu.getTypeId());
+            String money = ProcessServiceV2.numbertocn(bursementPO.getAllMoney());
+//            String money = ProcessService.numbertocn(bu.getAllMoney());
             model.addAttribute("prove", prove);
-            model.addAttribute("audit", audit);
+            model.addAttribute("audit", finallyAudit);
             model.addAttribute("type", type);
-            model.addAttribute("bu", bu);
+            model.addAttribute("bu", bursementVO);
             model.addAttribute("money", money);
-            model.addAttribute("detaillist", detaillist);
+            model.addAttribute("detaillist", detailsBurseVOList);
             model.addAttribute("map", map);
             return "process/serch";
-        } else if (("出差费用").equals(typename)) {
+        } else if (("出差费用").equals(typeName)) {
             Double staymoney = 0.0;
             Double tramoney = 0.0;
-            EvectionMoney emoney = emdao.findByProId(process);
+            EvectionMoneyPO evectionMoneyPO = evectionMoneyServiceV2.getEvectionMoneyPOByProcessListPOId(processId);
+            EvectionMoneyVO evectionMoneyVO = EvectionMoneyVOFactory.createEvectionMoneyVO(evectionMoneyPO);
+//            EvectionMoney emoney = emdao.findByProId(process);
 
-            String money = ProcessService.numbertocn(emoney.getMoney());
-            List<Stay> staylist = sadao.findByEvemoney(emoney);
-            for (Stay stay : staylist) {
-                staymoney += stay.getStayMoney();
+            String money = ProcessServiceV2.numbertocn(evectionMoneyPO.getMoney());
+//            String money = ProcessService.numbertocn(emoney.getMoney());
+            List<StayPO> stayPOList = evectionMoneyServiceV2.getStayPOList(evectionMoneyPO.getEvectionmoneyId());
+            List<StayVO> stayVOList = StayVOFactory.createStayVOList(stayPOList);
+//            List<Stay> staylist = sadao.findByEvemoney(emoney);
+            for (StayVO stayVO : stayVOList) {
+                staymoney += stayVO.getStayMoney();
             }
-            List<Traffic> tralist = tdao.findByEvection(emoney);
-            for (Traffic traffic : tralist) {
-                tramoney += traffic.getTrafficMoney();
+            List<TrafficPO> trafficPOList = evectionMoneyServiceV2.getTrafficPOList(evectionMoneyPO.getEvectionmoneyId());
+            List<TrafficVO> trafficVOList = TrafficVOFactory.createTrafficVOList(trafficPOList);
+//            List<Traffic> tralist = tdao.findByEvection(emoney);
+            for (TrafficVO trafficVO : trafficVOList) {
+                tramoney += trafficVO.getTrafficMoney();
             }
             model.addAttribute("staymoney", staymoney);
             model.addAttribute("tramoney", tramoney);
             model.addAttribute("allmoney", money);
-            model.addAttribute("emoney", emoney);
-            model.addAttribute("staylist", staylist);
-            model.addAttribute("tralist", tralist);
+            model.addAttribute("emoney", evectionMoneyVO);
+            model.addAttribute("staylist", stayVOList);
+            model.addAttribute("tralist", trafficVOList);
             model.addAttribute("map", map);
             return "process/evemonserch";
-        } else if (("出差申请").equals(typename)) {
-            Evection eve = edao.findByProId(process);
-            model.addAttribute("eve", eve);
+        } else if (("出差申请").equals(typeName)) {
+            EvectionPO evectionPO = byProcessPOIdServiceV2.getEvectionPOByProcessPOId(processId);
+            EvectionVO evectionVO = EvectionVOFactory.createEvectionVO(evectionPO);
+//            Evection eve = edao.findByProId(process);
+            model.addAttribute("eve", evectionVO);
             model.addAttribute("map", map);
             return "process/eveserach";
-        } else if (("加班申请").equals(typename)) {
-            Overtime eve = odao.findByProId(process);
-            String type = tydao.findname(eve.getTypeId());
-            model.addAttribute("eve", eve);
+        } else if (("加班申请").equals(typeName)) {
+            OvertimePO overtimePO = byProcessPOIdServiceV2.getOvertimePOByProcessPOId(processId);
+            OverTimeVO overTimeVO = OverTimeVOFactory.createOverTimeVO(overtimePO);
+            String type = typeServicev2.getTypeNameByTypeId(overtimePO.getTypeId());
+//            Overtime eve = odao.findByProId(process);
+//            String type = tydao.findname(eve.getTypeId());
+            model.addAttribute("eve", overTimeVO);
             model.addAttribute("map", map);
             model.addAttribute("type", type);
             return "process/overserch";
-        } else if (("请假申请").equals(typename)) {
-            Holiday eve = hdao.findByProId(process);
-            String type = tydao.findname(eve.getTypeId());
-            model.addAttribute("eve", eve);
+        } else if (("请假申请").equals(typeName)) {
+            HolidayPO holidayPO = byProcessPOIdServiceV2.getHolidayPOByProcessPOId(processId);
+            HolidayVO holidayVO = HolidayVOFactory.createHolidayVO(holidayPO);
+            String type = typeServicev2.getTypeNameByTypeId(holidayPO.getTypeId());
+//            Holiday eve = hdao.findByProId(process);
+//            String type = tydao.findname(eve.getTypeId());
+            model.addAttribute("eve", holidayVO);
             model.addAttribute("map", map);
             model.addAttribute("type", type);
             return "process/holiserch";
-        } else if (("转正申请").equals(typename)) {
-            Regular eve = rgdao.findByProId(process);
-            model.addAttribute("eve", eve);
+        } else if (("转正申请").equals(typeName)) {
+            RegularPO regularPO = byProcessPOIdServiceV2.getRegularPOByProcessPOId(processId);
+            RegularVO regularVO = RegularVOFactory.createRegularVO(regularPO);
+//            Regular eve = rgdao.findByProId(process);
+            model.addAttribute("eve", regularVO);
             model.addAttribute("map", map);
             return "process/reguserch";
-        } else if (("离职申请").equals(typename)) {
-            Resign eve = rsdao.findByProId(process);
-            model.addAttribute("eve", eve);
+        } else if (("离职申请").equals(typeName)) {
+            ResignPO resignPO = byProcessPOIdServiceV2.getResignPOByProcessPOId(processId);
+            ResignVO resignVO = ResignVOFactory.createResignVO(resignPO);
+//            Resign eve = rsdao.findByProId(process);
+            model.addAttribute("eve", resignVO);
             model.addAttribute("map", map);
             return "process/resserch";
         }
@@ -1288,5 +1327,28 @@ public class ProcedureController {
         return "process/serch";
     }
 
+    /**
+     * 流程管理》流程审核
+     * @param userId
+     * @param model
+     * @param page
+     * @param size
+     * @return
+     */
+    @RequestMapping("audit")
+    public String auding(@SessionAttribute("userId") Long userId, Model model,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "size", defaultValue = "10") int size) {
+//        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+//        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+        User user = udao.findOne(userId);
+        Page<AubUser> pagelist = proservice.index(user, page, size, null, model);
+        List<Map<String, Object>> prolist = proservice.index2(pagelist, user);
+        model.addAttribute("page", pagelist);
+        model.addAttribute("prolist", prolist);
+        model.addAttribute("url", "serch");
+
+        return "process/auditing";
+    }
 
 }

@@ -232,7 +232,7 @@ border-top: 1px solid #2196F3;
 									<td colspan="2"><span>${(detail.subject)!''}</span></td>
 									<td colspan="2"><span>${(detail.descript)!''}</span></td>
 									<td colspan="2"><span>${(detail.invoices)!''}</span></td>
-									<td colspan="2"><span>${(detail.detailmoney)!''}</span></td>
+									<td colspan="2"><span>${(detail.detailMoney)!''}</span></td>
 									
 							</tr>
 							</#list>

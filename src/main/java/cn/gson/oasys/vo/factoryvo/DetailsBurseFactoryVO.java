@@ -3,6 +3,7 @@ package cn.gson.oasys.vo.factoryvo;
 import cn.gson.oasys.model.po.DetailsbursePO;
 import cn.gson.oasys.vo.DetailsBurseVO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class DetailsBurseFactoryVO {
         detailsBurseVO.setDescript(detailsbursePO.getDescript());
         detailsBurseVO.setDetailMoney(detailsbursePO.getDetailmoney());
         detailsBurseVO.setInvoices(detailsbursePO.getInvoices());
-        detailsBurseVO.setProduceTime(detailsbursePO.getProduceTime());
+        detailsBurseVO.setProduceTime(new Timestamp(detailsbursePO.getProduceTime().getTime()));
         detailsBurseVO.setSubject(detailsbursePO.getSubject());
         //关联费用报销表bursement
         return detailsBurseVO;
