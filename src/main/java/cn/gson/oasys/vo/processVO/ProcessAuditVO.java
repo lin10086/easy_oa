@@ -15,13 +15,13 @@ public class ProcessAuditVO {
 
     private String typeName;//主表的类型名
 
-    private Long deeplyId;    //紧急程度
-
-    private String processName; //主题
+    private String processName; //标题（主表）
 
     private String userName;//申请人姓名
 
-    private Date applyTime; //申请时间
+    private Date applyTime; //申请时间（主表里）
 
-    private Long statusId;//审核人状态
+    private Long deeplyId;    //紧急程度（主表里）
+
+    private Long statusId;//审核人状态(在审核表里）
 }

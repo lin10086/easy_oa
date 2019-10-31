@@ -19,7 +19,7 @@ public class ProcessListFactoryVO {
         processListVO.setProcessDays(processListPO.getProcseeDays());
         processListVO.setProcessDescribe(processListPO.getProcessDes());
         processListVO.setProcessName(processListPO.getProcessName());
-        processListVO.setShenuser(processListPO.getShenuser());
+        processListVO.setAuditUsername(processListPO.getShenuser());
         processListVO.setStartTime(processListPO.getStartTime());
         processListVO.setStatusId(processListPO.getStatusId());
         processListVO.setTypeName(processListPO.getTypeName());

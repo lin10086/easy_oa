@@ -1329,6 +1329,7 @@ public class ProcedureController {
 
     /**
      * 流程管理》流程审核
+     *
      * @param userId
      * @param model
      * @param page
@@ -1336,16 +1337,19 @@ public class ProcedureController {
      * @return
      */
     @RequestMapping("audit")
-    public String auding(@SessionAttribute("userId") Long userId, Model model,
+    public String processAudit(@SessionAttribute("userId") Long userId, Model model,
                          @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size) {
-//        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-//        UserVO userVO = UserFactoryVO.createUserVO(userPO);
-        User user = udao.findOne(userId);
-        Page<AubUser> pagelist = proservice.index(user, page, size, null, model);
-        List<Map<String, Object>> prolist = proservice.index2(pagelist, user);
-        model.addAttribute("page", pagelist);
-        model.addAttribute("prolist", prolist);
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+//        User user = udao.findOne(userId);
+        List<ProcessAuditVO> processAuditVOList = processServiceV2.getProcessAuditVOList(userVO, page, size, null, model);
+        PageInfo pageInfo = new PageInfo(processAuditVOList);
+        List<Map<String, Object>> mapList = processServiceV2.mapList(processAuditVOList, userVO);
+//        Page<AubUser> pagelist = proservice.index(user, page, size, null, model);
+//        List<Map<String, Object>> prolist = proservice.index2(pagelist, user);
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("prolist", mapList);
         model.addAttribute("url", "serch");
 
         return "process/auditing";

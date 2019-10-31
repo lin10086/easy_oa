@@ -2,6 +2,7 @@ package cn.gson.oasys.ServiceV2;
 
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.processV2.AttachmentServiceV2;
+import cn.gson.oasys.ServiceV2.processV2.ProcessAuditVOServiceV2;
 import cn.gson.oasys.mappers.BursementPOMapper;
 import cn.gson.oasys.mappers.ProcessListPOMapper;
 import cn.gson.oasys.mappers.SubjectPOMapper;
@@ -12,6 +13,7 @@ import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.*;
 import cn.gson.oasys.vo.factoryvo.*;
+import cn.gson.oasys.vo.processVO.ProcessAuditVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
@@ -56,6 +58,11 @@ public class ProcessServiceV2 {
     private AttachmentServiceV2 attachmentServiceV2;
     @Resource
     private ProcessListPOMapper processListPOMapper;
+    @Resource
+    private StatusServiceV2 statusServiceV2;
+    @Resource
+    private ProcessAuditVOServiceV2 processAuditVOServiceV2;
+
 
     /**
      * 汉语中数字大写
@@ -115,7 +122,7 @@ public class ProcessServiceV2 {
         pro.setApplyTime(new Date());//流程申请时间
         pro.setUserVO(lu);//流程申请人
         pro.setStatusId(23L);//流程审核状态，23L未处理
-        pro.setShenuser(name);//审核人用户名
+        pro.setAuditUsername(name);//审核人用户名
         AttachmentVO attachmentVO = null;//附件
         //file.getOriginalFilename()是得到上传时的文件名。
         if (!StringUtil.isEmpty(filePath.getOriginalFilename())) {
@@ -371,5 +378,56 @@ public class ProcessServiceV2 {
     }
 
 
+    public List<ProcessAuditVO> getProcessAuditVOList(UserVO user, int page, int size, String val, Model model) {
+        PageHelper.startPage(page, size);
+        List<ProcessAuditVO> processAuditVOList = null;
+//        UserPO userPO = userServiceV2.getUserPOByUsername(val);
+//        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+//        StatusPO statusPO =statusServiceV2.getStatusPOByTypeModelAndTypeName("aoa_process_list",val);
+
+//        Pageable pa = new PageRequest(page, size);
+//        Page<AubUser> pagelist = null;
+//        Page<AubUser> pagelist2 = null;
+//        List<Sort.Order> orders = new ArrayList<>();
+//        User u = udao.findByUserName(val);//找用户
+//        SystemStatusList status = sdao.findByStatusModelAndStatusName("aoa_process_list", val);
+
+        if (StringUtil.isEmpty(val)) {
+//            orders.add(new Sort.Order(Sort.Direction.DESC, "applyTime"));
+//            Sort sort = new Sort(orders);
+//            pa = new PageRequest(page, size, sort);
+//                    pagelist = redao.findByUserIdOrderByStatusId(user, false, pa);
+
+            processAuditVOList = processAuditVOServiceV2.getProcessAuditVOByProcessPOAndReviewedPO(user,false);
+        }
+        return processAuditVOList;
+    }
+
+    public List<Map<String, Object>> mapList(List<ProcessAuditVO>processAuditVOList, UserVO userVO) {
+        //创建list集合
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        for (int i = 0; i < processAuditVOList.size(); i++) {
+
+            String harryname = typeServiceV2.getTypeNameByTypeId(processAuditVOList.get(i).getDeeplyId());
+//                    tydao.findname(prolist.get(i).getDeeply());
+            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(processAuditVOList.get(i).getStatusId());
+//            SystemStatusList status = sdao.findOne(prolist.get(i).getStatusId());
+            // 创建map集合用于用于存放前端的
+            Map<String, Object> result = new HashMap<>();
+
+            result.put("typename", processAuditVOList.get(i).getTypeName());
+            result.put("title", processAuditVOList.get(i).getProcessName());
+            result.put("pushuser", processAuditVOList.get(i).getUserName());
+            result.put("applytime", new Timestamp(processAuditVOList.get(i).getApplyTime().getTime()));
+            result.put("harry", harryname);
+            result.put("statusname", statusPO.getStatusName());
+            result.put("statuscolor", statusPO.getStatusColor());
+            result.put("proid", processAuditVOList.get(i).getProcessId());
+            list.add(result);
+
+        }
+        return list;
+    }
 
 }

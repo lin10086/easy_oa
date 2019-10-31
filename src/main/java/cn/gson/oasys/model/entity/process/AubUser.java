@@ -8,15 +8,15 @@ public class AubUser {
 
 	private Long processId;
 	
-	private String typeNmae;	
+	private String typeNmae;	//类型
 	
 	private Long deeply;    //紧急程度
 	
-	private String processName;	
+	private String processName;	//标题
 	
 	private String userName;//申请人姓名	
 	
-	private Date applyTime;
+	private Date applyTime;//流程申请时间
 	
 	private Long statusId;//审核人状态
 

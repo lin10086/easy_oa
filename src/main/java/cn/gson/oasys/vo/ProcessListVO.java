@@ -36,6 +36,6 @@ public class ProcessListVO {
 
     private AttachmentVO attachmentVO;   //流程附件id对应流程附件表pro_file_id
 
-    private String shenuser;        //审核人用户名
+    private String auditUsername;        //审核人用户名
 
 }

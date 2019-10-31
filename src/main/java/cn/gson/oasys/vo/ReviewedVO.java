@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.Date;
+
+/**
+ * 审核表
+ */
 @ToString
 @Data
 public class ReviewedVO {
@@ -22,7 +26,7 @@ public class ReviewedVO {
 
     private ProcessListVO proId;//主表（主表ID）
 
-    private Boolean del=false;//是否删除，默认未删除
+    private Boolean del = false;//是否删除，默认未删除
 
     private String username;//传过来的审核人的名字
 
