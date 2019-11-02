@@ -5,23 +5,18 @@ import cn.gson.oasys.ServiceV2.processV2.AttachmentServiceV2;
 import cn.gson.oasys.ServiceV2.processV2.ProcessAuditVOServiceV2;
 import cn.gson.oasys.mappers.BursementPOMapper;
 import cn.gson.oasys.mappers.ProcessListPOMapper;
+import cn.gson.oasys.mappers.ReviewedPOMapper;
 import cn.gson.oasys.mappers.SubjectPOMapper;
-import cn.gson.oasys.model.entity.process.AubUser;
-import cn.gson.oasys.model.entity.process.ProcessList;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.*;
 import cn.gson.oasys.vo.factoryvo.*;
+import cn.gson.oasys.vo.factoryvo.processfactory.ProcessListFactoryVO;
 import cn.gson.oasys.vo.processVO.ProcessAuditVO;
+import cn.gson.oasys.vo.processVO.ReimbursementVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,12 +41,8 @@ public class ProcessServiceV2 {
     private DeptServiceV2 deptServiceV2;
     @Resource
     private PositionServiceV2 positionServiceV2;
-
-    @Resource
-    private ReviewedServiceV2 reviewedServiceV2;
     @Resource
     private BursementPOMapper bursementPOMapper;
-
     @Resource
     private MailServiceV2 mailServiceV2;
     @Resource
@@ -62,6 +53,8 @@ public class ProcessServiceV2 {
     private StatusServiceV2 statusServiceV2;
     @Resource
     private ProcessAuditVOServiceV2 processAuditVOServiceV2;
+    @Resource
+    private ReviewedPOMapper reviewedPOMapper;
 
 
     /**
@@ -110,35 +103,18 @@ public class ProcessServiceV2 {
 
 
     /**
-     * 存表
+     * 设置model信息
      *
-     * @throws IOException
-     * @throws IllegalStateException
+     * @param model
+     * @param userId
+     * @param page
+     * @param size
      */
-    //主表，费用报销，申请人，上传的票据路径，审核人的用户名(pro,val,lu,filePath,reuser.getUserName())
-    public void publicX5(ProcessListVO pro, String val, UserVO lu, MultipartFile filePath, String name) throws IllegalStateException, IOException {
+    public void setModel(Model model, Long userId, int page, int size) {
+        //根据申请人userId获取申请人的用户信息
+        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);
+        UserVO applyUserVO = UserFactoryVO.createUserVO(applyUserPO);
 
-        pro.setTypeName(val);//流程申请类型
-        pro.setApplyTime(new Date());//流程申请时间
-        pro.setUserVO(lu);//流程申请人
-        pro.setStatusId(23L);//流程审核状态，23L未处理
-        pro.setAuditUsername(name);//审核人用户名
-        AttachmentVO attachmentVO = null;//附件
-        //file.getOriginalFilename()是得到上传时的文件名。
-        if (!StringUtil.isEmpty(filePath.getOriginalFilename())) {
-            //上传附件
-            attachmentVO = mailServiceV2.uploadAttachmentVO(filePath, lu);
-
-            attachmentServiceV2.insertAttachmentListPO();
-            pro.setAttachmentVO(attachmentVO);
-        }
-    }
-
-    //    	 公用
-    public void publicX6(Model model, Long userId, int page, int size) {
-        //根据userId获取用户信息
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-//        UserVO userVO = UserFactoryVO.createUserVO(userPO);
         PageHelper.startPage(page, size);
         List<UserPO> userPOList = userServiceV2.getUserAll();
         List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
@@ -152,8 +128,9 @@ public class ProcessServiceV2 {
             userVO.setPositionVO(PositionFactoryVO.createPositionVO(longPositionPOMap.get(userVO.getUserId())));
             userVO.setRoleVO(RoleFactoryVO.createRoleVO(longRolePOMap.get(userVO.getUserId())));
         }
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
-        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+
+        List<TypePO> exigenceTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
+        List<TypeVO> exigenceTypeVOList = TypeFactoryVO.createTypeVOList(exigenceTypePOList);
 
         List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
         List<DeptVO> deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
@@ -161,50 +138,96 @@ public class ProcessServiceV2 {
         List<PositionPO> positionPOList = positionServiceV2.getPositionList();
         List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
 
-        model.addAttribute("page", pageInfo);
-        model.addAttribute("userVOList", userVOList);
-        model.addAttribute("deptVOList", deptVOList);
-        model.addAttribute("positionVOList", positionVOList);
-        model.addAttribute("url", "names");
-        model.addAttribute("username", userPO.getUserName());
-        model.addAttribute("typeVOList", typeVOList);
+        model.addAttribute("username", applyUserVO.getUserName());//申请人的用户名
+        model.addAttribute("page", pageInfo);//可以获取第几页之类的
+        model.addAttribute("userVOList", userVOList);//分页后的用户列表
+        model.addAttribute("exigenceTypeVOList", exigenceTypeVOList);//紧急程度列表
+        model.addAttribute("deptVOList", deptVOList);//部门列表
+        model.addAttribute("positionVOList", positionVOList);//职位列表
+        model.addAttribute("url", "names");//
     }
 
 
     /**
      * 存审核表
-     *
-     * @param user          审核人
-     * @param processListVO 主表
      */
-    public void insertReviewedVO(UserVO user, ProcessListVO processListVO) {
+    public void insertReviewedPO(UserPO userPO, ProcessListPO processListPO) {
 
-
-        reviewedServiceV2.insertReviewedVO(user, processListVO);
-
+        ReviewedPO reviewedPO = new ReviewedPO();
+        reviewedPO.setUserId(userPO.getUserId());
+        reviewedPO.setStatusId(23L);
+        reviewedPO.setDel(0);
+        reviewedPO.setReviewedTime(new Date());
+        reviewedPO.setProId(processListPO.getProcessId());
+        reviewedPOMapper.insert(reviewedPO);
     }
 
-    //更新费用报销表
-//    票据总数,总计金额
 
     /**
      * 插入费用报销表
      *
-     * @param zhuti       证明人
-     * @param bursementVO 前端费用报销表数据
-     * @param allInvoice  票据总数
-     * @param allMoney    报销金额
-     * @param reUser      审核人
+     * @param reimbursementVO
      */
-    public void insertBursementVO(ProcessListVO processListVO, UserVO zhuti, BursementVO bursementVO, Integer allInvoice, Double allMoney, UserVO reUser) {
+    public void insertBursementPO(ReimbursementVO reimbursementVO, ProcessListPO processListPO, Long userId, Long auditUserId) {
         BursementPO bursementPO = new BursementPO();
-        bursementPO.setProId(processListVO.getProcessId());
-        bursementPO.setAllinvoices(allInvoice);
-        bursementPO.setAllMoney(allMoney);
-        bursementPO.setUserName(zhuti.getUserId());
+        bursementPO.setProId(processListPO.getProcessId());
+        bursementPO.setAllinvoices(reimbursementVO.getAllinvoices());
+        bursementPO.setAllMoney(reimbursementVO.getAllMoney());
+        bursementPO.setProId(processListPO.getProcessId());
+        bursementPO.setBurseTime(reimbursementVO.getReimbursementTime());
+        bursementPO.setName(reimbursementVO.getName());
+        bursementPO.setTypeId(reimbursementVO.getTypeId());
+        bursementPO.setOperationName(userId);
+        bursementPO.setUserName(auditUserId);
+        bursementPO.setBurseTime(new Date());
         bursementPOMapper.insertSelective(bursementPO);
     }
 
+
+    /**
+     * 插入附件表
+     *
+     * @param applyUserPO 申请人
+     * @param filePath
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    public AttachmentListPO insertAttachment(UserPO applyUserPO, MultipartFile filePath) throws IllegalStateException, IOException {
+
+        AttachmentVO attachmentVO = null;//附件
+        //file.getOriginalFilename()是得到上传时的文件名。
+        if (!StringUtil.isEmpty(filePath.getOriginalFilename())) {
+            //上传附件
+            AttachmentListPO attachmentListPO = mailServiceV2.uploadAttachmentListPO(filePath, applyUserPO);
+            attachmentServiceV2.insertAttachmentListPO(attachmentListPO);
+            return attachmentListPO;
+        }
+        return null;
+    }
+
+    /**
+     * 插入主表
+     *
+     * @param processListVO
+     * @param val           主表类型名
+     * @return
+     */
+    public ProcessListPO insertProcessListPO(ProcessListVO processListVO, String val, Long userId, UserPO auditUserPO) {
+        ProcessListPO processListPO = new ProcessListPO();
+        processListPO.setStatusId(23L);//流程审核状态，23L未处理
+        processListPO.setTypeName(val);//流程申请类型
+        processListPO.setProcessUserId(userId);//流程申请人
+        processListPO.setProcessDes(processListVO.getProcessDescribe());//////
+        processListPO.setIsChecked(0);
+        processListPO.setProcessName(processListVO.getProcessName());
+        processListPO.setDeeplyId(processListVO.getDeeplyId());///////
+        processListPO.setApplyTime(new Date());//流程申请时间
+        processListPO.setShenuser(auditUserPO.getUserName());
+        processListPOMapper.insertSelective(processListPO);
+
+        return processListPO;
+    }
 
     /**
      * 根据申请人ID查询主表信息(主表里面有申请人ID，根据申请人ID，process_user_id)
@@ -237,8 +260,7 @@ public class ProcessServiceV2 {
 
     /**
      * @param name          "审核"或者"申请"
-     * @param user          申请用户信息
-     * @param typename      主表里面的类型名称
+     * @param userPO        申请用户信息
      * @param processListPO 主表信息
      * @return
      */
@@ -378,7 +400,7 @@ public class ProcessServiceV2 {
     }
 
 
-    public List<ProcessAuditVO> getProcessAuditVOList(UserVO user, int page, int size, String val, Model model) {
+    public List<ProcessAuditVO> getProcessAuditVOList(UserPO user, int page, int size, String val, Model model) {
         PageHelper.startPage(page, size);
         List<ProcessAuditVO> processAuditVOList = null;
 //        UserPO userPO = userServiceV2.getUserPOByUsername(val);
@@ -398,12 +420,12 @@ public class ProcessServiceV2 {
 //            pa = new PageRequest(page, size, sort);
 //                    pagelist = redao.findByUserIdOrderByStatusId(user, false, pa);
 
-            processAuditVOList = processAuditVOServiceV2.getProcessAuditVOByProcessPOAndReviewedPO(user,false);
+            processAuditVOList = processAuditVOServiceV2.getProcessAuditVOByProcessPOAndReviewedPO(user, false);
         }
         return processAuditVOList;
     }
 
-    public List<Map<String, Object>> mapList(List<ProcessAuditVO>processAuditVOList, UserVO userVO) {
+    public List<Map<String, Object>> mapList(List<ProcessAuditVO> processAuditVOList, UserPO userVO) {
         //创建list集合
         List<Map<String, Object>> list = new ArrayList<>();
 
@@ -429,5 +451,6 @@ public class ProcessServiceV2 {
         }
         return list;
     }
+
 
 }

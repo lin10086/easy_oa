@@ -18,177 +18,174 @@ import javax.persistence.Transient;
 import cn.gson.oasys.model.entity.user.User;
 
 @Table
-@Entity(name="aoa_bursement")
+@Entity(name = "aoa_bursement")
 //费用报销表
 public class Bursement {
 
-	@Id
-	@Column(name="bursement_id")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long bursementId;
-	
-	
-	@OneToOne()
-	@JoinColumn(name="user_name")
-	private User usermoney;//证明人
-	
-	private String name;//相关客户
-	
-	@Column(name="type_id")
-	private Long typeId;//报销方式（银行卡，现金，其他）
-	
-	@OneToOne
-	@JoinColumn(name="operation_name")
-	private User operation;//报销人员
-	
-	private Date burseTime;//报销日期
-	
-	private Integer allinvoices ;//票据总数
-	
-	@Column(name="manager_advice")
-	private String managerAdvice;//经理意见及说明
-	
-	@Column(name="financial_advice")
-	private String financialAdvice;//财务部意见及说明
-	
-	@Column(name="all_money")
-	private Double allMoney;//总计金额
-	
-	@Transient
-	private String username;//审核人员
-	
-	@Transient
-	private String namemoney;//承担主体
-	
-	@OneToMany(cascade=CascadeType.ALL,mappedBy="burs",orphanRemoval = true)
-	List<DetailsBurse>  details;
-	
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="pro_id")
-	private ProcessList proId;
-	
-	
-	
-	public String getNamemoney() {
-		return namemoney;
-	}
+    @Id
+    @Column(name = "bursement_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long bursementId;
 
-	public void setNamemoney(String namemoney) {
-		this.namemoney = namemoney;
-	}
 
-	public String getUsername() {
-		return username;
-	}
+    @OneToOne()
+    @JoinColumn(name = "user_name")
+    private User usermoney;//证明人
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    private String name;//相关客户
 
-	public Long getBursementId() {
-		return bursementId;
-	}
+    @Column(name = "type_id")
+    private Long typeId;//报销方式（银行卡，现金，其他）
 
-	public void setBursementId(Long bursementId) {
-		this.bursementId = bursementId;
-	}
+    @OneToOne
+    @JoinColumn(name = "operation_name")
+    private User operation;//报销人员
 
-	public User getUsermoney() {
-		return usermoney;
-	}
+    private Date burseTime;//报销日期
 
-	public void setUsermoney(User usermoney) {
-		this.usermoney = usermoney;
-	}
+    private Integer allinvoices;//票据总数
 
-	public String getName() {
-		return name;
-	}
+    @Column(name = "manager_advice")
+    private String managerAdvice;//经理意见及说明
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Column(name = "financial_advice")
+    private String financialAdvice;//财务部意见及说明
 
-	public Long getTypeId() {
-		return typeId;
-	}
+    @Column(name = "all_money")
+    private Double allMoney;//总计金额
 
-	public void setTypeId(Long typeId) {
-		this.typeId = typeId;
-	}
+    @Transient
+    private String username;//审核人员名字
 
-	public User getOperation() {
-		return operation;
-	}
+    @Transient
+    private String namemoney;//证明人的名字
 
-	public void setOperation(User operation) {
-		this.operation = operation;
-	}
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "burs", orphanRemoval = true)
+    List<DetailsBurse> details;
 
-	public Date getBurseTime() {
-		return burseTime;
-	}
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pro_id")
+    private ProcessList proId;
 
-	public void setBurseTime(Date burseTime) {
-		this.burseTime = burseTime;
-	}
 
-	public Integer getAllinvoices() {
-		return allinvoices;
-	}
+    public String getNamemoney() {
+        return namemoney;
+    }
 
-	public void setAllinvoices(Integer allinvoices) {
-		this.allinvoices = allinvoices;
-	}
+    public void setNamemoney(String namemoney) {
+        this.namemoney = namemoney;
+    }
 
-	public String getManagerAdvice() {
-		return managerAdvice;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setManagerAdvice(String managerAdvice) {
-		this.managerAdvice = managerAdvice;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getFinancialAdvice() {
-		return financialAdvice;
-	}
+    public Long getBursementId() {
+        return bursementId;
+    }
 
-	public void setFinancialAdvice(String financialAdvice) {
-		this.financialAdvice = financialAdvice;
-	}
+    public void setBursementId(Long bursementId) {
+        this.bursementId = bursementId;
+    }
 
-	public Double getAllMoney() {
-		return allMoney;
-	}
+    public User getUsermoney() {
+        return usermoney;
+    }
 
-	public void setAllMoney(Double allMoney) {
-		this.allMoney = allMoney;
-	}
+    public void setUsermoney(User usermoney) {
+        this.usermoney = usermoney;
+    }
 
-	public List<DetailsBurse> getDetails() {
-		return details;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setDetails(List<DetailsBurse> details) {
-		this.details = details;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public ProcessList getProId() {
-		return proId;
-	}
+    public Long getTypeId() {
+        return typeId;
+    }
 
-	public void setProId(ProcessList proId) {
-		this.proId = proId;
-	}
+    public void setTypeId(Long typeId) {
+        this.typeId = typeId;
+    }
 
-	@Override
-	public String toString() {
-		return "Bursement [bursementId=" + bursementId + ", name=" + name + ", typeId=" + typeId + ", burseTime=" + burseTime + ", allinvoices=" + allinvoices + ", managerAdvice="
-				+ managerAdvice + ", namemoney=" + namemoney + ", financialAdvice=" + financialAdvice + ", allMoney=" + allMoney + ", username="
-				+ username + "]";
-	}
+    public User getOperation() {
+        return operation;
+    }
 
-	
-	
-	
+    public void setOperation(User operation) {
+        this.operation = operation;
+    }
+
+    public Date getBurseTime() {
+        return burseTime;
+    }
+
+    public void setBurseTime(Date burseTime) {
+        this.burseTime = burseTime;
+    }
+
+    public Integer getAllinvoices() {
+        return allinvoices;
+    }
+
+    public void setAllinvoices(Integer allinvoices) {
+        this.allinvoices = allinvoices;
+    }
+
+    public String getManagerAdvice() {
+        return managerAdvice;
+    }
+
+    public void setManagerAdvice(String managerAdvice) {
+        this.managerAdvice = managerAdvice;
+    }
+
+    public String getFinancialAdvice() {
+        return financialAdvice;
+    }
+
+    public void setFinancialAdvice(String financialAdvice) {
+        this.financialAdvice = financialAdvice;
+    }
+
+    public Double getAllMoney() {
+        return allMoney;
+    }
+
+    public void setAllMoney(Double allMoney) {
+        this.allMoney = allMoney;
+    }
+
+    public List<DetailsBurse> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<DetailsBurse> details) {
+        this.details = details;
+    }
+
+    public ProcessList getProId() {
+        return proId;
+    }
+
+    public void setProId(ProcessList proId) {
+        this.proId = proId;
+    }
+
+    @Override
+    public String toString() {
+        return "Bursement [bursementId=" + bursementId + ", name=" + name + ", typeId=" + typeId + ", burseTime=" + burseTime + ", allinvoices=" + allinvoices + ", managerAdvice="
+                + managerAdvice + ", namemoney=" + namemoney + ", financialAdvice=" + financialAdvice + ", allMoney=" + allMoney + ", username="
+                + username + "]";
+    }
+
+
 }

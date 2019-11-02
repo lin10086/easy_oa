@@ -106,8 +106,8 @@ min-height: 120px;
 					<td class="title"><span >紧急程度</span></td>
 					<td colspan="6">
 						<select class="form-control inpu" name="proId.deeply">
-							<#list harrylist as harry>
-							<option value="${harry.typeId}">${harry.typeName}</option>
+							<#list exigenceTypeVOList as exigence>
+							<option value="${exigence.typeId}">${exigence.typeName}</option>
 							</#list>
 						</select>
 					</td>
@@ -120,8 +120,8 @@ min-height: 120px;
 					<td class="title" ><label class="control-label">加班类型</label></td>
 					<td colspan="6">
 						<select class="form-control inpu" name="typeId">
-							<#list overtype as over>
-							<option value="${over.typeId}">${over.typeName}</option>
+							<#list overtimeTypeVOList as overtime>
+							<option value="${overtime.typeId}">${overtime.typeName}</option>
 							</#list>
 						</select>
 					</td>

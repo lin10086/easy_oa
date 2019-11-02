@@ -289,35 +289,41 @@ public class ProcessService {
         User lu = udao.findOne(id);//根据申请人ID查询申请人信息
 
         Pageable pa = new PageRequest(page, size);
+        //在类型列表获取流程的紧急程度（22正常，23重要，24紧急）
         List<SystemTypeList> harrylist = tydao.findByTypeModel("aoa_process_list");
-        //查看用户并分页
+        //查看所有用户并分页
         Page<User> pageuser = udao.findAll(pa);
-
+        //获取页面内容
         List<User> userlist = pageuser.getContent();
-        // 部门表
+        // 获取部门表
         Iterable<Dept> deptlist = ddao.findAll();
-        // 职位表
+        // 获取职位表
         Iterable<Position> poslist = pdao.findAll();
 
-        model.addAttribute("page", pageuser);
-        model.addAttribute("emplist", userlist);
-        model.addAttribute("deptlist", deptlist);
-        model.addAttribute("poslist", poslist);
-        model.addAttribute("url", "names");
-        model.addAttribute("username", lu.getUserName());
-        model.addAttribute("harrylist", harrylist);
+        model.addAttribute("page", pageuser);//可以获取第几页之类的
+        model.addAttribute("emplist", userlist);//分页后的用户列表
+        model.addAttribute("deptlist", deptlist);//部门列表
+        model.addAttribute("poslist", poslist);//职位列表
+        model.addAttribute("url", "names");//
+        model.addAttribute("username", lu.getUserName());//申请人的用户名
+        model.addAttribute("harrylist", harrylist);//紧急程度列表
     }
+
+    //主表，费用报销，申请人，上传的票据路径，审核人的用户名
 
     /**
      * 存表
-     *
-     * @throws IOException
+     * @param pro
+     * @param val
+     * @param lu
+     * @param filePath
+     * @param name
      * @throws IllegalStateException
+     * @throws IOException
      */
-    //主表，费用报销，申请人，上传的票据路径，审核人的用户名
     public void index5(ProcessList pro, String val, User lu, MultipartFile filePath, String name) throws IllegalStateException, IOException {
 
-        pro.setTypeNmae(val);//流程申请类型
+        pro.setTypeNmae(val);//流程主表类型名
         pro.setApplyTime(new Date());//流程申请时间
         pro.setUserId(lu);//流程申请人
         pro.setStatusId(23L);//流程审核状态，23L未处理

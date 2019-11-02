@@ -94,7 +94,7 @@ public class ProcedureController {
     private AttendceDao adao;
 
     @Resource
-    private TypeServiceV2 typeServicev2;
+    private TypeServiceV2 typeServiceV2;
     @Resource
     private ProcessServiceV2 processServiceV2;
     @Resource
@@ -684,15 +684,19 @@ public class ProcedureController {
         return "process/evectionmoney";
     }
 
+
     /**
      * 出差费用表单接收
      *
+     * @param filePath
+     * @param req
+     * @param eve
+     * @param br
+     * @param userId
      * @param model
-     * @param session
-     * @param request
-     * @param page
-     * @param size
      * @return
+     * @throws IllegalStateException
+     * @throws IOException
      */
     @RequestMapping("moneyeve")
     public String moneyeve(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid EvectionMoney eve, BindingResult br,
@@ -741,14 +745,14 @@ public class ProcedureController {
     /**
      * 出差申请表单接收
      *
-     * @param model
-     * @param session
-     * @param request
-     * @param page
-     * @param size
+     * @param filePath
+     * @param req
+     * @param eve
+     * @param br
+     * @param userId
      * @return
-     * @throws IOException
      * @throws IllegalStateException
+     * @throws IOException
      */
     @RequestMapping("evec")
     public String evec(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Evection eve, BindingResult br,
@@ -777,12 +781,13 @@ public class ProcedureController {
     /**
      * 加班申请接收
      *
-     * @param model
-     * @param session
-     * @param request
-     * @param page
-     * @param size
+     * @param req
+     * @param eve
+     * @param br
+     * @param userId
      * @return
+     * @throws IllegalStateException
+     * @throws IOException
      */
     @RequestMapping("over")
     public String over(HttpServletRequest req, @Valid Overtime eve, BindingResult br,
@@ -812,12 +817,15 @@ public class ProcedureController {
     /**
      * 请假申请接收
      *
+     * @param filePath
+     * @param req
+     * @param eve
+     * @param br
+     * @param userId
      * @param model
-     * @param session
-     * @param request
-     * @param page
-     * @param size
      * @return
+     * @throws IllegalStateException
+     * @throws IOException
      */
     @RequestMapping("holi")
     public String holi(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Holiday eve, BindingResult br,
@@ -864,12 +872,14 @@ public class ProcedureController {
     /**
      * 转正申请接收
      *
+     * @param req
+     * @param eve
+     * @param br
+     * @param userId
      * @param model
-     * @param session
-     * @param request
-     * @param page
-     * @param size
      * @return
+     * @throws IllegalStateException
+     * @throws IOException
      */
     @RequestMapping("regu")
     public String regu(HttpServletRequest req, @Valid Regular eve, BindingResult br,
@@ -905,12 +915,14 @@ public class ProcedureController {
     /**
      * 离职申请接收
      *
+     * @param req
+     * @param eve
+     * @param br
+     * @param userId
      * @param model
-     * @param session
-     * @param request
-     * @param page
-     * @param size
      * @return
+     * @throws IllegalStateException
+     * @throws IOException
      */
     @RequestMapping("res")
     public String res(HttpServletRequest req, @Valid Resign eve, BindingResult br,
@@ -939,6 +951,11 @@ public class ProcedureController {
 
     /**
      * 删除
+     *
+     * @param req
+     * @param userId
+     * @param model
+     * @return
      */
     @RequestMapping("sdelete")
     public String dele(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model) {
@@ -978,8 +995,11 @@ public class ProcedureController {
     /**
      * 图片预览
      *
+     * @param model
      * @param response
-     * @param fileid
+     * @param userId
+     * @param request
+     * @throws IOException
      */
     @RequestMapping("show/**")
     public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
@@ -1003,19 +1023,29 @@ public class ProcedureController {
 
     //		================================================================
 
-    //费用报销表单(1)
+
+    /**
+     * 费用报销表单(1)
+     *
+     * @param model
+     * @param userId
+     * @param request
+     * @param page
+     * @param size
+     * @return
+     */
     @RequestMapping("burse")
     public String bursement(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
-        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_bursement");
-        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
-        //查找费用科目生成树
+        List<TypePO> reimbursementTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_bursement");
+        List<TypeVO> reimbursementTypeVOList = TypeFactoryVO.createTypeVOList(reimbursementTypePOList);
+        //查找费用科目生成树(1L报销科目）
         List<SubjectPO> second = processServiceV2.getSubjectByParentId(1L);
         List<SubjectPO> sublist = processServiceV2.getSubjectByParentIdNot(1L);
-        processServiceV2.publicX6(model, userId, page, size);
-        model.addAttribute("typeVOList", typeVOList);
+        processServiceV2.setModel(model, userId, page, size);
+        model.addAttribute("reimbursementTypeVOList", reimbursementTypeVOList);
         model.addAttribute("second", second);
         model.addAttribute("sublist", sublist);
         return "process/bursement";
@@ -1032,59 +1062,45 @@ public class ProcedureController {
      */
 //   @Valid Bursement bursement 直接将页面传过来的bursement对象中的信息封装到里面去了(1-1)
     @RequestMapping("apply")
-    public String apply(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid BursementVO bu, BindingResult br,
-                        @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-
-//        RolePO rolePO = roleServiceV2.getRoleByRoleId(userPO.getRoleId());
-//        RoleVO roleVO = RoleFactoryVO.createRoleVO(rolePO);
-        UserVO lu = UserFactoryVO.createUserVO(userPO);
-//        lu.setRoleVO(roleVO);
-
-//        User lu = udao.findOne(userId);//申请人
-
-        UserPO reUserPO = userServiceV2.getUserPOByUsername(bu.getAuditName());
-        UserVO reuser = UserFactoryVO.createUserVO(reUserPO);
-//        User reuser = udao.findByUserName(bu.getUsername());//审核人(从费用报销表里获取审核人员名）
-
-        UserPO zhutiPO = userServiceV2.getUserPOByUsername(bu.getNameMoney());
-        UserVO zhuti = UserFactoryVO.createUserVO(zhutiPO);
-//        User zhuti = udao.findByUserName(bu.getNameMoney());//证明人
-
+    public String applyReception(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid ReimbursementVO reimbursementVO, BindingResult br,
+                                 @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
+        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userServiceV2.getUserPOByUsername(reimbursementVO.getAuditName());//根据审核人名获取审核人信息
+        UserPO testifyUserPO = userServiceV2.getUserPOByUsername(reimbursementVO.getTestifyName());//根据证明人名获取证明人信息
+        UserVO testifyUserVO = UserFactoryVO.createUserVO(testifyUserPO);
         Integer allinvoice = 0;//票据总数
         Double allmoney = 0.0;//总计金额
-        Long roleId = userPO.getRoleId();
-//        Long roleid = lu.getRole().getRoleId();//申请人角色id
-        Long fatherId = lu.getFatherId();
-//        Long fatherid = lu.getFatherId();//申请人上司id
-
-        Long reUserVOId = reuser.getUserId();
-//        Long userid = reuser.getUserId();//审核人userid
+        Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
+        Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
+        Long auditUserId = auditUserPO.getUserId();//审核人的ID
         String val = req.getParameter("val");
-        //角色ID大于等于3，申请人的上司ID和审核人ID
-        if (roleId >= 3L && Objects.equals(fatherId, reUserVOId)) {
-            List<DetailsBurseVO> detailsBurseVOList = bu.getDetailsBurseVOList();
+
+
+        //角色ID大于等于3(1L管理员,2L CEO)，申请人的上司ID和审核人ID
+        if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserId)) {
+            List<DetailsReimburseVO> detailsReimburseVOList = reimbursementVO.getDetailsReimburseVOList();
 //            List<DetailsBurse> mm = bu.getDetails();//获取费用报销明细
-            for (DetailsBurseVO detailsBurseVO : detailsBurseVOList) {
-                allinvoice += detailsBurseVO.getInvoices();//获取票据总数
-                allmoney += detailsBurseVO.getDetailMoney();//报销金额
-                detailsBurseVO.setBursementVO(bu);//设置报销明细表里的费用报销
+            for (DetailsReimburseVO detailsReimburseVO : detailsReimburseVOList) {
+                allinvoice += detailsReimburseVO.getInvoices();//获取票据总数
+                allmoney += detailsReimburseVO.getDetailMoney();//报销金额
+                detailsReimburseVO.setReimbursementVO(reimbursementVO);//设置报销明细表里的费用报销
             }
             //在报销费用表里面set票据总数和总金额，证明人
-            bu.setAllinvoices(allinvoice);
-            bu.setAllMoney(allmoney);
-            bu.setUserVOMoney(zhuti);
+            reimbursementVO.setAllinvoices(allinvoice);
+            reimbursementVO.setAllMoney(allmoney);
+            reimbursementVO.setUserVOMoney(testifyUserVO);
             //set主表
-            ProcessListVO pro = bu.getProcessListVO();//从报销表里获取主表
+            ProcessListVO processListVO = reimbursementVO.getProcessListVO();//从报销表里获取主表
 
             //主表，费用报销，申请人，上传的票据路径，审核人的用户名
 //            proservice.index5(pro, val, lu, filePath, reuser.getUserName());
-            processServiceV2.publicX5(pro, val, lu, filePath, reuser.getUserName());
+            processServiceV2.insertAttachment(applyUserPO,filePath);
+            ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO,val,userId,auditUserPO);
             //存费用报销表
-            processServiceV2.insertBursementVO(pro, zhuti, bu, allinvoice, allmoney, lu);
+            processServiceV2.insertBursementPO(reimbursementVO, processListPO, userId, auditUserId);
 //            budao.save(bu);
-            //存审核表
-            processServiceV2.insertReviewedVO(reuser, pro);
+            //存审核表(申请人，主表）
+            processServiceV2.insertReviewedPO(applyUserPO, processListPO);
 //            proservice.index7(reuser, pro);
         } else {
             return "common/proce";
@@ -1099,11 +1115,11 @@ public class ProcedureController {
     public String evection(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        //查找类型
-        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_evection");
-        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
-        processServiceV2.publicX6(model, userId, page, size);
-        model.addAttribute("outtype", typeVOList);
+        //根据类型模板找出出差的类型列表（28，29，30，31，32）
+        List<TypePO> evectionTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_evection");
+        List<TypeVO> evectionTypeVOList = TypeFactoryVO.createTypeVOList(evectionTypePOList);
+        model.addAttribute("evectionTypeVOList", evectionTypeVOList);
+        processServiceV2.setModel(model, userId, page, size);
         return "process/evection";
     }
 
@@ -1112,11 +1128,11 @@ public class ProcedureController {
     public String overtime(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        //查找类型
-        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_overtime");
-        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
-        processServiceV2.publicX6(model, userId, page, size);
-        model.addAttribute("overtype", typeVOList);
+        //根据类型模板找出加班的类型列表（33，34，35，36）
+        List<TypePO> overtimeTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_overtime");
+        List<TypeVO> overtimeTypeVOList = TypeFactoryVO.createTypeVOList(overtimeTypePOList);
+        processServiceV2.setModel(model, userId, page, size);
+        model.addAttribute("overtimeTypeVOList", overtimeTypeVOList);
         return "process/overtime";
     }
 
@@ -1125,7 +1141,7 @@ public class ProcedureController {
     public String regular(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                           @RequestParam(value = "page", defaultValue = "0") int page,
                           @RequestParam(value = "size", defaultValue = "10") int size) {
-        processServiceV2.publicX6(model, userId, page, size);
+        processServiceV2.setModel(model, userId, page, size);
         return "process/regular";
     }
 
@@ -1134,10 +1150,10 @@ public class ProcedureController {
     public String holiday(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                           @RequestParam(value = "page", defaultValue = "0") int page,
                           @RequestParam(value = "size", defaultValue = "10") int size) {
-        //查找类型
-        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_holiday");
+        //根据类型模板找出请假的类型列表（37，38，39，40，41，42，43）
+        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_holiday");
         List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
-        processServiceV2.publicX6(model, userId, page, size);
+        processServiceV2.setModel(model, userId, page, size);
         model.addAttribute("overtype", typeVOList);
         return "process/holiday";
     }
@@ -1147,10 +1163,9 @@ public class ProcedureController {
     public String resign(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                          @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size) {
-        processServiceV2.publicX6(model, userId, page, size);
+        processServiceV2.setModel(model, userId, page, size);
         return "process/resign";
     }
-
 
     /**
      * 流程管理》我的申请,查找出自己的申请
@@ -1174,7 +1189,7 @@ public class ProcedureController {
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_process_list");
         List<StatusVO> statusVOList = StatusFactoryVO.createStatusVOList(statusPOList);
 
-        List<TypePO> typePOList = typeServicev2.getTypePOByTypeModel("aoa_process_list");
+        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
         List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
 
         model.addAttribute("page", pageInfo);
@@ -1226,7 +1241,7 @@ public class ProcedureController {
 //        map = proservice.index3(name, user, typename, process);
         if (("费用报销").equals(typeName)) {
             BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);
-            BursementVO bursementVO = BursementFactoryVO.createBursementVO(bursementPO);
+            ReimbursementVO bursementVO = BursementFactoryVO.createBursementVO(bursementPO);
 //            Bursement bu = budao.findByProId(process);
             UserPO provePO = userServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
             UserVO prove = UserFactoryVO.createUserVO(provePO);
@@ -1237,9 +1252,9 @@ public class ProcedureController {
 //                audit = udao.findOne(bu.getOperation().getUserId());//最终审核人
             }
             List<DetailsbursePO> detailsbursePOList = detailsburseServiceV2.getDetailsbursePOListByBusementId(bursementPO.getBursementId());
-            List<DetailsBurseVO> detailsBurseVOList = DetailsBurseFactoryVO.createDetailsBurseVOList(detailsbursePOList);
+            List<DetailsReimburseVO> detailsBurseVOList = DetailsBurseFactoryVO.createDetailsBurseVOList(detailsbursePOList);
 //            List<DetailsBurse> detaillist = dedao.findByBurs(bu);
-            String type = typeServicev2.getTypeNameByTypeId(bursementPO.getTypeId());
+            String type = typeServiceV2.getTypeNameByTypeId(bursementPO.getTypeId());
 //            String type = tydao.findname(bu.getTypeId());
             String money = ProcessServiceV2.numbertocn(bursementPO.getAllMoney());
 //            String money = ProcessService.numbertocn(bu.getAllMoney());
@@ -1248,7 +1263,7 @@ public class ProcedureController {
             model.addAttribute("type", type);
             model.addAttribute("bu", bursementVO);
             model.addAttribute("money", money);
-            model.addAttribute("detaillist", detailsBurseVOList);
+            model.addAttribute("detailsBurseVOList", detailsBurseVOList);//detaillist
             model.addAttribute("map", map);
             return "process/serch";
         } else if (("出差费用").equals(typeName)) {
@@ -1290,7 +1305,7 @@ public class ProcedureController {
         } else if (("加班申请").equals(typeName)) {
             OvertimePO overtimePO = byProcessPOIdServiceV2.getOvertimePOByProcessPOId(processId);
             OverTimeVO overTimeVO = OverTimeVOFactory.createOverTimeVO(overtimePO);
-            String type = typeServicev2.getTypeNameByTypeId(overtimePO.getTypeId());
+            String type = typeServiceV2.getTypeNameByTypeId(overtimePO.getTypeId());
 //            Overtime eve = odao.findByProId(process);
 //            String type = tydao.findname(eve.getTypeId());
             model.addAttribute("eve", overTimeVO);
@@ -1300,7 +1315,7 @@ public class ProcedureController {
         } else if (("请假申请").equals(typeName)) {
             HolidayPO holidayPO = byProcessPOIdServiceV2.getHolidayPOByProcessPOId(processId);
             HolidayVO holidayVO = HolidayVOFactory.createHolidayVO(holidayPO);
-            String type = typeServicev2.getTypeNameByTypeId(holidayPO.getTypeId());
+            String type = typeServiceV2.getTypeNameByTypeId(holidayPO.getTypeId());
 //            Holiday eve = hdao.findByProId(process);
 //            String type = tydao.findname(eve.getTypeId());
             model.addAttribute("eve", holidayVO);
@@ -1338,14 +1353,12 @@ public class ProcedureController {
      */
     @RequestMapping("audit")
     public String processAudit(@SessionAttribute("userId") Long userId, Model model,
-                         @RequestParam(value = "page", defaultValue = "0") int page,
-                         @RequestParam(value = "size", defaultValue = "10") int size) {
+                               @RequestParam(value = "page", defaultValue = "0") int page,
+                               @RequestParam(value = "size", defaultValue = "10") int size) {
         UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-        UserVO userVO = UserFactoryVO.createUserVO(userPO);
-//        User user = udao.findOne(userId);
-        List<ProcessAuditVO> processAuditVOList = processServiceV2.getProcessAuditVOList(userVO, page, size, null, model);
+        List<ProcessAuditVO> processAuditVOList = processServiceV2.getProcessAuditVOList(userPO, page, size, null, model);
         PageInfo pageInfo = new PageInfo(processAuditVOList);
-        List<Map<String, Object>> mapList = processServiceV2.mapList(processAuditVOList, userVO);
+        List<Map<String, Object>> mapList = processServiceV2.mapList(processAuditVOList, userPO);
 //        Page<AubUser> pagelist = proservice.index(user, page, size, null, model);
 //        List<Map<String, Object>> prolist = proservice.index2(pagelist, user);
         model.addAttribute("page", pageInfo);

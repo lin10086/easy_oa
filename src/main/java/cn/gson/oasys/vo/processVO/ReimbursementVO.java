@@ -1,19 +1,23 @@
-package cn.gson.oasys.vo;
+package cn.gson.oasys.vo.processVO;
 
-import cn.gson.oasys.model.entity.process.DetailsBurse;
-import cn.gson.oasys.model.entity.process.ProcessList;
 import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.vo.DetailsReimburseVO;
+import cn.gson.oasys.vo.ProcessListVO;
+import cn.gson.oasys.vo.UserVO;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+
+/**
+ * 费用报销表
+ */
 @ToString
 @Data
-public class BursementVO {
+public class ReimbursementVO {
 
-    private Long bursementId;
+    private Long reimbursementId;
 
     private UserVO userVOMoney;//证明人(数据库名称用户ID）user_name
 
@@ -23,7 +27,7 @@ public class BursementVO {
 
     private User operation;//报销人员(数据库名称用户ID)operation_name
 
-    private Date burseTime;//报销日期
+    private Date reimbursementTime;//报销日期
 
     private Integer allinvoices ;//票据总数
 
@@ -35,9 +39,9 @@ public class BursementVO {
 
     private String auditName;//审核人员名
 
-    private String nameMoney;//承担主体(证明人的名字）
+    private String testifyName;//证明人的名字
 
-    private List<DetailsBurseVO> detailsBurseVOList;//费用报销明细表
+    private List<DetailsReimburseVO> detailsReimburseVOList;//费用报销明细表
 
-    private ProcessListVO processListVO;//主表
+    private ProcessListVO processListVO;//主表id
 }

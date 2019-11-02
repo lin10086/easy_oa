@@ -1,19 +1,19 @@
 package cn.gson.oasys.vo.factoryvo;
 
 import cn.gson.oasys.model.po.BursementPO;
-import cn.gson.oasys.vo.BursementVO;
+import cn.gson.oasys.vo.processVO.ReimbursementVO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BursementFactoryVO {
-    public static BursementVO createBursementVO(BursementPO bursementPO) {
-        BursementVO bursementVO = new BursementVO();
+    public static ReimbursementVO createBursementVO(BursementPO bursementPO) {
+        ReimbursementVO bursementVO = new ReimbursementVO();
 
-        bursementVO.setBursementId(bursementPO.getBursementId());
+        bursementVO.setReimbursementId(bursementPO.getBursementId());
         bursementVO.setAllinvoices(bursementPO.getAllinvoices());
         bursementVO.setAllMoney(bursementPO.getAllMoney());
-        bursementVO.setBurseTime(bursementPO.getBurseTime());
+        bursementVO.setReimbursementTime(bursementPO.getBurseTime());
         bursementVO.setFinancialAdvice(bursementPO.getFinancialAdvice());
         bursementVO.setManagerAdvice(bursementPO.getManagerAdvice());
         bursementVO.setName(bursementPO.getName());
@@ -29,8 +29,8 @@ public class BursementFactoryVO {
         return bursementVO;
     }
 
-    public static List<BursementVO> createBursementVOList(List<BursementPO> bursementPOList) {
-        List<BursementVO> bursementVOList = new ArrayList<>();
+    public static List<ReimbursementVO> createBursementVOList(List<BursementPO> bursementPOList) {
+        List<ReimbursementVO> bursementVOList = new ArrayList<>();
         for (BursementPO bursementPO : bursementPOList) {
             bursementVOList.add(BursementFactoryVO.createBursementVO(bursementPO));
         }

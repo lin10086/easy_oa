@@ -122,7 +122,12 @@ public class UserServiceV2 {
     }
 
 
-    //根据用户ID获取userPO
+    /**
+     * 根据用户ID获取userPO
+     *
+     * @param userId 用户ID
+     * @return
+     */
     public UserPO getUserPOByUserId(Long userId) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
         return userPO;

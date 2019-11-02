@@ -12,6 +12,8 @@ import cn.gson.oasys.model.entity.note.Attachment;
 import cn.gson.oasys.model.entity.system.SystemStatusList;
 import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.model.po.AttachmentListPO;
+import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.AttachmentVO;
 import cn.gson.oasys.vo.UserVO;
 import com.github.pagehelper.util.StringUtil;
@@ -124,7 +126,7 @@ public class MailServiceV2 {
 
     private String rootpath;
 
-   /* @PostConstruct
+    @PostConstruct
     public void UserpanelController() {
         try {
             rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/static/attachment");
@@ -135,9 +137,9 @@ public class MailServiceV2 {
         }
     }
 
-    *//**
+    /**
      * 收件箱
-     *//*
+     */
     public Page<Pagemail> recive(int page, int size, User tu, String val, String title) {
         Page<Pagemail> pagelist = null;
         Pageable pa = new PageRequest(page, size);
@@ -175,9 +177,9 @@ public class MailServiceV2 {
     }
 
 
-    *//**
+    /**
      * 封装json
-     *//*
+     */
     public List<Map<String, Object>> mail(Page<Pagemail> mail) {
         List<Pagemail> maillist = mail.getContent();
         List<Map<String, Object>> list = new ArrayList<>();
@@ -201,9 +203,9 @@ public class MailServiceV2 {
         return list;
     }
 
-    *//**
+    /**
      * 发件箱
-     *//*
+     */
     public Page<Inmaillist> inmail(int page, int size, User tu, String val, String title) {
         Page<Inmaillist> pagemail = null;
         Pageable pa = new PageRequest(page, size);
@@ -242,9 +244,9 @@ public class MailServiceV2 {
 
     }
 
-    *//**
+    /**
      * 发件箱封装
-     *//*
+     */
     public List<Map<String, Object>> maillist(Page<Inmaillist> mail) {
         List<Inmaillist> maillist = mail.getContent();
         List<Map<String, Object>> list = new ArrayList<>();
@@ -268,7 +270,7 @@ public class MailServiceV2 {
         return list;
     }
 
-    *//**
+    /**
      * 账号
      *
      * @param page
@@ -276,7 +278,7 @@ public class MailServiceV2 {
      * @param tu
      * @param val
      * @return
-     *//*
+     */
     public Page<Mailnumber> index(int page, int size, User tu, String val, Model model) {
         Page<Mailnumber> account = null;
         List<Sort.Order> orders = new ArrayList<>();
@@ -318,22 +320,26 @@ public class MailServiceV2 {
             list.add(result);
         }
         return list;
-    }*/
+    }
+
+
 
     /**
-     * 上传附件
      *
-     * @throws IOException
+     * @param file
+     * @param applyUserPO
+     * @return
      * @throws IllegalStateException
+     * @throws IOException
      */
-    public AttachmentVO uploadAttachmentVO(MultipartFile file, UserVO mu) throws IllegalStateException, IOException {
+    public AttachmentListPO uploadAttachmentListPO(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM");
         File root = new File(rootpath, simpleDateFormat.format(new Date()));
         //获取登录名
-        File savepath = new File(root, mu.getUserName());
+        File savePath = new File(root, applyUserPO.getUserName());
 
-        if (!savepath.exists()) {
-            savepath.mkdirs();
+        if (!savePath.exists()) {
+            savePath.mkdirs();
         }
         //获取原始文件名
         String fileName = file.getOriginalFilename();
@@ -342,19 +348,18 @@ public class MailServiceV2 {
             String suffix = FilenameUtils.getExtension(fileName);
             //新文件名
             String newFileName = UUID.randomUUID().toString().toLowerCase() + "." + suffix;
-            File targetFile = new File(savepath, newFileName);
+            File targetFile = new File(savePath, newFileName);
             file.transferTo(targetFile);
 
-            AttachmentVO attachmentVO = new AttachmentVO();
-            attachmentVO.setAttachmentName(file.getOriginalFilename());
-            attachmentVO.setAttachmentPath(targetFile.getAbsolutePath().replace("\\", "/").replace(rootpath, ""));
-            attachmentVO.setAttachmentShuffix(suffix);
-            attachmentVO.setAttachmentSize(file.getSize());
-            attachmentVO.setAttachmentType(file.getContentType());
-            attachmentVO.setUploadTime(new Date());
-            attachmentVO.setUserVOId(mu.getUserId());
-
-            return attachmentVO;
+            AttachmentListPO attachmentPO = new AttachmentListPO();
+            attachmentPO.setAttachmentName(file.getOriginalFilename());
+            attachmentPO.setAttachmentPath(targetFile.getAbsolutePath().replace("\\", "/").replace(rootpath, ""));
+            attachmentPO.setAttachmentShuffix(suffix);
+            attachmentPO.setAttachmentSize(file.getSize() + "");
+            attachmentPO.setAttachmentType(file.getContentType());
+            attachmentPO.setUploadTime(new Date());
+            attachmentPO.setUserId(applyUserPO.getUserId() + "");
+            return attachmentPO;
         }
         return null;
     }
@@ -372,7 +377,7 @@ public class MailServiceV2 {
      * @param str
      * @return
      */
-   /* public boolean isContainChinese(String str) {
+    public boolean isContainChinese(String str) {
 
         Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
         Matcher m = p.matcher(str);
@@ -380,14 +385,14 @@ public class MailServiceV2 {
             return true;
         }
         return false;
-    }*/
+    }
 
     /**
      * 发外部邮件
      *
      * @return
      */
-    /*
+
     public void pushmail(String account, String password, String reciver,
                          String name, String title, String content, String affix, String filename) {
         String file = null;
@@ -498,5 +503,5 @@ public class MailServiceV2 {
 
 
         return message;
-    }*/
+    }
 }

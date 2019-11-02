@@ -106,8 +106,8 @@ min-height: 120px;
 					<td class="title"><span >紧急程度</span></td>
 					<td colspan="6">
 						<select class="form-control inpu" name="proId.deeply">
-							<#list harrylist as harry>
-							<option value="${harry.typeId}">${harry.typeName}</option>
+							<#list exigenceTypeVOList as exigence>
+							<option value="${exigence.typeId}">${exigence.typeName}</option>
 							</#list>
 						</select>
 					</td>

@@ -15,8 +15,7 @@ public class AttachmentServiceV2 {
     /**
      * 插入附件到附件表
      */
-    public void insertAttachmentListPO() {
-        AttachmentListPO attachmentListPO = new AttachmentListPO();
+    public void insertAttachmentListPO(AttachmentListPO attachmentListPO) {
         attachmentListPO.setModel("aoa_bursement");
         attachmentListPOMapper.insertSelective(attachmentListPO);
     }

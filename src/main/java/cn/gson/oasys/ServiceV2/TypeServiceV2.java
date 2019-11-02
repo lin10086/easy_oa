@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -40,6 +42,20 @@ public class TypeServiceV2 {
         TypePO typePO = typePOMapper.selectByPrimaryKey(typeId);
         String typeName = typePO.getTypeName();
         return typeName;
+    }
+
+    /**
+     * 在类型列表里面找类型ID和类型名
+     *
+     * @param typePOList 类型列表
+     * @return
+     */
+    public Map<Long, String> getTypeIdAndTypeNameByTypePoList(List<TypePO> typePOList) {
+        Map<Long, String> map = new HashMap<>();
+        for (TypePO typePO : typePOList) {
+            map.put(typePO.getTypeId(), typePO.getTypeName());
+        }
+        return map;
     }
 
 }

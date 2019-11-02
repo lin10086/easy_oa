@@ -1,11 +1,10 @@
-package cn.gson.oasys.vo.factoryvo;
+package cn.gson.oasys.vo.factoryvo.processfactory;
 
 import cn.gson.oasys.model.po.ProcessListPO;
 import cn.gson.oasys.vo.ProcessListVO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ProcessListFactoryVO {
@@ -32,5 +31,23 @@ public class ProcessListFactoryVO {
             processListVOList.add(ProcessListFactoryVO.createProcessListVO(processListPO));
         }
         return processListVOList;
+    }
+
+    public static ProcessListPO createProcessListPO(ProcessListVO processListVO) {
+        ProcessListPO processListPO = new ProcessListPO();
+        processListPO.setProcessId(processListVO.getProcessId());
+        processListPO.setApplyTime(processListVO.getApplyTime());
+        processListPO.setDeeplyId(processListVO.getDeeplyId());
+        processListPO.setProcessName(processListVO.getProcessName());
+        processListPO.setEndTime(processListVO.getEndTime());
+        processListPO.setIsChecked(processListVO.getIsChecked() == false ? 0 : 1);
+        processListPO.setProcessDes(processListVO.getProcessDescribe());
+//        processListPO.setProcessUserId(processListVO.getUserVO().getUserId());
+        processListPO.setProcseeDays(processListVO.getProcessDays());
+//        processListPO.setProFileId(processListVO.getAttachmentVO().getAttachmentId());
+        processListPO.setStartTime(processListVO.getStartTime());
+        processListPO.setTypeName(processListVO.getTypeName());
+        processListPO.setStatusId(processListVO.getStatusId());
+        return processListPO;
     }
 }
