@@ -32,6 +32,6 @@ public class RegularVO {
 
     private ProcessListVO processListVO;//流程主表ID（pro_id）
 
-    private String nameUser;
+    private String auditUser;//审核人员
 
 }

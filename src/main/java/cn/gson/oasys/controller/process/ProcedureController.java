@@ -110,6 +110,7 @@ public class ProcedureController {
     @Resource
     private EvectionMoneyServiceV2 evectionMoneyServiceV2;
 
+
     //	@Value("${attachment.roopath}")
     private String rootpath;
 
@@ -742,18 +743,19 @@ public class ProcedureController {
     }
 
 
-    /**
-     * 出差申请表单接收
-     *
-     * @param filePath
-     * @param req
-     * @param eve
-     * @param br
-     * @param userId
-     * @return
-     * @throws IllegalStateException
-     * @throws IOException
-     */
+/**
+ * 出差申请表单接收
+ *
+ * @param filePath
+ * @param req
+ * @param eve
+ * @param br
+ * @param userId
+ * @return
+ * @throws IllegalStateException
+ * @throws IOException
+ *//*
+
     @RequestMapping("evec")
     public String evec(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Evection eve, BindingResult br,
                        @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
@@ -776,19 +778,21 @@ public class ProcedureController {
 
         return "redirect:/xinxeng";
     }
+*/
 
 
-    /**
-     * 加班申请接收
-     *
-     * @param req
-     * @param eve
-     * @param br
-     * @param userId
-     * @return
-     * @throws IllegalStateException
-     * @throws IOException
-     */
+/**
+ * 加班申请接收
+ *
+ * @param req
+ * @param eve
+ * @param br
+ * @param userId
+ * @return
+ * @throws IllegalStateException
+ * @throws IOException
+ */
+/*
     @RequestMapping("over")
     public String over(HttpServletRequest req, @Valid Overtime eve, BindingResult br,
                        @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
@@ -808,11 +812,57 @@ public class ProcedureController {
         } else {
             return "common/proce";
         }
+        return "redirect:/xinxeng";
+
+    }
+*/
+
+
+
+
+    /**
+     * 转正申请接收
+     *
+     * @param req
+     * @param eve
+     * @param br
+     * @param userId
+     * @param model
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+/*
+    @RequestMapping("regu")
+    public String regu(HttpServletRequest req, @Valid Regular eve, BindingResult br,
+                       @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
+        User lu = udao.findOne(userId);//申请人
+        User shen = udao.findByUserName(eve.getNameuser());//审核人
+        Long roleid = lu.getRole().getRoleId();//申请人角色id
+        Long fatherid = lu.getFatherId();//申请人父id
+        Long userid = shen.getUserId();//审核人userid
+        String val = req.getParameter("val");
+        if (roleid >= 3L && Objects.equals(fatherid, userid)) {
+            if (lu.getRole().getRoleId() == 6 || lu.getRole().getRoleId() == 7) {
+
+                //set主表
+                ProcessList pro = eve.getProId();
+                proservice.index8(pro, val, lu, shen.getUserName());
+                rgdao.save(eve);
+                //存审核表
+                proservice.index7(shen, pro);
+            } else {
+                model.addAttribute("error", "你不需要转正。。。");
+                return "common/proce";
+            }
+        } else {
+            return "common/proce";
+        }
 
         return "redirect:/xinxeng";
 
     }
-
+*/
 
     /**
      * 请假申请接收
@@ -827,7 +877,7 @@ public class ProcedureController {
      * @throws IllegalStateException
      * @throws IOException
      */
-    @RequestMapping("holi")
+   /* @RequestMapping("holi")
     public String holi(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid Holiday eve, BindingResult br,
                        @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
         User lu = udao.findOne(userId);//申请人
@@ -867,50 +917,7 @@ public class ProcedureController {
 
         return "redirect:/xinxeng";
     }
-
-
-    /**
-     * 转正申请接收
-     *
-     * @param req
-     * @param eve
-     * @param br
-     * @param userId
-     * @param model
-     * @return
-     * @throws IllegalStateException
-     * @throws IOException
-     */
-    @RequestMapping("regu")
-    public String regu(HttpServletRequest req, @Valid Regular eve, BindingResult br,
-                       @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
-        User lu = udao.findOne(userId);//申请人
-        User shen = udao.findByUserName(eve.getNameuser());//审核人
-        Long roleid = lu.getRole().getRoleId();//申请人角色id
-        Long fatherid = lu.getFatherId();//申请人父id
-        Long userid = shen.getUserId();//审核人userid
-        String val = req.getParameter("val");
-        if (roleid >= 3L && Objects.equals(fatherid, userid)) {
-            if (lu.getRole().getRoleId() == 6 || lu.getRole().getRoleId() == 7) {
-
-                //set主表
-                ProcessList pro = eve.getProId();
-                proservice.index8(pro, val, lu, shen.getUserName());
-                rgdao.save(eve);
-                //存审核表
-                proservice.index7(shen, pro);
-            } else {
-                model.addAttribute("error", "你不需要转正。。。");
-                return "common/proce";
-            }
-        } else {
-            return "common/proce";
-        }
-
-        return "redirect:/xinxeng";
-
-    }
-
+*/
 
     /**
      * 离职申请接收
@@ -1054,7 +1061,7 @@ public class ProcedureController {
 //    费用表单接收(1-1)
 
     /**
-     * 费用表单接收
+     * 费用报销单接收
      *
      * @return
      * @throws IOException
@@ -1072,6 +1079,7 @@ public class ProcedureController {
         Double allmoney = 0.0;//总计金额
         Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
+
         Long auditUserId = auditUserPO.getUserId();//审核人的ID
         String val = req.getParameter("val");
 
@@ -1094,8 +1102,8 @@ public class ProcedureController {
 
             //主表，费用报销，申请人，上传的票据路径，审核人的用户名
 //            proservice.index5(pro, val, lu, filePath, reuser.getUserName());
-            processServiceV2.insertAttachment(applyUserPO,filePath);
-            ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO,val,userId,auditUserPO);
+            AttachmentListPO attachmentListPO = processServiceV2.insertAttachment(applyUserPO, filePath);
+            ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, attachmentListPO.getAttachmentId());
             //存费用报销表
             processServiceV2.insertBursementPO(reimbursementVO, processListPO, userId, auditUserId);
 //            budao.save(bu);
@@ -1123,6 +1131,41 @@ public class ProcedureController {
         return "process/evection";
     }
 
+    /**
+     * 出差申请表单接收(2-1)
+     *
+     * @param filePath
+     * @param req
+     * @param evectionVO
+     * @param userId
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    @RequestMapping("evec")
+    public String evectionReception(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid EvectionVO evectionVO,
+                                    @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
+        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userServiceV2.getUserPOByUsername(evectionVO.getAuditUser());//根据审核人名获取审核人信息
+        Long auditUserPOId = auditUserPO.getUserId();
+        Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
+        Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
+        String val = req.getParameter("val");
+        if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
+            ProcessListVO processListVO = evectionVO.getProcessListVO();
+            AttachmentListPO attachmentListPO = processServiceV2.insertAttachment(applyUserPO, filePath);
+            ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, attachmentListPO.getAttachmentId());
+            //存出差表
+            processServiceV2.insertEvectionPO(evectionVO.getTypeId(), processListPO);
+            //存审核表
+            processServiceV2.insertReviewedPO(applyUserPO, processListPO);
+        } else {
+            return "common/proce";
+        }
+        return "redirect:/xinxeng";
+    }
+
+
     //加班申请单（3）
     @RequestMapping("overtime")
     public String overtime(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
@@ -1136,6 +1179,42 @@ public class ProcedureController {
         return "process/overtime";
     }
 
+    /**
+     * 加班申请接收(3-1)
+     *
+     * @param req
+     * @param overTimeVO
+     * @param userId
+     * @return
+     * @throws IllegalStateException
+     */
+
+    @RequestMapping("over")
+    public String overTimeReception(HttpServletRequest req, @Valid OverTimeVO overTimeVO, BindingResult br,
+                       @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
+
+        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userServiceV2.getUserPOByUsername(overTimeVO.getAuditUser());//根据审核人名获取审核人信息
+        Long auditUserPOId = auditUserPO.getUserId();
+        Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
+        Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
+        String val = req.getParameter("val");
+
+
+        if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
+            ProcessListVO processListVO = overTimeVO.getProcessListVO();
+            ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, null);
+            //存加班表
+            processServiceV2.insertOverTimePO(overTimeVO.getTypeId(), processListPO);
+            //存审核表
+            processServiceV2.insertReviewedPO(applyUserPO, processListPO);
+        } else {
+            return "common/proce";
+        }
+        return "redirect:/xinxeng";
+
+    }
+
     //转正申请单（4）
     @RequestMapping("regular")
     public String regular(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
@@ -1144,6 +1223,52 @@ public class ProcedureController {
         processServiceV2.setModel(model, userId, page, size);
         return "process/regular";
     }
+
+    /**
+     * 转正申请接收(4-1)
+     *
+     * @param req
+     * @param regularVO
+     * @param br
+     * @param userId
+     * @param model
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    @RequestMapping("regu")
+    public String regularReception(HttpServletRequest req, @Valid RegularVO regularVO, BindingResult br,
+                       @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
+
+        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userServiceV2.getUserPOByUsername(regularVO.getAuditUser());//根据审核人名获取审核人信息
+        Long auditUserPOId = auditUserPO.getUserId();
+        Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
+        Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
+        String val = req.getParameter("val");
+
+        if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
+            if (applyUserRoleId == 6 || applyUserRoleId == 7) {
+
+                ProcessListVO processListVO = regularVO.getProcessListVO();
+                ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, null);
+                //存转正申请表
+                processServiceV2.insertRegularPO(regularVO,processListPO);
+                //存审核表
+                processServiceV2.insertReviewedPO(applyUserPO, processListPO);
+
+            } else {
+                model.addAttribute("error", "你不需要转正。。。");
+                return "common/proce";
+            }
+        } else {
+            return "common/proce";
+        }
+
+        return "redirect:/xinxeng";
+
+    }
+
 
     //请假申请单（5）
     @RequestMapping("holiday")
@@ -1157,6 +1282,66 @@ public class ProcedureController {
         model.addAttribute("overtype", typeVOList);
         return "process/holiday";
     }
+
+    /**
+     * 请假申请接收（5-1）
+     *
+     * @param filePath
+     * @param req
+     * @param eve
+     * @param br
+     * @param userId
+     * @param model
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    @RequestMapping("holi")
+    public String holidayReception(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid HolidayVO holidayVO, BindingResult br,
+                       @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
+
+        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userServiceV2.getUserPOByUsername(holidayVO.getAuditUser());//根据审核人名获取审核人信息
+        Long auditUserPOId = auditUserPO.getUserId();
+        Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
+        Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
+        String val = req.getParameter("val");
+
+        if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
+
+            SystemTypeList type = tydao.findOne(eve.getTypeId());
+            if (eve.getTypeId() == 40) {
+                if (type.getTypeSortValue() < eve.getLeaveDays()) {
+                    model.addAttribute("error", "婚假必须小于10天。");
+                    return "common/proce";
+                }
+            } else if (eve.getTypeId() == 38) {
+                if (type.getTypeSortValue() < eve.getLeaveDays()) {
+                    model.addAttribute("error", "单次事假必须小于4天。");
+                    return "common/proce";
+                }
+            } else if (eve.getTypeId() == 42) {
+                if (type.getTypeSortValue() < eve.getLeaveDays()) {
+                    model.addAttribute("error", "陪产假必须小于10天。");
+                    return "common/proce";
+                }
+            } else {
+
+                ProcessListVO processListVO = holidayVO.getProcessListVO();
+                ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, null);
+                //存请假申请单
+                processServiceV2.insertRegularPO(holidayVO,processListPO);
+                //存审核表
+                processServiceV2.insertReviewedPO(applyUserPO, processListPO);
+
+            }
+        } else {
+            return "common/proce";
+        }
+
+        return "redirect:/xinxeng";
+    }
+
 
     //离职申请单（6）
     @RequestMapping("resign")
@@ -1367,5 +1552,6 @@ public class ProcedureController {
 
         return "process/auditing";
     }
+
 
 }

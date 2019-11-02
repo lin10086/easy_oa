@@ -110,11 +110,11 @@
                         </tr>
                         <tr>
                             <td class="title"><label class="control-label">标题</label></td>
-                            <td colspan="6"><input type="text" class="form-control inpu" name="proId.processName"/></td>
+                            <td colspan="6"><input type="text" class="form-control inpu" name="processListVO.processName"/></td>
 
                             <td class="title"><span>紧急程度</span></td>
                             <td colspan="6">
-                                <select class="form-control inpu" name="proId.deeply">
+                                <select class="form-control inpu" name="processListVO.deeplyId">
                                     <#list exigenceTypeVOList as exigence>
                                         <option value="${exigence.typeId}">${exigence.typeName}</option>
                                     </#list>
@@ -140,10 +140,10 @@
                         <tr>
                             <td class="title"><label class="control-label">开始日期</label></td>
                             <td colspan="6"><input type="text" class="form-control inpu" id="starTime"
-                                                   name="proId.startTime"/></td>
+                                                   name="processListVO.startTime"/></td>
                             <td class="title"><label class="control-label">结束日期</label></td>
                             <td colspan="6"><input type="text" class="form-control inpu" id="endTime"
-                                                   name="proId.endTime"/></td>
+                                                   name="processListVO.endTime"/></td>
                         </tr>
                         <tr>
 
@@ -157,7 +157,7 @@
                                 </div>
                             </td>
                             <td class="title"><label class="control-label">审核人员</label></td>
-                            <td colspan="6"><input name="nameuser" type="text" id="recive_list"
+                            <td colspan="6"><input name="auditUser" type="text" id="recive_list"
                                                    class="form-control " readonly="readonly"
                                                    style="background-color:#fff;"/>
                                 <div class="reciver">
@@ -170,13 +170,13 @@
                         <tr>
 
                             <td class="title"><label class="control-label">出差原因</label></td>
-                            <td colspan="6"><textarea class="form-control text" name="proId.processDescribe"></textarea>
+                            <td colspan="6"><textarea class="form-control text" name="processListVO.processDescribe"></textarea>
                             </td>
                         </tr>
                         <tr>
 
                             <td colspan="14" style="text-align: right;">
-                                <input type="text" class="days" name="proId.procseeDays" hidden="hidden"/>
+                                <input type="text" class="days" name="processListVO.processDays" hidden="hidden"/>
                                 <input type="text" value="出差申请" name="val" hidden="hidden"/>
                                 <input class="btn btn-primary" id="save" type="submit" value="保存"/>
                                 <input class="btn btn-default" id="cancel" type="button" value="取消"

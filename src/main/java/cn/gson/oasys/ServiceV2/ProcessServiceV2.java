@@ -3,15 +3,14 @@ package cn.gson.oasys.ServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.processV2.AttachmentServiceV2;
 import cn.gson.oasys.ServiceV2.processV2.ProcessAuditVOServiceV2;
-import cn.gson.oasys.mappers.BursementPOMapper;
-import cn.gson.oasys.mappers.ProcessListPOMapper;
-import cn.gson.oasys.mappers.ReviewedPOMapper;
-import cn.gson.oasys.mappers.SubjectPOMapper;
+import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.*;
 import cn.gson.oasys.vo.factoryvo.*;
 import cn.gson.oasys.vo.factoryvo.processfactory.ProcessListFactoryVO;
+import cn.gson.oasys.vo.processVO.EvectionVO;
 import cn.gson.oasys.vo.processVO.ProcessAuditVO;
+import cn.gson.oasys.vo.processVO.RegularVO;
 import cn.gson.oasys.vo.processVO.ReimbursementVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -55,8 +54,12 @@ public class ProcessServiceV2 {
     private ProcessAuditVOServiceV2 processAuditVOServiceV2;
     @Resource
     private ReviewedPOMapper reviewedPOMapper;
-
-
+    @Resource
+    private EvectionPOMapper evectionPOMapper;
+    @Resource
+    private OvertimePOMapper overtimePOMapper;
+    @Resource
+    private RegularPOMapper regularPOMapper;
     /**
      * 汉语中数字大写
      */
@@ -183,6 +186,53 @@ public class ProcessServiceV2 {
         bursementPOMapper.insertSelective(bursementPO);
     }
 
+    /**
+     * 插入出差申请表
+     *
+     * @param typeId
+     * @param processListPO
+     */
+    public void insertEvectionPO(Long typeId, ProcessListPO processListPO) {
+        EvectionPO evectionPO = new EvectionPO();
+        evectionPO.setTypeId(typeId);
+        evectionPO.setProId(processListPO.getProcessId());
+        evectionPOMapper.insertSelective(evectionPO);
+
+    }
+
+    /**
+     * 插入加班申请表
+     *
+     * @param typeId
+     * @param processListPO
+     */
+    public void insertOverTimePO(Long typeId, ProcessListPO processListPO) {
+        OvertimePO overtimePO = new OvertimePO();
+        overtimePO.setTypeId(typeId);
+        overtimePO.setProId(processListPO.getProcessId());
+        overtimePOMapper.insertSelective(overtimePO);
+    }
+
+    /**
+     * 插入转正申请表
+     *
+     * @param regularVO
+     * @param processListPO
+     */
+    public void insertRegularPO(RegularVO regularVO, ProcessListPO processListPO) {
+        RegularPO regularPO = new RegularPO();
+        regularPO.setExperience(regularVO.getExperience());
+        regularPO.setUnderstand(regularVO.getUnderstand());
+        regularPO.setPullulate(regularVO.getPullulate());
+        regularPO.setDeficiency(regularVO.getDeficiency());
+        regularPO.setDobetter(regularVO.getDobetter());
+        regularPO.setAdvice(regularVO.getAdvice());
+        regularPO.setDays(regularVO.getDays());
+        regularPO.setPersonnelAdvice(regularVO.getPersonnelAdvice());
+        regularPO.setManagerAdvice(regularVO.getManagerAdvice());
+        regularPO.setProId(processListPO.getProcessId());
+        regularPOMapper.insertSelective(regularPO);
+    }
 
     /**
      * 插入附件表
@@ -194,7 +244,6 @@ public class ProcessServiceV2 {
      * @throws IOException
      */
     public AttachmentListPO insertAttachment(UserPO applyUserPO, MultipartFile filePath) throws IllegalStateException, IOException {
-
         AttachmentVO attachmentVO = null;//附件
         //file.getOriginalFilename()是得到上传时的文件名。
         if (!StringUtil.isEmpty(filePath.getOriginalFilename())) {
@@ -213,19 +262,19 @@ public class ProcessServiceV2 {
      * @param val           主表类型名
      * @return
      */
-    public ProcessListPO insertProcessListPO(ProcessListVO processListVO, String val, Long userId, UserPO auditUserPO) {
+    public ProcessListPO insertProcessListPO(ProcessListVO processListVO, String val, Long userId, UserPO auditUserPO, Long attachmentListPOId) {
         ProcessListPO processListPO = new ProcessListPO();
         processListPO.setStatusId(23L);//流程审核状态，23L未处理
         processListPO.setTypeName(val);//流程申请类型
         processListPO.setProcessUserId(userId);//流程申请人
-        processListPO.setProcessDes(processListVO.getProcessDescribe());//////
+        processListPO.setProcessDes(processListVO.getProcessDescribe());
         processListPO.setIsChecked(0);
         processListPO.setProcessName(processListVO.getProcessName());
-        processListPO.setDeeplyId(processListVO.getDeeplyId());///////
+        processListPO.setDeeplyId(processListVO.getDeeplyId());
         processListPO.setApplyTime(new Date());//流程申请时间
         processListPO.setShenuser(auditUserPO.getUserName());
+        processListPO.setProFileId(attachmentListPOId);
         processListPOMapper.insertSelective(processListPO);
-
         return processListPO;
     }
 

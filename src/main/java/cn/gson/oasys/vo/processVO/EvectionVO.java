@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Data
 public class EvectionVO {
 
-    private Long evectionId;
+    private Long evectionId;//出差表ID
 
     private Long typeId;    //外出类型
 

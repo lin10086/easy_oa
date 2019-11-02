@@ -23,5 +23,5 @@ public class OverTimeVO {
 
     private String managerAdvice;//经理意见及说明
 
-    private String nameUser;
+    private String auditUser;//审核人员
 }
