@@ -34,7 +34,7 @@ public class ResignVO {
 
     private ProcessListVO processListVO;//流程主表ID（pro_id)
 
-    private String nameUser;//审核人员
+    private String auditUser;//审核人员
 
     private String handUser;//交接人员名
 }

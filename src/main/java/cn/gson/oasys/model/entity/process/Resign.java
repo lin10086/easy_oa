@@ -51,7 +51,7 @@ public class Resign {
 	private String nameuser;//审核人员
 	
 	@Transient
-	private String handuser;//交接人员
+	private String handuser;//交接人员名
 	
 	
 

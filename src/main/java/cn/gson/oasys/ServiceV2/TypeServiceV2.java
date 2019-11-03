@@ -58,4 +58,14 @@ public class TypeServiceV2 {
         return map;
     }
 
+    /**
+     * 根据ID找类型
+     *
+     * @param typeId
+     * @return
+     */
+    public TypePO getTypePOByTypeId(Long typeId) {
+        TypePO typePO = typePOMapper.selectByPrimaryKey(typeId);
+        return typePO;
+    }
 }

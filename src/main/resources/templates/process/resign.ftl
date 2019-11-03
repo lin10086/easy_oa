@@ -101,11 +101,11 @@ min-height: 120px;
 				</tr>	
 				<tr >
 					<td class="title"><label class="control-label">标题</label></td>
-					<td  colspan="6"><input type="text" class="form-control inpu" name="proId.processName"/></td>
+					<td  colspan="6"><input type="text" class="form-control inpu" name="processListVO.processName""/></td>
 					
 					<td class="title"><span >紧急程度</span></td>
 					<td colspan="6">
-						<select class="form-control inpu" name="proId.deeply">
+						<select class="form-control inpu" name="processListVO.deeplyId">
 							<#list exigenceTypeVOList as exigence>
 							<option value="${exigence.typeId}">${exigence.typeName}</option>
 							</#list>
@@ -119,7 +119,7 @@ min-height: 120px;
 					readonly="readonly" style="background-color:#fff;" value="${username}"/></td>
 					<td class="title" ><label class="control-label">交接人员</label></td>
 					<td  colspan="6"><input type="text" class="form-control inpu cheng" 
-					readonly="readonly" style="background-color:#fff;" name="handuser"/>
+					readonly="readonly" style="background-color:#fff;" name="handUser"/>
 						<div class="reciver">
 						<span class="label label-success glyphicon glyphicon-plus">通讯录</span>
 					</div>
@@ -130,15 +130,15 @@ min-height: 120px;
 				
 				<tr >
 					<td class="title" ><label class="control-label">未完成事宜</label></td>
-					<td  colspan="6"><textarea class="form-control text" name="nofinish"></textarea></td>
+					<td  colspan="6"><textarea class="form-control text" name="noFinish"></textarea></td>
 					<td class="title" ><label class="control-label">离职原因</label></td>
-					<td  colspan="6"><textarea class="form-control text" name="proId.processDescribe"></textarea></td>
+					<td  colspan="6"><textarea class="form-control text" name="processListVO.processDescribe"></textarea></td>
 				</tr>
 				
 					<tr >
 					<td class="title" ><label class="control-label">审核人员</label></td>
 					<td  colspan="6"><input type="text" class="form-control inpu cheng" 
-						readonly="readonly" style="background-color:#fff;" name="nameuser"/>
+						readonly="readonly" style="background-color:#fff;" name="auditUser"/>
 							<div class="reciver">
 							<span class="label label-success glyphicon glyphicon-plus">通讯录</span>
 						</div>

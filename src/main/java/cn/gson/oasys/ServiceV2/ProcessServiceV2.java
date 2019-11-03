@@ -8,10 +8,7 @@ import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.*;
 import cn.gson.oasys.vo.factoryvo.*;
 import cn.gson.oasys.vo.factoryvo.processfactory.ProcessListFactoryVO;
-import cn.gson.oasys.vo.processVO.EvectionVO;
-import cn.gson.oasys.vo.processVO.ProcessAuditVO;
-import cn.gson.oasys.vo.processVO.RegularVO;
-import cn.gson.oasys.vo.processVO.ReimbursementVO;
+import cn.gson.oasys.vo.processVO.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
@@ -60,6 +57,11 @@ public class ProcessServiceV2 {
     private OvertimePOMapper overtimePOMapper;
     @Resource
     private RegularPOMapper regularPOMapper;
+    @Resource
+    private HolidayPOMapper holidayPOMapper;
+    @Resource
+    private ResignPOMapper resignPOMapper;
+
     /**
      * 汉语中数字大写
      */
@@ -232,6 +234,39 @@ public class ProcessServiceV2 {
         regularPO.setManagerAdvice(regularVO.getManagerAdvice());
         regularPO.setProId(processListPO.getProcessId());
         regularPOMapper.insertSelective(regularPO);
+    }
+
+    /**
+     * 插入请假表
+     *
+     * @param holidayVO
+     * @param processListPO
+     */
+    public void insertHolidayPO(HolidayVO holidayVO, ProcessListPO processListPO) {
+        HolidayPO holidayPO = new HolidayPO();
+        holidayPO.setLeaveDays(holidayVO.getLeaveDays());
+        holidayPO.setProId(processListPO.getProcessId());
+        holidayPO.setTypeId(holidayVO.getTypeId());
+        holidayPOMapper.insertSelective(holidayPO);
+    }
+
+    /**
+     * 插入离职申请表
+     *
+     * @param resignVO
+     * @param processListPO
+     */
+    public void insertResignPO(ResignVO resignVO, ProcessListPO processListPO,Long correlationUserPOId) {
+        ResignPO resignPO = new ResignPO();
+        resignPO.setFinancialAdvice(resignVO.getFinancialAdvice());
+        resignPO.setHandUser(correlationUserPOId);
+        resignPO.setIsFinish(resignVO.getFinish());
+        resignPO.setManagerAdvice(resignVO.getManagerAdvice());
+        resignPO.setNofinish(resignVO.getNoFinish());
+        resignPO.setPersonnelAdvice(resignVO.getPersonnelAdvice());
+        resignPO.setProId(processListPO.getProcessId());
+        resignPO.setSuggest(resignVO.getSuggest());
+        resignPOMapper.insertSelective(resignPO);
     }
 
     /**
