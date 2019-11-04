@@ -5,6 +5,7 @@ import cn.gson.oasys.model.po.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class ByProcessPOIdServiceV2 {
@@ -13,6 +14,8 @@ public class ByProcessPOIdServiceV2 {
     @Resource
     private EvectionPOMapper evectionPOMapper;
     @Resource
+    private EvectionMoneyPOMapper evectionMoneyPOMapper;
+    @Resource
     private OvertimePOMapper overtimePOMapper;
     @Resource
     private HolidayPOMapper holidayPOMapper;
@@ -20,6 +23,8 @@ public class ByProcessPOIdServiceV2 {
     private RegularPOMapper regularPOMapper;
     @Resource
     private ResignPOMapper resignPOMapper;
+    @Resource
+    private ReviewedPOMapper reviewedPOMapper;
 
     /**
      * 根据流程主表ID查询消费表信息
@@ -45,6 +50,19 @@ public class ByProcessPOIdServiceV2 {
         evectionPOExample.createCriteria().andProIdEqualTo(processPOId);
         EvectionPO evectionPO = evectionPOMapper.selectByExample(evectionPOExample).get(0);
         return evectionPO;
+    }
+
+    /**
+     * 根据主表ID找出差消费表ID
+     *
+     * @param processPOId 流程主表ID
+     * @return
+     */
+    public EvectionMoneyPO getEvectionMoneyPOByProcessPOId(Long processPOId) {
+        EvectionMoneyPOExample evectionMoneyPOExample = new EvectionMoneyPOExample();
+        evectionMoneyPOExample.createCriteria().andProIdEqualTo(processPOId);
+        EvectionMoneyPO evectionMoneyPO = evectionMoneyPOMapper.selectByExample(evectionMoneyPOExample).get(0);
+        return evectionMoneyPO;
     }
 
     /**
@@ -94,9 +112,36 @@ public class ByProcessPOIdServiceV2 {
      */
     public ResignPO getResignPOByProcessPOId(Long processPOId) {
         ResignPOExample resignPOExample = new ResignPOExample();
-        resignPOExample.createCriteria().andResignIdEqualTo(processPOId);
+        resignPOExample.createCriteria().andProIdEqualTo(processPOId);
         ResignPO resignPO = resignPOMapper.selectByExample(resignPOExample).get(0);
         return resignPO;
     }
 
+    /**
+     * 根据主表ID和审核人ID找审核表
+     *
+     * @param processPOId 主表ID
+     * @param auditUserId 审核人ID
+     * @return
+     */
+    public ReviewedPO getReviewedPOByProcessPOIdAndAuditUserId(Long processPOId, Long auditUserId) {
+        ReviewedPOExample reviewedPOExample = new ReviewedPOExample();
+        reviewedPOExample.createCriteria().andProIdEqualTo(processPOId).andUserIdEqualTo(auditUserId);
+        ReviewedPO reviewedPO = reviewedPOMapper.selectByExample(reviewedPOExample).get(0);
+        return reviewedPO;
+    }
+
+    /**
+     * 根据审核时间非空和主表ID找审核列表
+     *
+     * @param processPOId
+     * @return
+     */
+    public List<ReviewedPO> getReviewedPOListByReviewedTimeNotNullAndProcessId(Long processPOId) {
+
+        ReviewedPOExample reviewedPOExample = new ReviewedPOExample();
+        reviewedPOExample.createCriteria().andReviewedTimeIsNotNull().andProIdEqualTo(processPOId);
+        List<ReviewedPO> reviewedPOList = reviewedPOMapper.selectByExample(reviewedPOExample);
+        return reviewedPOList;
+    }
 }

@@ -120,11 +120,11 @@ border-top: 1px solid #2196F3;
 </style>
 <div class="row" style="padding-top: 10px;">
 	<div class="col-md-2">
-		<h1 style="font-size: 24px; margin: 0;" class="">${(map.typename)!''}</h1>
+		<h1 style="font-size: 24px; margin: 0;" class="">${(map.typeName)!''}</h1>
 	</div>
 	<div class="col-md-10 text-right">
 		<a href="##"><span class="glyphicon glyphicon-home"></span> 首页</a> > <a
-			disabled="disabled">${(map.typename)!''}</a>
+			disabled="disabled">${(map.typeName)!''}</a>
 	</div>
 </div>
 <div class="row" style="padding-top: 15px;">
@@ -136,7 +136,7 @@ border-top: 1px solid #2196F3;
 				<table class="bo table ">
 			
 				<tr >
-					<td colspan="14" class="title"><h2>${(map.typename)!''}单</h2></td>
+					<td colspan="14" class="title"><h2>${(map.typeName)!''}单</h2></td>
 			
 				</tr>
 				<tr style="opacity: 0;">
@@ -148,7 +148,7 @@ border-top: 1px solid #2196F3;
 					<td class="css" style="width:30px;"></td>
 					
 					<td class="wi" style="width: 72px;"><label class="control-label">紧急程度</label></td>
-					<td colspan="4" class="underline" style="width: 60px;"><div class="bottom">${(map.harryname)!''}</div></td>
+					<td colspan="4" class="underline" style="width: 60px;"><div class="bottom">${(map.exigencyName)!''}</div></td>
 					
 				</tr>
 				<tr >
@@ -156,10 +156,10 @@ border-top: 1px solid #2196F3;
 					<td  style="width:140px;"><div class="bottom">${(map.username)!''}</div></td>
 					<td class="css"style="width:30px;"></td>
 					<td class="wi" style="width:90px;"><label class="control-label">提单部门</label></td>
-					<td colspan="4" style="width:44px;"><div class="bottom">${(map.deptname)!''}</div></td>
+					<td colspan="4" style="width:44px;"><div class="bottom">${(map.deptName)!''}</div></td>
 					<td class="css" style="width:30px;"></td>
 					<td class="wi"><label class="control-label">提单日期</label></td>
-					<td colspan="4" ><div class="bottom">${(map.applytime)!''}</div></td>
+					<td colspan="4" ><div class="bottom">${(map.applyTime)!''}</div></td>
 					
 				</tr>
 				
@@ -169,13 +169,13 @@ border-top: 1px solid #2196F3;
 				
 				<tr class="rile two">
 					<td class="wi" style="width:100px;"><label class="control-label">证明人</label></td>
-					<td  style="width:140px;"><div class="bottom">${(prove.userName)!''}</div></td>
+					<td  style="width:140px;"><div class="bottom">${(proveUserVO.userName)!''}</div></td>
 					<td class="css"style="width:30px;"></td>
 					<td class="wi" style="width:90px;"><label class="control-label">相关客户</label></td>
-					<td colspan="4" style="width:44px;"><div class="bottom">${(bu.name)!''}</div></td>
+					<td colspan="4" style="width:44px;"><div class="bottom">${(reimbursementVO.name)!''}</div></td>
 					<td class="css" style="width:30px;"></td>
 					<td class="wi"><label class="control-label">报销方式</label></td>
-					<td colspan="4" ><div class="bottom">${(type)!''}</div></td>
+					<td colspan="4" ><div class="bottom">${(reimbursementTypeName)!''}</div></td>
 				</tr>
 				
 				<tr class="rile">
@@ -183,10 +183,10 @@ border-top: 1px solid #2196F3;
 					<td  style="width:140px;"><div class="bottom">${(audit.userName)!''}</div></td>
 					<td class="css"style="width:30px;"></td>
 					<td class="wi" style="width:90px;"><label class="control-label">报销日期</label></td>
-					<td colspan="4" style="width:44px;"><div class="bottom">${(bu.burseTime)!''}</div></td>
+					<td colspan="4" style="width:44px;"><div class="bottom">${(reimbursementVO.reimbursementTime)!''}</div></td>
 					<td class="css" style="width:30px;"></td>
 					<td class="wi"><label class="control-label">票据总数</label></td>
-					<td colspan="4" ><div class="bottom">${(bu.allinvoices)!''}</div></td>
+					<td colspan="4" ><div class="bottom">${(reimbursementVO.allinvoices)!''}</div></td>
 				</tr>
 				
 				<tr class="rile">
@@ -225,7 +225,7 @@ border-top: 1px solid #2196F3;
 								</tr>
 							</thead>
 							<tbody class="tbody">
-							<#list detaillist as detail>
+							<#list detailsBurseVOList as detail>
 							<tr class="tr">
 									<td style="border-left: 0px ;" colspan="2"><span>${detail_index+1}</span></td>
 									<td colspan="2"><span>${(detail.produceTime)!''}</span></td>
@@ -233,18 +233,18 @@ border-top: 1px solid #2196F3;
 									<td colspan="2"><span>${(detail.descript)!''}</span></td>
 									<td colspan="2"><span>${(detail.invoices)!''}</span></td>
 									<td colspan="2"><span>${(detail.detailMoney)!''}</span></td>
-									
+
 							</tr>
 							</#list>
-						   </tbody> 
+						   </tbody>
 						   <tfoot>
 						   	<tr>
 						   			<td colspan="2"><span>合计</span></td>
 									<td colspan="2"><span></span></td>
 									<td colspan="2"><span></span></td>
 									<td colspan="2"><span></span></td>
-									<td colspan="2"><span>${(bu.allinvoices)!''}</span></td>
-									<td colspan="2" class="mm"><span>${(bu.allMoney)!''}</span></td>
+									<td colspan="2"><span>${(reimbursementVO.allinvoices)!''}</span></td>
+									<td colspan="2" class="mm"><span>${(reimbursementVO.allMoney)!''}</span></td>
 						   	</tr>
 						   </tfoot>
 						</table>
@@ -295,7 +295,7 @@ border-top: 1px solid #2196F3;
 											<span>经理意见</span>
 										</div>
 									</td>
-									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(bu.managerAdvice)!''}</p></td>
+									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(reimbursementVO.managerAdvice)!''}</p></td>
 								</tr>
 								
 								<tr>
@@ -306,7 +306,7 @@ border-top: 1px solid #2196F3;
 											
 										</div>
 									</td>
-									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(bu.financialAdvice)!''}</p></td>
+									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(reimbursementVO.financialAdvice)!''}</p></td>
 								</tr>
 							</table>
 						</div>

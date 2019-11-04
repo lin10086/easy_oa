@@ -39,7 +39,7 @@ public class Bursement {
 
     @OneToOne
     @JoinColumn(name = "operation_name")
-    private User operation;//报销人员
+    private User operation;//报销人员id对应报销人员
 
     private Date burseTime;//报销日期
 

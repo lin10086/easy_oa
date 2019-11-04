@@ -34,18 +34,18 @@
 						<#list prolist as pro>
 						<tr>
 							
-							<td>${pro.typename}</td>
-							<td><span>${pro.title}</span></td>
-							<td><span>${pro.pushuser}</span></td>
-							<td><span>${pro.applytime}</span></td>
-							<td><span>${pro.harry}</span></td>
-							<td><span class="label ${pro.statuscolor}">${pro.statusname}</span></td>
-							<td> <a href="auditing?id=${pro.proid}" class="label sheding"><span
+							<td>${pro.typeName}</td>
+							<td><span>${pro.processName}</span></td>
+							<td><span>${pro.auditUsername}</span></td>
+							<td><span>${pro.applyTime}</span></td>
+							<td><span>${pro.exigence}</span></td>
+							<td><span class="label ${pro.statusColor}">${pro.statusName}</span></td>
+							<td> <a href="auditing?processId=${pro.processId}" class="label sheding"><span
 									class="glyphicon glyphicon-zoom-in"></span> 审核</a> 
-								 <a href="particular?id=${pro.proid}&typename=${pro.typename}" class="label xiugai"><span
+								 <a href="particular?processId=${pro.processId}&typeName=${pro.typeName}" class="label xiugai"><span
 									class="glyphicon glyphicon-search"></span> 查看</a> 
-								<#if pro.statusname=="未通过"	|| pro.statusname=="已批准">
-								 <a href="sdelete?id=${pro.proid}" onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};" class="label shanchu">
+								<#if pro.statusName=="未通过"	|| pro.statusName=="已批准">
+								 <a href="sdelete?processId=${pro.processId}" onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};" class="label shanchu">
 								 	<span class="glyphicon glyphicon-remove"></span> 删除</a>	
 									</#if>
 									</td>

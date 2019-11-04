@@ -19,7 +19,7 @@ public class DetailsburseServiceV2 {
      * @param bursementId 费用报销表ID
      * @return
      */
-    public List<DetailsbursePO> getDetailsbursePOListByBusementId(Long bursementId) {
+    public List<DetailsbursePO> getDetailsBursePOListByBusementId(Long bursementId) {
         DetailsbursePOExample detailsbursePOExample = new DetailsbursePOExample();
         detailsbursePOExample.createCriteria().andBursmentIdEqualTo(bursementId);
         List<DetailsbursePO> detailsbursePOList = detailsbursePOMapper.selectByExample(detailsbursePOExample);

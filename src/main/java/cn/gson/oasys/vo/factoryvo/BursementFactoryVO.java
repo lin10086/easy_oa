@@ -3,6 +3,7 @@ package cn.gson.oasys.vo.factoryvo;
 import cn.gson.oasys.model.po.BursementPO;
 import cn.gson.oasys.vo.processVO.ReimbursementVO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class BursementFactoryVO {
         bursementVO.setReimbursementId(bursementPO.getBursementId());
         bursementVO.setAllinvoices(bursementPO.getAllinvoices());
         bursementVO.setAllMoney(bursementPO.getAllMoney());
-        bursementVO.setReimbursementTime(bursementPO.getBurseTime());
+        bursementVO.setReimbursementTime(new Timestamp(bursementPO.getBurseTime().getTime()));
         bursementVO.setFinancialAdvice(bursementPO.getFinancialAdvice());
         bursementVO.setManagerAdvice(bursementPO.getManagerAdvice());
         bursementVO.setName(bursementPO.getName());

@@ -1,4 +1,4 @@
-package cn.gson.oasys.vo;
+package cn.gson.oasys.vo.processVO;
 
 import cn.gson.oasys.vo.processVO.ReimbursementVO;
 import lombok.Data;

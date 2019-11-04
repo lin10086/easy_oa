@@ -281,6 +281,8 @@ public class ProcedureController {
     }
 */
 
+
+
     /**
      * 申请人查看流程条件查询
      */
@@ -364,7 +366,7 @@ public class ProcedureController {
     }
 
 
-    /* *//**
+    /**
      * 查看详细
      *
      * @return
@@ -463,11 +465,11 @@ public class ProcedureController {
     }
 */
 
-    /**
-     * 进入审核页面
+   /* *//**
+     * 流程管理》流程审核》审核页面
      *
      * @return
-     */
+     *//*
     @RequestMapping("auditing")
     public String auditing(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
                            @RequestParam(value = "page", defaultValue = "0") int page,
@@ -507,7 +509,7 @@ public class ProcedureController {
         return "process/audetail";
 
     }
-
+*/
     /**
      * 审核确定的页面
      *
@@ -1101,7 +1103,9 @@ public class ProcedureController {
             AttachmentListPO attachmentListPO = processServiceV2.insertAttachment(applyUserPO, filePath);
             ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, attachmentListPO.getAttachmentId());
             //存费用报销表
-            processServiceV2.insertBursementPO(reimbursementVO, processListPO, userId, auditUserId);
+            BursementPO bursementPO = processServiceV2.insertBursementPO(reimbursementVO, processListPO, userId, auditUserId);
+            //插入报销明细表
+            processServiceV2.insertDetailsReimbursePO(reimbursementVO, bursementPO.getBursementId());
 //            budao.save(bu);
             //存审核表(申请人，主表）
             processServiceV2.insertReviewedPO(applyUserPO, processListPO);
@@ -1148,7 +1152,9 @@ public class ProcedureController {
         String val = req.getParameter("val");
         if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
             ProcessListVO processListVO = evectionVO.getProcessListVO();
+            //存附件表
             AttachmentListPO attachmentListPO = processServiceV2.insertAttachment(applyUserPO, filePath);
+//            存主表
             ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, attachmentListPO.getAttachmentId());
             //存出差表
             processServiceV2.insertEvectionPO(evectionVO.getTypeId(), processListPO);
@@ -1321,10 +1327,14 @@ public class ProcedureController {
                     return "common/proce";
                 }
             } else {
+                //存附件表
+                AttachmentListPO attachmentListPO = processServiceV2.insertAttachment(applyUserPO, filePath);
+
                 ProcessListVO processListVO = holidayVO.getProcessListVO();
-                ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, null);
+                ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, attachmentListPO.getAttachmentId());
                 //存请假申请单
                 processServiceV2.insertHolidayPO(holidayVO, processListPO);
+
                 //存审核表
                 processServiceV2.insertReviewedPO(applyUserPO, processListPO);
             }
@@ -1372,9 +1382,9 @@ public class ProcedureController {
             ProcessListVO processListVO = resignVO.getProcessListVO();
             ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, null);
             //存离职申请表
-            processServiceV2.insertResignPO(resignVO, processListPO,correlationUserPO.getUserId());
+            processServiceV2.insertResignPO(resignVO, processListPO, correlationUserPO.getUserId());
             //存审核表
-            processServiceV2.insertReviewedPO(applyUserPO, processListPO);
+            processServiceV2.insertReviewedPO(auditUserPO, processListPO);
         } else {
             return "common/proce";
         }
@@ -1415,7 +1425,7 @@ public class ProcedureController {
     }
 
     /**
-     * 流程申请》我的查看》操作（查看）
+     * 流程申请》我的申请》操作（查看）
      *
      * @param userId 申请人ID
      * @param model
@@ -1428,8 +1438,8 @@ public class ProcedureController {
         UserVO userVO = UserFactoryVO.createUserVO(userPO);
 //        User user = udao.findOne(userId);//审核人或者申请人
 
-        UserPO finallyAudit = null;
-//        User audit = null;//最终审核人
+        UserPO audit = null;//报销人员
+//        User audit = null;
 
         Long processId = Long.parseLong(req.getParameter("processId"));
 //        String id = req.getParameter("id");
@@ -1440,7 +1450,6 @@ public class ProcedureController {
 
         Map<String, Object> map = new HashMap<>();
         ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);
-        ProcessListVO processListVO = ProcessListFactoryVO.createProcessListVO(processListPO);
 //        ProcessList process = prodao.findOne(proid);//查看该条申请
 
         Boolean flag = processListPO.getProcessUserId().equals(userId);//判断是申请人还是审核人
@@ -1454,30 +1463,30 @@ public class ProcedureController {
         map = processServiceV2.resultMap(name, userPO, processListPO);
 //        map = proservice.index3(name, user, typename, process);
         if (("费用报销").equals(typeName)) {
-            BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);
-            ReimbursementVO bursementVO = BursementFactoryVO.createBursementVO(bursementPO);
+            BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);//报销日期格式错误
+            ReimbursementVO reimbursementVO = BursementFactoryVO.createBursementVO(bursementPO);
 //            Bursement bu = budao.findByProId(process);
-            UserPO provePO = userServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
-            UserVO prove = UserFactoryVO.createUserVO(provePO);
+            UserPO proveUserPO = userServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
+            UserVO proveUserVO = UserFactoryVO.createUserVO(proveUserPO);
 //            User prove = udao.findOne(bu.getUsermoney().getUserId());//证明人
 
             if (!Objects.isNull(bursementPO.getOperationName())) {
-                finallyAudit = userServiceV2.getUserPOByUserId(bursementPO.getOperationName());
-//                audit = udao.findOne(bu.getOperation().getUserId());//最终审核人
+                audit = userServiceV2.getUserPOByUserId(bursementPO.getOperationName());
+//                audit = udao.findOne(bu.getOperation().getUserId());//报销人
             }
-            List<DetailsbursePO> detailsbursePOList = detailsburseServiceV2.getDetailsbursePOListByBusementId(bursementPO.getBursementId());
+            List<DetailsbursePO> detailsbursePOList = detailsburseServiceV2.getDetailsBursePOListByBusementId(bursementPO.getBursementId());
             List<DetailsReimburseVO> detailsBurseVOList = DetailsBurseFactoryVO.createDetailsBurseVOList(detailsbursePOList);
 //            List<DetailsBurse> detaillist = dedao.findByBurs(bu);
-            String type = typeServiceV2.getTypeNameByTypeId(bursementPO.getTypeId());
+            String reimbursementTypeName = typeServiceV2.getTypeNameByTypeId(bursementPO.getTypeId());
 //            String type = tydao.findname(bu.getTypeId());
             String money = ProcessServiceV2.numbertocn(bursementPO.getAllMoney());
 //            String money = ProcessService.numbertocn(bu.getAllMoney());
-            model.addAttribute("prove", prove);
-            model.addAttribute("audit", finallyAudit);
-            model.addAttribute("type", type);
-            model.addAttribute("bu", bursementVO);
+            model.addAttribute("proveUserVO", proveUserVO);//证明人
+            model.addAttribute("audit", audit);//报销人
+            model.addAttribute("reimbursementTypeName", reimbursementTypeName);
+            model.addAttribute("reimbursementVO", reimbursementVO);
             model.addAttribute("money", money);
-            model.addAttribute("detailsBurseVOList", detailsBurseVOList);//detaillist
+            model.addAttribute("detailsBurseVOList", detailsBurseVOList);//费用科目
             model.addAttribute("map", map);
             return "process/serch";
         } else if (("出差费用").equals(typeName)) {
@@ -1524,7 +1533,7 @@ public class ProcedureController {
 //            String type = tydao.findname(eve.getTypeId());
             model.addAttribute("eve", overTimeVO);
             model.addAttribute("map", map);
-            model.addAttribute("type", type);
+            model.addAttribute("type", type);//加班类型名
             return "process/overserch";
         } else if (("请假申请").equals(typeName)) {
             HolidayPO holidayPO = byProcessPOIdServiceV2.getHolidayPOByProcessPOId(processId);
@@ -1545,7 +1554,9 @@ public class ProcedureController {
             return "process/reguserch";
         } else if (("离职申请").equals(typeName)) {
             ResignPO resignPO = byProcessPOIdServiceV2.getResignPOByProcessPOId(processId);
+            String handUser = userServiceV2.getUsernameByUserId(resignPO.getHandUser());
             ResignVO resignVO = ResignVOFactory.createResignVO(resignPO);
+            resignVO.setHandUser(handUser);
 //            Resign eve = rsdao.findByProId(process);
             model.addAttribute("eve", resignVO);
             model.addAttribute("map", map);
@@ -1580,6 +1591,62 @@ public class ProcedureController {
         model.addAttribute("url", "serch");
 
         return "process/auditing";
+    }
+
+    /**
+     * 流程管理》流程审核》审核页面
+     *
+     * @return
+     */
+    @RequestMapping("auditing")
+    public String auditing(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
+                           @RequestParam(value = "page", defaultValue = "0") int page,
+                           @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+//        User u = udao.findOne(userId);
+        //流程主表Id
+        Long processId = Long.parseLong(req.getParameter("processId"));
+        //根据流程主表ID获取流程主表信息
+        ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);
+//        ProcessList process = prodao.findOne(id);
+     //根据主表ID和审核人ID找审核表
+        ReviewedPO reviewedPO = byProcessPOIdServiceV2.getReviewedPOByProcessPOIdAndAuditUserId(processId,userPO.getFatherId());
+//        Reviewed re = redao.findByProIdAndUserId(process.getProcessId(), u);//查找审核表
+        String typeName = processListPO.getTypeName().trim();
+//        String typename = process.getTypeNmae().trim();
+        if (("费用报销").equals(typeName)) {
+            BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);
+            ReimbursementVO reimbursementVO = BursementFactoryVO.createBursementVO(bursementPO);
+//            Bursement bu = budao.findByProId(process);
+            model.addAttribute("bu", reimbursementVO);
+        } else if (("出差费用").equals(typeName)) {
+            EvectionMoneyPO evectionMoneyPO = byProcessPOIdServiceV2.getEvectionMoneyPOByProcessPOId(processId);
+            EvectionMoneyVO evectionMoneyVO = EvectionMoneyVOFactory.createEvectionMoneyVO(evectionMoneyPO);
+//            EvectionMoney emoney = emdao.findByProId(process);
+            model.addAttribute("bu", evectionMoneyVO);
+        } else if (("转正申请").equals(typeName) || ("离职申请").equals(typeName)) {
+            UserPO applyUser = userServiceV2.getUserPOByUserId(userId);
+//            User zhuan = udao.findOne(process.getUserId().getUserId());
+            model.addAttribute("position", applyUser);
+        }
+//        proservice.user(page, size, model);
+        processServiceV2.getUser(page,size,model);
+
+//        List<Map<String, Object>> list = proservice.index4(process);
+        List<Map<String, Object>> list = processServiceV2.getAuditUser(processListPO);
+
+        model.addAttribute("statusid", processListPO.getStatusId());
+        model.addAttribute("process", processListPO);
+        model.addAttribute("revie", list);
+        model.addAttribute("size", list.size());
+        model.addAttribute("statusid", processListPO.getStatusId());
+        model.addAttribute("ustatusid", reviewedPO.getStatusId());
+        model.addAttribute("positionid", userPO.getPositionId());
+        model.addAttribute("typename", typeName);
+
+        return "process/audetail";
+
     }
 
 

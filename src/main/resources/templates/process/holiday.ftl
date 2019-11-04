@@ -211,8 +211,8 @@
 
     $(function () {
         $(".days").focus(function () {
-            var $star = new Date($(".holistart").val());
-            var $end = new Date($(".holiend").val());
+            var $star = new Date($(".starTime").val());
+            var $end = new Date($(".endTime").val());
             tt = $end.getTime() - $star.getTime();
             $(".days").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));
             $(".day").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));

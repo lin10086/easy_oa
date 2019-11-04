@@ -79,7 +79,7 @@ public class DeptServiceV2 {
     /**
      * 根据用户ID找部门名
      *
-     * @param userId
+     * @param userId 用户ID
      * @return
      */
     public String getDeptNameByUserId(Long userId) {

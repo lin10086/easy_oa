@@ -2,8 +2,15 @@ package cn.gson.oasys.ServiceV2;
 
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.processV2.AttachmentServiceV2;
+import cn.gson.oasys.ServiceV2.processV2.ByProcessPOIdServiceV2;
 import cn.gson.oasys.ServiceV2.processV2.ProcessAuditVOServiceV2;
 import cn.gson.oasys.mappers.*;
+import cn.gson.oasys.model.entity.process.ProcessList;
+import cn.gson.oasys.model.entity.process.Reviewed;
+import cn.gson.oasys.model.entity.system.SystemStatusList;
+import cn.gson.oasys.model.entity.user.Dept;
+import cn.gson.oasys.model.entity.user.Position;
+import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.*;
 import cn.gson.oasys.vo.factoryvo.*;
@@ -13,6 +20,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,6 +71,10 @@ public class ProcessServiceV2 {
     private HolidayPOMapper holidayPOMapper;
     @Resource
     private ResignPOMapper resignPOMapper;
+    @Resource
+    private DetailsbursePOMapper detailsbursePOMapper;
+    @Resource
+    private ByProcessPOIdServiceV2 byProcessPOIdServiceV2;
 
     /**
      * 汉语中数字大写
@@ -173,7 +187,7 @@ public class ProcessServiceV2 {
      *
      * @param reimbursementVO
      */
-    public void insertBursementPO(ReimbursementVO reimbursementVO, ProcessListPO processListPO, Long userId, Long auditUserId) {
+    public BursementPO insertBursementPO(ReimbursementVO reimbursementVO, ProcessListPO processListPO, Long userId, Long auditUserId) {
         BursementPO bursementPO = new BursementPO();
         bursementPO.setProId(processListPO.getProcessId());
         bursementPO.setAllinvoices(reimbursementVO.getAllinvoices());
@@ -186,6 +200,23 @@ public class ProcessServiceV2 {
         bursementPO.setUserName(auditUserId);
         bursementPO.setBurseTime(new Date());
         bursementPOMapper.insertSelective(bursementPO);
+        return bursementPO;
+    }
+
+    /**
+     * 插入报销明细表（目前只能插入一个）
+     *
+     * @param reimbursementVO
+     */
+    public void insertDetailsReimbursePO(ReimbursementVO reimbursementVO, Long bursementPOId) {
+        DetailsbursePO detailsbursePO = new DetailsbursePO();
+        detailsbursePO.setBursmentId(bursementPOId);
+        detailsbursePO.setDescript(reimbursementVO.getDetailsReimburseVOList().get(0).getDescript());//目前只能插入一个消费明细表
+        detailsbursePO.setDetailmoney(reimbursementVO.getDetailsReimburseVOList().get(0).getDetailMoney());
+        detailsbursePO.setInvoices(reimbursementVO.getDetailsReimburseVOList().get(0).getInvoices());
+        detailsbursePO.setProduceTime(reimbursementVO.getDetailsReimburseVOList().get(0).getProduceTime());
+        detailsbursePO.setSubject(reimbursementVO.getDetailsReimburseVOList().get(0).getSubject());
+        detailsbursePOMapper.insertSelective(detailsbursePO);
     }
 
     /**
@@ -256,7 +287,7 @@ public class ProcessServiceV2 {
      * @param resignVO
      * @param processListPO
      */
-    public void insertResignPO(ResignVO resignVO, ProcessListPO processListPO,Long correlationUserPOId) {
+    public void insertResignPO(ResignVO resignVO, ProcessListPO processListPO, Long correlationUserPOId) {
         ResignPO resignPO = new ResignPO();
         resignPO.setFinancialAdvice(resignVO.getFinancialAdvice());
         resignPO.setHandUser(correlationUserPOId);
@@ -349,39 +380,40 @@ public class ProcessServiceV2 {
      * @return
      */
     public Map<String, Object> resultMap(String name, UserPO userPO, ProcessListPO processListPO) {
-        ProcessListVO processListVO = ProcessListFactoryVO.createProcessListVO(processListPO);
         Map<String, Object> resultMap = new HashMap<>();
         String typeName = typeServiceV2.getTypeNameByTypeId(processListPO.getDeeplyId());
 //        String harryname = tydao.findname(process.getDeeply());
 
         resultMap.put("proId", processListPO.getProcessId());
-        resultMap.put("harryname", typeName);
-        resultMap.put("processName", processListPO.getProcessName());
-        resultMap.put("processDescribe", processListPO.getProcessDes());
+        resultMap.put("exigencyName", typeName);//类型名（紧急程度）
+        resultMap.put("processName", processListPO.getProcessName());//标题
+        resultMap.put("processDescribe", processListPO.getProcessDes());//原因内容
+
 
         String deptName = deptServiceV2.getDeptNameByUserId(processListPO.getProcessUserId());
         if (("审核").equals(name)) {
             String userName = userServiceV2.getUsernameByUserId(processListPO.getProcessUserId());
             resultMap.put("username", userName);//提单人员(申请人名）
-            resultMap.put("deptname", deptName);//部门
+            resultMap.put("deptName", deptName);//部门
         } else if (("申请").equals(name)) {
             resultMap.put("username", userPO.getUserName());
-            resultMap.put("deptname", deptName);
+            resultMap.put("deptName", deptName);
         }
-        resultMap.put("applytime", new Timestamp(processListPO.getApplyTime().getTime()));
+        resultMap.put("applyTime", new Timestamp(processListPO.getApplyTime().getTime()));//提单日期
 
         if (!Objects.isNull(processListPO.getProFileId())) {
             AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(processListPO.getProFileId());
             resultMap.put("file", attachmentListPO);
         } else {
-            resultMap.put("file", "file");//？？？
+            resultMap.put("file", "file");
         }
         resultMap.put("name", name);
-        resultMap.put("typename", processListPO.getTypeName());
-        resultMap.put("startime", new Timestamp(processListPO.getStartTime().getTime()));
-        resultMap.put("endtime", new Timestamp(processListPO.getEndTime().getTime()));
-        resultMap.put("tianshu", processListPO.getProcseeDays());
-        resultMap.put("statusid", processListPO.getStatusId());
+        resultMap.put("typeName", processListPO.getTypeName());// 主表的类型名
+        resultMap.put("startime", new Timestamp(new Date().getTime()));//开始时间
+        resultMap.put("endtime", new Timestamp(new Date().getTime()));// 结束时间
+        resultMap.put("numberOfDays", processListPO.getProcseeDays());//天数
+        resultMap.put("statusId", processListPO.getStatusId());//主表的状态ID
+        //没有附件ID
         if (processListPO.getProFileId() != null) {
             String filePath = attachmentServiceV2.getAttachmentPathByAttachmentListPOId(processListPO.getProFileId());
             resultMap.put("filepath", filePath);
@@ -515,25 +547,75 @@ public class ProcessServiceV2 {
 
         for (int i = 0; i < processAuditVOList.size(); i++) {
 
-            String harryname = typeServiceV2.getTypeNameByTypeId(processAuditVOList.get(i).getDeeplyId());
+            String exigenceName = typeServiceV2.getTypeNameByTypeId(processAuditVOList.get(i).getDeeplyId());
 //                    tydao.findname(prolist.get(i).getDeeply());
             StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(processAuditVOList.get(i).getStatusId());
 //            SystemStatusList status = sdao.findOne(prolist.get(i).getStatusId());
             // 创建map集合用于用于存放前端的
             Map<String, Object> result = new HashMap<>();
 
-            result.put("typename", processAuditVOList.get(i).getTypeName());
-            result.put("title", processAuditVOList.get(i).getProcessName());
-            result.put("pushuser", processAuditVOList.get(i).getUserName());
-            result.put("applytime", new Timestamp(processAuditVOList.get(i).getApplyTime().getTime()));
-            result.put("harry", harryname);
-            result.put("statusname", statusPO.getStatusName());
-            result.put("statuscolor", statusPO.getStatusColor());
-            result.put("proid", processAuditVOList.get(i).getProcessId());
+            result.put("typeName", processAuditVOList.get(i).getTypeName());//主表的类型名
+            result.put("processName", processAuditVOList.get(i).getProcessName());//主表的标题
+            result.put("auditUsername", processAuditVOList.get(i).getUserName());//申请人姓名
+            result.put("applyTime", new Timestamp(processAuditVOList.get(i).getApplyTime().getTime()));//申请时间
+            result.put("exigence", exigenceName);//紧急程度
+            result.put("statusName", statusPO.getStatusName());//状态名
+            result.put("statusColor", statusPO.getStatusColor());//状态颜色
+            result.put("processId", processAuditVOList.get(i).getProcessId());//主表ID
             list.add(result);
 
         }
         return list;
+    }
+
+    /**
+     * 用户封装
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    public void getUser(int page, int size, Model model) {
+        PageHelper.startPage(page, size);
+        List<UserPO> userPOList = userServiceV2.getUserAll();
+        PageInfo pageInfo = new PageInfo(userPOList);
+        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
+        List<PositionPO> positionPOList = positionServiceV2.getPositionList();
+
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("emplist", userPOList);
+        model.addAttribute("deptlist", deptPOList);
+        model.addAttribute("poslist", positionPOList);
+        model.addAttribute("url", "names");
+    }
+
+    /**
+     * 审核人封装
+     */
+    public List<Map<String, Object>> getAuditUser(ProcessListPO processListPO) {
+        List<Map<String, Object>> auditMapList = new ArrayList<>();
+        List<ReviewedPO> reviewedPOList = byProcessPOIdServiceV2.getReviewedPOListByReviewedTimeNotNullAndProcessId(processListPO.getProcessId());
+        for (int i = 0; i < reviewedPOList.size(); i++) {
+            Map<String, Object> result = new HashMap<>();
+            //根据审核人ID获取审核人信息
+            UserPO auditUserPO = userServiceV2.getUserPOByUserId(reviewedPOList.get(i).getUserId());
+            //根据审核人的职位ID获取审核人的职位信息
+            PositionPO positionPO = positionServiceV2.getPositionByPositionId(auditUserPO.getPositionId());
+            //根据审核人的状态ID获取审核人的状态信息
+            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(reviewedPOList.get(i).getStatusId());
+
+            result.put("poname", positionPO.getName());//获取职位名
+            result.put("username", auditUserPO.getUserName());//获取审核人的用户名
+            result.put("img", auditUserPO.getImgPath());//获取审核人图像
+            result.put("positionid", auditUserPO.getPositionId());//获取申请人的职位ID
+            result.put("retime", reviewedPOList.get(i).getReviewedTime());//获取审核时间
+            result.put("des", reviewedPOList.get(i).getAdvice());//获取审核人意见
+            result.put("restatus", statusPO.getStatusName());//获取状态名
+            result.put("statuscolor", statusPO.getStatusColor());//获取状态颜色
+            auditMapList.add(result);//将map集合添加斤进list集合
+
+        }
+        return auditMapList;
     }
 
 
