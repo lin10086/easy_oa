@@ -1,5 +1,6 @@
 package cn.gson.oasys.controller.inform;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,10 +14,12 @@ import javax.validation.Valid;
 
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
 import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.ServiceV2.noticeServiceV2.InfrommanageServiceV2;
 import cn.gson.oasys.model.po.NoticeListPO;
 import cn.gson.oasys.model.po.StatusPO;
 import cn.gson.oasys.model.po.TypePO;
+import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.noticeV2.NoticeListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +147,7 @@ public class InformManageController {
     /**
      * 通知管理删除
      */
-  /*  @RequestMapping("infromdelete")
+   /* @RequestMapping("infromdelete")
     public String infromDelete(HttpSession session, HttpServletRequest req) {
         Long noticeId = Long.parseLong(req.getParameter("id"));
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
@@ -157,12 +160,13 @@ public class InformManageController {
         informService.deleteOne(noticeId);
         return "redirect:/infrommanage";
 
-    }
-*/
+    }*/
+
+
     /**
      * 通知列表删除
      */
-  /*  @RequestMapping("informlistdelete")
+    @RequestMapping("informlistdelete")
     public String informListDelete(HttpServletRequest req, HttpSession session) {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
         Long noticeId = Long.parseLong(req.getParameter("id"));
@@ -175,13 +179,13 @@ public class InformManageController {
         informrelationservice.deleteOne(relation);
         return "forward:/infromlist";
     }
-*/
+
     /**
      * 通知列表
      *
      * @return
      */
- /*   @RequestMapping("infromlist")
+    @RequestMapping("infromlist")
     public String infromList(HttpSession session, HttpServletRequest req, Model model,
                              @RequestParam(value = "pageNum", defaultValue = "1") int page) {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
@@ -198,7 +202,7 @@ public class InformManageController {
         System.out.println(pageinfo);
         return "inform/informlist";
     }
-*/
+
     /**
      * 编辑通知界面
      */
@@ -316,6 +320,8 @@ public class InformManageController {
     private TypeServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
+    @Resource
+    private UserServiceV2 userServiceV2;
 
     /**
      * 通知管理面板
@@ -414,5 +420,42 @@ public class InformManageController {
         return "forward:/informedit";
     }
 
+    /**
+     * 详细通知显示
+     */
+    @RequestMapping("informshow")
+    public String informShow(HttpServletRequest req, Model model) {
+        Long noticeId = Long.parseLong(req.getParameter("id"));
+        if (!StringUtils.isEmpty(req.getParameter("read"))) {
+            if (("0").equals(req.getParameter("read"))) {
+                //代表是通知列表的查询
+                Long relationId = Long.parseLong(req.getParameter("relationid"));//通知用户关联列表的ID
+                infromManageServiceV2.updateNoticeUserRelation(relationId);
+            }
+        }
+        NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);
+        UserPO userPO = userServiceV2.getUserPOByUserId(noticeListPO.getUserId());
+        model.addAttribute("notice", noticeListPO);
+        model.addAttribute("noticeTime", new Timestamp(noticeListPO.getNoticeTime().getTime()));
+        model.addAttribute("userName", userPO.getUserName());
+        return "inform/informshow";
+    }
+
+    /**
+     * 通知管理删除
+     */
+    @RequestMapping("infromdelete")
+    public String infromDelete(HttpSession session, HttpServletRequest req) {
+        Long noticeId = Long.parseLong(req.getParameter("id"));//通知公告的ID
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");//登录人ID
+        NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);//根据通知公告ID找通知公告
+        if (!Objects.equals(userId, noticeListPO.getUserId())) {
+            System.out.println("权限不匹配，不能删除");
+            return "redirect:/notlimit";
+        }
+        infromManageServiceV2.deleteNoticeListPO(noticeId);
+        return "redirect:/infrommanage";
+
+    }
 
 }

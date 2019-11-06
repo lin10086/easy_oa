@@ -7,10 +7,7 @@ import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.mappers.NoticeListPOMapper;
 import cn.gson.oasys.mappers.NoticeUserRelationPOMapper;
 import cn.gson.oasys.model.entity.notice.NoticesList;
-import cn.gson.oasys.model.po.NoticeListPO;
-import cn.gson.oasys.model.po.NoticeListPOExample;
-import cn.gson.oasys.model.po.NoticeUserRelationPO;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.noticeV2.NoticeListVO;
 import com.github.pagehelper.PageHelper;
 import org.hibernate.annotations.Source;
@@ -96,7 +93,7 @@ public class InfrommanageServiceV2 {
      * @param session
      * @param menu
      */
-    public void updateNoticeListPO(HttpSession session, NoticeListVO menu,Long userId) {
+    public void updateNoticeListPO(HttpSession session, NoticeListVO menu, Long userId) {
         Long menuId = (Long) session.getAttribute("noticeId"); // 获取进入编辑界面的menuID值
         NoticeListPO noticeListPO = noticeListPOMapper.selectByPrimaryKey(menuId);
         noticeListPO.setContent(menu.getContent());
@@ -114,7 +111,7 @@ public class InfrommanageServiceV2 {
     }
 
     /**
-     * 插入通知表信息
+     * 插入通知主表信息
      *
      * @param menu
      * @param userId
@@ -132,12 +129,28 @@ public class InfrommanageServiceV2 {
         noticeListPO.setUrl(menu.getUrl());
         noticeListPOMapper.insertSelective(noticeListPO);
         return noticeListPO;
-
-
-
     }
-    public void insertNoticeUserRelation(NoticeListPO noticeListPO,Long fatherId){
-        List<UserPO> userPOList =userServiceV2.getUserPOListByFatherId(fatherId);
+
+    /**
+     * 根据通知主表ID删除通知表
+     *
+     * @param noticeId 通知表ID
+     */
+    public void deleteNoticeListPO(Long noticeId) {
+        NoticeUserRelationPOExample noticeUserRelationPOExample = new NoticeUserRelationPOExample();
+        noticeUserRelationPOExample.createCriteria().andRelatinNoticeIdEqualTo(noticeId);
+        noticeUserRelationPOMapper.deleteByExample(noticeUserRelationPOExample);
+        noticeListPOMapper.deleteByPrimaryKey(noticeId);
+    }
+
+    /**
+     * 通知与用户中间关联表，多一个字段，是否已读（告诉下属用户还有通知为读）
+     *
+     * @param noticeListPO 公告通知
+     * @param fatherId     上司ID
+     */
+    public void insertNoticeUserRelation(NoticeListPO noticeListPO, Long fatherId) {
+        List<UserPO> userPOList = userServiceV2.getUserPOListByFatherId(fatherId);
 
         for (UserPO userPO : userPOList) {
             NoticeUserRelationPO noticeUserRelationPO = new NoticeUserRelationPO();
@@ -148,4 +161,16 @@ public class InfrommanageServiceV2 {
         }
 
     }
+
+    /**
+     * 更新通知用户表（把未读改为已读）
+     *
+     * @param relationId 通知用户是否已读表ID
+     */
+    public void updateNoticeUserRelation(Long relationId) {
+        NoticeUserRelationPO noticeUserRelationPO = noticeUserRelationPOMapper.selectByPrimaryKey(relationId);
+        noticeUserRelationPO.setIsRead(1);
+        noticeUserRelationPOMapper.updateByPrimaryKeySelective(noticeUserRelationPO);
+    }
+
 }
