@@ -1,6 +1,5 @@
-package cn.gson.oasys.vo.processVO;
+package cn.gson.oasys.vo.processV2;
 
-import cn.gson.oasys.vo.ProcessListVO;
 import lombok.Data;
 import lombok.ToString;
 

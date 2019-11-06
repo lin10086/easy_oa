@@ -141,6 +141,7 @@
                         </tr>
                         <tr>
                             <td class="title"><label class="control-label">提单人员</label></td>
+
                             <td colspan="6"><input type="text" class="form-control inpu"
                                                    readonly="readonly" style="background-color:#fff;"
                                                    value="${username}"/></td>
@@ -168,6 +169,8 @@
                             </td>
                         </tr>
                         <tr>
+
+
                             <td class="title"><label class="control-label">审核人员</label></td>
                             <td colspan="6"><input type="text" class="form-control inpu shen"
                                                    readonly="readonly" style="background-color:#fff;" name="auditName"
@@ -176,6 +179,8 @@
                                     <span class="label label-success glyphicon glyphicon-plus">通讯录</span>
                                 </div>
                             </td>
+
+
                             <td class="title"><label class="control-label">相关票据</label></td>
                             <td colspan="6">
                                 <div class="btn btn-default"

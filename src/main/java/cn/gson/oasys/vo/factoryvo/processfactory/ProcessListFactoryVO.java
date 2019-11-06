@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.factoryvo.processfactory;
 
 import cn.gson.oasys.model.po.ProcessListPO;
-import cn.gson.oasys.vo.ProcessListVO;
+import cn.gson.oasys.vo.processV2.ProcessListVO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.factoryvo.processfactory;
 
 import cn.gson.oasys.model.po.RegularPO;
-import cn.gson.oasys.vo.processVO.RegularVO;
+import cn.gson.oasys.vo.processV2.RegularVO;
 
 import java.util.ArrayList;
 import java.util.List;

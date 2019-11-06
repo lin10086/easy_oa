@@ -1,8 +1,7 @@
 package cn.gson.oasys.vo.factoryvo.processfactory;
 
-import cn.gson.oasys.model.entity.process.ProcessList;
 import cn.gson.oasys.model.po.EvectionMoneyPO;
-import cn.gson.oasys.vo.processVO.EvectionMoneyVO;
+import cn.gson.oasys.vo.processV2.EvectionMoneyVO;
 
 import java.util.ArrayList;
 import java.util.List;

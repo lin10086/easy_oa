@@ -20,7 +20,11 @@ public class PositionServiceV2 {
     @Resource
     PositionPOMapper positionPOMapper;
 
-    //获取所有的职位列表
+    /**
+     * 获取所有的职位列表
+     *
+     * @return
+     */
     public List<PositionPO> getPositionList() {
         PositionPOExample positionPOExample = new PositionPOExample();
         List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);

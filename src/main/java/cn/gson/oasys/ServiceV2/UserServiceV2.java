@@ -61,7 +61,12 @@ public class UserServiceV2 {
         return userPOList;
     }
 
-    //查询所有用户
+
+    /**
+     * 获取所有用户
+     *
+     * @return
+     */
     public List<UserPO> getUserAll() {
         UserPOExample userPOExample = new UserPOExample();
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
@@ -301,7 +306,7 @@ public class UserServiceV2 {
     /**
      * 根据用户ID找用户名
      *
-     * @param userId 用户名
+     * @param userId 用户id
      * @return
      */
     public String getUsernameByUserId(Long userId) {

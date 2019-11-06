@@ -1,4 +1,4 @@
-package cn.gson.oasys.ServiceV2.processV2;
+package cn.gson.oasys.ServiceV2.processServiceV2;
 
 import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.po.*;
@@ -121,14 +121,14 @@ public class ByProcessPOIdServiceV2 {
      * 根据主表ID和审核人ID找审核表
      *
      * @param processPOId 主表ID
-     * @param auditUserId 审核人ID
+     * @param userId      审核人ID
      * @return
      */
-    public ReviewedPO getReviewedPOByProcessPOIdAndAuditUserId(Long processPOId, Long auditUserId) {
+    public ReviewedPO getReviewedPOByProcessPOIdAndUserId(Long processPOId, Long userId) {
         ReviewedPOExample reviewedPOExample = new ReviewedPOExample();
-        reviewedPOExample.createCriteria().andProIdEqualTo(processPOId).andUserIdEqualTo(auditUserId);
-        ReviewedPO reviewedPO = reviewedPOMapper.selectByExample(reviewedPOExample).get(0);
-        return reviewedPO;
+        reviewedPOExample.createCriteria().andProIdEqualTo(processPOId).andUserIdEqualTo(userId);
+        List<ReviewedPO> reviewedPOList = reviewedPOMapper.selectByExample(reviewedPOExample);
+        return reviewedPOList.get(0);
     }
 
     /**

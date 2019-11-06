@@ -283,7 +283,7 @@ public class ProcessService {
     }
 
     /**
-     * 公用
+     * 公用(setModel)
      */
     public void index6(Model model, Long id, int page, int size) {
         User lu = udao.findOne(id);//根据申请人ID查询申请人信息
@@ -349,7 +349,12 @@ public class ProcessService {
     }
 
     /**
-     * 存主表
+     * 更新主表信息（主表ID，登录人信息，审核表，主表，下一个审核人）
+     * @param proid
+     * @param u
+     * @param reviewed
+     * @param pro
+     * @param u2
      */
     public void save(Long proid, User u, Reviewed reviewed, ProcessList pro, User u2) {
         Reviewed re = redao.findByProIdAndUserId(proid, u);

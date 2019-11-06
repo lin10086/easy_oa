@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.factoryvo.processfactory;
 
 import cn.gson.oasys.model.po.EvectionPO;
-import cn.gson.oasys.vo.processVO.EvectionVO;
+import cn.gson.oasys.vo.processV2.EvectionVO;
 
 import java.util.ArrayList;
 import java.util.List;

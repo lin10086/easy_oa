@@ -1,5 +1,7 @@
-package cn.gson.oasys.vo;
+package cn.gson.oasys.vo.processV2;
 
+import cn.gson.oasys.vo.AttachmentVO;
+import cn.gson.oasys.vo.UserVO;
 import lombok.Data;
 import lombok.ToString;
 
@@ -22,7 +24,7 @@ public class ProcessListVO {
 
     private String processDescribe;    //流程申请原因内容
 
-    private UserVO userVO;            //流程申请人
+    private UserVO userVO;            //流程申请人（数据库process_user_id)
 
     private Date applyTime;            //流程申请时间
 

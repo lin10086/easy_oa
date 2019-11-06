@@ -1,8 +1,7 @@
 package cn.gson.oasys.vo.factoryvo.processfactory;
 
 import cn.gson.oasys.model.po.HolidayPO;
-import cn.gson.oasys.vo.ProcessListVO;
-import cn.gson.oasys.vo.processVO.HolidayVO;
+import cn.gson.oasys.vo.processV2.HolidayVO;
 
 import java.util.ArrayList;
 import java.util.List;

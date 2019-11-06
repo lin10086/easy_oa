@@ -1,4 +1,4 @@
-package cn.gson.oasys.vo.processVO;
+package cn.gson.oasys.vo.processV2;
 
 import lombok.Data;
 import lombok.ToString;
@@ -21,7 +21,7 @@ public class ProcessAuditVO {
 
     private Date applyTime; //申请时间（主表里）
 
-    private Long deeplyId;    //紧急程度（主表里）
+    private Long exigenceName;    //紧急程度（主表里deeplyId）
 
     private Long statusId;//审核人状态(在审核表里）
 }

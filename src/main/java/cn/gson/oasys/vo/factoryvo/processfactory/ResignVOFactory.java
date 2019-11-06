@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.factoryvo.processfactory;
 
 import cn.gson.oasys.model.po.ResignPO;
-import cn.gson.oasys.vo.processVO.ResignVO;
+import cn.gson.oasys.vo.processV2.ResignVO;
 
 import java.util.ArrayList;
 import java.util.List;

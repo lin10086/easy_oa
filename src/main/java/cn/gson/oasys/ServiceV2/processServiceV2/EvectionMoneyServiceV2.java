@@ -1,10 +1,9 @@
-package cn.gson.oasys.ServiceV2.processV2;
+package cn.gson.oasys.ServiceV2.processServiceV2;
 
 import cn.gson.oasys.mappers.EvectionMoneyPOMapper;
 import cn.gson.oasys.mappers.StayPOMapper;
 import cn.gson.oasys.mappers.TrafficPOMapper;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.processVO.EvectionMoneyVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

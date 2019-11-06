@@ -159,6 +159,11 @@
             <generatedKey column="resign_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="resign_id" javaType="Long"/>
         </table>
+        <!--通知模块通知总表-->
+        <table tableName="aoa_notice_list" domainObjectName="NoticeListPO">
+            <generatedKey column="notice_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="notice_id" javaType="Long"/>
+        </table>
 
     </context>
 </generatorConfiguration>

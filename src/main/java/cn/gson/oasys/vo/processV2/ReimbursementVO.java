@@ -1,6 +1,5 @@
-package cn.gson.oasys.vo.processVO;
+package cn.gson.oasys.vo.processV2;
 
-import cn.gson.oasys.vo.ProcessListVO;
 import cn.gson.oasys.vo.UserVO;
 import lombok.Data;
 import lombok.ToString;
@@ -23,7 +22,7 @@ public class ReimbursementVO {
 
     private Long typeId;//报销方式（银行卡，现金，其他）
 
-    private UserVO operationUserVO;//报销人员(数据库名称用户ID)operation_name
+    private UserVO operationUserVO;//报销人员(数据库名称用户ID)operation_name(审核人员id)
 
     private Date reimbursementTime;//报销日期
 

@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.factoryvo.processfactory;
 
 import cn.gson.oasys.model.po.TrafficPO;
-import cn.gson.oasys.vo.processVO.TrafficVO;
+import cn.gson.oasys.vo.processV2.TrafficVO;
 
 import java.util.ArrayList;
 import java.util.List;

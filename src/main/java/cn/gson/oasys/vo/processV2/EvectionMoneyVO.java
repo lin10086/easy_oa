@@ -1,12 +1,9 @@
-package cn.gson.oasys.vo.processVO;
+package cn.gson.oasys.vo.processV2;
 
 import cn.gson.oasys.model.entity.process.ProcessList;
-import cn.gson.oasys.model.entity.process.Stay;
-import cn.gson.oasys.model.entity.process.Traffic;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -16,7 +13,7 @@ import java.util.List;
 @Data
 public class EvectionMoneyVO {
 
-    private Long evectionMoneyId;
+    private Long evectionMoneyId;//住宿申请表ID
 
     private Double money; //申请总金额
 

@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.factoryvo;
 
 import cn.gson.oasys.model.po.BursementPO;
-import cn.gson.oasys.vo.processVO.ReimbursementVO;
+import cn.gson.oasys.vo.processV2.ReimbursementVO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

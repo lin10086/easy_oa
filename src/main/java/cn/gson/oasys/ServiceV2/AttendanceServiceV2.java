@@ -78,17 +78,17 @@ public class AttendanceServiceV2 {
     }
 
     //单个用户分页
-    public  List<Attends>attendancePage(int page,Long userId){
+    public List<Attends> attendancePage(int page, Long userId) {
         UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserIdEqualTo(userId);
-        List<UserPO>userPOList  = userPOMapper.selectByExample(userPOExample);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
 
         AttendsPOExample attendsPOExample = new AttendsPOExample();
         attendsPOExample.createCriteria().andAttendsUserIdEqualTo(userId);
-        PageHelper.startPage(page,10);
-        List<AttendsPO>attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
-        List<Attends>attendsList = AttendsFactory.create(userPOList,attendsPOList);
-        return  attendsList;
+        PageHelper.startPage(page, 10);
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        List<Attends> attendsList = AttendsFactory.create(userPOList, attendsPOList);
+        return attendsList;
     }
 
     private List<Long> getAttendStatus() {
@@ -236,24 +236,26 @@ public class AttendanceServiceV2 {
         }
         return i;
     }
+
     //用户当天的考勤次数
-    public Integer countAttendance(String nowdate,Long userId){
+    public Integer countAttendance(String nowdate, Long userId) {
 
         AttendsPOExample attendsPOExample = new AttendsPOExample();
         attendsPOExample.createCriteria().andAttendsUserIdEqualTo(userId);
-        List<AttendsPO>attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         int i = 0;
-        for(AttendsPO attendsPO:attendsPOList){
+        for (AttendsPO attendsPO : attendsPOList) {
             Date date = attendsPO.getAttendsTime();
-            String str =simpleDateFormat.format(date);
-            if(nowdate.equals(str)){
+            String str = simpleDateFormat.format(date);
+            if (nowdate.equals(str)) {
                 i++;
             }
 
         }
         return i;
     }
+
     //获取用户当天下班的考勤ID
     public Long userAttendanceId(String nowdate, Long stypeId, Long userId) {
         AttendsPOExample attendsPOExample = new AttendsPOExample();
@@ -261,58 +263,80 @@ public class AttendanceServiceV2 {
                 .andAttendsUserIdEqualTo(userId);
         List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Long attendanceId =null;
+        Long attendanceId = null;
         for (AttendsPO attendsPO : attendsPOList) {
             Date date = attendsPO.getAttendsTime();
-            String str =simpleDateFormat.format(date);
-            if(nowdate.equals(str)){
-            attendanceId = attendsPO.getAttendsId();
+            String str = simpleDateFormat.format(date);
+            if (nowdate.equals(str)) {
+                attendanceId = attendsPO.getAttendsId();
             }
         }
         return attendanceId;
     }
-    //根据考勤ID修改时间，时分，状态
-    public void updateTimeV2(Date date,String hourmin,Long statusId,Long aid){
 
-                AttendsPO attendsPO = attendsPOMapper.selectByPrimaryKey(aid);
-                attendsPO.setAttendsTime(new Date());
-                attendsPO.setAttendHmtime(hourmin);
-                attendsPO.setStatusId(statusId);
+    //根据考勤ID修改时间，时分，状态
+    public void updateTimeV2(Date date, String hourmin, Long statusId, Long aid) {
+
+        AttendsPO attendsPO = attendsPOMapper.selectByPrimaryKey(aid);
+        attendsPO.setAttendsTime(new Date());
+        attendsPO.setAttendHmtime(hourmin);
+        attendsPO.setStatusId(statusId);
 
     }
+
     //根据类型ID找类型名
-    public String typeName(Long typeId){
+    public String typeName(Long typeId) {
         TypePO typePO = typePOMapper.selectByPrimaryKey(typeId);
         SystemTypeList systemTypeList = TypeFactory.create(typePO);
-       String typeName = systemTypeList.getTypeName();
+        String typeName = systemTypeList.getTypeName();
         return typeName;
     }
 
     //显示当天的最新记录(考勤表的用户ID和时间降序取第一个）
-    public Attends attends(String nowdate,Long userId,UserPO userPO){
+    public Attends attends(String nowdate, Long userId, UserPO userPO) {
         AttendsPOExample attendsPOExample = new AttendsPOExample();
         attendsPOExample.createCriteria().andAttendsUserIdEqualTo(userId);
-        attendsPOExample.setOrderByClause(nowdate +"DESC");
-       List<AttendsPO>attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        attendsPOExample.setOrderByClause(nowdate + "DESC");
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        List<Long>longList =null;
+        List<Long> longList = null;
         for (AttendsPO attendsPO : attendsPOList) {
             Date date = attendsPO.getAttendsTime();
-            String str =simpleDateFormat.format(date);
-            if(nowdate.equals(str)){
+            String str = simpleDateFormat.format(date);
+            if (nowdate.equals(str)) {
                 longList.add(attendsPO.getAttendsId());
             }
         }
         Long attendanceId = longList.get(0);
         AttendsPO attendsPO = attendsPOMapper.selectByPrimaryKey(attendanceId);
-        Attends attends =AttendsFactory.create(userPO,attendsPO);
+        Attends attends = AttendsFactory.create(userPO, attendsPO);
 
         return attends;
     }
+
     //考勤管理里面的删除
-    public void deleteUserAttendanceByAid(Long aid){
+    public void deleteUserAttendanceByAid(Long aid) {
         attendsPOMapper.deleteByPrimaryKey(aid);
+    }
+
+    /**
+     * 插入考勤
+     *
+     * @param typename
+     * @param processListPO
+     */
+    public void insertAttendsPO(String typename, ProcessListPO processListPO) {
+        AttendsPO attendsPO = new AttendsPO();
+        attendsPO.setHolidayDays((double) processListPO.getProcseeDays());
+        attendsPO.setHolidayStart(processListPO.getStartTime());
+        attendsPO.setAttendsUserId(processListPO.getProcessUserId());
+        if (("请假申请").equals(typename)) {
+            attendsPO.setStatusId(46L);
+        } else if (("出差申请").equals(typename)) {
+            attendsPO.setStatusId(47L);
+        }
+        attendsPOMapper.insertSelective(attendsPO);
     }
 
 }

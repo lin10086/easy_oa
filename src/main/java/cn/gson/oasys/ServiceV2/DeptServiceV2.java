@@ -28,7 +28,12 @@ public class DeptServiceV2 {
     @Resource
     private UserPOMapper userPOMapper;
 
-    //获取所有的部门信息（部门列表）
+
+    /**
+     * 获取所有的部门信息（部门列表）
+     *
+     * @return
+     */
     public List<DeptPO> getDeptPOList() {
         DeptPOExample deptPOExample = new DeptPOExample();
         List<DeptPO> deptPOList = deptPOMapper.selectByExample(deptPOExample);
@@ -87,6 +92,18 @@ public class DeptServiceV2 {
         DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
         String deptName = deptPO.getDeptName();
         return deptName;
+    }
+
+    /**
+     * 根据用户ID找部门信息
+     *
+     * @param userId 用户ID
+     * @return 部门信息
+     */
+    public DeptPO getDeptPOByUserId(Long userId) {
+        UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
+        DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+        return deptPO;
     }
 }
 

@@ -1,12 +1,9 @@
-package cn.gson.oasys.vo.processVO;
+package cn.gson.oasys.vo.processV2;
 
-import cn.gson.oasys.model.entity.process.EvectionMoney;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.vo.UserVO;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.persistence.*;
 import java.util.Date;
 
 /**

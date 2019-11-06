@@ -30,10 +30,10 @@
 							<th scope="col">状态</th>
 							<th scope="col">操作</th>
 						</tr>
-						<#if prolist?? && (prolist?size > 0)>
-						<#list prolist as pro>
+							<#--prolist-->
+						<#if processAuditVOList?? && (processAuditVOList?size > 0)>
+						<#list processAuditVOList as pro>
 						<tr>
-							
 							<td>${pro.typeName}</td>
 							<td><span>${pro.processName}</span></td>
 							<td><span>${pro.auditUsername}</span></td>

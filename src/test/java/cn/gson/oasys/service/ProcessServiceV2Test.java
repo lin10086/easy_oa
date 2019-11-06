@@ -8,13 +8,11 @@ import cn.gson.oasys.model.po.ProcessListPO;
 import cn.gson.oasys.model.po.ProcessListPOExample;
 import cn.gson.oasys.model.po.ReviewedPO;
 import cn.gson.oasys.model.po.ReviewedPOExample;
-import cn.gson.oasys.vo.UserVO;
-import cn.gson.oasys.vo.processVO.ProcessAuditVO;
+import cn.gson.oasys.vo.processV2.ProcessAuditVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -57,7 +55,7 @@ public class ProcessServiceV2Test {
                     processAuditVO.setProcessName(processListPO.getProcessName());
                     processAuditVO.setUserName(userServiceV2.getUsernameByUserId(processListPO.getProcessUserId()));
                     processAuditVO.setApplyTime(processListPO.getApplyTime());
-                    processAuditVO.setDeeplyId(processListPO.getDeeplyId());
+                    processAuditVO.setExigenceName(processListPO.getDeeplyId());
                     processAuditVO.setStatusId(reviewedPO.getStatusId());
                     processAuditVOList.add(processAuditVO);
                 }

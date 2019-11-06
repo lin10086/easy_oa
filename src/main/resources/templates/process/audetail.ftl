@@ -84,6 +84,7 @@ a:hover {
 		<form action="susave">
 		
 			<div class="box-body">
+				<#--25已批准26未通过-->
 				<#if statusid==25 ||statusid==26>
 					<div>
 						<i class="glyphicon glyphicon-record" style="color:#9E9E9E;padding-left: 13px;"></i> 结束审核
@@ -113,12 +114,13 @@ a:hover {
 				<div class="shuxian"></div>
 				</#list>
 				<div class="shen">
-					<p>申请人：${(process.userId.userName)!''}<span class="pull-right">${(process.applyTime)!''}</span></p>
+					<#--process.userId.userName》userPO.userName-->
+					<p>申请人：${(userPO.userName)!''}<span class="pull-right">${(process.applyTime)!''}</span></p>
 					<div >
 					<div style="display:inline-block;position:absolute;">
-					<#if process.userId.imgPath?? && process.userId.imgPath!=''>
+					<#if userPO.imgPath?? && userPO.imgPath!=''>
 						<img style="width: 50px;height: 50px;border-radius: 72px; position: relative;bottom:0px;right:0px;"
-							src="/image/${process.userId.imgPath}" />
+							src="/image/${userPO.imgPath}" />
 						<#else>
 						<img style="width: 50px;height: 50px;border-radius: 72px; position: relative;bottom:0px;right:0px;"
 							src="images/timg.jpg" alt="images"/>
@@ -139,12 +141,13 @@ a:hover {
 					<p class="pa" >申请理由：${(process.processDescribe)!''}</p>
 					</#if>
 					<#if typename=="转正申请">
-					<p class="pa" style="padding-top: 9px;">试用/实习职位：${(position.position.name)!''}</p>
+						<#--position.position.name>positionPO.name-->
+					<p class="pa" style="padding-top: 9px;">试用/实习职位：${(positionPO.name)!''}</p>
 					<p class="pa" >开始时间：${(process.startTime)!''}</p>
 					<p class="pa" >结束时间：${(process.endTime)!''}</p>
 					</#if>
 					<#if typename=="离职申请">
-					<p class="pa" style="padding-top: 9px;">在职岗位：${(position.position.name)!''}</p>
+					<p class="pa" style="padding-top: 9px;">在职岗位：${(positionPO.name)!''}</p>
 					<p class="pa" >离职理由：${(process.processDescribe)!''}</p>
 					</#if>
 					</div>
@@ -223,8 +226,12 @@ a:hover {
 			var se=$("select").find("option:selected").text();
 			console.log(se);
 		});
-		
-	})
+
+
+
+    });
+
+
 </script>
 
 <#include "/common/reciver.ftl">
