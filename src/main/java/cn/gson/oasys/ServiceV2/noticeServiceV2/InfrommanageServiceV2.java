@@ -5,9 +5,12 @@ import cn.gson.oasys.ServiceV2.StatusServiceV2;
 import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.mappers.NoticeListPOMapper;
+import cn.gson.oasys.mappers.NoticeUserRelationPOMapper;
 import cn.gson.oasys.model.entity.notice.NoticesList;
 import cn.gson.oasys.model.po.NoticeListPO;
 import cn.gson.oasys.model.po.NoticeListPOExample;
+import cn.gson.oasys.model.po.NoticeUserRelationPO;
+import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.noticeV2.NoticeListVO;
 import com.github.pagehelper.PageHelper;
 import org.hibernate.annotations.Source;
@@ -18,11 +21,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class InfrommanageServiceV2 {
@@ -36,6 +37,8 @@ public class InfrommanageServiceV2 {
     private StatusServiceV2 statusServiceV2;
     @Resource
     private DeptServiceV2 deptServiceV2;
+    @Resource
+    private NoticeUserRelationPOMapper noticeUserRelationPOMapper;
 
     /**
      * 根据用户ID找管理公告
@@ -87,5 +90,62 @@ public class InfrommanageServiceV2 {
         return noticeListPO;
     }
 
+    /**
+     * 更新通知表信息
+     *
+     * @param session
+     * @param menu
+     */
+    public void updateNoticeListPO(HttpSession session, NoticeListVO menu,Long userId) {
+        Long menuId = (Long) session.getAttribute("noticeId"); // 获取进入编辑界面的menuID值
+        NoticeListPO noticeListPO = noticeListPOMapper.selectByPrimaryKey(menuId);
+        noticeListPO.setContent(menu.getContent());
+        noticeListPO.setIsTop(menu.getTop() == false ? 0 : 1);
+        noticeListPO.setModifyTime(new Timestamp(new Date().getTime()));
+        noticeListPO.setStatusId(menu.getStatusId());
+        noticeListPO.setTitle(menu.getTitle());
+        noticeListPO.setTypeId(menu.getTypeId());
+        noticeListPO.setUrl(menu.getUrl());
+        noticeListPO.setUserId(userId);
+        session.removeAttribute("noticeId");
+        noticeListPOMapper.updateByPrimaryKeySelective(noticeListPO);
 
+
+    }
+
+    /**
+     * 插入通知表信息
+     *
+     * @param menu
+     * @param userId
+     */
+    public NoticeListPO insertNoticeListPO(NoticeListVO menu, Long userId) {
+        NoticeListPO noticeListPO = new NoticeListPO();
+        noticeListPO.setUserId(userId);
+        noticeListPO.setNoticeTime(new Timestamp(new Date().getTime()));
+        noticeListPO.setContent(menu.getContent());
+        noticeListPO.setIsTop(menu.getTop() == false ? 0 : 1);
+        noticeListPO.setModifyTime(new Timestamp(new Date().getTime()));
+        noticeListPO.setStatusId(menu.getStatusId());
+        noticeListPO.setTitle(menu.getTitle());
+        noticeListPO.setTypeId(menu.getTypeId());
+        noticeListPO.setUrl(menu.getUrl());
+        noticeListPOMapper.insertSelective(noticeListPO);
+        return noticeListPO;
+
+
+
+    }
+    public void insertNoticeUserRelation(NoticeListPO noticeListPO,Long fatherId){
+        List<UserPO> userPOList =userServiceV2.getUserPOListByFatherId(fatherId);
+
+        for (UserPO userPO : userPOList) {
+            NoticeUserRelationPO noticeUserRelationPO = new NoticeUserRelationPO();
+            noticeUserRelationPO.setIsRead(0);
+            noticeUserRelationPO.setRelatinUserId(userPO.getUserId());
+            noticeUserRelationPO.setRelatinNoticeId(noticeListPO.getNoticeId());
+            noticeUserRelationPOMapper.insertSelective(noticeUserRelationPO);
+        }
+
+    }
 }

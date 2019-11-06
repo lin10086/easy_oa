@@ -164,6 +164,10 @@
             <generatedKey column="notice_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="notice_id" javaType="Long"/>
         </table>
-
+        <!--通知与用户中间关联表，多一个字段，是否已读-->
+        <table tableName="aoa_notice_user_relation" domainObjectName="NoticeUserRelationPO">
+            <generatedKey column="relatin_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="relatin_id" javaType="Long"/>
+        </table>
     </context>
 </generatorConfiguration>

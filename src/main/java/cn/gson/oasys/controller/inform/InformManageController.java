@@ -17,6 +17,7 @@ import cn.gson.oasys.ServiceV2.noticeServiceV2.InfrommanageServiceV2;
 import cn.gson.oasys.model.po.NoticeListPO;
 import cn.gson.oasys.model.po.StatusPO;
 import cn.gson.oasys.model.po.TypePO;
+import cn.gson.oasys.vo.noticeV2.NoticeListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -374,8 +375,8 @@ public class InformManageController {
      * @return
      */
     @RequestMapping("informcheck")
-    public String testMess(HttpServletRequest req, @Valid NoticesList menu, BindingResult br) {
-        HttpSession session = req.getSession();
+    public String testMess(HttpServletRequest req, @Valid NoticeListVO menu, BindingResult br) {
+        HttpSession session = req.getSession();//获取session信息
         Long menuId = null;
         req.setAttribute("menuObj", menu);
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
@@ -401,26 +402,15 @@ public class InformManageController {
         else {
             // 判断是否从编辑界面进来的，前面有"session.setAttribute("getId",getId);",在这里获取，并remove掉；
             if (!StringUtils.isEmpty(session.getAttribute("noticeId"))) {
-                menuId = (Long) session.getAttribute("noticeId"); // 获取进入编辑界面的menuID值
-                NoticesList inform = informDao.findOne(menuId);
-                menu.setNoticeTime(inform.getNoticeTime());
-                menu.setNoticeId(menuId);
-                session.removeAttribute("noticeId");
-                informService.save(menu);
+                infromManageServiceV2.updateNoticeListPO(session, menu, userId);
             } else {
-                menu.setNoticeTime(new Date());
-                menu.setUserId(userId);
-                NoticesList noticeList = informService.save(menu);
-                List<User> userList = uDao.findByFatherId(userId);
-                for (User user : userList) {
-                    informrelationservice.save(new NoticeUserRelation(noticeList, user, false));
-                }
+                NoticeListPO noticeListPO = infromManageServiceV2.insertNoticeListPO(menu, userId);
+                //新公告通知下属用户，标记为未读
+                infromManageServiceV2.insertNoticeUserRelation(noticeListPO, userId);
             }
             // 执行业务代码
-            System.out.println("此操作是正确的");
             req.setAttribute("success", "后台验证成功");
         }
-        System.out.println("是否进入最后的实体类信息：" + menu);
         return "forward:/informedit";
     }
 

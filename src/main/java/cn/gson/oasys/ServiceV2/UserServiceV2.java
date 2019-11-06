@@ -315,4 +315,17 @@ public class UserServiceV2 {
         return username;
 
     }
+
+    /**
+     * 根据上司ID找下属用户列表
+     *
+     * @param fatherId
+     * @return
+     */
+    public List<UserPO> getUserPOListByFatherId(Long fatherId) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andFatherIdEqualTo(fatherId);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
 }
