@@ -16,10 +16,8 @@ import cn.gson.oasys.ServiceV2.StatusServiceV2;
 import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.ServiceV2.noticeServiceV2.InfrommanageServiceV2;
-import cn.gson.oasys.model.po.NoticeListPO;
-import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.model.po.TypePO;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.ServiceV2.noticeServiceV2.NoticeUserRelationServiceV2;
+import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.noticeV2.NoticeListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +91,7 @@ public class InformManageController {
      *
      * @return
      */
-	/*@RequestMapping("infrommanage")
+/*	@RequestMapping("infrommanage")
 	public String inform(@RequestParam(value = "page", defaultValue = "0") int page,@SessionAttribute("userId") Long userId,Model model) {
 		Page<NoticesList> page2 = informService.pageThis(page,userId);
 		List<NoticesList> noticeList=page2.getContent();
@@ -103,7 +101,8 @@ public class InformManageController {
 		//设置变量，需要load的url；
 		model.addAttribute("url", "infrommanagepaging");
 		return "inform/informmanage";
-	}*/
+	}
+*/
  /*   @RequestMapping("forwardother")
     public String forwardOther(@SessionAttribute("userId") Long userId, @RequestParam(value = "noticeId") Long noticeId) {
         List<User> users = uDao.findByFatherId(userId);
@@ -166,7 +165,7 @@ public class InformManageController {
     /**
      * 通知列表删除
      */
-    @RequestMapping("informlistdelete")
+ /*   @RequestMapping("informlistdelete")
     public String informListDelete(HttpServletRequest req, HttpSession session) {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
         Long noticeId = Long.parseLong(req.getParameter("id"));
@@ -179,13 +178,14 @@ public class InformManageController {
         informrelationservice.deleteOne(relation);
         return "forward:/infromlist";
     }
+*/
 
     /**
      * 通知列表
      *
      * @return
      */
-    @RequestMapping("infromlist")
+  /*  @RequestMapping("infromlist")
     public String infromList(HttpSession session, HttpServletRequest req, Model model,
                              @RequestParam(value = "pageNum", defaultValue = "1") int page) {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
@@ -202,7 +202,7 @@ public class InformManageController {
         System.out.println(pageinfo);
         return "inform/informlist";
     }
-
+*/
     /**
      * 编辑通知界面
      */
@@ -322,6 +322,8 @@ public class InformManageController {
     private StatusServiceV2 statusServiceV2;
     @Resource
     private UserServiceV2 userServiceV2;
+    @Resource
+    private NoticeUserRelationServiceV2 noticeUserRelationServiceV2;
 
     /**
      * 通知管理面板
@@ -330,10 +332,10 @@ public class InformManageController {
      */
     @RequestMapping("infrommanage")
     public String inform(@RequestParam(value = "page", defaultValue = "0") int page, @SessionAttribute("userId") Long userId, Model model) {
-        List<NoticeListPO> noticeListPOList = infromManageServiceV2.noticeListManageList(page, userId);
+        List<NoticeListPO> noticeListPOList = infromManageServiceV2.noticeListManageList(page, userId);//根据用户ID找通知主表信息并分页排序
         PageInfo pageInfo = new PageInfo(noticeListPOList);
         model.addAttribute("page", pageInfo);
-        List<Map<String, Object>> list = infromManageServiceV2.encapsulationNoticeList(noticeListPOList);
+        List<Map<String, Object>> list = infromManageServiceV2.encapsulationNoticeList(noticeListPOList);//封装通表的信息
         model.addAttribute("list", list);
         //设置变量，需要load的url；
         model.addAttribute("url", "infrommanagepaging");
@@ -345,28 +347,27 @@ public class InformManageController {
      */
     @RequestMapping("informedit")
     public String infromEdit(HttpServletRequest req, HttpSession session, Model model) {
-        session.removeAttribute("noticeId");
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("inform");
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("inform");
+        session.removeAttribute("noticeId");// 移除上次session里面的通知主表ID
+        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("inform");//根据类型模型找类型列表
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("inform");//根据状态模型找状态列表
         if (!StringUtils.isEmpty(req.getAttribute("errormess"))) {
             req.setAttribute("errormess", req.getAttribute("errormess"));
         }
         if (!StringUtils.isEmpty(req.getAttribute("success"))) {
             req.setAttribute("success", "数据保存成功");
         }
-        req.setAttribute("typeList", typePOList);
-        req.setAttribute("statusList", statusPOList);
+        req.setAttribute("typeList", typePOList);//把类型列表设置到请求属性里面
+        req.setAttribute("statusList", statusPOList);//把状态列表设置到请求属性里面
         //ID不存在(新增)就返回true
         if (!StringUtils.isEmpty(req.getParameter("id"))) {
             //走到这里就代表ID存在即修改
-            Long noticeId = Long.parseLong(req.getParameter("id"));
-            NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);
-            model.addAttribute("noticeList", noticeListPO);
-            model.addAttribute("top", noticeListPO.getIsTop() == 0 ? false : true);
-
-            model.addAttribute("typeName", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());
-            model.addAttribute("statusName", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());
-            session.setAttribute("noticeId", noticeId);
+            Long noticeId = Long.parseLong(req.getParameter("id"));//从前端获取参数ID即通知列表的ID（noticeId)
+            NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);//根据通知表ID找通知表信息
+            model.addAttribute("noticeList", noticeListPO);//设置通知表信息
+            model.addAttribute("top", noticeListPO.getIsTop() == 0 ? false : true);//是否置顶
+            model.addAttribute("typeName", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());//类型名
+            model.addAttribute("statusName", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName()); //状态名
+            session.setAttribute("noticeId", noticeId);//把通知表ID放进session里面
         }
 
         return "inform/informedit";
@@ -376,17 +377,16 @@ public class InformManageController {
      * 系统管理表单验证
      *
      * @param req
-     * @param menu
+     * @param noticeListVO
      * @param br   后台校验表单数据，不通过则回填数据，显示错误信息；通过则直接执行业务，例如新增、编辑等；
      * @return
      */
     @RequestMapping("informcheck")
-    public String testMess(HttpServletRequest req, @Valid NoticeListVO menu, BindingResult br) {
+    public String testMess(HttpServletRequest req, @Valid NoticeListVO noticeListVO, BindingResult br) {
         HttpSession session = req.getSession();//获取session信息
-        Long menuId = null;
-        req.setAttribute("menuObj", menu);
+        req.setAttribute("menuObj", noticeListVO);//把接收的通知信息放到请求属性里面
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
-        menu.setUserId(userId);
+        noticeListVO.setUserId(userId);//把接收表单里面的用户ID设置为登录人的ID
 
         // 这里返回ResultVO对象，如果校验通过，ResultEnum.SUCCESS.getCode()返回的值为200；否则就是没有通过；
         ResultVO res = BindingResultVOUtil.hasErrors(br);
@@ -395,7 +395,7 @@ public class InformManageController {
             List<Object> list = new MapToList<>().mapToList(res.getData());
             req.setAttribute("errormess", list.get(0).toString());
             // 代码调试阶段，下面是错误的相关信息；
-            System.out.println("list错误的实体类信息：" + menu);
+            System.out.println("list错误的实体类信息：" + noticeListVO);
             System.out.println("list错误详情:" + list);
             System.out.println("list错误第一条:" + list.get(0));
             System.out.println("啊啊啊错误的信息——：" + list.get(0).toString());
@@ -408,10 +408,12 @@ public class InformManageController {
         else {
             // 判断是否从编辑界面进来的，前面有"session.setAttribute("getId",getId);",在这里获取，并remove掉；
             if (!StringUtils.isEmpty(session.getAttribute("noticeId"))) {
-                infromManageServiceV2.updateNoticeListPO(session, menu, userId);
+//                更新通知表信息（即修改）
+                infromManageServiceV2.updateNoticeListPO(session, noticeListVO, userId);
             } else {
-                NoticeListPO noticeListPO = infromManageServiceV2.insertNoticeListPO(menu, userId);
-                //新公告通知下属用户，标记为未读
+//                插入通知主表信息
+                NoticeListPO noticeListPO = infromManageServiceV2.insertNoticeListPO(noticeListVO, userId);
+                //新公告给下属用户，标记为未读
                 infromManageServiceV2.insertNoticeUserRelation(noticeListPO, userId);
             }
             // 执行业务代码
@@ -421,23 +423,30 @@ public class InformManageController {
     }
 
     /**
-     * 详细通知显示
+     * 查看
      */
     @RequestMapping("informshow")
     public String informShow(HttpServletRequest req, Model model) {
-        Long noticeId = Long.parseLong(req.getParameter("id"));
+        Long noticeId = Long.parseLong(req.getParameter("id"));//获取参数ID
+        //如果read不存在就带表查看的是通知管理的查看
         if (!StringUtils.isEmpty(req.getParameter("read"))) {
+            // read存在就代表是通知列表的查看
             if (("0").equals(req.getParameter("read"))) {
-                //代表是通知列表的查询
+                //0代表是通知列表的信息未读
                 Long relationId = Long.parseLong(req.getParameter("relationid"));//通知用户关联列表的ID
+                //更新关联表信息，把未读改为已读
                 infromManageServiceV2.updateNoticeUserRelation(relationId);
             }
         }
-        NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);
-        UserPO userPO = userServiceV2.getUserPOByUserId(noticeListPO.getUserId());
-        model.addAttribute("notice", noticeListPO);
-        model.addAttribute("noticeTime", new Timestamp(noticeListPO.getNoticeTime().getTime()));
-        model.addAttribute("userName", userPO.getUserName());
+        NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);//根据通知主表ID找通知主表信息
+        UserPO userPO = userServiceV2.getUserPOByUserId(noticeListPO.getUserId());//根据通知主表里的发布人ID找发布人信息
+        //（页面需要：标题，发布人名，发布时间，发布内容，链接）
+//        model.addAttribute("notice", noticeListPO);//设置通知主表信息
+        model.addAttribute("title", noticeListPO.getTitle());//设置发布标题
+        model.addAttribute("noticeTime", new Timestamp(noticeListPO.getNoticeTime().getTime()));//设置发布时间
+        model.addAttribute("content", noticeListPO.getContent());//设置发布内容
+        model.addAttribute("url", noticeListPO.getUrl());//设置发布人的用户名
+        model.addAttribute("userName", userPO.getUserName());//设置发布人的用户名
         return "inform/informshow";
     }
 
@@ -447,15 +456,63 @@ public class InformManageController {
     @RequestMapping("infromdelete")
     public String infromDelete(HttpSession session, HttpServletRequest req) {
         Long noticeId = Long.parseLong(req.getParameter("id"));//通知公告的ID
-        Long userId = Long.parseLong(session.getAttribute("userId") + "");//登录人ID
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");//从 session中获取登录人ID
         NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);//根据通知公告ID找通知公告
         if (!Objects.equals(userId, noticeListPO.getUserId())) {
+             //如果登录人ID和发布人ID不通则不能删除(没用，因为这里显示的就是根据登录人ID在通知主表找属于登录人管理的通告信息信息，既然显示了那登录ID和通知表ID肯定是相同的）
             System.out.println("权限不匹配，不能删除");
             return "redirect:/notlimit";
         }
+        //删除发布的通知（先删除附表的，即发布给下属的通知）
         infromManageServiceV2.deleteNoticeListPO(noticeId);
         return "redirect:/infrommanage";
+    }
 
+
+    /**
+     * 通知列表
+     *
+     * @return
+     */
+    @RequestMapping("infromlist")
+    public String infromList(HttpSession session, HttpServletRequest req, Model model,
+                             @RequestParam(value = "pageNum", defaultValue = "1") int page) {
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");//登录人ID
+        PageHelper.startPage(page, 10);
+        //通知列表信息
+        List<Map<String, Object>> mapList = infromManageServiceV2.getNoticeUserRelation(userId);
+        PageInfo pageInfo = new PageInfo(mapList);
+        model.addAttribute("url", "informlistpaging");
+        model.addAttribute("list", mapList);
+        model.addAttribute("page", pageInfo);
+        return "inform/informlist";
+    }
+
+    //转发
+    @RequestMapping("forwardother")
+    public String forwardOther(@SessionAttribute("userId") Long userId, @RequestParam(value = "noticeId") Long noticeId) {
+        NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);
+        infromManageServiceV2.insertNoticeUserRelation(noticeListPO, userId);
+        return "redirect:/infromlist";
+    }
+
+
+    /**
+     * 通知列表删除
+     */
+    @RequestMapping("informlistdelete")
+    public String informListDelete(HttpServletRequest req, HttpSession session) {
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");//获取登录人ID
+        Long noticeId = Long.parseLong(req.getParameter("id"));//获取通知主表ID
+        //根据通知主表ID和登录人ID找关联表信息
+        NoticeUserRelationPO noticeUserRelationPO = noticeUserRelationServiceV2.getNoticeUserRelationPOByNoticeIdAndUserId(userId, noticeId);
+        if (Objects.isNull(noticeUserRelationPO)) {
+            //也不可能存在，因为现实的信息就是登录人的ID和通知主表ID找到的
+            System.out.println("权限不匹配，不能删除");
+            return "redirect:/notlimit";
+        }
+        noticeUserRelationServiceV2.deleteNoticeUserRelationPOByNoticeUserRelationPOId(noticeUserRelationPO.getRelatinId());
+        return "forward:/infromlist";
     }
 
 }

@@ -7,9 +7,6 @@ import cn.gson.oasys.ServiceV2.DeptServiceV2;
 import cn.gson.oasys.ServiceV2.PositionServiceV2;
 import cn.gson.oasys.ServiceV2.RoleServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
-import cn.gson.oasys.factory.UserFactory;
-import cn.gson.oasys.model.entity.user.Position;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.RolePO;
@@ -27,9 +24,6 @@ import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,8 +34,6 @@ import cn.gson.oasys.model.dao.roledao.RoleDao;
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.PositionDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.role.Role;
-import cn.gson.oasys.model.entity.user.Dept;
 
 import javax.annotation.Resource;
 
@@ -243,7 +235,7 @@ public class UserController {
         PageInfo pageInfo = new PageInfo(userVOList);
 
         Map<Long, RolePO> longRolePOMap = userServiceV2.userIdAndRolePO(userPOList);
-        Map<Long, DeptPO>longDeptPOMap = userServiceV2.userIdAndDeptPO(userPOList);
+        Map<Long, DeptPO>longDeptPOMap = userServiceV2.userPOListIdAndDeptPO(userPOList);
         for (UserVO userVO : userVOList) {
         RoleVO roleVO = RoleFactoryVO.createRoleVO(longRolePOMap.get(userVO.getUserId()));
         DeptVO deptVO = DeptFactoryVO.createDeptVO(longDeptPOMap.get(userVO.getUserId()));
@@ -289,7 +281,7 @@ public class UserController {
     public String usereditget(@RequestParam(value = "userid", required = false) Long userId, Model model) {
         if (userId != null) {
             //有userID代表修改
-            UserVO userVO = userServiceV2.findUserVOByUserId(userId);
+            UserVO userVO = userServiceV2.setUserVOByUserId(userId);
             model.addAttribute("where", "xg");
             model.addAttribute("user", userVO);
         }

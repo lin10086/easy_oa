@@ -67,6 +67,8 @@ public class ProcessServiceV2 {
     private ByProcessPOIdServiceV2 byProcessPOIdServiceV2;
     @Resource
     private AttendanceServiceV2 attendanceServiceV2;
+    @Resource
+    private UserVOListServiceV2 userVOListServiceV2;
 
     /**
      * 汉语中数字大写
@@ -114,48 +116,24 @@ public class ProcessServiceV2 {
 
 
     /**
-     * 设置model信息(index6)
+     * 设置model信息(index6)实际上是通讯录
      *
      * @param model
      * @param userId
      * @param page
      * @param size
      */
-    public void setModel(Model model, Long userId, int page, int size) {
-        //根据申请人userId获取申请人的用户信息
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);
-        UserVO applyUserVO = UserFactoryVO.createUserVO(applyUserPO);
+    public List<Map<String, Object>> setModel(Model model, Long userId, int page, int size) {
+        List<Map<String,Object>> mapList = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//补全了用户的部门，职位，角色信息
+        map.put("userVOList", userVOList);
+        mapList.add(map);
+        return mapList;
 
-        PageHelper.startPage(page, size);
-        List<UserPO> userPOList = userServiceV2.getUserAll();
-        List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
-        PageInfo pageInfo = new PageInfo(userVOList);
-
-        Map<Long, DeptPO> longDeptPOMap = userServiceV2.userIdAndDeptPO(userPOList);
-        Map<Long, PositionPO> longPositionPOMap = userServiceV2.userIdAndPositionPO(userPOList);
-        Map<Long, RolePO> longRolePOMap = userServiceV2.userIdAndRolePO(userPOList);
-        for (UserVO userVO : userVOList) {
-            userVO.setDeptVO(DeptFactoryVO.createDeptVO(longDeptPOMap.get(userVO.getUserId())));
-            userVO.setPositionVO(PositionFactoryVO.createPositionVO(longPositionPOMap.get(userVO.getUserId())));
-            userVO.setRoleVO(RoleFactoryVO.createRoleVO(longRolePOMap.get(userVO.getUserId())));
-        }
-
-        List<TypePO> exigenceTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
-        List<TypeVO> exigenceTypeVOList = TypeFactoryVO.createTypeVOList(exigenceTypePOList);
-
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
-        List<DeptVO> deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
-
-        List<PositionPO> positionPOList = positionServiceV2.getPositionList();
-        List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
-
-        model.addAttribute("username", applyUserVO.getUserName());//申请人的用户名
-        model.addAttribute("page", pageInfo);//可以获取第几页之类的
-        model.addAttribute("userVOList", userVOList);//分页后的用户列表
-        model.addAttribute("exigenceTypeVOList", exigenceTypeVOList);//紧急程度列表
-        model.addAttribute("deptVOList", deptVOList);//部门列表
-        model.addAttribute("positionVOList", positionVOList);//职位列表
-        model.addAttribute("url", "names");//
+//        model.addAttribute("page", pageInfo);//可以获取第几页之类的
+//        model.addAttribute("userVOList", userVOList);//分页后的用户列表
+//        model.addAttribute("url", "names");//
     }
 
 

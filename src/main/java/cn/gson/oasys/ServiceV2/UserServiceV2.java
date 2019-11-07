@@ -27,10 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -75,7 +72,7 @@ public class UserServiceV2 {
 
 
     //把用户的ID和用户的部门对应起来放到map里面
-    public Map<Long, DeptPO> userIdAndDeptPO(List<UserPO> userPOList) {
+    public Map<Long, DeptPO> userPOListIdAndDeptPO(List<UserPO> userPOList) {
         //建立Map集合用于把用户ID和用户的部门对应起来
         Map<Long, DeptPO> map = new HashMap<>();
         //遍历自己定义的用户，从中获取用户所在的部门ID
@@ -181,7 +178,7 @@ public class UserServiceV2 {
     /**
      * 根据部门获取用户列表
      *
-     * @param dept
+     * @param deptId
      * @return userPOList
      */
     public List<UserPO> getUserByDeptId(Long deptId) {
@@ -219,7 +216,14 @@ public class UserServiceV2 {
          return user;
      }*/
     //二次修改：根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
-    public UserVO findUserVOByUserId(Long userId) {
+
+    /**
+     * 根据用户ID找到用户信息并补全userVO里面的部门，职位，角色信息(单个用户）
+     *
+     * @param userId 用户ID
+     * @return
+     */
+    public UserVO setUserVOByUserId(Long userId) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
 
         DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
@@ -328,4 +332,22 @@ public class UserServiceV2 {
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
         return userPOList;
     }
+
+    /**
+     * 根据上司ID找下属用户ID
+     *
+     * @param fatherId
+     * @return
+     */
+    public List<Long> getUserPOIdListByFatherId(Long fatherId) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andFatherIdEqualTo(fatherId);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        List<Long> userIdList = new ArrayList<>();
+        for (UserPO userPO : userPOList) {
+            userIdList.add(userPO.getUserId());
+        }
+        return userIdList;
+    }
+
 }

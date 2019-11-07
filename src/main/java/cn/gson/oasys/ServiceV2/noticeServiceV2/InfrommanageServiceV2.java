@@ -1,20 +1,11 @@
 package cn.gson.oasys.ServiceV2.noticeServiceV2;
 
-import cn.gson.oasys.ServiceV2.DeptServiceV2;
-import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.*;
 import cn.gson.oasys.mappers.NoticeListPOMapper;
 import cn.gson.oasys.mappers.NoticeUserRelationPOMapper;
-import cn.gson.oasys.model.entity.notice.NoticesList;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.noticeV2.NoticeListVO;
 import com.github.pagehelper.PageHelper;
-import org.hibernate.annotations.Source;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,9 +27,11 @@ public class InfrommanageServiceV2 {
     private DeptServiceV2 deptServiceV2;
     @Resource
     private NoticeUserRelationPOMapper noticeUserRelationPOMapper;
+    @Resource
+    private NoticeUserRelationServiceV2 noticeUserRelationServiceV2;
 
     /**
-     * 根据用户ID找管理公告
+     * 根据用户ID找通知公告
      *
      * @param page
      * @param userId
@@ -91,23 +84,21 @@ public class InfrommanageServiceV2 {
      * 更新通知表信息
      *
      * @param session
-     * @param menu
+     * @param noticeListVO 从页面获取的信息
      */
-    public void updateNoticeListPO(HttpSession session, NoticeListVO menu, Long userId) {
-        Long menuId = (Long) session.getAttribute("noticeId"); // 获取进入编辑界面的menuID值
-        NoticeListPO noticeListPO = noticeListPOMapper.selectByPrimaryKey(menuId);
-        noticeListPO.setContent(menu.getContent());
-        noticeListPO.setIsTop(menu.getTop() == false ? 0 : 1);
+    public void updateNoticeListPO(HttpSession session, NoticeListVO noticeListVO, Long userId) {
+        Long noticeId = (Long) session.getAttribute("noticeId"); // 获取进入编辑界面的noticeId值
+        NoticeListPO noticeListPO = noticeListPOMapper.selectByPrimaryKey(noticeId);
+        noticeListPO.setContent(noticeListVO.getContent());
+        noticeListPO.setIsTop(noticeListVO.getTop() == false ? 0 : 1);
         noticeListPO.setModifyTime(new Timestamp(new Date().getTime()));
-        noticeListPO.setStatusId(menu.getStatusId());
-        noticeListPO.setTitle(menu.getTitle());
-        noticeListPO.setTypeId(menu.getTypeId());
-        noticeListPO.setUrl(menu.getUrl());
+        noticeListPO.setStatusId(noticeListVO.getStatusId());
+        noticeListPO.setTitle(noticeListVO.getTitle());
+        noticeListPO.setTypeId(noticeListVO.getTypeId());
+        noticeListPO.setUrl(noticeListVO.getUrl());
         noticeListPO.setUserId(userId);
         session.removeAttribute("noticeId");
         noticeListPOMapper.updateByPrimaryKeySelective(noticeListPO);
-
-
     }
 
     /**
@@ -132,14 +123,14 @@ public class InfrommanageServiceV2 {
     }
 
     /**
-     * 根据通知主表ID删除通知表
+     * 根据通知主表ID删除通知表信息
      *
      * @param noticeId 通知表ID
      */
     public void deleteNoticeListPO(Long noticeId) {
         NoticeUserRelationPOExample noticeUserRelationPOExample = new NoticeUserRelationPOExample();
         noticeUserRelationPOExample.createCriteria().andRelatinNoticeIdEqualTo(noticeId);
-        noticeUserRelationPOMapper.deleteByExample(noticeUserRelationPOExample);
+        noticeUserRelationPOMapper.deleteByExample(noticeUserRelationPOExample);//先删除附表
         noticeListPOMapper.deleteByPrimaryKey(noticeId);
     }
 
@@ -159,18 +150,89 @@ public class InfrommanageServiceV2 {
             noticeUserRelationPO.setRelatinNoticeId(noticeListPO.getNoticeId());
             noticeUserRelationPOMapper.insertSelective(noticeUserRelationPO);
         }
-
     }
 
     /**
-     * 更新通知用户表（把未读改为已读）
+     * 更新通知关联表信息（把未读改为已读）
      *
      * @param relationId 通知用户是否已读表ID
      */
     public void updateNoticeUserRelation(Long relationId) {
-        NoticeUserRelationPO noticeUserRelationPO = noticeUserRelationPOMapper.selectByPrimaryKey(relationId);
-        noticeUserRelationPO.setIsRead(1);
+        NoticeUserRelationPO noticeUserRelationPO = noticeUserRelationPOMapper.selectByPrimaryKey(relationId);//根据关联表ID查出关联表信息
+        noticeUserRelationPO.setIsRead(1);//0未读1已读
         noticeUserRelationPOMapper.updateByPrimaryKeySelective(noticeUserRelationPO);
+    }
+
+    public List<Map<String, Object>> getNoticeUserRelation(Long userId) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        NoticeUserRelationPOExample noticeUserRelationPOExample = new NoticeUserRelationPOExample();
+        noticeUserRelationPOExample.createCriteria().andRelatinUserIdEqualTo(userId);
+        // 根据登录人ID在关联表找关联表信息
+        List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationPOMapper.selectByExample(noticeUserRelationPOExample);
+        for (NoticeUserRelationPO noticeUserRelationPO : noticeUserRelationPOList) {
+            Map<String, Object> map = new HashMap<>();
+            //根据关联表中的通知主表ID找通知主表信息
+            NoticeListPO noticeListPO = noticeListPOMapper.selectByPrimaryKey(noticeUserRelationPO.getRelatinNoticeId());
+            map.put("status", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());
+            map.put("type", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());
+            map.put("statusColor", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());
+            map.put("userName", userServiceV2.getUserPOByUserId(noticeListPO.getUserId()).getUserName());
+            map.put("deptName", deptServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());
+            map.put("contain", this.isForward(noticeListPO.getNoticeId(), noticeUserRelationPO.getRelatinUserId()));
+            map.put("is_read", noticeUserRelationPO.getIsRead());
+            map.put("notice_time", new Timestamp(noticeListPO.getNoticeTime().getTime()));
+            map.put("is_top", noticeListPO.getIsTop());
+            map.put("title", noticeListPO.getTitle());
+            map.put("url", noticeListPO.getUrl());
+            map.put("notice_id", noticeListPO.getNoticeId());
+            map.put("relatin_id", noticeUserRelationPO.getRelatinId());
+            list.add(map);
+        }
+        return list;
+    }
+
+    // 封装对象，将List<Map<String, Object>>中的值进行封装，例如type_id封装成相对应的名字
+//    public List<Map<String, Object>> setNoticeListPOList(List<NoticeListPO> noticeListPOList) {
+//        List<Map<String,Object>> mapList = new ArrayList<>();
+//        Map<String,Object>map = new HashMap<>();
+//        for (NoticeListPO noticeListPO : noticeListPOList) {
+//            map.put("status",statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());
+//            map.put("type", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());
+//            map.put("statusColor", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());
+//            map.put("userName", userServiceV2.getUserPOByUserId(noticeListPO.getUserId()).getUserName());
+//            map.put("deptName", deptServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());
+//            map.put("contain",this.isForward(noticeListPO.getNoticeId(), noticeListPO.getUserId()));
+//        }
+//        return mapList;
+//    }
+
+    /**
+     * 用户判断是否已经转发了
+     *
+     * @param noticeId
+     * @param userId
+     * @return
+     */
+    private int isForward(Long noticeId, Long userId) {
+        int count = 1;
+        if (userServiceV2.getUserPOListByFatherId(userId).size() > 0) {
+            List<Long> userListId = userServiceV2.getUserPOIdListByFatherId(userId);
+            if (noticeUserRelationServiceV2.getNoticeUserRelationPOListByNoticeId(noticeId) != null) {
+                List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationServiceV2.getNoticeUserRelationPOListByNoticeId(noticeId);
+
+                for (NoticeUserRelationPO noticeUserRelationPO : noticeUserRelationPOList) {
+                    if (userListId.contains(noticeUserRelationPO.getRelatinUserId())) {
+                        //下属用户ID包含了公告关联表用户ID，已经有此公告了已经转发了
+                        count = 2;
+                    }
+                }
+                if (count != 2) {
+                    count = 3;
+                }
+            }
+
+        }
+        return count;
     }
 
 }

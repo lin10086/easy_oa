@@ -21,6 +21,7 @@ import cn.gson.oasys.vo.*;
 import cn.gson.oasys.vo.factoryvo.*;
 import cn.gson.oasys.vo.factoryvo.processfactory.*;
 import cn.gson.oasys.vo.processV2.*;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
 import org.apache.commons.io.IOUtils;
@@ -88,45 +89,6 @@ public class ProcedureController {
     private ResignDao rsdao;
     @Autowired
     private AttendceDao adao;
-
-    @Resource
-    private TypeServiceV2 typeServiceV2;
-    @Resource
-    private ProcessServiceV2 processServiceV2;
-    @Resource
-    private UserServiceV2 userServiceV2;
-    @Resource
-    private RoleServiceV2 roleServiceV2;
-    @Resource
-    private StatusServiceV2 statusServiceV2;
-    @Resource
-    private ByProcessPOIdServiceV2 byProcessPOIdServiceV2;
-    @Resource
-    private DetailsburseServiceV2 detailsburseServiceV2;
-    @Resource
-    private EvectionMoneyServiceV2 evectionMoneyServiceV2;
-    @Resource
-    private PositionServiceV2 positionServiceV2;
-    @Resource
-    private AttendanceServiceV2 attendanceServiceV2;
-    @Resource
-    private BursementPOMapper bursementPOMapper;
-    @Resource
-    private EvectionMoneyPOMapper evectionMoneyPOMapper;
-    @Resource
-    private EvectionPOMapper evectionPOMapper;
-    @Resource
-    private OvertimePOMapper overtimePOMapper;
-    @Resource
-    private HolidayPOMapper holidayPOMapper;
-    @Resource
-    private RegularPOMapper regularPOMapper;
-    @Resource
-    private ResignPOMapper resignPOMapper;
-    @Resource
-    private ReviewedPOMapper reviewedPOMapper;
-    @Resource
-    private AttachmentServiceV2 attachmentServiceV2;
 
 
     //	@Value("${attachment.roopath}")
@@ -1018,7 +980,8 @@ public class ProcedureController {
         }
     }
 
-    *//**
+    */
+    /**
      * 图片预览
      *
      * @param model
@@ -1049,6 +1012,44 @@ public class ProcedureController {
 */
     //		================================================================
 
+    @Resource
+    private TypeServiceV2 typeServiceV2;
+    @Resource
+    private ProcessServiceV2 processServiceV2;
+    @Resource
+    private UserServiceV2 userServiceV2;
+    @Resource
+    private RoleServiceV2 roleServiceV2;
+    @Resource
+    private StatusServiceV2 statusServiceV2;
+    @Resource
+    private ByProcessPOIdServiceV2 byProcessPOIdServiceV2;
+    @Resource
+    private DetailsburseServiceV2 detailsburseServiceV2;
+    @Resource
+    private EvectionMoneyServiceV2 evectionMoneyServiceV2;
+    @Resource
+    private PositionServiceV2 positionServiceV2;
+    @Resource
+    private AttendanceServiceV2 attendanceServiceV2;
+    @Resource
+    private BursementPOMapper bursementPOMapper;
+    @Resource
+    private EvectionMoneyPOMapper evectionMoneyPOMapper;
+    @Resource
+    private EvectionPOMapper evectionPOMapper;
+    @Resource
+    private OvertimePOMapper overtimePOMapper;
+    @Resource
+    private HolidayPOMapper holidayPOMapper;
+    @Resource
+    private RegularPOMapper regularPOMapper;
+    @Resource
+    private ResignPOMapper resignPOMapper;
+    @Resource
+    private ReviewedPOMapper reviewedPOMapper;
+    @Resource
+    private AttachmentServiceV2 attachmentServiceV2;
 
     /**
      * 费用报销表单(1)
@@ -1066,14 +1067,26 @@ public class ProcedureController {
                             @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
         List<TypePO> reimbursementTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_bursement");
-        List<TypeVO> reimbursementTypeVOList = TypeFactoryVO.createTypeVOList(reimbursementTypePOList);
-        //查找费用科目生成树(1L报销科目）
+
+        //查找费用科目生成树(1L报销科目）(parentId=1L是主目录）
         List<SubjectPO> second = processServiceV2.getSubjectByParentId(1L);
         List<SubjectPO> sublist = processServiceV2.getSubjectByParentIdNot(1L);
-        processServiceV2.setModel(model, userId, page, size);
-        model.addAttribute("reimbursementTypeVOList", reimbursementTypeVOList);
+        PageHelper.startPage(page,size);
+       List<Map<String,Object>>mapList = processServiceV2.setModel(model, userId, page, size);
+       PageInfo pageInfo = new PageInfo(mapList);
+        //22正常；23重要；24紧急
+        List<TypePO> exigenceTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
+        model.addAttribute("exigenceTypeVOList", exigenceTypePOList);//流程列表紧急程度
+
+        UserPO loginUserPO = userServiceV2.getUserPOByUserId(userId);//根据登录人id(userId)获取登录人的用户信息
+        model.addAttribute("username", loginUserPO.getUserName());//登录人的用户名
+
+        model.addAttribute("reimbursementTypePOList", reimbursementTypePOList);
         model.addAttribute("second", second);
         model.addAttribute("sublist", sublist);
+        model.addAttribute("map",mapList);
+        model.addAttribute("page", pageInfo);//可以获取第几页之类的
+        model.addAttribute("url", "names");
         return "process/bursement";
     }
 

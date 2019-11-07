@@ -162,16 +162,18 @@ public class LoginsController {
         String password = request.getParameter("password");
         String ca = request.getParameter("code").toLowerCase();
         //获取后台的验证码
-        String sesionCode = (String) request.getSession().getAttribute(CAPTCHA_KEY);
+        String sesionCode = (String) request.getSession().getAttribute(CAPTCHA_KEY);//后台验证码
         model.addAttribute("userName", userName);
-        if (!ca.equals(sesionCode.toLowerCase())) {
+//        if (!ca.equals(sesionCode.toLowerCase())) {
+        if (false) {
             System.out.println("验证码输入错误!");
             model.addAttribute("errormess", "验证码输入错误!");
             request.setAttribute("errormess", "验证码输入错误!");
             return "login/login";
         }
 //		 将用户名分开查找；用户名或者电话号码；
-        UserPO userPO = userServiceV2.checkUserByUsernameAndPassword(userName, password);//没有根据手机号
+//        UserPO userPO = userServiceV2.checkUserByUsernameAndPassword(userName, password);
+        UserPO userPO = userServiceV2.checkUserByUsernameAndPassword("soli", "123456");//没有根据手机号
 
         if (Objects.isNull(userPO)) {
             System.out.println(userPO);

@@ -618,7 +618,7 @@ public class AttendceController {
         request.setAttribute("url", "attendcelisttable");
     }
 
-    //新增的方法（改管理下的所有所有用户）V2
+    //新增的方法（改管理下的所有所有用户）
     private void attendceattPage(HttpServletRequest request, HttpSession session, int page, String baseKey,
                                  String type, String status, String time, String icon, Model model) {
         setModelSomething(baseKey, type, status, time, icon, model);

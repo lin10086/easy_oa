@@ -2,7 +2,6 @@ package cn.gson.oasys.controller.user;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +11,6 @@ import javax.validation.Valid;
 import cn.gson.oasys.ServiceV2.DeptServiceV2;
 import cn.gson.oasys.ServiceV2.PositionServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
-import cn.gson.oasys.factory.DeptFactory;
-import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
@@ -36,9 +33,6 @@ import org.springframework.web.bind.annotation.*;
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.PositionDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.entity.user.Position;
-import cn.gson.oasys.model.entity.user.User;
 
 @Slf4j
 @Controller
@@ -306,7 +300,7 @@ public class DeptController {
         List<UserPO> userPOList = userServiceV2.getUserByDeptId(deptId);
         List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
 
-        Map<Long, DeptPO> deptMap = userServiceV2.userIdAndDeptPO(userPOList);
+        Map<Long, DeptPO> deptMap = userServiceV2.userPOListIdAndDeptPO(userPOList);
         Map<Long, PositionPO> positionMap = userServiceV2.userIdAndPositionPO(userPOList);
         //职位不是以经理结尾的用户列表
         List<UserVO> formalUser = new ArrayList<>();

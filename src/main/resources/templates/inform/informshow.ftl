@@ -79,7 +79,7 @@
             <div class="box-body no-padding chat-box">
                 <div class="chat-title">
                     <h4>
-                        <span>${(notice.title)!''}</span>
+                        <span>标题：${(title)!''}</span>
                     </h4>
                     <h5>
                         <small><span>发布人：${(userName)!''}</span> <span class="pull-right">发布时间：${(noticeTime)!''}</span>
@@ -87,10 +87,10 @@
                     </h5>
                 </div>
                 <div class="chat-content" style="padding: 10px 40px 12px 16px;">
-                    <p>${(notice.content)!''}
+                    <p>内容：${(content)!''}
                     </p>
-                    <#if notice.url!=''>
-                        <kbd><a href="${(notice.url)!''}" style="color: #fff;font-size:12px;"><i
+                    <#if url!=''>
+                        <kbd><a href="${(url)!''}" style="color: #fff;font-size:12px;"><i
                                         class="glyphicon glyphicon-link"></i>打开连接</a></kbd>
                     <#else>
 

@@ -78,10 +78,10 @@
 									已转发</a> 
 								</#if>
 							</#if>
-							<#if this.is_read==0> 
+							<#if this.is_read==0>
 							<#else> 
 							<a onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};"
-							href="informlistdelete?id=${this.notice_id}" class="label shanchu"> 
+							href="informlistdelete?id=${this.notice_id}" class="label shanchu">
 							<span class="glyphicon glyphicon-remove"></span> 删除
 						</a></#if></td>
 				</tr>
