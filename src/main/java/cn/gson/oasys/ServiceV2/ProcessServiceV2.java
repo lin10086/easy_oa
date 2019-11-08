@@ -123,17 +123,23 @@ public class ProcessServiceV2 {
      * @param page
      * @param size
      */
-    public List<Map<String, Object>> setModel(Model model, Long userId, int page, int size) {
-        List<Map<String,Object>> mapList = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//补全了用户的部门，职位，角色信息
-        map.put("userVOList", userVOList);
-        mapList.add(map);
-        return mapList;
+    public void setModel(Model model, Long userId, int page, int size) {
 
-//        model.addAttribute("page", pageInfo);//可以获取第几页之类的
-//        model.addAttribute("userVOList", userVOList);//分页后的用户列表
-//        model.addAttribute("url", "names");//
+        PageHelper.startPage(page, size);
+        List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
+        PageInfo pageInfo = new PageInfo(userVOList);
+        model.addAttribute("userVOList", userVOList);//用户信息
+        model.addAttribute("page", pageInfo);//可以获取第几页之类的
+
+        //22正常；23重要；24紧急
+        List<TypePO> exigenceTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
+        model.addAttribute("exigenceTypeVOList", exigenceTypePOList);//流程列表紧急程度
+
+        UserPO loginUserPO = userServiceV2.getUserPOByUserId(userId);//根据登录人id(userId)获取登录人的用户信息
+        model.addAttribute("username", loginUserPO.getUserName());//登录人的用户名
+
+        model.addAttribute("url", "names");
+
     }
 
 

@@ -30,8 +30,8 @@ public class UserVOListServiceV2 {
         List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
         //补全用户里面的信息（部门，职位，角色）
         Map<Long, DeptPO> longDeptPOMap = userServiceV2.userPOListIdAndDeptPO(userPOList);
-        Map<Long, PositionPO> longPositionPOMap = userServiceV2.userIdAndPositionPO(userPOList);
-        Map<Long, RolePO> longRolePOMap = userServiceV2.userIdAndRolePO(userPOList);
+        Map<Long, PositionPO> longPositionPOMap = userServiceV2.userPOListIdAndPositionPO(userPOList);
+        Map<Long, RolePO> longRolePOMap = userServiceV2.userPOListIdAndRolePO(userPOList);
         for (UserVO userVO : userVOList) {
             userVO.setDeptVO(DeptFactoryVO.createDeptVO(longDeptPOMap.get(userVO.getUserId())));
             userVO.setPositionVO(PositionFactoryVO.createPositionVO(longPositionPOMap.get(userVO.getUserId())));

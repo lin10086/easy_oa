@@ -117,7 +117,7 @@
                             <td colspan="13">
 						<textarea class="form-control shuoming" readonly="readonly" style="background-color:#fff;">
 员工因临时或突发情况无法到岗，未能提前请病假或事假的，则应用电话通知直接上级批准后，短信通知人事行政部，说明请假事由，并在上班后第一时间补办请假手续，如在2个工作日内未提交请假流程，超过2个工作日补流程无效，均视为旷工，扣除当日双倍工资。  
-<#list overtype as out>
+<#list holidayTypePOList as out>
     ${(out.typeColor)!''}
 </#list>
 						</textarea>
@@ -146,7 +146,7 @@
                             <td class="title"><label class="control-label">请假类型</label></td>
                             <td colspan="6">
                                 <select class="form-control inpu" name="typeId">
-                                    <#list overtype as out>
+                                    <#list holidayTypePOList as out>
                                         <option value="${out.typeId}">${out.typeName}</option>
                                     </#list>
                                 </select>

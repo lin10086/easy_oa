@@ -178,10 +178,11 @@ $(function(){
 })
 </script>
 </#if>
+
 <script type="text/javascript">
  $('.test').on('click',function(){
 	$(this).css('border',"1px solid transparent");
-}) 
+})
 $('.contiue').on('click',function(){
 		location.href="/handlehas";
 })
@@ -209,17 +210,19 @@ function check() {
 		count=0;
 		return false;
 	}
-	if(code==null || code==""){
-		$('.error-mess').text("验证码不能为空!");
-		$('.alert-danger').css('display','block');
-		$('.code').css('border-color',"#a94442");
-		count=0;
-		return false;
-	}
-	console.log(count);
-	return true;
-}
-	
+// 	if(code==null || code==""){
+// 		$('.error-mess').text("验证码不能为空!");
+// 		$('.alert-danger').css('display','block');
+// 		$('.code').css('border-color',"#a94442");
+// 		count=0;
+// 		return false;
+// 	}
+// 	console.log(count);
+// 	return true;
+// }
+
 </script>
+
+
 </body>
 </html>

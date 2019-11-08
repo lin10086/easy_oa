@@ -655,19 +655,19 @@ public class ProcedureController {
 
     }
 */
-    /*
+
     //出差费用
     @RequestMapping("evemoney")
     public String evemoney(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest req,
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        Long proid = Long.parseLong(req.getParameter("processId"));//出差申请的id
+        Long proid = Long.parseLong(req.getParameter("id"));//出差申请的id
         ProcessList prolist = prodao.findbyuseridandtitle(userId, proid);//找这个用户的出差申请
         proservice.index6(model, userId, page, size);
         model.addAttribute("prolist", prolist);
         return "process/evectionmoney";
     }
-*/
+
 
     /**
      * 出差费用表单接收
@@ -1050,6 +1050,8 @@ public class ProcedureController {
     private ReviewedPOMapper reviewedPOMapper;
     @Resource
     private AttachmentServiceV2 attachmentServiceV2;
+    @Resource
+    private UserVOListServiceV2 userVOListServiceV2;
 
     /**
      * 费用报销表单(1)
@@ -1067,26 +1069,15 @@ public class ProcedureController {
                             @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
         List<TypePO> reimbursementTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_bursement");
+        model.addAttribute("reimbursementTypePOList", reimbursementTypePOList);//报销方式
 
         //查找费用科目生成树(1L报销科目）(parentId=1L是主目录）
         List<SubjectPO> second = processServiceV2.getSubjectByParentId(1L);
         List<SubjectPO> sublist = processServiceV2.getSubjectByParentIdNot(1L);
-        PageHelper.startPage(page,size);
-       List<Map<String,Object>>mapList = processServiceV2.setModel(model, userId, page, size);
-       PageInfo pageInfo = new PageInfo(mapList);
-        //22正常；23重要；24紧急
-        List<TypePO> exigenceTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
-        model.addAttribute("exigenceTypeVOList", exigenceTypePOList);//流程列表紧急程度
+        model.addAttribute("second", second);//报销明细的主目录
+        model.addAttribute("sublist", sublist);//报销明细的子目录
 
-        UserPO loginUserPO = userServiceV2.getUserPOByUserId(userId);//根据登录人id(userId)获取登录人的用户信息
-        model.addAttribute("username", loginUserPO.getUserName());//登录人的用户名
-
-        model.addAttribute("reimbursementTypePOList", reimbursementTypePOList);
-        model.addAttribute("second", second);
-        model.addAttribute("sublist", sublist);
-        model.addAttribute("map",mapList);
-        model.addAttribute("page", pageInfo);//可以获取第几页之类的
-        model.addAttribute("url", "names");
+        processServiceV2.setModel(model,userId,page,size);
         return "process/bursement";
     }
 
@@ -1148,19 +1139,20 @@ public class ProcedureController {
         return "redirect:/xinxeng";
     }
 
-    //出差费用（2）
-    @RequestMapping("evemoney")
+    //出差费用单（2）
+  /*  @RequestMapping("evemoney")
     public String evemoney(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest req,
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        Long processId = Long.parseLong(req.getParameter("id"));//出差申请的主表ID
+        Long processId = Long.parseLong(req.getParameter("processId"));//出差申请的主表ID
         //根据申请人ID和主表ID找主表信息
+        ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);//流程主表信息
         ProcessList prolist = prodao.findbyuseridandtitle(userId, processId);//找这个用户的出差申请
 //        proservice.index6(model, userId, page, size);
         processServiceV2.setModel(model, userId, page, size);
         model.addAttribute("prolist", prolist);
         return "process/evectionmoney";
-    }
+    }*/
 
 
     /**
@@ -1225,11 +1217,11 @@ public class ProcedureController {
     public String evection(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        //根据类型模板找出出差的类型列表（28，29，30，31，32）
+        //根据类型模板找出出差的类型列表（28销售拜访，29售前支持，30项目支持，31客服外出，32其他）
         List<TypePO> evectionTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_evection");
-        List<TypeVO> evectionTypeVOList = TypeFactoryVO.createTypeVOList(evectionTypePOList);
-        model.addAttribute("evectionTypeVOList", evectionTypeVOList);
-        processServiceV2.setModel(model, userId, page, size);
+        model.addAttribute("evectionTypePOList", evectionTypePOList);// 出差类型
+        //设置model还未封装
+        processServiceV2.setModel(model,userId,page,size);
         return "process/evection";
     }
 
@@ -1277,9 +1269,8 @@ public class ProcedureController {
                            @RequestParam(value = "size", defaultValue = "10") int size) {
         //根据类型模板找出加班的类型列表（33，34，35，36）
         List<TypePO> overtimeTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_overtime");
-        List<TypeVO> overtimeTypeVOList = TypeFactoryVO.createTypeVOList(overtimeTypePOList);
+        model.addAttribute("overtimeTypePOList", overtimeTypePOList);//加班类型
         processServiceV2.setModel(model, userId, page, size);
-        model.addAttribute("overtimeTypeVOList", overtimeTypeVOList);
         return "process/overtime";
     }
 
@@ -1379,11 +1370,10 @@ public class ProcedureController {
     public String holiday(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                           @RequestParam(value = "page", defaultValue = "0") int page,
                           @RequestParam(value = "size", defaultValue = "10") int size) {
-        //根据类型模板找出请假的类型列表（37，38，39，40，41，42，43）
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_holiday");
-        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
+        //根据类型模板找出请假的类型列表（37年假，38事假，39病假，40婚假，41产假，42陪产假，43丧假）
+        List<TypePO> holidayTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_holiday");
+        model.addAttribute("holidayTypePOList", holidayTypePOList);//请假类型
         processServiceV2.setModel(model, userId, page, size);
-        model.addAttribute("overtype", typeVOList);
         return "process/holiday";
     }
 

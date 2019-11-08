@@ -234,7 +234,7 @@ public class UserController {
         List<UserVO>userVOList = UserFactoryVO.createUserVOList(userPOList);
         PageInfo pageInfo = new PageInfo(userVOList);
 
-        Map<Long, RolePO> longRolePOMap = userServiceV2.userIdAndRolePO(userPOList);
+        Map<Long, RolePO> longRolePOMap = userServiceV2.userPOListIdAndRolePO(userPOList);
         Map<Long, DeptPO>longDeptPOMap = userServiceV2.userPOListIdAndDeptPO(userPOList);
         for (UserVO userVO : userVOList) {
         RoleVO roleVO = RoleFactoryVO.createRoleVO(longRolePOMap.get(userVO.getUserId()));

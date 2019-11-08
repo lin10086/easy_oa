@@ -17,7 +17,7 @@
         </tr>
         </thead>
         <tbody>
-        <#list map.get(0).get("userVOList") as userVO>
+        <#list userVOList as userVO>
             <tr class="row">
                 <td class=" col-xs-1">
                     <span class="labels"><label><input name="id" type="checkbox"><i>✓</i></label></span>

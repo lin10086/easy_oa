@@ -130,7 +130,7 @@
                             <td class="title"><label class="control-label">外出类型</label></td>
                             <td colspan="6">
                                 <select class="form-control inpu" name="typeId">
-                                    <#list evectionTypeVOList as evection>
+                                    <#list evectionTypePOList as evection>
                                         <option value="${evection.typeId}">${evection.typeName}</option>
                                     </#list>
                                 </select>

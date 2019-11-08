@@ -71,7 +71,12 @@ public class UserServiceV2 {
     }
 
 
-    //把用户的ID和用户的部门对应起来放到map里面
+    /**
+     * 把用户的ID和用户的部门对应起来放到map里面
+     *
+     * @param userPOList
+     * @return
+     */
     public Map<Long, DeptPO> userPOListIdAndDeptPO(List<UserPO> userPOList) {
         //建立Map集合用于把用户ID和用户的部门对应起来
         Map<Long, DeptPO> map = new HashMap<>();
@@ -85,20 +90,13 @@ public class UserServiceV2 {
         return map;
     }
 
-    //把用户的ID和用户的部门对应起来放到map里面
-    public Map<Long, Dept> userIdAndDept(List<UserPO> userPOList) {
-        Map<Long, Dept> map = new HashMap<>();
-        for (UserPO userPO : userPOList) {
-            DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
-            Dept dept = DeptFactory.create(deptPO);
-            map.put(userPO.getUserId(), dept);
-        }
-        return map;
-    }
-
-
-    //把用户的ID和用户的职位对应起来放到map里面
-    public Map<Long, PositionPO> userIdAndPositionPO(List<UserPO> userPOList) {
+    /**
+     * 把用户的ID和用户的职位对应起来放到map里面
+     *
+     * @param userPOList
+     * @return
+     */
+    public Map<Long, PositionPO> userPOListIdAndPositionPO(List<UserPO> userPOList) {
         //建立Map集合用于把用户ID和用户的职位对应起来
         Map<Long, PositionPO> map = new HashMap<>();
         //遍历自己定义的用户，从中获取用户所在的职位ID
@@ -109,8 +107,13 @@ public class UserServiceV2 {
         return map;
     }
 
-    //把用户的ID和用户的角色对应起来放到map里面
-    public Map<Long, RolePO> userIdAndRolePO(List<UserPO> userPOList) {
+    /**
+     * 把用户的ID和用户的角色对应起来放到map里面
+     *
+     * @param userPOList
+     * @return
+     */
+    public Map<Long, RolePO> userPOListIdAndRolePO(List<UserPO> userPOList) {
         //建立Map集合用于把用户ID和用户的角色对应起来
         Map<Long, RolePO> map = new HashMap<>();
         //遍历自己定义的用户，从中获取用户所在的角色ID
@@ -119,6 +122,17 @@ public class UserServiceV2 {
             RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
             //把用户ID和角色对应起来
             map.put(userPO.getUserId(), rolePO);
+        }
+        return map;
+    }
+
+    //把用户的ID和用户的部门对应起来放到map里面
+    public Map<Long, Dept> userIdAndDept(List<UserPO> userPOList) {
+        Map<Long, Dept> map = new HashMap<>();
+        for (UserPO userPO : userPOList) {
+            DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+            Dept dept = DeptFactory.create(deptPO);
+            map.put(userPO.getUserId(), dept);
         }
         return map;
     }
@@ -225,7 +239,6 @@ public class UserServiceV2 {
      */
     public UserVO setUserVOByUserId(Long userId) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
-
         DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
         DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
         PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());

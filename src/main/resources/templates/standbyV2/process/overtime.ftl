@@ -135,7 +135,7 @@
                             <td class="title"><label class="control-label">加班类型</label></td>
                             <td colspan="6">
                                 <select class="form-control inpu" name="typeId">
-                                    <#list overtimeTypeVOList as overtime>
+                                    <#list overtimeTypePOList as overtime>
                                         <option value="${overtime.typeId}">${overtime.typeName}</option>
                                     </#list>
                                 </select>

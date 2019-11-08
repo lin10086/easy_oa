@@ -42,29 +42,19 @@ public class UserManageTest {
 
     @Test
     public void getUserPO() {
-        List<Map<String, Object>> mapList = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
+        List<Map<String, UserPO>> mapList = new ArrayList<>();
+        Map<String, UserPO> map = new HashMap<>();
         UserPOExample userPOExample = new UserPOExample();
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
-        log.info("userPOList={}", userPOList);
-
-        map.put("userPOList", userPOList);
-        mapList.add(map);
-        log.info("mapList={}", mapList);
-
-        Map<String, Object> map1 = mapList.get(0);
-        log.info("map1={}", map1);
-
-        List<UserPO> userPOList1 = (List) map1.get("userPOList");
-        log.info("userPOList1={}", userPOList1);
-        List<UserPO> userPOList2 = (List) mapList.get(0).get("userPOList");
-        log.info("userPOList2={}", userPOList2);
-
-        for (UserPO userPO : userPOList1) {
-            String userName = userPO.getUserName();
-            log.info("userName={}", userName);
-
+        for (UserPO userPO : userPOList) {
+            map.put("userPO", userPO);
+            mapList.add(map);
         }
+        log.info("mapList={}", mapList);
+        for (Map<String, UserPO> map1 : mapList) {
+            log.info("map1.get(\"userPO\")={}",map1.get("userPO"));
+        }
+
     }
 
 }

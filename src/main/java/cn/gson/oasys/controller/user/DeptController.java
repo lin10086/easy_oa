@@ -301,7 +301,7 @@ public class DeptController {
         List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
 
         Map<Long, DeptPO> deptMap = userServiceV2.userPOListIdAndDeptPO(userPOList);
-        Map<Long, PositionPO> positionMap = userServiceV2.userIdAndPositionPO(userPOList);
+        Map<Long, PositionPO> positionMap = userServiceV2.userPOListIdAndPositionPO(userPOList);
         //职位不是以经理结尾的用户列表
         List<UserVO> formalUser = new ArrayList<>();
         for (UserVO deptUser : userVOList) {
