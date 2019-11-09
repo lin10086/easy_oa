@@ -77,15 +77,15 @@ min-height: 120px;
 </div>
 <div class="row" style="padding-top: 15px;">
 	<div class="col-md-12">
-		
+
 		<div class="bgc-w box">
 			<form action="holi" enctype="multipart/form-data" method="post" onsubmit="return check();" >
 			<div class="box-header">
 				<table class="bo table ">
-			
+
 				<tr >
 					<td colspan="14" class="title"><h2>请假申请单</h2></td>
-			
+
 				</tr>
 				<tr style="opacity: 0;">
 					<td colspan="14">11</td>
@@ -113,7 +113,7 @@ ${(out.typeColor)!''}
 				<tr >
 					<td class="title"><label class="control-label">标题</label></td>
 					<td  colspan="6"><input type="text" class="form-control inpu" name="proId.processName"/></td>
-					
+
 					<td class="title"><span >紧急程度</span></td>
 					<td colspan="6">
 						<select class="form-control inpu" name="proId.deeply">
@@ -122,7 +122,7 @@ ${(out.typeColor)!''}
 							</#list>
 						</select>
 					</td>
-					
+
 				</tr>
 				<tr >
 					<td class="title" ><label class="control-label">申请人</label></td>
@@ -137,7 +137,7 @@ ${(out.typeColor)!''}
 						</select>
 					</td>
 				</tr>
-				
+
 				<tr >
 					<td class="title" ><label class="control-label">开始日期</label></td>
 					<td  colspan="6"><input type="text" class="form-control inpu holistart"  name="proId.startTime"/></td>
@@ -157,7 +157,7 @@ ${(out.typeColor)!''}
 							</div>
 					</td>
 				</tr>
-				
+
 				<tr >
 					<td class="title" ><label class="control-label">相关资料</label></td>
 					<td  colspan="6">
@@ -180,7 +180,7 @@ ${(out.typeColor)!''}
 						<input class="btn btn-default" id="cancel" type="button" value="取消"
 						onclick="window.history.back();" />
 					</td>
-					
+
 				</tr>
 				</table>
 			</div>
@@ -216,7 +216,7 @@ function check() {
 			/* if (index == 5||index == 6) {
 				return true;
 			}  */
-			
+
 			// 获取到input框的兄弟的文本信息，并对应提醒；
 			console.log(index);
 			var errorMess = "红色提示框不能为空!";
@@ -225,15 +225,15 @@ function check() {
 			$('.alert-danger').css('display', 'block');
 			// 提示框的错误信息显示
 			$('.error-mess').text(errorMess);
-			
+
 			isRight = 0;
 			return false;
-			
+
 		} else {
 			return true;
 		}
 	});
-	
+
 	if (isRight == 0) {
 		//modalShow(0);
 		 return false;

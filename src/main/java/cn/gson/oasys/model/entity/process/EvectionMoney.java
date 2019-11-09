@@ -37,7 +37,8 @@ public class EvectionMoney {
 	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="pro_id")
 	private ProcessList proId;
-	
+
+//	@Column(name="pro")
 	private Long pro;
 	
 	@OneToMany(cascade=CascadeType.ALL,mappedBy="evection")

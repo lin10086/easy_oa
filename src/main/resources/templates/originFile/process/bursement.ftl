@@ -194,13 +194,15 @@ cursor: pointer;
 							<tr class="tr">
 									<td class="chebox" colspan="2"><span class="labels"><label><input type="checkbox" name="items" class="val" ><i>✓</i></label></span></td>
 									<td colspan="2"><input type="text" class="form-control inpu shijian" name="details[0].produceTime" /></td>
-									<td colspan="2">
+
+								<td colspan="2">
 										<input type="text" class="form-control inpu" name="details[0].subject"
 										readonly="readonly" style="background-color:#fff;"/>
 										<div class="sub">
 											<i class="glyphicon glyphicon-search"></i>
 										</div>
 									</td>
+
 									<td colspan="2"><input type="text" class="form-control inpu" name="details[0].descript"/></td>
 									<td colspan="2"><input type="text" class="form-control inpu" name="details[0].invoices"/></td>
 									<td colspan="2" class="tdrig"><input type="text" class="form-control inpu"	name="details[0].detailmoney"/></td>

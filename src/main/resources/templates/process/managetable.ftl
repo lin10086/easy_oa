@@ -36,12 +36,12 @@
                         <td><span>${(pro.processName)!''}</span></td>
                         <td><span>${(pro.applyTime)!''}</span></td>
                         <td><span>${(pro.auditUsername)!''}</span></td>
-                        <#list typeVOList as type>
+                        <#list typePOList as type>
                             <#if type.typeId==pro.deeplyId>
                                 <td><span>${type.typeName}</span></td>
                             </#if>
                         </#list>
-                        <#list statusVOList as status>
+                        <#list statusPOList as status>
                             <#if status.statusId==pro.statusId>
                                 <td><span class="label ${status.statusColor}">${status.statusName}</span></td>
                             </#if>

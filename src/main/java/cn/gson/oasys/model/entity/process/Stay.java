@@ -52,7 +52,7 @@ public class Stay {
 	private  EvectionMoney  evemoney;
 	
 	@Transient
-	private String nameuser;
+	private String nameuser;//出差人员名
 	
 	
 

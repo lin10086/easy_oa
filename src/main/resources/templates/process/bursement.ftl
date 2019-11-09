@@ -224,6 +224,7 @@
                                                                 class="val"><i>✓</i></label></span></td>
                                             <td colspan="2"><input type="text" class="form-control inpu shijian"
                                                                    name="detailsReimburseVOList[0].produceTime"/></td>
+
                                             <td colspan="2">
                                                 <input type="text" class="form-control inpu"
                                                        name="detailsReimburseVOList[0].subject"
@@ -232,6 +233,8 @@
                                                     <i class="glyphicon glyphicon-search"></i>
                                                 </div>
                                             </td>
+
+
                                             <td colspan="2"><input type="text" class="form-control inpu"
                                                                    name="detailsReimburseVOList[0].descript"/></td>
                                             <td colspan="2"><input type="text" class="form-control inpu"

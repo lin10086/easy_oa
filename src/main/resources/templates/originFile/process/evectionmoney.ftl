@@ -163,9 +163,8 @@ cursor: pointer;
 				<tr >
 					<td class="titleleft" ><label class="control-label">申请理由</label></td>
 					<td  colspan="6"><textarea class="form-control text" name="proId.processDescribe"></textarea></td>
+
 					<td class="titleleft" ><label class="control-label">出差申请</label></td>
-					
-					
 					<td  colspan="6">
 					<input type="text" class="form-control inpu"  value="${(prolist.processName)!''}"/>
 					<input type="text" style="display:none;" name="pro" value="${(prolist.processId)!''}"/>

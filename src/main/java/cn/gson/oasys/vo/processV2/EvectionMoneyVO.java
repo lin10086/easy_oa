@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * 出差费用申请表
  */
-@ToString
 @Data
+@ToString
 public class EvectionMoneyVO {
 
     private Long evectionMoneyId;//住宿申请表ID
@@ -23,7 +23,7 @@ public class EvectionMoneyVO {
 
     private String financialAdvice;//财务部意见及说明
 
-    private ProcessList proId;//主表ID（pro_id）
+    private ProcessListVO processListVO;//主表ID（pro_id）
 
     private Long pro;
 
@@ -31,6 +31,6 @@ public class EvectionMoneyVO {
 
     List<StayVO> stayVOList;//住宿申请表
 
-    private String auditName;//审核人员
+    private String auditUser;//审核人员
 
 }

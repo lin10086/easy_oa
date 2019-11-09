@@ -31,11 +31,8 @@ public class TrafficVO {
 
     private Double trafficMoney;//交通标准
 
-    @ManyToOne()
-    @JoinColumn(name="evection_id")
-    private EvectionMoney evection;
+    private EvectionMoneyVO evectionMoneyVO;//数据库evemoney_id，出差费用申请单ID
 
-    @Transient
-    private String username;
+    private String username;//出差人员名
 
 }

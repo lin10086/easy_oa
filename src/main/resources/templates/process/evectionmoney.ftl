@@ -123,13 +123,14 @@
                         </tr>
                         <tr>
                             <td class="titleleft"><label class="control-label">标题</label></td>
-                            <td colspan="6"><input type="text" class="form-control inpu" name="proId.processName"/></td>
+                            <td colspan="6"><input type="text" class="form-control inpu"
+                                                   name="processListVO.processName"/></td>
 
                             <td class="title"><span>紧急程度</span></td>
                             <td colspan="6">
-                                <select class="form-control inpu" name="proId.deeply">
-                                    <#list harrylist as harry>
-                                        <option value="${harry.typeId}">${harry.typeName}</option>
+                                <select class="form-control inpu" name="processListVO.deeplyId">
+                                    <#list exigenceTypeVOList as exigence>
+                                        <option value="${exigence.typeId}">${exigence.typeName}</option>
                                     </#list>
                                 </select>
                             </td>
@@ -145,18 +146,14 @@
                         </tr>
 
                         <tr>
-                            <td class="titleleft"><label class="control-label">开始日期</label></td>
-                            <td colspan="6">
-                                <input type="text" class="form-control inpu start" name="proId.startTime"
-                                       readonly="readonly" style="background-color:#fff;"
-                                       value="${(prolist.startTime)!''}"/></td>
+                            <td class="title"><label class="control-label">开始日期</label></td>
+                            <td colspan="6"><input type="text" class="form-control inpu chu" id="starTime"
+                                                   name="processListVO.startTime"/></td>
                             <td class="title"><label class="control-label">结束日期</label></td>
-                            <td colspan="6">
-                                <input type="text" class="form-control inpu end" name="proId.endTime"
-                                       readonly="readonly" style="background-color:#fff;"
-                                       value="${(prolist.endTime)!''}"/></td>
-
+                            <td colspan="6"><input type="text" class="form-control inpu chu" id="endTime"
+                                                   name="processListVO.endTime"/></td>
                         </tr>
+
                         <tr>
 
                             <td class="titleleft"><label class="control-label">相关票据</label></td>
@@ -171,7 +168,7 @@
                             <td class="title"><label class="control-label">审核人员</label></td>
                             <td colspan="6" class="tt">
                                 <input type="text" class="form-control inpu" readonly="readonly"
-                                       style="background-color:#fff;" name="shenname" placeholder="请选自己的上级"/>
+                                       style="background-color:#fff;" name="auditUser" placeholder="请选自己的上级"/>
                                 <div class="reciver">
                                     <span class="label label-success glyphicon glyphicon-plus">通讯录</span>
                                 </div>
@@ -179,14 +176,13 @@
                         </tr>
                         <tr>
                             <td class="titleleft"><label class="control-label">申请理由</label></td>
-                            <td colspan="6"><textarea class="form-control text" name="proId.processDescribe"></textarea>
+                            <td colspan="6"><textarea class="form-control text" name="processListVO.processDescribe"></textarea>
                             </td>
                             <td class="titleleft"><label class="control-label">出差申请</label></td>
 
-
                             <td colspan="6">
-                                <input type="text" class="form-control inpu" value="${(prolist.processName)!''}"/>
-                                <input type="text" style="display:none;" name="pro" value="${(prolist.processId)!''}"/>
+                                <input type="text" class="form-control inpu" value="${(processListVO.processName)!''}"/>
+                                <input type="text" style="display:none;" name="pro" value="${(processListVO.processId)!''}"/>
                             </td>
 
 
@@ -223,23 +219,23 @@
                                             <td colspan="2"><input type="text" class="form-control inpu"
                                                                    readonly="readonly"
                                                                    style="background-color:#fff;"
-                                                                   name="traffic[0].username"/>
+                                                                   name="trafficVOList[0].username"/>
                                                 <div class="reciver">
                                                     <span style="color:green;" class=" glyphicon glyphicon-plus"></span>
                                                 </div>
                                             </td>
                                             <td colspan="2"><input type="text" class="form-control inpu chu"
-                                                                   name="traffic[0].departTime"/></td>
+                                                                   name="trafficVOList[0].departTime"/></td>
                                             <td colspan="2"><input type="text" class="form-control inpu"
-                                                                   name="traffic[0].departName"/></td>
+                                                                   name="trafficVOList[0].departName"/></td>
                                             <td colspan="2"><input type="text" class="form-control inpu"
-                                                                   name="traffic[0].reachName"/></td>
+                                                                   name="trafficVOList[0].reachName"/></td>
                                             <td colspan="2"><input type="text" class="form-control inpu"
-                                                                   name="traffic[0].trafficName"/></td>
+                                                                   name="trafficVOList[0].trafficName"/></td>
                                             <td><input type="text" class="form-control inpu"
-                                                       name="traffic[0].seatType"/></td>
+                                                       name="trafficVOList[0].seatType"/></td>
                                             <td colspan="2" class="tdrig"><input type="text" class="form-control inpu"
-                                                                                 name="traffic[0].trafficMoney"/></td>
+                                                                                 name="trafficVOList[0].trafficMoney"/></td>
 
                                         </tr>
 
@@ -279,27 +275,31 @@
                                                                                                   class="val"><i>✓</i></label></span>
                                             </td>
                                             <td colspan="2"><input type="text" class="form-control inpu"
-                                                                   name="stay[0].nameuser" readonly="readonly"
+                                                                   name="stayVOList[0].username" readonly="readonly"
                                                                    style="background-color:#fff;"/>
                                                 <div class="reciver">
                                                     <span style="color:green;" class=" glyphicon glyphicon-plus"></span>
                                                 </div>
                                             </td>
+
                                             <td colspan="2" class="t1"><input type="text" class="form-control inpu chu"
-                                                                              name="stay[0].stayTime"/></td>
+                                                                              name="stayVOList[0].stayTime"/></td>
                                             <td colspan="2" class="t2"><input type="text" class="form-control inpu chu"
-                                                                              name="stay[0].leaveTime"/></td>
+                                                                              name="stayVOList[0].leaveTime"/></td>
+
                                             <td colspan="2" class="date"><input type="text"
                                                                                 class="form-control inpu leave"
-                                                                                name="stay[0].stayCity"/></td>
+                                                                                name="stayVOList[0].stayCity"/></td>
                                             <td colspan="2"><input type="text" class="form-control inpu"
-                                                                   name="stay[0].hotelName"/></td>
+                                                                   name="stayVOList[0].hotelName"/></td>
+
                                             <td class="day"><input type="text" class="form-control inpu "
-                                                                   name="stay[0].day"
+                                                                   name="stayVOList[0].day"
                                                                    readonly="readonly" style="background-color:#fff;"/>
                                             </td>
+
                                             <td colspan="2" class="tdrig"><input type="text" class="form-control inpu"
-                                                                                 name="stay[0].stayMoney"/></td>
+                                                                                 name="stayVOList[0].stayMoney"/></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -310,8 +310,8 @@
 
                             <td colspan="14" style="text-align: right;">
                                 <input type="text" value="出差费用" name="val" hidden="hidden"/>
-                                <#--proId.procseeDays-->
-                                <input type="text" class="days" hidden="hidden" name="id"/>
+                                <input type="text" class="days" name="processListVO.processDays" hidden="hidden"/>
+
                                 <input class="btn btn-primary" id="save" type="submit" value="保存"/>
                                 <input class="btn btn-default" id="cancel" type="button" value="取消"
                                        onclick="window.history.back();"/>
@@ -329,6 +329,25 @@
 <input type="text" class="ject" style="display:none;">
 <#include "/common/modalTip.ftl">
 <script>
+
+    $(function () {
+        $(".text").focus(function () {
+            var $star = new Date($("#starTime").val());
+            var $end = new Date($("#endTime").val());
+            tt = $end.getTime() - $star.getTime();
+            $(".days").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));
+        });
+    })
+
+    // $(function () {
+    //     $(".text").focus(function () {
+    //         var $star1 = new Date($(".t1").val());
+    //         var $end1 = new Date($(".t2").val());
+    //         ttt = $end1.getTime() - $star1.getTime();
+    //         $(".day").val(Math.ceil(ttt / (24 * 60 * 60 * 1000)));
+    //     });
+    // })
+
 
     //表单提交前执行的onsubmit()方法；返回false时，执行相应的提示信息；返回true就提交表单到后台校验与执行
     function check() {
@@ -388,7 +407,7 @@
             var $star = new Date($(".start").val());
             var $end = new Date($(".end").val());
             tt = $end.getTime() - $star.getTime();
-            $(".days").val(Math.ceil(tt / (24 * 60 * 60 * 1000)))
+            $(".day").val(Math.ceil(tt / (24 * 60 * 60 * 1000)))
         });
 
         $('.tt').on('click', '.reciver', function () {
@@ -411,14 +430,14 @@
             var nowDate = date.Format('yyyy-MM-dd hh:mm:ss');
             var star = addDate(nowDate, 0);
             var td1 = $('<td class="chebox"></td>').append($('<span class="labels"></span>').append($('<label></label>').append($('<input type="checkbox" name="items"  class="val" >')).append($('<i></i>').text('✓'))));
-            var td2 = $('<td  colspan="2" "></td>').append($('<input type="text" class="form-control inpu" readonly="readonly"  style="background-color:#fff;" name="stay[' + j + '].nameuser"/>'))
+            var td2 = $('<td  colspan="2" "></td>').append($('<input type="text" class="form-control inpu" readonly="readonly"  style="background-color:#fff;" name="stayVOList[' + j + '].username"/>'))
                 .append($('<div class="reciver"></div>').append($('<span style="color:green;" class=" glyphicon glyphicon-plus"></span>')));
-            var td3 = $('<td colspan="2" class="t1"></td>').append($('<input type="text" class="form-control inpu car" name="stay[' + j + '].stayTime"/>').val(star));
-            var td4 = $('<td colspan="2" class="t2"></td>').append($('<input type="text" class="form-control inpu car" name="stay[' + j + '].leaveTime"/>').val(star));
-            var td5 = $('<td colspan="2" class="date"></td>').append($('<input type="text" class="form-control inpu leave" name="stay[' + j + '].stayCity"/>'));
-            var td6 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu" name="stay[' + j + '].hotelName"/>'));
-            var td7 = $('<td class="day"></td>').append($('<input type="text" class="form-control inpu" name="stay[' + j + '].day"/>'));
-            var td8 = $('<td colspan="2" class="tdrig"></td>').append($('<input type="text" class="form-control inpu" name="stay[' + j + '].stayMoney"/>'));
+            var td3 = $('<td colspan="2" class="t1"></td>').append($('<input type="text" class="form-control inpu car" name="stayVOList[' + j + '].stayTime"/>').val(star));
+            var td4 = $('<td colspan="2" class="t2"></td>').append($('<input type="text" class="form-control inpu car" name="stayVOList[' + j + '].leaveTime"/>').val(star));
+            var td5 = $('<td colspan="2" class="date"></td>').append($('<input type="text" class="form-control inpu leave" name="stayVOList[' + j + '].stayCity"/>'));
+            var td6 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu" name="stayVOList[' + j + '].hotelName"/>'));
+            var td7 = $('<td class="day"></td>').append($('<input type="text" class="form-control inpu" name="stayVOList[' + j + '].day"/>'));
+            var td8 = $('<td colspan="2" class="tdrig"></td>').append($('<input type="text" class="form-control inpu" name="stayVOList[' + j + '].stayMoney"/>'));
             var tr = $('<tr class="tr" ></tr>').append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7).append(td8);
             $('.stay').append(tr);
             j = j + 1;
@@ -445,14 +464,14 @@
             var nowDate = date.Format('yyyy-MM-dd hh:mm:ss');
             var star = addDate(nowDate, 0);
             var td1 = $('<td class="chebox"></td>').append($('<span class="labels"></span>').append($('<label></label>').append($('<input type="checkbox" name="top"  class="val" >')).append($('<i></i>').text('✓'))));
-            var td2 = $('<td  colspan="2"></td>').append($('<input type="text" class="form-control inpu" readonly="readonly"  style="background-color:#fff;" name="traffic[' + i + '].username"/>'))
+            var td2 = $('<td  colspan="2"></td>').append($('<input type="text" class="form-control inpu" readonly="readonly"  style="background-color:#fff;" name="trafficVOList[' + i + '].username"/>'))
                 .append($('<div class="reciver"></div>').append($('<span style="color:green;" class=" glyphicon glyphicon-plus"></span>')));
-            var td3 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu car" name="traffic[' + i + '].departTime"/>').val(star));
-            var td4 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu" name="traffic[' + i + '].departName"/>'));
-            var td5 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu" name="traffic[' + i + '].reachName"/>'));
-            var td6 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu" name="traffic[' + i + '].trafficName"/>'));
-            var td7 = $('<td ></td>').append($('<input type="text" class="form-control inpu" name="traffic[' + i + '].seatType"/>'));
-            var td8 = $('<td colspan="2" class="tdrig"></td>').append($('<input type="text" class="form-control inpu" name="traffic[' + i + '].trafficMoney"/>'));
+            var td3 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu car" name="trafficVOList[' + i + '].departTime"/>').val(star));
+            var td4 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu" name="trafficVOList[' + i + '].departName"/>'));
+            var td5 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu" name="trafficVOList[' + i + '].reachName"/>'));
+            var td6 = $('<td colspan="2"></td>').append($('<input type="text" class="form-control inpu" name="trafficVOList[' + i + '].trafficName"/>'));
+            var td7 = $('<td ></td>').append($('<input type="text" class="form-control inpu" name="trafficVOList[' + i + '].seatType"/>'));
+            var td8 = $('<td colspan="2" class="tdrig"></td>').append($('<input type="text" class="form-control inpu" name="trafficVOList[' + i + '].trafficMoney"/>'));
             var tr = $('<tr class="tr"></tr>').append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7).append(td8);
             $('.traffic').append(tr);
             i = i + 1;

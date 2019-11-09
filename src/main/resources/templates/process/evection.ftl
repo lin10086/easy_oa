@@ -139,12 +139,13 @@
 
                         <tr>
                             <td class="title"><label class="control-label">开始日期</label></td>
-                            <td colspan="6"><input type="text" class="form-control inpu" id="starTime"
+                            <td colspan="6"><input type="text" class="form-control inpu chu" id="starTime"
                                                    name="processListVO.startTime"/></td>
                             <td class="title"><label class="control-label">结束日期</label></td>
-                            <td colspan="6"><input type="text" class="form-control inpu" id="endTime"
+                            <td colspan="6"><input type="text" class="form-control inpu chu" id="endTime"
                                                    name="processListVO.endTime"/></td>
                         </tr>
+
                         <tr>
 
                             <td class="title"><label class="control-label">相关资料</label></td>

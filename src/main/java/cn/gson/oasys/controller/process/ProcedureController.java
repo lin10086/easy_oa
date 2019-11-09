@@ -14,6 +14,7 @@ import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.entity.process.*;
+import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.services.process.ProcessService;
@@ -45,7 +46,84 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.sql.Timestamp;
 import java.util.*;
+
+
+//.................................
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.ResourceUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.github.pagehelper.util.StringUtil;
+
+import cn.gson.oasys.model.dao.attendcedao.AttendceDao;
+import cn.gson.oasys.model.dao.notedao.AttachmentDao;
+import cn.gson.oasys.model.dao.plandao.TrafficDao;
+import cn.gson.oasys.model.dao.processdao.BursementDao;
+import cn.gson.oasys.model.dao.processdao.DetailsBurseDao;
+import cn.gson.oasys.model.dao.processdao.EvectionDao;
+import cn.gson.oasys.model.dao.processdao.EvectionMoneyDao;
+import cn.gson.oasys.model.dao.processdao.HolidayDao;
+import cn.gson.oasys.model.dao.processdao.OvertimeDao;
+import cn.gson.oasys.model.dao.processdao.ProcessListDao;
+import cn.gson.oasys.model.dao.processdao.RegularDao;
+import cn.gson.oasys.model.dao.processdao.ResignDao;
+import cn.gson.oasys.model.dao.processdao.ReviewedDao;
+import cn.gson.oasys.model.dao.processdao.StayDao;
+import cn.gson.oasys.model.dao.processdao.SubjectDao;
+import cn.gson.oasys.model.dao.system.StatusDao;
+import cn.gson.oasys.model.dao.system.TypeDao;
+import cn.gson.oasys.model.dao.user.UserDao;
+import cn.gson.oasys.model.entity.attendce.Attends;
+import cn.gson.oasys.model.entity.note.Attachment;
+import cn.gson.oasys.model.entity.process.AubUser;
+import cn.gson.oasys.model.entity.process.Bursement;
+import cn.gson.oasys.model.entity.process.DetailsBurse;
+import cn.gson.oasys.model.entity.process.Evection;
+import cn.gson.oasys.model.entity.process.EvectionMoney;
+import cn.gson.oasys.model.entity.process.Holiday;
+import cn.gson.oasys.model.entity.process.Overtime;
+import cn.gson.oasys.model.entity.process.ProcessList;
+import cn.gson.oasys.model.entity.process.Regular;
+import cn.gson.oasys.model.entity.process.Resign;
+import cn.gson.oasys.model.entity.process.Reviewed;
+import cn.gson.oasys.model.entity.process.Stay;
+import cn.gson.oasys.model.entity.process.Subject;
+import cn.gson.oasys.model.entity.process.Traffic;
+import cn.gson.oasys.model.entity.system.SystemStatusList;
+import cn.gson.oasys.model.entity.system.SystemTypeList;
+import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.services.process.ProcessService;
 
 @Controller
 @RequestMapping("/")
@@ -111,6 +189,7 @@ public class ProcedureController {
         //直接返回流程管理页面
         return "process/procedure";
     }
+
     //------------------------------------
 
    /* //费用报销表单（1）
@@ -657,7 +736,7 @@ public class ProcedureController {
 */
 
     //出差费用
-    @RequestMapping("evemoney")
+  /*  @RequestMapping("evemoney")
     public String evemoney(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest req,
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -667,7 +746,7 @@ public class ProcedureController {
         model.addAttribute("prolist", prolist);
         return "process/evectionmoney";
     }
-
+*/
 
     /**
      * 出差费用表单接收
@@ -1076,8 +1155,7 @@ public class ProcedureController {
         List<SubjectPO> sublist = processServiceV2.getSubjectByParentIdNot(1L);
         model.addAttribute("second", second);//报销明细的主目录
         model.addAttribute("sublist", sublist);//报销明细的子目录
-
-        processServiceV2.setModel(model,userId,page,size);
+        processServiceV2.setModel(model, userId, page, size);
         return "process/bursement";
     }
 
@@ -1140,20 +1218,13 @@ public class ProcedureController {
     }
 
     //出差费用单（2）
-  /*  @RequestMapping("evemoney")
+    @RequestMapping("evemoney")
     public String evemoney(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest req,
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        Long processId = Long.parseLong(req.getParameter("processId"));//出差申请的主表ID
-        //根据申请人ID和主表ID找主表信息
-        ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);//流程主表信息
-        ProcessList prolist = prodao.findbyuseridandtitle(userId, processId);//找这个用户的出差申请
-//        proservice.index6(model, userId, page, size);
         processServiceV2.setModel(model, userId, page, size);
-        model.addAttribute("prolist", prolist);
         return "process/evectionmoney";
-    }*/
-
+    }
 
     /**
      * 出差费用表单接收
@@ -1169,50 +1240,63 @@ public class ProcedureController {
      * @throws IOException
      */
     @RequestMapping("moneyeve")
-    public String moneyeve(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid EvectionMoney eve, BindingResult br,
+    public String moneyeve(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid EvectionMoneyVO eve, BindingResult br,
                            @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
-        User lu = udao.findOne(userId);//申请人
-        User shen = udao.findByUserName(eve.getShenname());//审核人
-        Long roleid = lu.getRole().getRoleId();//申请人角色id
-        Long fatherid = lu.getFatherId();//申请人父id
-        Long userid = shen.getUserId();//审核人userid
+        UserPO loginUserPO = userServiceV2.getUserPOByUserId(userId);//登录人信息
+        Long loginUserPORoleId = loginUserPO.getRoleId();//登录人的角色ID
+        Long loginUserPOFatnerId = loginUserPO.getFatherId();//登录人的上司ID
+        UserPO auditUserPO = userServiceV2.getUserPOByUsername(eve.getAuditUser());//根据审核人名字获取审核人信息
+        Long auditUserPOId = auditUserPO.getUserId();//审核人的用户ID
         String val = req.getParameter("val");
         Double allmoney = 0.0;
-        if (roleid >= 3L && Objects.equals(fatherid, userid)) {
-            List<Traffic> ss = eve.getTraffic();
-            for (Traffic traffic : ss) {
-                allmoney += traffic.getTrafficMoney();
-                User u = udao.findByUserName(traffic.getUsername());
-                traffic.setUser(u);
-                traffic.setEvection(eve);
-
+        if (loginUserPORoleId >= 3L && Objects.equals(loginUserPOFatnerId, auditUserPOId)) {
+            List<TrafficVO> trafficVOList = eve.getTrafficVOList();//交通费用明细表
+            for (TrafficVO trafficVO : trafficVOList) {
+                allmoney += trafficVO.getTrafficMoney();
+                UserPO u = userServiceV2.getUserPOByUsername(trafficVO.getUsername());// 出差人员
+                trafficVO.setUserVO(UserFactoryVO.createUserVO(u));
+                trafficVO.setEvectionMoneyVO(eve);
             }
-            List<Stay> mm = eve.getStay();
-            for (Stay stay : mm) {
-                allmoney += stay.getStayMoney() * stay.getDay();
-                User u = udao.findByUserName(stay.getNameuser());
-                stay.setUser(u);
-                stay.setEvemoney(eve);
+            List<StayVO> stayVOList = eve.getStayVOList();//住宿申请表
+            for (StayVO stayVO : stayVOList) {
+                allmoney += stayVO.getStayMoney() * stayVO.getDay();
+                UserPO u = userServiceV2.getUserPOByUsername(stayVO.getUsername());//住宿人员名
+                stayVO.setUserVO(UserFactoryVO.createUserVO(u));
             }
-
             eve.setMoney(allmoney);
-            //set主表
-            ProcessList pro = eve.getProId();
-            System.out.println(pro + "mmmmmm");
-            proservice.index5(pro, val, lu, filePath, shen.getUserName());
-            emdao.save(eve);
+
+            ProcessListVO processListVO = eve.getProcessListVO();
+            //存附件表
+            AttachmentListPO attachmentListPO = processServiceV2.insertAttachment(loginUserPO, filePath);
+//            存主表
+            ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, attachmentListPO.getAttachmentId());
+            //存出差费用表
+            EvectionMoneyPO evectionMoneyPO = processServiceV2.insertEvectionMoneyPO(eve, allmoney, eve.getName(), processListPO);
+            //住宿表
+            processServiceV2.insertStayVOList(stayVOList, evectionMoneyPO.getEvectionmoneyId());
+            //存交通费用明细表
+            processServiceV2.inserTtrafficVOList(trafficVOList, evectionMoneyPO.getEvectionmoneyId());
             //存审核表
-            proservice.index7(shen, pro);
+            processServiceV2.insertReviewedPO(loginUserPO, processListPO);
         } else {
             return "common/proce";
         }
-
-        return "redirect:/flowmanage";
+//        return "redirect:/flowmanage";
+        return "redirect:/xinxeng";
 
     }
 
 
-    //出差申请单（2）
+    /**
+     * 出差申请单（2）
+     *
+     * @param model
+     * @param userId  登录人ID
+     * @param request
+     * @param page
+     * @param size
+     * @return
+     */
     @RequestMapping("evection")
     public String evection(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                            @RequestParam(value = "page", defaultValue = "0") int page,
@@ -1221,7 +1305,7 @@ public class ProcedureController {
         List<TypePO> evectionTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_evection");
         model.addAttribute("evectionTypePOList", evectionTypePOList);// 出差类型
         //设置model还未封装
-        processServiceV2.setModel(model,userId,page,size);
+        processServiceV2.setModel(model, userId, page, size);
         return "process/evection";
     }
 
@@ -1295,7 +1379,6 @@ public class ProcedureController {
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
         String val = req.getParameter("val");
 
-
         if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
             ProcessListVO processListVO = overTimeVO.getProcessListVO();
             ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, null);
@@ -1351,7 +1434,6 @@ public class ProcedureController {
                 processServiceV2.insertRegularPO(regularVO, processListPO);
                 //存审核表
                 processServiceV2.insertReviewedPO(applyUserPO, processListPO);
-
             } else {
                 model.addAttribute("error", "你不需要转正。。。");
                 return "common/proce";
@@ -1359,9 +1441,7 @@ public class ProcedureController {
         } else {
             return "common/proce";
         }
-
         return "redirect:/xinxeng";
-
     }
 
 
@@ -1382,9 +1462,9 @@ public class ProcedureController {
      *
      * @param filePath
      * @param req
-     * @param holidayVO
+     * @param holidayVO 接收前端页面的内容
      * @param br
-     * @param userId
+     * @param userId    登录人ID
      * @param model
      * @return
      * @throws IllegalStateException
@@ -1400,13 +1480,11 @@ public class ProcedureController {
         Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
         String val = req.getParameter("val");
-
         if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
-
             TypePO typePO = typeServiceV2.getTypePOByTypeId(holidayVO.getTypeId());
-            if (holidayVO.getTypeId() == 40) {
+            if (holidayVO.getTypeId() == 37) {
                 if (typePO.getSortValue() < holidayVO.getLeaveDays()) {
-                    model.addAttribute("error", "婚假必须小于10天。");
+                    model.addAttribute("error", "年假必须小于7天。");
                     return "common/proce";
                 }
             } else if (holidayVO.getTypeId() == 38) {
@@ -1414,27 +1492,45 @@ public class ProcedureController {
                     model.addAttribute("error", "单次事假必须小于4天。");
                     return "common/proce";
                 }
+            } else if (holidayVO.getTypeId() == 39) {
+                if (typePO.getSortValue() < holidayVO.getLeaveDays()) {
+                    model.addAttribute("error", "病假必须小于5天。");
+                    return "common/proce";
+                }
+            } else if (holidayVO.getTypeId() == 40) {
+                if (typePO.getSortValue() < holidayVO.getLeaveDays()) {
+                    model.addAttribute("error", "婚假必须小于10天。");
+                    return "common/proce";
+                }
+            } else if (holidayVO.getTypeId() == 41) {
+                if (typePO.getSortValue() < holidayVO.getLeaveDays()) {
+                    model.addAttribute("error", "产假及哺乳假必须小于180天。");
+                    return "common/proce";
+                }
             } else if (holidayVO.getTypeId() == 42) {
                 if (typePO.getSortValue() < holidayVO.getLeaveDays()) {
                     model.addAttribute("error", "陪产假必须小于10天。");
                     return "common/proce";
                 }
+            } else if (holidayVO.getTypeId() == 43) {
+                if (typePO.getSortValue() < holidayVO.getLeaveDays()) {
+                    model.addAttribute("error", "丧假必须小于10天。");
+                    return "common/proce";
+                }
             } else {
-                //存附件表
-                AttachmentListPO attachmentListPO = processServiceV2.insertAttachment(applyUserPO, filePath);
-
-                ProcessListVO processListVO = holidayVO.getProcessListVO();
-                ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, attachmentListPO.getAttachmentId());
-                //存请假申请单
-                processServiceV2.insertHolidayPO(holidayVO, processListPO);
-
-                //存审核表
-                processServiceV2.insertReviewedPO(applyUserPO, processListPO);
+                return "common/proce";
             }
-        } else {
-            return "common/proce";
-        }
 
+            //存附件表
+            AttachmentListPO attachmentListPO = processServiceV2.insertAttachment(applyUserPO, filePath);
+            ProcessListVO processListVO = holidayVO.getProcessListVO();
+            //存主表
+            ProcessListPO processListPO = processServiceV2.insertProcessListPO(processListVO, val, userId, auditUserPO, attachmentListPO.getAttachmentId());
+            //存请假申请单
+            processServiceV2.insertHolidayPO(holidayVO, processListPO);
+            //存审核表
+            processServiceV2.insertReviewedPO(applyUserPO, processListPO);
+        }
         return "redirect:/xinxeng";
     }
 
@@ -1484,6 +1580,8 @@ public class ProcedureController {
         return "redirect:/xinxeng";
     }
 
+
+
     /**
      * 流程管理》我的申请,查找出自己的申请
      *
@@ -1497,22 +1595,18 @@ public class ProcedureController {
     public String flowManage(@SessionAttribute("userId") Long userId, Model model,
                              @RequestParam(value = "page", defaultValue = "0") int page,
                              @RequestParam(value = "size", defaultValue = "10") int size) {
+        //根据流程主表里的用户ID找出流程主表列表
         List<ProcessListPO> processListPOList = processServiceV2.getProcessListPOListByUserId(userId, page, size);
-
-        List<ProcessListVO> processListVOList = ProcessListFactoryVO.createProcessListVOList(processListPOList);
-
+        List<ProcessListVO>processListVOList = ProcessListFactoryVO.createProcessListVOList(processListPOList);
         PageInfo<ProcessListPO> pageInfo = new PageInfo<>(processListPOList);
-
+        //23未处理,24处理中,25已批准,26未通过
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_process_list");
-        List<StatusVO> statusVOList = StatusFactoryVO.createStatusVOList(statusPOList);
-
+        //22正常,23重要,24紧急
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
-        List<TypeVO> typeVOList = TypeFactoryVO.createTypeVOList(typePOList);
-
         model.addAttribute("page", pageInfo);
         model.addAttribute("processListVOList", processListVOList);
-        model.addAttribute("statusVOList", statusVOList);
-        model.addAttribute("typeVOList", typeVOList);
+        model.addAttribute("statusPOList", statusPOList);
+        model.addAttribute("typePOList", typePOList);
         model.addAttribute("url", "shenser");
         return "process/flowmanage";
     }
@@ -1953,6 +2047,5 @@ public class ProcedureController {
         input.close();
         sos.close();
     }
-
 
 }

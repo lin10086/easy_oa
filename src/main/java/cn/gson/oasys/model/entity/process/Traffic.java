@@ -48,11 +48,12 @@ public class Traffic {
 	private Double trafficMoney;//交通标准
 	
 	@ManyToOne()
-	@JoinColumn(name="evection_id")
+//	@JoinColumn(name="evection_id")
+	@JoinColumn(name="evemoney_id")
 	private  EvectionMoney  evection;
 	
 	@Transient
-	private String username;
+	private String username;//出差人员名
 	
 
 	public String getUsername() {

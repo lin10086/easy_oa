@@ -144,10 +144,10 @@
 
                         <tr>
                             <td class="title"><label class="control-label">开始日期</label></td>
-                            <td colspan="6"><input type="text" class="form-control inpu" id="starTime"
+                            <td colspan="6"><input type="text" class="form-control inpu  chu startTime"
                                                    name="processListVO.startTime"/></td>
                             <td class="title"><label class="control-label">结束日期</label></td>
-                            <td colspan="6"><input type="text" class="form-control inpu chu" id="endTime"
+                            <td colspan="6"><input type="text" class="form-control inpu chu endTime"
                                                    name="processListVO.endTime"/></td>
                         </tr>
 
@@ -185,14 +185,12 @@
     </div>
 </div>
 <script>
-    $(function () {
-        $(".text").focus(function () {
-            var $star = new Date($("#starTime").val());
-            var $end = new Date($(".chu").val());
-            tt = $end.getTime() - $star.getTime();
-            $(".days").val((tt / (24 * 60 * 60 * 1000)).toFixed(1));
 
-        });
+    $(".days").focus(function(){
+        var $star=new Date($(".startTime").val());
+        var $end=new Date($(".endTime").val());
+        tt=$end.getTime()-$star.getTime();
+        $(".days").val(Math.ceil(tt/ (24*60*60*1000)));
     })
 
     //表单提交前执行的onsubmit()方法；返回false时，执行相应的提示信息；返回true就提交表单到后台校验与执行

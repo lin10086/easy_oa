@@ -54,6 +54,12 @@ public class ProcessServiceV2 {
     @Resource
     private EvectionPOMapper evectionPOMapper;
     @Resource
+    private EvectionMoneyPOMapper evectionMoneyPOMapper;
+    @Resource
+    private StayPOMapper stayPOMapper;
+    @Resource
+    private TrafficPOMapper trafficPOMapper;
+    @Resource
     private OvertimePOMapper overtimePOMapper;
     @Resource
     private RegularPOMapper regularPOMapper;
@@ -130,14 +136,11 @@ public class ProcessServiceV2 {
         PageInfo pageInfo = new PageInfo(userVOList);
         model.addAttribute("userVOList", userVOList);//用户信息
         model.addAttribute("page", pageInfo);//可以获取第几页之类的
-
         //22正常；23重要；24紧急
         List<TypePO> exigenceTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
         model.addAttribute("exigenceTypeVOList", exigenceTypePOList);//流程列表紧急程度
-
         UserPO loginUserPO = userServiceV2.getUserPOByUserId(userId);//根据登录人id(userId)获取登录人的用户信息
         model.addAttribute("username", loginUserPO.getUserName());//登录人的用户名
-
         model.addAttribute("url", "names");
 
     }
@@ -209,6 +212,68 @@ public class ProcessServiceV2 {
         evectionPO.setProId(processListPO.getProcessId());
         evectionPOMapper.insertSelective(evectionPO);
 
+    }
+
+    /**
+     * 插入出差表
+     *
+     * @param evectionMoneyVO
+     * @param allMoney
+     * @param name
+     * @param processListPO
+     * @return
+     */
+    public EvectionMoneyPO insertEvectionMoneyPO(EvectionMoneyVO evectionMoneyVO, Double allMoney, String name, ProcessListPO processListPO) {
+        EvectionMoneyPO evectionMoneyPO = new EvectionMoneyPO();
+        evectionMoneyPO.setFinancialAdvice(evectionMoneyVO.getFinancialAdvice());
+        evectionMoneyPO.setManagerAdvice(evectionMoneyVO.getManagerAdvice());
+        evectionMoneyPO.setMoney(allMoney);
+        evectionMoneyPO.setName(name);
+        evectionMoneyPO.setProId(processListPO.getProcessId());
+        evectionMoneyPOMapper.insertSelective(evectionMoneyPO);
+        return evectionMoneyPO;
+    }
+
+    /**
+     * 插入住宿列表
+     *
+     * @param stayVOList
+     * @param evemoneyId
+     */
+    public void insertStayVOList(List<StayVO> stayVOList, Long evemoneyId) {
+        for (StayVO stayVO : stayVOList) {
+            StayPO stayPO = new StayPO();
+            stayPO.setStayTime(stayVO.getStayTime());
+            stayPO.setLeaveTime(stayVO.getLeaveTime());
+            stayPO.setHotelName(stayVO.getHotelName());
+            stayPO.setDay(stayVO.getDay());
+            stayPO.setStayMoney(stayVO.getStayMoney());
+            stayPO.setStayCity(stayVO.getStayCity());
+            stayPO.setEvemoneyId(evemoneyId);
+            stayPO.setUserName(userServiceV2.getUserPOByUsername(stayVO.getUsername()).getUserId());
+            stayPOMapper.insertSelective(stayPO);
+        }
+    }
+
+    /**
+     * 插入交通列表
+     *
+     * @param trafficVOList
+     * @param evemoneyId
+     */
+    public void inserTtrafficVOList(List<TrafficVO> trafficVOList, Long evemoneyId) {
+        for (TrafficVO trafficVO : trafficVOList) {
+            TrafficPO trafficPO = new TrafficPO();
+            trafficPO.setEvemoneyId(evemoneyId);
+            trafficPO.setDepartName(trafficVO.getDepartName());
+            trafficPO.setDepartTime(trafficVO.getDepartTime());
+            trafficPO.setReachName(trafficVO.getReachName());
+            trafficPO.setSeatType(trafficVO.getSeatType());
+            trafficPO.setTrafficMoney(trafficVO.getTrafficMoney());
+            trafficPO.setTrafficName(trafficVO.getTrafficName());
+            trafficPO.setUserName(userServiceV2.getUserPOByUsername(trafficVO.getUsername()).getUserId());
+            trafficPOMapper.insertSelective(trafficPO);
+        }
     }
 
     /**
@@ -309,7 +374,7 @@ public class ProcessServiceV2 {
     public ProcessListPO insertProcessListPO(ProcessListVO processListVO, String val, Long userId, UserPO auditUserPO, Long attachmentListPOId) {
         ProcessListPO processListPO = new ProcessListPO();
         processListPO.setStatusId(23L);//流程审核状态，23L未处理
-        processListPO.setTypeName(val);//流程申请类型
+        processListPO.setTypeName(val);//流程申请类型名
         processListPO.setProcessUserId(userId);//流程申请人
         processListPO.setProcessDes(processListVO.getProcessDescribe());
         processListPO.setIsChecked(0);
@@ -318,6 +383,9 @@ public class ProcessServiceV2 {
         processListPO.setApplyTime(new Date());//流程申请时间
         processListPO.setShenuser(auditUserPO.getUserName());
         processListPO.setProFileId(attachmentListPOId);
+        processListPO.setStartTime(processListVO.getStartTime());
+        processListPO.setEndTime(processListVO.getEndTime());
+        processListPO.setProcseeDays(processListVO.getProcessDays());//流程天数
         processListPOMapper.insertSelective(processListPO);
         return processListPO;
     }

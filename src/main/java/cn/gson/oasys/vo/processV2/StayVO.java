@@ -27,9 +27,9 @@ public class StayVO {
 
     private Integer day;//入住天数
 
-    private Double stayMoney;//酒店标准
+    private Double stayMoney;//酒店标准(多少元一天）
 
     private EvectionMoneyVO evectionMoneyVO;//数据库evemoney_id，出差费用申请单ID
 
-    private String nameuser;
+    private String username;//出差人员名
 }
