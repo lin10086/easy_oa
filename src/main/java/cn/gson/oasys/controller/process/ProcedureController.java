@@ -1580,7 +1580,7 @@ public class ProcedureController {
         return "redirect:/xinxeng";
     }
 
-
+//------------------------------------
 
     /**
      * 流程管理》我的申请,查找出自己的申请
@@ -1603,13 +1603,130 @@ public class ProcedureController {
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_process_list");
         //22正常,23重要,24紧急
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
-        model.addAttribute("page", pageInfo);
-        model.addAttribute("processListVOList", processListVOList);
+//        model.addAttribute("page", pageInfo);//分页信息
+        model.addAttribute("processListVOList", processListVOList);//根据用户ID找出流程主表的信息
         model.addAttribute("statusPOList", statusPOList);
         model.addAttribute("typePOList", typePOList);
         model.addAttribute("url", "shenser");
         return "process/flowmanage";
     }
+
+    /**
+     * 流程申请》我的申请》操作（查看）
+     *
+     * @param userId
+     * @param model
+     * @param req
+     * @return
+     */
+    @RequestMapping("particular")
+    public String particular(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req) {
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//根据登录人ID获取登录人信息（审核人或者申请人）
+        UserPO bursementUserPO = null;//报销人员
+        Long processId = Long.parseLong(req.getParameter("processId"));//获取流程主表的ID
+        String typeName = req.getParameter("typeName");//获取流程主表里面的类型名称
+        Map<String, Object> map = null;
+        String name = null;
+        ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);//根据流程主表ID获取流程主表信息
+        //获取主表里面的申请人ID和登录人ID比较，判断是申请人还是审核人
+        Boolean flag = processListPO.getProcessUserId().equals(userId);//登录人ID和流程主表的用户ID相等则为声请人
+        if (!flag) {
+            name = "审核";
+        } else {
+            name = "申请";
+        }
+        //封装主表的信息
+        map = processServiceV2.resultMap(name, userPO, processListPO);
+        model.addAttribute("map", map);
+        if (("费用报销").equals(typeName)) {
+            BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);//根据流程主表获取费用报销表信息
+            ReimbursementVO reimbursementVO = BursementFactoryVO.createBursementVO(bursementPO);
+            UserPO testifyUserPO = userServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
+            UserVO proveUserVO = UserFactoryVO.createUserVO(testifyUserPO);
+            //费用报销表里面的报销人员是否为null
+            if (!Objects.isNull(bursementPO.getOperationName())) {
+                bursementUserPO = userServiceV2.getUserPOByUserId(bursementPO.getOperationName());//费用报销人
+            }
+            //根据报销表ID找报销明细表
+            List<DetailsbursePO> detailsbursePOList = detailsburseServiceV2.getDetailsBursePOListByBusementId(bursementPO.getBursementId());
+            List<DetailsReimburseVO> detailsBurseVOList = DetailsBurseFactoryVO.createDetailsBurseVOList(detailsbursePOList);
+            // 根据费用报销表的类型ID找类型名
+            String reimbursementTypeName = typeServiceV2.getTypePOByTypeId(bursementPO.getTypeId()).getTypeName();
+            //获取报销表的总钱数
+            String money = ProcessServiceV2.numbertocn(bursementPO.getAllMoney());
+            model.addAttribute("testifyUserPO", testifyUserPO);//证明人
+            model.addAttribute("bursementUserPO", bursementUserPO);//报销人
+            model.addAttribute("reimbursementTypeName", reimbursementTypeName);// 报销类型名
+            model.addAttribute("reimbursementVO", reimbursementVO);//费用报销表信息
+            model.addAttribute("money", money);
+            model.addAttribute("detailsBurseVOList", detailsBurseVOList);//费用科目
+            return "process/serch";
+        } else if (("出差费用").equals(typeName)) {
+            Double stayMoneyAll = 0.0;
+            Double trafficMoneyAll = 0.0;
+            EvectionMoneyPO evectionMoneyPO = evectionMoneyServiceV2.getEvectionMoneyPOByProcessListPOId(processId);//根据出差报销表里的流程主表ID找出差报销表
+            EvectionMoneyVO evectionMoneyVO = EvectionMoneyVOFactory.createEvectionMoneyVO(evectionMoneyPO);
+
+            String amountMoney = ProcessServiceV2.numbertocn(evectionMoneyPO.getMoney());//总费用大写
+            List<StayPO> stayPOList = evectionMoneyServiceV2.getStayPOList(evectionMoneyPO.getEvectionmoneyId());//根据住宿表里的出差报销表的ID找住宿列表
+            List<StayVO> stayVOList = StayVOFactory.createStayVOList(stayPOList);
+            //根据stay表里的用户Id找用户名
+            for (StayVO stayVO : stayVOList){
+                stayVO.setUserVO(UserFactoryVO.createUserVO(evectionMoneyServiceV2.userPOByStayId(stayVO.getStayId())));
+                stayMoneyAll += stayVO.getStayMoney()*stayVO.getDay();
+            }
+
+            List<TrafficPO> trafficPOList = evectionMoneyServiceV2.getTrafficPOList(evectionMoneyPO.getEvectionmoneyId());//根据交通表里的出差报销表的ID找交通列表
+            List<TrafficVO> trafficVOList = TrafficVOFactory.createTrafficVOList(trafficPOList);
+            for (TrafficVO trafficVO : trafficVOList) {
+                trafficMoneyAll += trafficVO.getTrafficMoney();
+                trafficVO.setUserVO(UserFactoryVO.createUserVO(evectionMoneyServiceV2.userPOByTrafficId(trafficVO.getTrafficId())));
+            }
+            model.addAttribute("stayMoneyAll", stayMoneyAll);//住宿总费用
+            model.addAttribute("trafficMoneyAll", trafficMoneyAll);//交通费总费用
+            model.addAttribute("amountMoney", amountMoney);//总费用大写
+            model.addAttribute("evectionMoneyPO", evectionMoneyPO);//出差费用表
+            model.addAttribute("stayVOList", stayVOList);
+            model.addAttribute("trafficVOList", trafficVOList);
+            return "process/evemonserch";
+        } else if (("出差申请").equals(typeName)) {
+            EvectionPO evectionPO = byProcessPOIdServiceV2.getEvectionPOByProcessPOId(processId);
+            EvectionVO evectionVO = EvectionVOFactory.createEvectionVO(evectionPO);
+            model.addAttribute("eve", evectionVO);
+            return "process/eveserach";
+        } else if (("加班申请").equals(typeName)) {
+            OvertimePO overtimePO = byProcessPOIdServiceV2.getOvertimePOByProcessPOId(processId);
+            OverTimeVO overTimeVO = OverTimeVOFactory.createOverTimeVO(overtimePO);
+            String overTimeType = typeServiceV2.getTypeNameByTypeId(overtimePO.getTypeId());
+            model.addAttribute("eve", overTimeVO);
+            model.addAttribute("overTimeType", overTimeType);//加班类型名
+            return "process/overserch";
+        } else if (("请假申请").equals(typeName)) {
+            HolidayPO holidayPO = byProcessPOIdServiceV2.getHolidayPOByProcessPOId(processId);
+            HolidayVO holidayVO = HolidayVOFactory.createHolidayVO(holidayPO);
+            String type = typeServiceV2.getTypeNameByTypeId(holidayPO.getTypeId());
+            model.addAttribute("eve", holidayVO);
+            model.addAttribute("type", type);
+            return "process/holiserch";
+        } else if (("转正申请").equals(typeName)) {
+            RegularPO regularPO = byProcessPOIdServiceV2.getRegularPOByProcessPOId(processId);
+            RegularVO regularVO = RegularVOFactory.createRegularVO(regularPO);
+            model.addAttribute("eve", regularVO);
+            return "process/reguserch";
+        } else if (("离职申请").equals(typeName)) {
+            ResignPO resignPO = byProcessPOIdServiceV2.getResignPOByProcessPOId(processId);
+            String handUser = userServiceV2.getUsernameByUserId(resignPO.getHandUser());
+            ResignVO resignVO = ResignVOFactory.createResignVO(resignPO);
+            resignVO.setHandUser(handUser);
+            model.addAttribute("eve", resignVO);
+            return "process/resserch";
+        }
+
+
+        return "process/serch";
+    }
+
+
 
     /**
      * 流程管理》流程审核
@@ -1636,137 +1753,6 @@ public class ProcedureController {
 
         return "process/auditing";
     }
-
-
-    /**
-     * 流程申请》我的申请》操作（查看）
-     *
-     * @param userId
-     * @param model
-     * @param req
-     * @return
-     */
-    @RequestMapping("particular")
-    public String particular(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//登录人ID（审核人或者申请人）
-        UserPO reimbursementUserPO = null;//报销人员
-        Long processId = Long.parseLong(req.getParameter("processId"));
-        String typeName = req.getParameter("typeName");//获取主表里面的类型名称
-//        String typename = req.getParameter("typename");//类型名称
-        Map<String, Object> map = null;
-        String name = null;
-        ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);
-        //获取主表里面的申请人ID和登录人ID比较，判断是申请人还是审核人
-        Boolean flag = processListPO.getProcessUserId().equals(userId);
-        if (!flag) {
-            name = "审核";
-        } else {
-            name = "申请";
-        }
-        //封装主表的信息
-        map = processServiceV2.resultMap(name, userPO, processListPO);
-        if (("费用报销").equals(typeName)) {
-            BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);//报销日期格式错误
-            ReimbursementVO reimbursementVO = BursementFactoryVO.createBursementVO(bursementPO);
-            UserPO testifyUserPO = userServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
-            UserVO proveUserVO = UserFactoryVO.createUserVO(testifyUserPO);
-            //报销表里面的报销人员是否为null
-            if (!Objects.isNull(bursementPO.getOperationName())) {
-                reimbursementUserPO = userServiceV2.getUserPOByUserId(bursementPO.getOperationName());
-            }
-            //根据报销表ID找报销明细表
-            List<DetailsbursePO> detailsbursePOList = detailsburseServiceV2.getDetailsBursePOListByBusementId(bursementPO.getBursementId());
-            List<DetailsReimburseVO> detailsBurseVOList = DetailsBurseFactoryVO.createDetailsBurseVOList(detailsbursePOList);
-            // 根据报销表的类型ID找类型名
-            String reimbursementTypeName = typeServiceV2.getTypeNameByTypeId(bursementPO.getTypeId());
-            //获取报销表的总钱数
-            String money = ProcessServiceV2.numbertocn(bursementPO.getAllMoney());
-            model.addAttribute("proveUserVO", proveUserVO);//证明人
-            model.addAttribute("audit", reimbursementUserPO);//报销人
-            model.addAttribute("reimbursementTypeName", reimbursementTypeName);// 报销类型名
-            model.addAttribute("reimbursementVO", reimbursementVO);
-            model.addAttribute("money", money);
-            model.addAttribute("detailsBurseVOList", detailsBurseVOList);//费用科目
-            model.addAttribute("map", map);
-            return "process/serch";
-        } else if (("出差费用").equals(typeName)) {
-            Double staymoney = 0.0;
-            Double tramoney = 0.0;
-            EvectionMoneyPO evectionMoneyPO = evectionMoneyServiceV2.getEvectionMoneyPOByProcessListPOId(processId);
-            EvectionMoneyVO evectionMoneyVO = EvectionMoneyVOFactory.createEvectionMoneyVO(evectionMoneyPO);
-//            EvectionMoney emoney = emdao.findByProId(process);
-
-            String money = ProcessServiceV2.numbertocn(evectionMoneyPO.getMoney());
-//            String money = ProcessService.numbertocn(emoney.getMoney());
-            List<StayPO> stayPOList = evectionMoneyServiceV2.getStayPOList(evectionMoneyPO.getEvectionmoneyId());
-            List<StayVO> stayVOList = StayVOFactory.createStayVOList(stayPOList);
-//            List<Stay> staylist = sadao.findByEvemoney(emoney);
-            for (StayVO stayVO : stayVOList) {
-                staymoney += stayVO.getStayMoney();
-            }
-            List<TrafficPO> trafficPOList = evectionMoneyServiceV2.getTrafficPOList(evectionMoneyPO.getEvectionmoneyId());
-            List<TrafficVO> trafficVOList = TrafficVOFactory.createTrafficVOList(trafficPOList);
-//            List<Traffic> tralist = tdao.findByEvection(emoney);
-            for (TrafficVO trafficVO : trafficVOList) {
-                tramoney += trafficVO.getTrafficMoney();
-            }
-            model.addAttribute("staymoney", staymoney);
-            model.addAttribute("tramoney", tramoney);
-            model.addAttribute("allmoney", money);
-            model.addAttribute("emoney", evectionMoneyVO);
-            model.addAttribute("staylist", stayVOList);
-            model.addAttribute("tralist", trafficVOList);
-            model.addAttribute("map", map);
-            return "process/evemonserch";
-        } else if (("出差申请").equals(typeName)) {
-            EvectionPO evectionPO = byProcessPOIdServiceV2.getEvectionPOByProcessPOId(processId);
-            EvectionVO evectionVO = EvectionVOFactory.createEvectionVO(evectionPO);
-//            Evection eve = edao.findByProId(process);
-            model.addAttribute("eve", evectionVO);
-            model.addAttribute("map", map);
-            return "process/eveserach";
-        } else if (("加班申请").equals(typeName)) {
-            OvertimePO overtimePO = byProcessPOIdServiceV2.getOvertimePOByProcessPOId(processId);
-            OverTimeVO overTimeVO = OverTimeVOFactory.createOverTimeVO(overtimePO);
-            String type = typeServiceV2.getTypeNameByTypeId(overtimePO.getTypeId());
-//            Overtime eve = odao.findByProId(process);
-//            String type = tydao.findname(eve.getTypeId());
-            model.addAttribute("eve", overTimeVO);
-            model.addAttribute("map", map);
-            model.addAttribute("type", type);//加班类型名
-            return "process/overserch";
-        } else if (("请假申请").equals(typeName)) {
-            HolidayPO holidayPO = byProcessPOIdServiceV2.getHolidayPOByProcessPOId(processId);
-            HolidayVO holidayVO = HolidayVOFactory.createHolidayVO(holidayPO);
-            String type = typeServiceV2.getTypeNameByTypeId(holidayPO.getTypeId());
-//            Holiday eve = hdao.findByProId(process);
-//            String type = tydao.findname(eve.getTypeId());
-            model.addAttribute("eve", holidayVO);
-            model.addAttribute("map", map);
-            model.addAttribute("type", type);
-            return "process/holiserch";
-        } else if (("转正申请").equals(typeName)) {
-            RegularPO regularPO = byProcessPOIdServiceV2.getRegularPOByProcessPOId(processId);
-            RegularVO regularVO = RegularVOFactory.createRegularVO(regularPO);
-//            Regular eve = rgdao.findByProId(process);
-            model.addAttribute("eve", regularVO);
-            model.addAttribute("map", map);
-            return "process/reguserch";
-        } else if (("离职申请").equals(typeName)) {
-            ResignPO resignPO = byProcessPOIdServiceV2.getResignPOByProcessPOId(processId);
-            String handUser = userServiceV2.getUsernameByUserId(resignPO.getHandUser());
-            ResignVO resignVO = ResignVOFactory.createResignVO(resignPO);
-            resignVO.setHandUser(handUser);
-//            Resign eve = rsdao.findByProId(process);
-            model.addAttribute("eve", resignVO);
-            model.addAttribute("map", map);
-            return "process/resserch";
-        }
-
-
-        return "process/serch";
-    }
-
 
     /**
      * 流程管理》流程审核》审核页面

@@ -400,10 +400,9 @@ public class ProcessServiceV2 {
      */
     public List<ProcessListPO> getProcessListPOListByUserId(Long userId, int pageNum, int pageSize) {
 
-        PageHelper.startPage(pageNum, pageSize);
+//        PageHelper.startPage(pageNum, pageSize);
         ProcessListPOExample processListPOExample = new ProcessListPOExample();
         processListPOExample.createCriteria().andProcessUserIdEqualTo(userId);
-
         List<ProcessListPO> processListPOList = processListPOMapper.selectByExample(processListPOExample);
         return processListPOList;
     }
@@ -423,53 +422,52 @@ public class ProcessServiceV2 {
      * 封装process
      *
      * @param name          "审核"或者"申请"
-     * @param userPO        申请用户信息
+     * @param userPO        登录人信息
      * @param processListPO 主表信息
      * @return
      */
     public Map<String, Object> resultMap(String name, UserPO userPO, ProcessListPO processListPO) {
         Map<String, Object> resultMap = new HashMap<>();
         //根据主表里面的紧急ID在类型表获取紧急名称
-        String exigencyName = typeServiceV2.getTypeNameByTypeId(processListPO.getDeeplyId());
+        String exigencyName = typeServiceV2.getTypePOByTypeId(processListPO.getDeeplyId()).getTypeName();
 
-        resultMap.put("proId", processListPO.getProcessId());//流程主表ID
+        resultMap.put("processId", processListPO.getProcessId());//流程主表ID
         resultMap.put("exigencyName", exigencyName);//类型名（紧急程度）
         resultMap.put("processName", processListPO.getProcessName());//标题
         resultMap.put("processDescribe", processListPO.getProcessDes());//原因内容
 
-        //根据流程主表的申请人ID找申请人部门
+        //根据流程主表的申请人ID找申请人部门名
         String applyDeptName = deptServiceV2.getDeptNameByUserId(processListPO.getProcessUserId());
+        resultMap.put("deptName", applyDeptName);//申请人部门
         if (("审核").equals(name)) {
-            String userName = userServiceV2.getUsernameByUserId(processListPO.getProcessUserId());//根据申请人ID找申请人的名字
+            String userName = userServiceV2.getUserPOByUserId(processListPO.getProcessUserId()).getUserName();//根据流程主表的申请人ID找申请人的名字
             resultMap.put("username", userName);//提单人员(申请人名）
         } else if (("申请").equals(name)) {
-            resultMap.put("username", userPO.getUserName());
+            resultMap.put("username", userPO.getUserName());//登录人是申请人则直接获取名字
         }
-        resultMap.put("deptName", applyDeptName);//申请人部门
         resultMap.put("applyTime", new Timestamp(processListPO.getApplyTime().getTime()));//提单日期
-        // 流程表的附件ID不为null返回false
+        //Objects.isNull（）是null就返回true
         if (!Objects.isNull(processListPO.getProFileId())) {
             //根据流程表附件ID找附件
             AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(processListPO.getProFileId());
             resultMap.put("file", attachmentListPO);//流程附件
 
-            String filePath = attachmentListPO.getAttachmentPath();//根据附件ID找附件存储路径
+            String filePath = attachmentListPO.getAttachmentPath();//根据附件找附件存储路径
             resultMap.put("filepath", filePath);
             if (attachmentListPO.getAttachmentType().startsWith("image")) {
                 resultMap.put("filetype", "img");
             } else {
                 resultMap.put("filetype", "appli");
             }
-
         } else {
             resultMap.put("file", "file");
         }
         resultMap.put("name", name);// 审核或者申请
         resultMap.put("typeName", processListPO.getTypeName());// 主表的类型名
-//        resultMap.put("startime", new Timestamp(processListPO.getStartTime().getTime()));//开始时间(要注意为空值）
-//        resultMap.put("endtime", new Timestamp(processListPO.getEndTime().getTime()));// 结束时间
-        resultMap.put("startime", new Timestamp(new Date().getTime()));//开始时间
-        resultMap.put("endtime", new Timestamp(new Date().getTime()));// 结束时间
+        if (processListPO.getStartTime() != null && processListPO.getEndTime() != null) {
+            resultMap.put("startime", new Timestamp(processListPO.getStartTime().getTime()));//开始时间(要注意为空值）
+            resultMap.put("endtime", new Timestamp(processListPO.getEndTime().getTime()));// 结束时间
+        }
         resultMap.put("numberOfDays", processListPO.getProcseeDays());//天数
         resultMap.put("statusId", processListPO.getStatusId());//主表的状态ID
         return resultMap;

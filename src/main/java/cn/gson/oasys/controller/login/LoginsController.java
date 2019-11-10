@@ -64,6 +64,7 @@ public class LoginsController {
     public String loginout(HttpSession session) {
         session.removeAttribute("userId");
         return "redirect:/logins";
+//        return "redirect:/index";//点击退出重定向到主页面
     }
 
     /**
@@ -164,17 +165,14 @@ public class LoginsController {
         //获取后台的验证码
         String sesionCode = (String) request.getSession().getAttribute(CAPTCHA_KEY);//后台验证码
         model.addAttribute("userName", userName);
-//        if (!ca.equals(sesionCode.toLowerCase())) {
-        if (false) {
+        if (!ca.equals(sesionCode.toLowerCase())) {
             System.out.println("验证码输入错误!");
             model.addAttribute("errormess", "验证码输入错误!");
             request.setAttribute("errormess", "验证码输入错误!");
             return "login/login";
         }
 //		 将用户名分开查找；用户名或者电话号码；
-//        UserPO userPO = userServiceV2.checkUserByUsernameAndPassword(userName, password);
-        UserPO userPO = userServiceV2.checkUserByUsernameAndPassword("soli", "123456");//没有根据手机号
-
+        UserPO userPO = userServiceV2.checkUserByUsernameAndPassword(userName, password);
         if (Objects.isNull(userPO)) {
             System.out.println(userPO);
             System.out.println("账号或密码错误!");

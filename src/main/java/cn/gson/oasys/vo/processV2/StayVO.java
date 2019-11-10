@@ -15,7 +15,7 @@ public class StayVO {
 
     private Long stayId;//住宿申请表ID
 
-    private UserVO userVO;//出差人员数据录user_name用户ID
+    private UserVO userVO;//住宿人员数据录user_name用户ID
 
     private Date stayTime;//入住日期
 
@@ -31,5 +31,5 @@ public class StayVO {
 
     private EvectionMoneyVO evectionMoneyVO;//数据库evemoney_id，出差费用申请单ID
 
-    private String username;//出差人员名
+    private String username;//住宿人员名
 }

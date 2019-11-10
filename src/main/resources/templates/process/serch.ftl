@@ -169,7 +169,7 @@ border-top: 1px solid #2196F3;
 				
 				<tr class="rile two">
 					<td class="wi" style="width:100px;"><label class="control-label">证明人</label></td>
-					<td  style="width:140px;"><div class="bottom">${(proveUserVO.userName)!''}</div></td>
+					<td  style="width:140px;"><div class="bottom">${(testifyUserPO.userName)!''}</div></td>
 					<td class="css"style="width:30px;"></td>
 					<td class="wi" style="width:90px;"><label class="control-label">相关客户</label></td>
 					<td colspan="4" style="width:44px;"><div class="bottom">${(reimbursementVO.name)!''}</div></td>
@@ -180,7 +180,7 @@ border-top: 1px solid #2196F3;
 				
 				<tr class="rile">
 					<td class="wi" style="width:100px;"><label class="control-label">报销人员</label></td>
-					<td  style="width:140px;"><div class="bottom">${(audit.userName)!''}</div></td>
+					<td  style="width:140px;"><div class="bottom">${(bursementUserPO.userName)!''}</div></td>
 					<td class="css"style="width:30px;"></td>
 					<td class="wi" style="width:90px;"><label class="control-label">报销日期</label></td>
 					<td colspan="4" style="width:44px;"><div class="bottom">${(reimbursementVO.reimbursementTime)!''}</div></td>
@@ -321,7 +321,7 @@ border-top: 1px solid #2196F3;
 							<a class="btn btn-default fault" onclick="javascript:window.print();">
 			   					<span class="glyphicon glyphicon glyphicon-print"></span> 打印</a>
 			   				<#if map.name="审核">
-							<a class="btn btn-primary huifu" href="auditing?id=${map.proId}">
+							<a class="btn btn-primary huifu" href="auditing?pricessId=${map.processId}">
 							<span class="glyphicon glyphicon-zoom-in"></span> 审核</a> 
 							</#if>
 						</div>

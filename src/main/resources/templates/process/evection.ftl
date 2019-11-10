@@ -110,7 +110,8 @@
                         </tr>
                         <tr>
                             <td class="title"><label class="control-label">标题</label></td>
-                            <td colspan="6"><input type="text" class="form-control inpu" name="processListVO.processName"/></td>
+                            <td colspan="6"><input type="text" class="form-control inpu"
+                                                   name="processListVO.processName"/></td>
 
                             <td class="title"><span>紧急程度</span></td>
                             <td colspan="6">
@@ -147,7 +148,6 @@
                         </tr>
 
                         <tr>
-
                             <td class="title"><label class="control-label">相关资料</label></td>
                             <td colspan="6">
                                 <div class="btn btn-default" style="position: relative; overflow: hidden;width: 100%;
@@ -171,13 +171,14 @@
                         <tr>
 
                             <td class="title"><label class="control-label">出差原因</label></td>
-                            <td colspan="6"><textarea class="form-control text" name="processListVO.processDescribe"></textarea>
+                            <td colspan="6"><textarea class="form-control text"
+                                                      name="processListVO.processDescribe"></textarea>
                             </td>
                         </tr>
                         <tr>
 
                             <td colspan="14" style="text-align: right;">
-                                <input type="text" class="days" name="processListVO.processDays" hidden="hidden"/>
+                                <input type="text" class="day" name="processListVO.processDays" hidden="hidden"/>
                                 <input type="text" value="出差申请" name="val" hidden="hidden"/>
                                 <input class="btn btn-primary" id="save" type="submit" value="保存"/>
                                 <input class="btn btn-default" id="cancel" type="button" value="取消"
@@ -198,7 +199,7 @@
             var $star = new Date($("#starTime").val());
             var $end = new Date($("#endTime").val());
             tt = $end.getTime() - $star.getTime();
-            $(".days").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));
+            $(".day").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));
         });
     })
 

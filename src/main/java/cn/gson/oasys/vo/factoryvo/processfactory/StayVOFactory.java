@@ -1,19 +1,24 @@
 package cn.gson.oasys.vo.factoryvo.processfactory;
 
+import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.model.po.StayPO;
 import cn.gson.oasys.vo.processV2.StayVO;
 
+import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StayVOFactory {
+    @Resource
+    private UserServiceV2 userServiceV2;
 
     public static StayVO createStayVO(StayPO stayPO) {
         StayVO stayVO = new StayVO();
         stayVO.setStayId(stayPO.getStayId());
 //        private User user;//出差人员user_name(用户ID)
-        stayVO.setStayTime(stayPO.getStayTime());
-        stayVO.setLeaveTime(stayPO.getLeaveTime());
+        stayVO.setStayTime(new Timestamp(stayPO.getStayTime().getTime()));
+        stayVO.setLeaveTime(new Timestamp(stayPO.getLeaveTime().getTime()));
         stayVO.setStayCity(stayPO.getStayCity());
         stayVO.setHotelName(stayPO.getHotelName());
         stayVO.setDay(stayPO.getDay());

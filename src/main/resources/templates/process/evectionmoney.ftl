@@ -309,9 +309,8 @@
                         <tr>
 
                             <td colspan="14" style="text-align: right;">
-                                <input type="text" value="出差费用" name="val" hidden="hidden"/>
                                 <input type="text" class="days" name="processListVO.processDays" hidden="hidden"/>
-
+                                <input type="text" value="出差费用" name="val" hidden="hidden"/>
                                 <input class="btn btn-primary" id="save" type="submit" value="保存"/>
                                 <input class="btn btn-default" id="cancel" type="button" value="取消"
                                        onclick="window.history.back();"/>
@@ -336,17 +335,11 @@
             var $end = new Date($("#endTime").val());
             tt = $end.getTime() - $star.getTime();
             $(".days").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));
+            $(".day").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));
         });
     })
 
-    // $(function () {
-    //     $(".text").focus(function () {
-    //         var $star1 = new Date($(".t1").val());
-    //         var $end1 = new Date($(".t2").val());
-    //         ttt = $end1.getTime() - $star1.getTime();
-    //         $(".day").val(Math.ceil(ttt / (24 * 60 * 60 * 1000)));
-    //     });
-    // })
+
 
 
     //表单提交前执行的onsubmit()方法；返回false时，执行相应的提示信息；返回true就提交表单到后台校验与执行

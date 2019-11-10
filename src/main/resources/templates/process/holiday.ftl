@@ -161,8 +161,6 @@
                             <td colspan="6"><input type="text" class="form-control inpu chu endTime"
                                                    name="processListVO.endTime"/></td>
                         </tr>
-
-
                         <tr>
                             <td class="title"><label class="control-label">请假天数</label></td>
                             <td colspan="6"><input type="text" class="form-control inpu days" name="leaveDays"

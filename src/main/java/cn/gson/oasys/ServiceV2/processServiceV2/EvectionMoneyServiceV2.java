@@ -1,5 +1,6 @@
 package cn.gson.oasys.ServiceV2.processServiceV2;
 
+import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.mappers.EvectionMoneyPOMapper;
 import cn.gson.oasys.mappers.StayPOMapper;
 import cn.gson.oasys.mappers.TrafficPOMapper;
@@ -18,6 +19,8 @@ public class EvectionMoneyServiceV2 {
     private StayPOMapper stayPOMapper;
     @Resource
     private TrafficPOMapper trafficPOMapper;
+    @Resource
+    private UserServiceV2 userServiceV2;
 
     /**
      * 根据主表ID找出差费用报销表
@@ -33,7 +36,7 @@ public class EvectionMoneyServiceV2 {
     }
 
     /**
-     * 根据费用报销表ID找住宿列表
+     * 根据费用出差报销表ID找住宿列表
      *
      * @param evectionMoneyPOId 费用报销表ID
      * @return
@@ -46,7 +49,7 @@ public class EvectionMoneyServiceV2 {
     }
 
     /**
-     * 根据费用报销表ID找交通列表
+     * 根据出差报销表ID找交通列表
      *
      * @param evectionMoneyPOId 费用报销表ID
      * @return
@@ -59,4 +62,39 @@ public class EvectionMoneyServiceV2 {
     }
 
 
+    /**
+     * 根据住宿表ID找住宿人员
+     *
+     * @param stayId
+     * @return
+     */
+    public UserPO userPOByStayId(Long stayId) {
+        StayPO stayPO = stayPOMapper.selectByPrimaryKey(stayId);
+        UserPO userPO = userServiceV2.getUserPOByUserId(stayPO.getUserName());
+        return userPO;
+    }
+
+    /**
+     * 根据交通表ID找出差人员名
+     *
+     * @param trafficId
+     * @return
+     */
+    public UserPO userPOByTrafficId(Long trafficId) {
+        TrafficPO trafficPO = trafficPOMapper.selectByPrimaryKey(trafficId);
+        UserPO userPO = userServiceV2.getUserPOByUserId(trafficPO.getUserName());
+        return userPO;
+    }
+
+
+    /**
+     * 根据交通费用表ID找交通费用表
+     *
+     * @param trafficId
+     * @return
+     */
+    public TrafficPO getTrafficPOByTrafficId(Long trafficId) {
+        TrafficPO trafficPO = trafficPOMapper.selectByPrimaryKey(trafficId);
+        return trafficPO;
+    }
 }

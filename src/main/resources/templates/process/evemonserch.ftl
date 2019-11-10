@@ -123,11 +123,11 @@ border-top: 1px solid #2196F3;
 </style>
 <div class="row" style="padding-top: 10px;">
 	<div class="col-md-2">
-		<h1 style="font-size: 24px; margin: 0;" class="">${map.typename}</h1>
+		<h1 style="font-size: 24px; margin: 0;" class="">${map.typeName}</h1>
 	</div>
 	<div class="col-md-10 text-right">
 		<a href="##"><span class="glyphicon glyphicon-home"></span> 首页</a> > <a
-			disabled="disabled">${map.typename}</a>
+			disabled="disabled">${map.typeName}</a>
 	</div>
 </div>
 <div class="row" style="padding-top: 15px;">
@@ -139,7 +139,7 @@ border-top: 1px solid #2196F3;
 				<table class="bo table ">
 			
 				<tr >
-					<td colspan="14" class="title"><h2>${map.typename}单</h2></td>
+					<td colspan="14" class="title"><h2>${map.typeName}单</h2></td>
 			
 				</tr>
 				<tr style="opacity: 0;">
@@ -151,7 +151,7 @@ border-top: 1px solid #2196F3;
 					<td class="css" style="width:30px;"></td>
 					
 					<td class="wi" style="width: 72px;"><label class="control-label">紧急程度</label></td>
-					<td colspan="4" class="underline" style="width: 60px;"><div class="bottom">${map.harryname}</div></td>
+					<td colspan="4" class="underline" style="width: 60px;"><div class="bottom">${map.exigencyName}</div></td>
 					
 				</tr>
 				<tr >
@@ -159,10 +159,10 @@ border-top: 1px solid #2196F3;
 					<td  style="width:140px;"><div class="bottom">${map.username}</div></td>
 					<td class="css"style="width:30px;"></td>
 					<td class="wi" style="width:90px;"><label class="control-label">提单部门</label></td>
-					<td colspan="4" style="width:44px;"><div class="bottom">${map.deptname}</div></td>
+					<td colspan="4" style="width:44px;"><div class="bottom">${map.deptName}</div></td>
 					<td class="css" style="width:30px;"></td>
 					<td class="wi"><label class="control-label">提单日期</label></td>
-					<td colspan="4" ><div class="bottom">${map.applytime}</div></td>
+					<td colspan="4" ><div class="bottom">${map.applyTime}</div></td>
 					
 				</tr>
 				
@@ -178,12 +178,12 @@ border-top: 1px solid #2196F3;
 					<td colspan="4" style="width:108px;"><div class="bottom">${map.endtime}</div></td>
 					<td class="css" style="width:30px;"></td>
 					<td class="wi"><label class="control-label">出差天数</label></td>
-					<td colspan="4" ><div class="bottom">${(map.tianshu)!''}</div></td>
+					<td colspan="4" ><div class="bottom">${(map.numberOfDays)!''}</div></td>
 				</tr>
 				
 				<tr class="rile">
 					<td class="wi" style="width:100px;"><label class="control-label">相关客户</label></td>
-					<td  style="width:140px;"><div class="bottom">${(emoney.name)!''}</div></td>
+					<td  style="width:140px;"><div class="bottom">${(evectionMoneyPO.name)!''}</div></td>
 					<td class="css"style="width:30px;"></td>
 					<td class="wi" style="width:90px;"><label class="control-label">相关票据</label></td>
 					
@@ -199,11 +199,11 @@ border-top: 1px solid #2196F3;
 							</div>
 					</td>
 					
-					<#if emoney.pro??>
+					<#if evectionMoneyPO.pro??>
 					<td class="css" style="width:30px;"></td>
 					<td class="wi"><label class="control-label">出差相关</label></td>
 					<td colspan="4" ><div class="bottom">
-						<a href="particular?id=${emoney.pro}&typename=出差申请" class="label xiugai">
+						<a href="particular?processId=${evectionMoneyPO.pro}&typeName=出差申请" class="label xiugai">
 						<span class="glyphicon glyphicon-search"></span> 查看</a> </div></td>
 						<#else>
 						<td class="css" colspan="6"></td>
@@ -229,10 +229,10 @@ border-top: 1px solid #2196F3;
 								</tr>
 							</thead>
 							<tbody class="tbody">
-							<#list tralist as tra>
+							<#list trafficVOList as tra>
 							<tr class="tr">
 									<td style="border-left: 0px ;"><span>${tra_index+1}</span></td>
-									<td colspan="2"><span>${tra.user.userName}</span></td>
+									<td colspan="2"><span>${tra.userVO.userName}</span></td>
 									<td colspan="2"><span>${tra.departTime}</span></td>
 									<td colspan="2"><span>${tra.departName}</span></td>
 									<td colspan="2"><span>${tra.reachName}</span></td>
@@ -252,7 +252,7 @@ border-top: 1px solid #2196F3;
 									<td colspan="2"><span></span></td>
 									<td colspan="2"><span></span></td>
 									<td colspan="2"><span></span></td>
-									<td  class="mm"><span>${tramoney}</span></td>
+									<td  class="mm"><span>${trafficMoneyAll}</span></td>
 						   	</tr>
 						   </tfoot>
 						</table>
@@ -279,10 +279,10 @@ border-top: 1px solid #2196F3;
 								</tr>
 							</thead>
 							<tbody class="tbody">
-							<#list staylist as stay>
+							<#list stayVOList as stay>
 							<tr class="tr">
 									<td style="border-left: 0px ;"><span>${stay_index+1}</span></td>
-									<td colspan="2"><span>${stay.user.userName}</span></td>
+									<td colspan="2"><span>${stay.userVO.userName}</span></td>
 									<td colspan="2"><span>${stay.stayTime}</span></td>
 									<td colspan="2"><span>${stay.leaveTime}</span></td>
 									<td colspan="2"><span>${stay.stayCity}</span></td>
@@ -302,7 +302,7 @@ border-top: 1px solid #2196F3;
 									<td colspan="2"><span></span></td>
 									<td colspan="2"><span></span></td>
 									<td colspan="2"><span></span></td>
-									<td  class="mm"><span>${staymoney}</span></td>
+									<td  class="mm"><span>${stayMoneyAll}</span></td>
 						   	</tr>
 						   </tfoot>
 						</table>
@@ -322,7 +322,7 @@ border-top: 1px solid #2196F3;
 											<span>(大写)</span>
 										</div>
 									</td>
-									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(allmoney)!''}</p></td>
+									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(amountMoney)!''}</p></td>
 								</tr>
 								
 								<tr>
@@ -353,7 +353,7 @@ border-top: 1px solid #2196F3;
 											<span>经理意见</span>
 										</div>
 									</td>
-									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(emoney.managerAdvice)!''}</p></td>
+									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(evectionMoneyPO.managerAdvice)!''}</p></td>
 								</tr>
 								
 								<tr>
@@ -364,7 +364,7 @@ border-top: 1px solid #2196F3;
 											
 										</div>
 									</td>
-									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(emoney.financialAdvice)!''}</p></td>
+									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(evectionMoneyPO.financialAdvice)!''}</p></td>
 								</tr>
 							</table>
 						</div>
@@ -379,7 +379,7 @@ border-top: 1px solid #2196F3;
 							<a class="btn btn-default fault" onclick="javascript:window.print();">
 			   					<span class="glyphicon glyphicon glyphicon-print"></span> 打印</a>
 			   				<#if map.name="审核">
-							<a class="btn btn-primary huifu" href="auditing?id=${map.proId}">
+							<a class="btn btn-primary huifu" href="auditing?pricessId=${map.processId}">
 							<span class="glyphicon glyphicon-zoom-in"></span> 审核</a> 
 							</#if>
 						</div>

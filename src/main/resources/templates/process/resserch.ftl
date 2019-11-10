@@ -195,7 +195,7 @@ border-top: 1px solid #2196F3;
 											<span>未完成事宜</span>
 										</div>
 									</td>
-									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(eve.nofinish)!''}</p></td>
+									<td colspan="13"><p style="margin-top: 20px;font-size:16px;">${(eve.noFinish)!''}</p></td>
 								</tr>
 								<tr>
 									<td style="width:130px;text-align:center;background-color:#6d9eeb;">
@@ -259,7 +259,7 @@ border-top: 1px solid #2196F3;
 							<a class="btn btn-default fault" onclick="javascript:window.print();">
 			   					<span class="glyphicon glyphicon glyphicon-print"></span> 打印</a>
 			   				<#if map.name="审核">
-							<a class="btn btn-primary huifu" href="auditing?id=${map.proId}">
+							<a class="btn btn-primary huifu" href="auditing?processId=${map.processId}">
 							<span class="glyphicon glyphicon-zoom-in"></span> 审核</a> 
 							</#if>
 						</div>

@@ -180,7 +180,7 @@ border-top: 1px solid #2196F3;
 				
 				<tr class="rile">
 					<td class="wi" style="width:100px;"><label class="control-label">加班类型</label></td>
-					<td  style="width:140px;"><div class="bottom">${(type)!''}</div></td>
+					<td  style="width:140px;"><div class="bottom">${(overTimeType)!''}</div></td>
 					<td class="css" colspan="12" ></td>
 					
 				</tr>
@@ -241,7 +241,7 @@ border-top: 1px solid #2196F3;
 							<a class="btn btn-default fault" onclick="javascript:window.print();">
 			   					<span class="glyphicon glyphicon glyphicon-print"></span> 打印</a>
 			   				<#if map.name="审核">
-							<a class="btn btn-primary huifu" href="auditing?id=${map.proId}">
+							<a class="btn btn-primary huifu" href="auditing?pricessId=${map.processId}">
 							<span class="glyphicon glyphicon-zoom-in"></span> 审核</a> 
 							</#if>
 						</div>

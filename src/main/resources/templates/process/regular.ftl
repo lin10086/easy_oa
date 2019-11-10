@@ -128,7 +128,7 @@
                         </tr>
                         <tr>
                             <td class="title"><label class="control-label">开始日期</label></td>
-                            <td colspan="6"><input type="text" class="form-control inpu" id="starTime"
+                            <td colspan="6"><input type="text" class="form-control inpu chu" id="starTime"
                                                    name="processListVO.startTime"/></td>
                             <td class="title"><label class="control-label">结束日期</label></td>
                             <td colspan="6"><input type="text" class="form-control inpu chu" id="endTime"
@@ -173,7 +173,7 @@
                         <tr>
 
                             <td colspan="14" style="text-align: right;">
-                                <input type="text" class="days" name="days" hidden="hidden"/>
+                                <#--<input type="text" class="days" name="days" hidden="hidden"/>-->
                                 <input type="text" class="day" name="processListVO.processDays" hidden="hidden"/>
                                 <input type="text" value="转正申请" name="val" hidden="hidden"/>
                                 <input class="btn btn-primary" id="save" type="submit" value="保存"/>
@@ -191,11 +191,10 @@
 <script>
 
     $(function () {
-        $(".days").focus(function () {
-            var $star = new Date($(".holistart").val());
-            var $end = new Date($(".holiend").val());
+        $(".text").focus(function () {
+            var $star = new Date($("#starTime").val());
+            var $end = new Date($("#endTime").val());
             tt = $end.getTime() - $star.getTime();
-            $(".days").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));
             $(".day").val(Math.ceil(tt / (24 * 60 * 60 * 1000)));
         });
     })

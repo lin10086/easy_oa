@@ -3,6 +3,7 @@ package cn.gson.oasys.vo.factoryvo.processfactory;
 import cn.gson.oasys.model.po.TrafficPO;
 import cn.gson.oasys.vo.processV2.TrafficVO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class TrafficVOFactory {
         trafficVO.setTrafficId(trafficPO.getTrafficId());
         //        private User user;//出差人员user_name(用户ID)
         trafficVO.setDepartName(trafficPO.getDepartName());
-        trafficVO.setDepartTime(trafficPO.getDepartTime());
+        trafficVO.setDepartTime(new Timestamp(trafficPO.getDepartTime().getTime()));
         trafficVO.setReachName(trafficPO.getReachName());
         trafficVO.setTrafficName(trafficPO.getTrafficName());
         trafficVO.setSeatType(trafficPO.getSeatType());

@@ -113,8 +113,10 @@ public class IndexController {
 
     @RequestMapping("index")
     public String index(HttpServletRequest req, Model model) {
+
         //获取session
         HttpSession session = req.getSession();
+        session.setAttribute("userId",5L);
         // 判断用户ID是否为空
         if (StringUtils.isEmpty(session.getAttribute("userId"))) {
             //为空返回登录页面
@@ -122,7 +124,6 @@ public class IndexController {
         }
         //parse***把String类型转换成基本类型
         //valueOf把String转换成包装类型
-        //Long userId = Long.parstLong(session.getAttribute("userId").toString);
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
         //根据用户ID查询用户信息
         User user = uDao.findOne(userId);
@@ -239,7 +240,8 @@ public class IndexController {
      */
     @RequestMapping("test2")
     public String test2(HttpSession session, Model model, HttpServletRequest request) {
-        Long userId = Long.parseLong(session.getAttribute("userId") + "");
+//        Long userId = Long.parseLong(session.getAttribute("userId") + "");
+        Long userId = 5L;
         User user = uDao.findOne(userId);
         request.setAttribute("user", user);
         //计算三个模块的记录条数
