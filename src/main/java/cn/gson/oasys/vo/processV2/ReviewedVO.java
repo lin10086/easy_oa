@@ -27,6 +27,6 @@ public class ReviewedVO {
 
     private Boolean del = false;//是否删除，默认未删除
 
-    private String username;//传过来的审核人的名字
+    private String username;//传过来的下一个审核人的名字
 
 }

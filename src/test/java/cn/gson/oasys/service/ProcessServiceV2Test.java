@@ -4,11 +4,11 @@ import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.mappers.ProcessListPOMapper;
 import cn.gson.oasys.mappers.ReviewedPOMapper;
-import cn.gson.oasys.model.po.ProcessListPO;
-import cn.gson.oasys.model.po.ProcessListPOExample;
-import cn.gson.oasys.model.po.ReviewedPO;
-import cn.gson.oasys.model.po.ReviewedPOExample;
+import cn.gson.oasys.mappers.UserPOMapper;
+import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.processV2.ProcessAuditVO;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +35,8 @@ public class ProcessServiceV2Test {
     private UserServiceV2 userServiceV2;
     @Resource
     private TypeServiceV2 typeServiceV2;
+    @Resource
+    private UserPOMapper userPOMapper;
 
     @Test
     public void getProcessAuditVOByProcessPOAndReviewedPO() {
@@ -66,7 +68,14 @@ public class ProcessServiceV2Test {
     }
 
     @Test
-    public void DateAndTimeTemp() {
+    public void processPOList() {
+        PageHelper.startPage(0,10);
+        UserPOExample userPOExample = new UserPOExample();
+        List<UserPO>userPOList = userPOMapper.selectByExample(userPOExample);
+        PageInfo pageInfo = new PageInfo(userPOList);
+        log.info("pageInfo={}",pageInfo);
+
+
     }
 }
 

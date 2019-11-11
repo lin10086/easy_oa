@@ -36,7 +36,7 @@ public class AttachmentServiceV2 {
      * @param attachmentListPOId 附件ID
      * @return
      */
-    public String getAttachmentPathByAttachmentListPOId(Long attachmentListPOId) {
+    public String getAttachmentPathByFileId(Long attachmentListPOId) {
         AttachmentListPO attachmentListPO = attachmentListPOMapper.selectByPrimaryKey(attachmentListPOId);
         String attachmentPath = attachmentListPO.getAttachmentPath();
         return attachmentPath;

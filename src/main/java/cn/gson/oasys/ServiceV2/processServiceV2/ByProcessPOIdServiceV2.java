@@ -118,9 +118,9 @@ public class ByProcessPOIdServiceV2 {
     }
 
     /**
-     * 根据主表ID和审核人ID找审核表
+     * 根据流程主表ID和审核人ID找审核表
      *
-     * @param processPOId 主表ID
+     * @param processPOId 流程主表ID
      * @param userId      审核人ID
      * @return
      */

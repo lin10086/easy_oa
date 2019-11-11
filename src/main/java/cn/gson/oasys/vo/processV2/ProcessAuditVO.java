@@ -23,5 +23,5 @@ public class ProcessAuditVO {
 
     private Long exigenceName;    //紧急程度（主表里deeplyId）
 
-    private Long statusId;//审核人状态(在审核表里）
+    private Long statusId;//审核状态(在审核表里）
 }

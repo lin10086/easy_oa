@@ -4,6 +4,7 @@ import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.ByProcessPOIdServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.ProcessAuditVOServiceV2;
+import cn.gson.oasys.ServiceV2.processServiceV2.ReviewedServiceV2;
 import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.*;
@@ -75,6 +76,8 @@ public class ProcessServiceV2 {
     private AttendanceServiceV2 attendanceServiceV2;
     @Resource
     private UserVOListServiceV2 userVOListServiceV2;
+    @Resource
+    private ReviewedServiceV2 reviewedServiceV2;
 
     /**
      * 汉语中数字大写
@@ -561,25 +564,65 @@ public class ProcessServiceV2 {
         return s.toString();
     }
 
-
     /**
-     * 获取流程审核页面的信息
+     * 根据用户ID设置审核页面信息
      *
-     * @param userPO
-     * @param page
-     * @param size
-     * @param val
-     * @param model
+     * @param userId
      * @return
      */
-    public List<ProcessAuditVO> getProcessAuditVOList(UserPO userPO, int page, int size, String val, Model model) {
+    public List<ProcessAuditVO> getProcessAuditVOByUserId(Long userId, int page, int size) {
+        List<ReviewedPO> reviewedPOList = reviewedServiceV2.getReviewedPOListByUserId(userId);
+
+        ProcessListPOExample processListPOExample = new ProcessListPOExample();
+        processListPOExample.setOrderByClause("apply_time DESC");
+        List<ProcessListPO> processListPOList = processListPOMapper.selectByExample(processListPOExample);
         PageHelper.startPage(page, size);
-        List<ProcessAuditVO> processAuditVOList = null;
-        if (StringUtil.isEmpty(val)) {
-            processAuditVOList = processAuditVOServiceV2.getProcessAuditVOByProcessPOAndReviewedPO(userPO, false);
+        List<ProcessAuditVO> processAuditVOList = new ArrayList<>();
+        for (ProcessListPO processListPO : processListPOList) {
+            for (ReviewedPO reviewedPO : reviewedPOList) {
+                if (processListPO.getProcessId() == reviewedPO.getProId()) {
+                    ProcessAuditVO processAuditVO = new ProcessAuditVO();
+                    processAuditVO.setProcessId(processListPO.getProcessId());
+                    processAuditVO.setTypeName(processListPO.getTypeName());
+                    processAuditVO.setProcessName(processListPO.getProcessName());
+                    processAuditVO.setUserName(userServiceV2.getUsernameByUserId(processListPO.getProcessUserId()));
+                    processAuditVO.setApplyTime(new Timestamp(processListPO.getApplyTime().getTime()));
+                    processAuditVO.setExigenceName(processListPO.getDeeplyId());
+                    processAuditVO.setStatusId(reviewedPO.getStatusId());
+                    processAuditVOList.add(processAuditVO);
+                }
+            }
+        }
+        return processAuditVOList;
+
+    }
+
+
+    //    根据审核人ID在审核表里找出流程主表ID在找出其他信息
+    /*public List<ProcessAuditVO> getProcessAuditVOByUserId(Long userId) {
+
+        List<ProcessAuditVO> processAuditVOList = new ArrayList<>();
+        //根据用户ID找出的审核表信息（有主表ID，状态ID，是否删除，建议人意见，审核时间）
+        List<ReviewedPO> reviewedPOList = reviewedServiceV2.getReviewedPOListByUserId(userId);
+
+        for (ProcessAuditVO processAuditVO : processAuditVOList) {
+            if (reviewedPOList!=null){
+                for (ReviewedPO reviewedPO : reviewedPOList) {
+                    // 根据审核表中流程主表ID找流程主表信息
+                    ProcessListPO processListPO = processListPOMapper.selectByPrimaryKey(reviewedPO.getProId());
+                    processAuditVO.setProcessId(processListPO.getProcessId());//流程主表ID
+                    processAuditVO.setTypeName(processListPO.getTypeName());//流程主表的类型名
+                    processAuditVO.setProcessName(processListPO.getProcessName());//流程主表的标题
+                    processAuditVO.setUserName(userServiceV2.getUserPOByUserId(processListPO.getProcessUserId()).getUserName());// 申请人名
+                    processAuditVO.setApplyTime(new Timestamp(processListPO.getApplyTime().getTime()));//申请时间
+                    processAuditVO.setExigenceName(processListPO.getDeeplyId());//紧急程度
+                    processAuditVO.setStatusId(reviewedPO.getStatusId());//审核状态
+                }
+            }
         }
         return processAuditVOList;
     }
+    */
 
     /**
      * 封装审核页面信息
@@ -591,23 +634,21 @@ public class ProcessServiceV2 {
         //创建list集合
         List<Map<String, Object>> list = new ArrayList<>();
 
-        for (int i = 0; i < processAuditVOList.size(); i++) {
+        for (ProcessAuditVO processAuditVO : processAuditVOList) {
 
-            String exigenceName = typeServiceV2.getTypeNameByTypeId(processAuditVOList.get(i).getExigenceName());
-//                    tydao.findname(prolist.get(i).getDeeply());
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(processAuditVOList.get(i).getStatusId());
-//            SystemStatusList status = sdao.findOne(prolist.get(i).getStatusId());
-            // 创建map集合用于用于存放前端的
+            String exigenceName = typeServiceV2.getTypeNameByTypeId(processAuditVO.getExigenceName());//紧急程度
+            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(processAuditVO.getStatusId());
+            // 创建map集合用于用于存放前端需要的数据
             Map<String, Object> result = new HashMap<>();
 
-            result.put("typeName", processAuditVOList.get(i).getTypeName());//主表的类型名
-            result.put("processName", processAuditVOList.get(i).getProcessName());//主表的标题
-            result.put("auditUsername", processAuditVOList.get(i).getUserName());//申请人姓名
-            result.put("applyTime", new Timestamp(processAuditVOList.get(i).getApplyTime().getTime()));//申请时间
+            result.put("typeName", processAuditVO.getTypeName());//主表的类型名
+            result.put("processName", processAuditVO.getProcessName());//主表的标题
+            result.put("auditUsername", processAuditVO.getUserName());//申请人姓名
+            result.put("applyTime", new Timestamp(processAuditVO.getApplyTime().getTime()));//申请时间
             result.put("exigence", exigenceName);//紧急程度
             result.put("statusName", statusPO.getStatusName());//状态名
             result.put("statusColor", statusPO.getStatusColor());//状态颜色
-            result.put("processId", processAuditVOList.get(i).getProcessId());//主表ID
+            result.put("processId", processAuditVO.getProcessId());//主表ID
             list.add(result);
 
         }
@@ -615,7 +656,7 @@ public class ProcessServiceV2 {
     }
 
     /**
-     * 用户封装
+     * 封装用户，部门，信息职位
      *
      * @param page
      * @param size
@@ -649,14 +690,14 @@ public class ProcessServiceV2 {
             PositionPO positionPO = positionServiceV2.getPositionByPositionId(auditUserPO.getPositionId());
             //根据审核人的状态ID获取审核人的状态信息
             StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(reviewedPOList.get(i).getStatusId());
-            result.put("poname", positionPO.getName());//获取审核人的职位名
-            result.put("username", auditUserPO.getUserName());//获取审核人的用户名
+            result.put("auditUserPositionName", positionPO.getName());//获取审核人的职位名
+            result.put("auditUsername", auditUserPO.getUserName());//获取审核人的用户名
             result.put("img", auditUserPO.getImgPath());//获取审核人图像路径
-            result.put("positionid", auditUserPO.getPositionId());//获取申请人的职位ID
-            result.put("retime", new Timestamp(reviewedPOList.get(i).getReviewedTime().getTime()));//获取审核时间
-            result.put("des", reviewedPOList.get(i).getAdvice());//获取审核人意见
-            result.put("restatus", statusPO.getStatusName());//从审核人状态信息中获取审核人的状态名
-            result.put("statuscolor", statusPO.getStatusColor());//从审核人状态信息中获取审核人的状态颜色
+            result.put("auditUserPositionId", auditUserPO.getPositionId());//获取审核人的职位ID
+            result.put("reviewedTime", new Timestamp(reviewedPOList.get(i).getReviewedTime().getTime()));//获取审核时间
+            result.put("auditUserAdvice", reviewedPOList.get(i).getAdvice());//获取审核人意见
+            result.put("reviewedStatusName", statusPO.getStatusName());//从审核人状态信息中获取审核人的状态名
+            result.put("statusColor", statusPO.getStatusColor());//从审核人状态信息中获取审核人的状态颜色
             auditMapList.add(result);//将map集合添加斤进list集合
         }
         return auditMapList;
@@ -665,44 +706,46 @@ public class ProcessServiceV2 {
     /**
      * 更新主表信息
      *
-     * @param processId  主表ID
-     * @param u          登录人信息
-     * @param reviewedVO 审核表
-     * @param pro        主表
-     * @param u2         下一个审核人
+     * @param processId       主表ID
+     * @param auditUserPO     登录人信息
+     * @param reviewedVO      审核表
+     * @param processListPO   流程主表
+     * @param nextAuditUserPO 下一个审核人
      */
-    public void save(Long processId, UserPO u, ReviewedVO reviewedVO, ProcessListPO pro, UserPO u2) {
-        ReviewedPO reviewedPO = byProcessPOIdServiceV2.getReviewedPOByProcessPOIdAndUserId(processId, u.getUserId());
+    public void save(Long processId, UserPO auditUserPO, ReviewedVO reviewedVO, ProcessListPO processListPO, UserPO nextAuditUserPO) {
+        // 根据流程主表ID和审核人id找审核表
+        ReviewedPO reviewedPO = byProcessPOIdServiceV2.getReviewedPOByProcessPOIdAndUserId(processId, auditUserPO.getUserId());
         reviewedPO.setStatusId(reviewedVO.getStatusId());
         reviewedPO.setAdvice(reviewedVO.getAdvice());
         reviewedPO.setReviewedTime(new Date());
         reviewedPOMapper.updateByPrimaryKeySelective(reviewedPO);
-
+        //把下一个审核人信息插入审核表
         ReviewedPO reviewedPO2 = new ReviewedPO();
-        reviewedPO2.setProId(pro.getProcessId());
-        reviewedPO2.setUserId(u2.getUserId());
-        reviewedPO2.setStatusId(23L);
+        reviewedPO2.setProId(processListPO.getProcessId());
+        reviewedPO2.setUserId(nextAuditUserPO.getUserId());
+        reviewedPO2.setStatusId(23L);//未处理
+        reviewedPO2.setReviewedTime(new Date());
+        reviewedPO2.setDel(0);
+        reviewedPO2.setAdvice(reviewedVO.getAdvice());
         reviewedPOMapper.insertSelective(reviewedPO2);
 
-        pro.getShenuser();
-        pro.setShenuser(pro.getShenuser() + ";" + u2.getUserName());
-        pro.setStatusId(24L);//改变主表的状态
-        processListPOMapper.updateByPrimaryKeySelective(pro);
+        processListPO.setShenuser(processListPO.getShenuser() + ";" + nextAuditUserPO.getUserName());//修改流程主表的审核人
+        processListPO.setStatusId(24L);//改变主表的状态（处理中）
+        processListPOMapper.updateByPrimaryKeySelective(processListPO);
 
     }
 
     /**
      * 更新审核表信息
      *
-     * @param re
-     * @param reviewed
+     * @param reviewedPO 数据库查到的
+     * @param reviewedVO 前端传过来的
      */
-    public void updateReviewedPO(ReviewedPO re, ReviewedVO reviewed) {
-        re.setAdvice(reviewed.getAdvice());
-        re.setStatusId(reviewed.getStatusId());
-        re.setReviewedTime(new Date());
-        reviewedPOMapper.updateByPrimaryKeySelective(re);
-
+    public void updateReviewedPO(ReviewedPO reviewedPO, ReviewedVO reviewedVO) {
+        reviewedPO.setAdvice(reviewedVO.getAdvice());
+        reviewedPO.setStatusId(reviewedVO.getStatusId());
+        reviewedPO.setReviewedTime(new Date());
+        reviewedPOMapper.updateByPrimaryKeySelective(reviewedPO);
     }
 
     /**

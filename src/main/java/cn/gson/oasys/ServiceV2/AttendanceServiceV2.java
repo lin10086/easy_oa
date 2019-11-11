@@ -323,18 +323,18 @@ public class AttendanceServiceV2 {
     /**
      * 插入考勤
      *
-     * @param typename
+     * @param typeName      流程主表的类型名
      * @param processListPO
      */
-    public void insertAttendsPO(String typename, ProcessListPO processListPO) {
+    public void insertAttendsPO(String typeName, ProcessListPO processListPO) {
         AttendsPO attendsPO = new AttendsPO();
         attendsPO.setHolidayDays((double) processListPO.getProcseeDays());
         attendsPO.setHolidayStart(processListPO.getStartTime());
         attendsPO.setAttendsUserId(processListPO.getProcessUserId());
-        if (("请假申请").equals(typename)) {
-            attendsPO.setStatusId(46L);
-        } else if (("出差申请").equals(typename)) {
-            attendsPO.setStatusId(47L);
+        if (("请假申请").equals(typeName)) {
+            attendsPO.setTypeId(46L);
+        } else if (("出差申请").equals(typeName)) {
+            attendsPO.setTypeId(47L);
         }
         attendsPOMapper.insertSelective(attendsPO);
     }

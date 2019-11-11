@@ -9,6 +9,7 @@ import cn.gson.oasys.vo.processV2.ProcessAuditVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,33 +26,10 @@ public class ProcessAuditVOServiceV2 {
     private UserServiceV2 userServiceV2;
     @Resource
     private TypeServiceV2 typeServiceV2;
+    @Resource
+    private ReviewedServiceV2 reviewedServiceV2;
 
-    public List<ProcessAuditVO> getProcessAuditVOByProcessPOAndReviewedPO(UserPO userPO, Boolean bo) {
-        ProcessListPOExample processListPOExample = new ProcessListPOExample();
-        List<ProcessListPO> processListPOList = processListPOMapper.selectByExample(processListPOExample);
 
-        ReviewedPOExample reviewedPOExample = new ReviewedPOExample();
-        reviewedPOExample.createCriteria().andUserIdEqualTo(userPO.getFatherId()).andDelEqualTo(bo == false ? 0 : 1);
-        reviewedPOExample.setOrderByClause("status_id");
-        List<ReviewedPO> reviewedPOList = reviewedPOMapper.selectByExample(reviewedPOExample);
 
-        List<ProcessAuditVO> processAuditVOList = new ArrayList<>();
-        for (ProcessListPO processListPO : processListPOList) {
-            for (ReviewedPO reviewedPO : reviewedPOList) {
-                if (processListPO.getProcessId() == reviewedPO.getProId() && reviewedPO.getUserId() == userPO.getFatherId()) {
-                    ProcessAuditVO processAuditVO = new ProcessAuditVO();
-                    processAuditVO.setProcessId(processListPO.getProcessId());
-                    processAuditVO.setTypeName(processListPO.getTypeName());
-                    processAuditVO.setProcessName(processListPO.getProcessName());
-                    processAuditVO.setUserName(userServiceV2.getUsernameByUserId(processListPO.getProcessUserId()));
-                    processAuditVO.setApplyTime(processListPO.getApplyTime());
-                    processAuditVO.setExigenceName(processListPO.getDeeplyId());
-                    processAuditVO.setStatusId(reviewedPO.getStatusId());
-                    processAuditVOList.add(processAuditVO);
-                }
-            }
-        }
-        return processAuditVOList;
 
-    }
 }
