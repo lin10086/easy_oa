@@ -70,7 +70,7 @@ public class UserpanelController {
 	@PostConstruct
 	public void UserpanelController(){
 		try {
-			rootpath= ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/","/static/image");
+			rootpath= ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/","/src/main//resources/static");
 			System.out.println(rootpath);
 
 		}catch (IOException e){
@@ -239,7 +239,7 @@ public class UserpanelController {
 		System.out.println(projectPath);
 		String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
 		
-		String path = startpath.replace("/image", "");
+		String path = startpath.replace("/image", "/images");
 		
 		File f = new File(rootpath, path);
 		

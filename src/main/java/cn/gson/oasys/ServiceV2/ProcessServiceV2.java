@@ -14,11 +14,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -106,6 +111,43 @@ public class ProcessServiceV2 {
      * 特殊字符：零元整
      */
     private static final String CN_ZERO_FULL = "零元" + CN_FULL;
+
+
+
+    /**
+     * 写文件 方法
+     *
+     * @param response
+     * @param file
+     * @throws IOException
+     */
+    public void writefile(HttpServletResponse response, File file) {
+        ServletOutputStream sos = null;
+        FileInputStream aa = null;
+        try {
+            aa = new FileInputStream(file);
+            sos = response.getOutputStream();
+            // 读取文件问字节码
+            byte[] data = new byte[(int) file.length()];
+            IOUtils.readFully(aa, data);
+            // 将文件流输出到浏览器
+            IOUtils.write(data, sos);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            try {
+                sos.close();
+                aa.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
 
     //根据parent_id查找费用科目列表
     public List<SubjectPO> getSubjectByParentId(Long parentId) {
@@ -356,7 +398,6 @@ public class ProcessServiceV2 {
      * @throws IOException
      */
     public AttachmentListPO insertAttachment(UserPO applyUserPO, MultipartFile filePath) throws IllegalStateException, IOException {
-        AttachmentVO attachmentVO = null;//附件
         //file.getOriginalFilename()是得到上传时的文件名。
         if (!StringUtil.isEmpty(filePath.getOriginalFilename())) {
             //上传附件
@@ -580,7 +621,7 @@ public class ProcessServiceV2 {
         List<ProcessAuditVO> processAuditVOList = new ArrayList<>();
         for (ProcessListPO processListPO : processListPOList) {
             for (ReviewedPO reviewedPO : reviewedPOList) {
-                if (processListPO.getProcessId() == reviewedPO.getProId()) {
+                if (processListPO.getProcessId().equals(reviewedPO.getProId())) {
                     ProcessAuditVO processAuditVO = new ProcessAuditVO();
                     processAuditVO.setProcessId(processListPO.getProcessId());
                     processAuditVO.setTypeName(processListPO.getTypeName());

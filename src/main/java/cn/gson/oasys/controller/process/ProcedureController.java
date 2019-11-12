@@ -171,15 +171,13 @@ public class ProcedureController {
     private AttendceDao adao;
 
 
-    //	@Value("${attachment.roopath}")
+//    	@Value("${attachment.roopath}")
     private String rootpath;
 
     @PostConstruct
     public void UserpanelController() {
         try {
-            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "");
-            System.out.println(rootpath);
-
+            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main//resources/attachment");
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
         }
@@ -1208,10 +1206,8 @@ public class ProcedureController {
             BursementPO bursementPO = processServiceV2.insertBursementPO(reimbursementVO, processListPO, userId, auditUserId);
             //插入报销明细表
             processServiceV2.insertDetailsReimbursePO(reimbursementVO, bursementPO.getBursementId());
-//            budao.save(bu);
             //存审核表(申请人，主表）
             processServiceV2.insertReviewedPO(auditUserPO, processListPO);
-//            proservice.index7(reuser, pro);
         } else {
             return "common/proce";
         }
@@ -1604,7 +1600,7 @@ public class ProcedureController {
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_process_list");
         //22正常,23重要,24紧急
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
-//        model.addAttribute("page", pageInfo);//分页信息
+        model.addAttribute("page", pageInfo);//分页信息
         model.addAttribute("processListVOList", processListVOList);//根据用户ID找出流程主表的信息
         model.addAttribute("statusPOList", statusPOList);
         model.addAttribute("typePOList", typePOList);
@@ -1802,6 +1798,7 @@ public class ProcedureController {
         List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
         PageInfo pageInfo = new PageInfo(userVOList);
         model.addAttribute("userVOList", userVOList);//用户信息
+        model.addAttribute("page", pageInfo);//用户信息
 //        processServiceV2.getUser(page, size, model);//用户封装
         List<Map<String, Object>> mapList = processServiceV2.getAuditUser(processListPO);//审核人封装
         model.addAttribute("mapList", mapList);//审核人的信息
@@ -1821,8 +1818,7 @@ public class ProcedureController {
      */
     @RequestMapping("susave")
     public String auditSave(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req, ReviewedVO reviewedVO) {
-//        reviewedVO.setUsername("甄姬");
-        reviewedVO.setUsername("甄姬2");
+        reviewedVO.setUsername("soli");
         UserPO auditUserPO = userServiceV2.getUserPOByUserId(userId);//登录人信息
         String name = null;
         String processTypeName = req.getParameter("processTypeName");//流程主表类型名
@@ -2011,10 +2007,11 @@ public class ProcedureController {
     public void downFile(HttpServletResponse response, @RequestParam("fileid") Long fileId) {
         try {
             AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(fileId);
-            File file = new File(rootpath, attachmentListPO.getAttachmentPath());
+//            File file = new File(rootpath, attachmentListPO.getAttachmentPath());
+            File file = new File(attachmentListPO.getAttachmentPath());
             response.setContentLength(Integer.parseInt(attachmentListPO.getAttachmentSize()));
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(attachmentListPO.getAttachmentName().getBytes("UTF-8"), "ISO8859-1"));
-            proservice.writefile(response, file);
+            processServiceV2.writefile(response, file);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2037,7 +2034,8 @@ public class ProcedureController {
 
         String path = startpath.replace("/show", "");
 
-        File f = new File(rootpath, path);
+//        File f = new File(rootpath, path);
+        File f = new File(path);
         System.out.println(f.getAbsolutePath());
         ServletOutputStream sos = response.getOutputStream();
         FileInputStream input = new FileInputStream(f.getPath());

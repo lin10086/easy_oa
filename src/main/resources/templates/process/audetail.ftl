@@ -241,7 +241,7 @@
     $(function () {
         $(".text").click(function () {
             var se = $("select").find("option:selected").text();
-            if (se == "未通过" && (${positionid} != 5 || ${positionid} != 7))
+            if (se == "未通过" && (${auditUserPOPositionId}!=null && (${auditUserPOPositionId} != 5 || ${auditUserPOPositionId} != 7)))
             {
                 $(".liu").css("display", "none");
                 $(".jie").css("display", "inline-block");
@@ -256,6 +256,20 @@
 
 
     });
+
+    $(function () {
+        $('.reciver').on('click', function () {
+            $('#myModal').modal("toggle");
+            $(this).siblings("input").val("");
+            $('.reciver').removeClass("qu");
+            $(this).addClass("qu");
+        });
+        $("#recive_list").change(function () {
+            var $val = $(this).val();
+            $(".qu").siblings("input").val($val);
+
+        });
+    }
 
 
 </script>

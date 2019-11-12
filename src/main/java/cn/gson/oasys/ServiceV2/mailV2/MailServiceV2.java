@@ -129,9 +129,9 @@ public class MailServiceV2 {
     @PostConstruct
     public void UserpanelController() {
         try {
-            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/static/attachment");
-            System.out.println(rootpath);
 
+//            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/static/attachment");
+            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main//resources/attachment");
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
         }
@@ -323,11 +323,11 @@ public class MailServiceV2 {
     }
 
 
-
     /**
+     * 上传附件
      *
      * @param file
-     * @param applyUserPO
+     * @param applyUserPO 登录人
      * @return
      * @throws IllegalStateException
      * @throws IOException
@@ -335,7 +335,7 @@ public class MailServiceV2 {
     public AttachmentListPO uploadAttachmentListPO(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM");
         File root = new File(rootpath, simpleDateFormat.format(new Date()));
-        //获取登录名
+        //用当前时间的年月和用户名做文件夹
         File savePath = new File(root, applyUserPO.getUserName());
 
         if (!savePath.exists()) {
@@ -348,12 +348,14 @@ public class MailServiceV2 {
             String suffix = FilenameUtils.getExtension(fileName);
             //新文件名
             String newFileName = UUID.randomUUID().toString().toLowerCase() + "." + suffix;
+            //文件夹 文件名
             File targetFile = new File(savePath, newFileName);
             file.transferTo(targetFile);
 
+            String str = targetFile.getPath().replace(rootpath,"");
             AttachmentListPO attachmentPO = new AttachmentListPO();
             attachmentPO.setAttachmentName(file.getOriginalFilename());
-            attachmentPO.setAttachmentPath(targetFile.getAbsolutePath().replace("\\", "/").replace(rootpath, ""));
+            attachmentPO.setAttachmentPath(str);//没起作用
             attachmentPO.setAttachmentShuffix(suffix);
             attachmentPO.setAttachmentSize(file.getSize() + "");
             attachmentPO.setAttachmentType(file.getContentType());

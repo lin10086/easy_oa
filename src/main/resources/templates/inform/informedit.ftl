@@ -78,7 +78,10 @@
                             <div class="col-md-6 form-group">
                                 <label class="control-label"><span>链接</span></label>
                                 <input class="form-control" value="${(noticeList.url)!''}" name="url"/>
+
                             </div>
+
+
                             <div class="col-md-6 form-group">
                                 <label class="control-label"><span>描述</span></label>
                                 <textarea class="form-control text" rows="5" cols="20"

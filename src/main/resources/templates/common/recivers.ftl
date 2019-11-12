@@ -27,7 +27,7 @@
 														<#if userVO.imgPath?? && userVO.imgPath!=''  >
                                                             <img style="width: 30px;height: 30px;"
                                                                  class="profile-user-img img-responsive img-circle"
-                                                                 src="/image/${userVO.imgPath}"/>
+                                                                 src="/images/${userVO.imgPath}"/>
 														<#else>
                                                             <img style="width: 30px;height: 30px;"
                                                                  class="profile-user-img img-responsive img-circle"
