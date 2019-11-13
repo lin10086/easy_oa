@@ -2007,8 +2007,7 @@ public class ProcedureController {
     public void downFile(HttpServletResponse response, @RequestParam("fileid") Long fileId) {
         try {
             AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(fileId);
-//            File file = new File(rootpath, attachmentListPO.getAttachmentPath());
-            File file = new File(attachmentListPO.getAttachmentPath());
+            File file = new File(rootpath, attachmentListPO.getAttachmentPath());
             response.setContentLength(Integer.parseInt(attachmentListPO.getAttachmentSize()));
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(attachmentListPO.getAttachmentName().getBytes("UTF-8"), "ISO8859-1"));
             processServiceV2.writefile(response, file);
@@ -2034,8 +2033,7 @@ public class ProcedureController {
 
         String path = startpath.replace("/show", "");
 
-//        File f = new File(rootpath, path);
-        File f = new File(path);
+        File f = new File(rootpath, path);
         System.out.println(f.getAbsolutePath());
         ServletOutputStream sos = response.getOutputStream();
         FileInputStream input = new FileInputStream(f.getPath());

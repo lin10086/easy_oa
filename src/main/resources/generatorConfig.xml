@@ -169,5 +169,12 @@
             <generatedKey column="relatin_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="relatin_id" javaType="Long"/>
         </table>
+        <!--邮箱账号表-->
+        <table tableName="aoa_mailnumber" domainObjectName="MailNumberPO">
+            <generatedKey column="mail_number_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="mail_number_id" javaType="Long"/>
+        </table>
+
+
     </context>
 </generatorConfiguration>

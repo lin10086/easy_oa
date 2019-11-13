@@ -44,7 +44,8 @@ public class PathTest {
     @Test
     public void String(){
         String str ="sjknfdzjvna";
-        String str1 =str.replace("z","");
+        String str2 ="kn";
+        String str1 =str.replace(str2,"");
         log.info("str1={}",str1);
     }
 }

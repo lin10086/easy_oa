@@ -202,8 +202,8 @@ public class IndexController {
             for (int i = 0; i < oneMenuAll.size(); i++) {
                 twoMenuAll = rdao.findbyparentxianall(oneMenuAll.get(i).getMenuId(), user.getRole().getRoleId(), true, true);//找子菜单
             }
-            req.setAttribute("oneMenuAll", oneMenuAll);
-            req.setAttribute("twoMenuAll", twoMenuAll);
+            req.setAttribute("oneMenuAll", oneMenuAll);//一次菜单
+            req.setAttribute("twoMenuAll", twoMenuAll);//二级菜单
         } else {
             menuService.findMenuSys(req, user);
         }

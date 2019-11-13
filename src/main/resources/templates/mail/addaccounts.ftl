@@ -52,7 +52,7 @@ a:hover {
 							<label class="control-label"> <span>类型</span></label>
 							<#if mails??>
 								 <select class="form-control" name="mailType">
-									<option value="${mails.mailType}">${type}</option>
+									<option value="${mails.mailType}">${typeName}</option>
 									<#if mails.mailType==1>
 									<option value="2">公司邮件</option>
 									<#else>
@@ -61,7 +61,7 @@ a:hover {
 								</select>
 							<#else>
 								 <select class="form-control" name="mailType">
-									<#list typelist as type>
+									<#list typePOList as type>
 										<option value="${type.typeId}">${type.typeName}</option>
 									</#list>
 								</select>
@@ -71,7 +71,7 @@ a:hover {
 							<label class="control-label">状态</label> 
 							<#if mails??>
 							<select class="form-control" name="status">
-								<option value="${mails.status}">${status}</option>
+								<option value="${mails.status}">${statusName}</option>
 								<#if mails.status==1>
 								<option value="2">无效</option>
 								<#else>
@@ -80,7 +80,7 @@ a:hover {
 							</select>
 							<#else>
 							<select class="form-control" name="status">
-								<#list statuslist as status>
+								<#list statusPOList as status>
 								<option value="${status.statusId}">${status.statusName}</option>
 								</#list>
 							</select>
