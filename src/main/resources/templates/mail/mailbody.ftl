@@ -58,9 +58,9 @@
 						</#if>
 						<td><span>${(mail.time)!''}</span></td>
 						<#if mail.fileid??>
-						<td><span class="glyphicon glyphicon-paperclip"></span></td>
+						<td><span class="glyphicon glyphicon-paperclip">附件ID：${(mail.fileid)}</span></td>
 						<#else>
-						<td><span></span></td>
+						<td><span>无附件</span></td>
 						</#if>
 						<td>
 							<div class="label ${mail.statuscolor}">${(mail.statusname)!''}</div>
@@ -80,7 +80,7 @@
 			</div>
 		</div>
 		<!--盒子尾-->
-		<#include "/common/paging.ftl">
+		<#--<#include "/common/paging.ftl">-->
 <script>
 	$(function(){
 

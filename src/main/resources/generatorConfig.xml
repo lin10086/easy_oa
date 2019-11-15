@@ -175,6 +175,16 @@
             <columnOverride column="mail_number_id" javaType="Long"/>
         </table>
 
+        <!--内部邮件收件人中间表-->
+        <table tableName="aoa_mail_reciver" domainObjectName="MailReciverPO">
+            <generatedKey column="pk_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="pk_id" javaType="Long"/>
+        </table>
+        <!--内部邮件-->
+        <table tableName="aoa_in_mail_list" domainObjectName="InMailListPO">
+            <generatedKey column="mail_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="mail_id" javaType="Long"/>
+        </table>
 
     </context>
 </generatorConfiguration>

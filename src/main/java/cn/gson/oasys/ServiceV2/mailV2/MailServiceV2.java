@@ -1,17 +1,21 @@
 package cn.gson.oasys.ServiceV2.mailV2;
 
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
+import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.mappers.MailNumberPOMapper;
 import cn.gson.oasys.model.dao.maildao.InMailDao;
 import cn.gson.oasys.model.dao.maildao.MailnumberDao;
 import cn.gson.oasys.model.dao.maildao.MailreciverDao;
 import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
-import cn.gson.oasys.model.entity.mail.Mailnumber;
+import cn.gson.oasys.model.entity.mail.Inmaillist;
+import cn.gson.oasys.model.entity.mail.Pagemail;
 import cn.gson.oasys.model.entity.system.SystemStatusList;
+import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.mailV2.MailNumberV2;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -21,7 +25,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,6 +57,12 @@ public class MailServiceV2 {
     private MailNumberPOMapper mailNumberPOMapper;
     @Resource
     private StatusServiceV2 statusServiceV2;
+    @Resource
+    private TypeServiceV2 typeServiceV2;
+    @Resource
+    private MailReciverServiceV2 mailReciverServiceV2;
+    @Resource
+    private InMailListServiceV2 inMailListServiceV2;
 
     private String rootPath;
 
@@ -192,5 +201,125 @@ public class MailServiceV2 {
         mailNumberPOMapper.deleteByPrimaryKey(mailNumberPOId);
     }
 
+
+    /**
+     * 收件箱
+     */
+    public List<Pagemail> recive(int page, int size, Long userId, String title) {
+
+        PageHelper.startPage(page, size);
+        List<Pagemail> pagemailList = new ArrayList<>();
+
+//        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
+//        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
+        List<MailReciverPO> mailReciverPOList = null;
+        if ("收件箱".equals(title)) {
+            mailReciverPOList = mailReciverServiceV2.getDelMailReciverPOList(false, userId);
+        } else {
+            //垃圾箱
+            mailReciverPOList = mailReciverServiceV2.getDelMailReciverPOList(true, userId);
+        }
+        List<InMailListPO> inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESC();
+        for (MailReciverPO mailReciverPO : mailReciverPOList) {
+            for (InMailListPO inMailListPO : inMailListPOList) {
+                if (mailReciverPO.getMailId().equals(inMailListPO.getMailId())) {
+                    Pagemail pagemail = new Pagemail();
+                    pagemail.setMailType((long) mailReciverPO.getIsStar());
+                    pagemail.setRead(mailReciverPO.getIsRead() == 0 ? false : true);
+                    pagemail.setMailId(inMailListPO.getMailId());
+                    pagemail.setMailType(inMailListPO.getMailType());
+                    pagemail.setMailStatusid(inMailListPO.getMailStatusId());
+                    pagemail.setMailTitle(inMailListPO.getMailTitle());
+                    pagemail.setInReceiver(inMailListPO.getInReceiver());
+                    pagemail.setMailFileid(inMailListPO.getMailFileId());
+                    pagemail.setMailCreateTime(inMailListPO.getMailCreateTime());
+                    pagemailList.add(pagemail);
+                }
+            }
+        }
+        return pagemailList;
+    }
+
+    /**
+     * 封装Pagemail
+     */
+    public List<Map<String, Object>> mail(List<Pagemail> pageMailList) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Pagemail pagemail : pageMailList) {
+            Map<String, Object> result = new HashMap<>();
+            String typeName = typeServiceV2.getTypePOByTypeId(pagemail.getMailType()).getTypeName();
+            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(pagemail.getMailStatusid());
+            result.put("typename", typeName);
+            result.put("statusname", statusPO.getStatusName());
+            result.put("statuscolor", statusPO.getStatusColor());
+            result.put("star", pagemail.getStar());
+            result.put("read", pagemail.getRead());
+            result.put("time", new Timestamp(pagemail.getMailCreateTime().getTime()));
+            result.put("reciver", pagemail.getInReceiver());
+            result.put("title", pagemail.getMailTitle());
+            result.put("mailid", pagemail.getMailId());
+            result.put("fileid", pagemail.getMailFileid());
+            list.add(result);
+        }
+        return list;
+    }
+
+    /**
+     * 发件箱
+     */
+    public List<InMailListPO> inmail(int page, int size, Long userId,String title) {
+        PageHelper.startPage(page, size);
+        List<InMailListPO> inMailListPOList = null;
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
+        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
+        if ("发件箱".equals(title)){
+        inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(userId, true, false);
+        }else {
+//            草稿箱
+        inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(userId, false, false);
+
+        }
+        return inMailListPOList;
+
+    }
+
+    /**
+     * 发件箱封装
+     */
+    public List<Map<String, Object>> maillist(List<InMailListPO> inMailListPOList) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (InMailListPO inMailListPO : inMailListPOList) {
+            Map<String, Object> result = new HashMap<>();
+            String typeName = typeServiceV2.getTypePOByTypeId(inMailListPO.getMailType()).getTypeName();
+            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(inMailListPO.getMailStatusId());
+            result.put("typename", typeName);
+            result.put("statusname", statusPO.getStatusName());
+            result.put("statuscolor", statusPO.getStatusColor());
+            result.put("star", inMailListPO.getMailStar() == 0 ? false : true);
+            result.put("read", true);
+            result.put("time", new Timestamp(inMailListPO.getMailCreateTime().getTime()));
+            result.put("reciver", inMailListPO.getInReceiver());
+            result.put("title", inMailListPO.getMailTitle());
+            result.put("mailid", inMailListPO.getMailId());
+            result.put("fileid", inMailListPO.getMailFileId());
+            list.add(result);
+
+        }
+        return list;
+    }
+
+    /**
+     * 根据用户ID和状态找邮箱账号
+     *
+     * @param userId
+     * @param statusId
+     * @return
+     */
+    public List<MailNumberPO> getMailNumberPOListByStatusAndMailUserId(Long userId, Long statusId) {
+        MailNumberPOExample mailNumberPOExample = new MailNumberPOExample();
+        mailNumberPOExample.createCriteria().andMailNumUserIdEqualTo(userId).andStatusEqualTo(statusId);
+        List<MailNumberPO> mailNumberPOList = mailNumberPOMapper.selectByExample(mailNumberPOExample);
+        return mailNumberPOList;
+    }
 
 }

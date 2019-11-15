@@ -1,5 +1,6 @@
-package cn.gson.oasys.ServiceV2;
+package cn.gson.oasys.ServiceV2.processServiceV2;
 
+import cn.gson.oasys.ServiceV2.*;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.ByProcessPOIdServiceV2;

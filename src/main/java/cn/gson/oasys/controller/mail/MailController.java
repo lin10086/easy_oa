@@ -10,19 +10,18 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import cn.gson.oasys.ServiceV2.AttendanceServiceV2;
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
 import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.mailV2.InMailListServiceV2;
+import cn.gson.oasys.ServiceV2.mailV2.MailReciverServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
-import cn.gson.oasys.model.po.MailNumberPO;
-import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.model.po.TypePO;
-import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.UserVO;
-import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
+import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
+import cn.gson.oasys.ServiceV2.processServiceV2.ProcessServiceV2;
+import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.mailV2.MailNumberV2;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -59,9 +58,6 @@ import cn.gson.oasys.model.entity.mail.Mailnumber;
 import cn.gson.oasys.model.entity.mail.Mailreciver;
 import cn.gson.oasys.model.entity.mail.Pagemail;
 import cn.gson.oasys.model.entity.note.Attachment;
-import cn.gson.oasys.model.entity.role.Role;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.Position;
 import cn.gson.oasys.model.entity.user.User;
@@ -217,11 +213,11 @@ public class MailController {
     }*/
     //=========================================
 
-    /**
+    /* *//**
      * 邮件管理主页
      *
      * @return
-     */
+     *//*
     @RequestMapping("mail")
     public String index(@SessionAttribute("userId") Long userId, Model model,
                         @RequestParam(value = "page", defaultValue = "0") int page,
@@ -251,11 +247,59 @@ public class MailController {
         model.addAttribute("sort", "&title=收件箱");
         return "mail/mail";
     }
+*/
+
+
+    /**
+     * 写信
+     *//*
+    @RequestMapping("wmail")
+    public String index2(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "size", defaultValue = "10") int size) {
+        User mu = udao.findOne(userId);
+        //得到编辑过来的id
+        String id = null;
+        if (!StringUtil.isEmpty(request.getParameter("id"))) {
+            id = request.getParameter("id");
+        }
+        //回复那边过来的
+        String huifu = null;
+        if (!StringUtil.isEmpty(id)) {
+            Long lid = Long.parseLong(id);
+            //找到这条邮件
+            Inmaillist mail = imdao.findOne(lid);
+            if (!StringUtil.isEmpty(request.getParameter("huifu"))) {
+                huifu = request.getParameter("huifu");
+                model.addAttribute("title", huifu + mail.getMailTitle());
+                model.addAttribute("content", mail.getContent());
+            } else {
+                model.addAttribute("title", mail.getMailTitle());
+                model.addAttribute("content", mail.getContent());
+            }
+            model.addAttribute("status", sdao.findOne(mail.getMailStatusid()));
+            model.addAttribute("type", tydao.findOne(mail.getMailType()));
+            model.addAttribute("id", "回复");
+        } else {
+            List<SystemTypeList> typelist = tydao.findByTypeModel("aoa_in_mail_list");
+            List<SystemStatusList> statuslist = sdao.findByStatusModel("aoa_in_mail_list");
+            model.addAttribute("typelist", typelist);
+            model.addAttribute("statuslist", statuslist);
+            model.addAttribute("id", "新发");
+        }
+        //查看该用户所创建的有效邮箱账号
+        List<Mailnumber> mailnum = mndao.findByStatusAndMailUserId(1L, mu);
+        proservice.user(page, size, model);
+        model.addAttribute("mailnum", mailnum);
+
+        return "mail/wirtemail";
+    }
+*/
 
     /**
      * 删除邮件@SessionAttribute("userId") Long userId
      */
-    @RequestMapping("alldelete")
+   /* @RequestMapping("alldelete")
     public String delete(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model,
                          @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -364,6 +408,52 @@ public class MailController {
         return "mail/mailbody";
 
     }
+    */
+
+    /**
+     * 查看邮件
+     *//*
+    @RequestMapping("smail")
+    public String index4(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model) {
+        User mu = udao.findOne(userId);
+        //邮件id
+        Long id = Long.parseLong(req.getParameter("id"));
+        //title
+        String title = req.getParameter("title");
+        //找到中间表信息
+        if (("收件箱").equals(title) || ("垃圾箱").equals(title)) {
+            Mailreciver mailr = mrdao.findbyReciverIdAndmailId(mu, id);
+            mailr.setRead(true);
+            mrdao.save(mailr);
+        }
+
+        //找到该邮件信息
+        Inmaillist mail = imdao.findOne(id);
+        String filetype = null;
+        if (!Objects.isNull(mail.getMailFileid())) {
+            String filepath = mail.getMailFileid().getAttachmentPath();
+            System.out.println(filepath);
+            if (mail.getMailFileid().getAttachmentType().startsWith("image")) {
+
+                filetype = "img";
+            } else {
+                filetype = "appli";
+
+            }
+            model.addAttribute("filepath", filepath);
+            model.addAttribute("filetype", filetype);
+        }
+        User pushuser = udao.findOne(mail.getMailUserid().getUserId());
+        model.addAttribute("pushname", pushuser.getUserName());
+        model.addAttribute("mail", mail);
+        model.addAttribute("mess", title);
+        model.addAttribute("file", mail.getMailFileid());
+
+        return "mail/seemail";
+    }
+*/
+//------------------------------------------------------------------------------------------------
+
 
     /**
      * 批量查看
@@ -377,25 +467,20 @@ public class MailController {
         String ids = req.getParameter("ids");
         Page<Pagemail> pagelist = null;
         List<Map<String, Object>> maillist = null;
-
         if (("收件箱").equals(title)) {
             StringTokenizer st = new StringTokenizer(ids, ",");
             while (st.hasMoreElements()) {
                 //找到该用户联系邮件的中间记录
                 Mailreciver mailr = mrdao.findbyReciverIdAndmailId(user, Long.parseLong(st.nextToken()));
                 if (mailr.getRead().equals(false)) {
-
                     mailr.setRead(true);
                 } else {
-
                     mailr.setRead(false);
                 }
-
                 mrdao.save(mailr);
             }
             //分页及查找
             pagelist = mservice.recive(page, size, user, null, title);
-
         } else {
             //垃圾箱
             StringTokenizer st = new StringTokenizer(ids, ",");
@@ -587,57 +672,6 @@ public class MailController {
 
 
     /**
-     * 写信
-     */
-    @RequestMapping("wmail")
-    public String index2(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
-                         @RequestParam(value = "page", defaultValue = "0") int page,
-                         @RequestParam(value = "size", defaultValue = "10") int size) {
-
-        User mu = udao.findOne(userId);
-        //得到编辑过来的id
-        String id = null;
-        if (!StringUtil.isEmpty(request.getParameter("id"))) {
-            id = request.getParameter("id");
-        }
-        //回复那边过来的
-        String huifu = null;
-
-        if (!StringUtil.isEmpty(id)) {
-            Long lid = Long.parseLong(id);
-            //找到这条邮件
-            Inmaillist mail = imdao.findOne(lid);
-            if (!StringUtil.isEmpty(request.getParameter("huifu"))) {
-                huifu = request.getParameter("huifu");
-                model.addAttribute("title", huifu + mail.getMailTitle());
-                model.addAttribute("content", mail.getContent());
-
-            } else {
-                model.addAttribute("title", mail.getMailTitle());
-                model.addAttribute("content", mail.getContent());
-            }
-            model.addAttribute("status", sdao.findOne(mail.getMailStatusid()));
-            model.addAttribute("type", tydao.findOne(mail.getMailType()));
-            model.addAttribute("id", "回复");
-
-        } else {
-
-            List<SystemTypeList> typelist = tydao.findByTypeModel("aoa_in_mail_list");
-            List<SystemStatusList> statuslist = sdao.findByStatusModel("aoa_in_mail_list");
-            model.addAttribute("typelist", typelist);
-            model.addAttribute("statuslist", statuslist);
-            model.addAttribute("id", "新发");
-
-        }
-        //查看该用户所创建的有效邮箱账号
-        List<Mailnumber> mailnum = mndao.findByStatusAndMailUserId(1L, mu);
-        proservice.user(page, size, model);
-        model.addAttribute("mailnum", mailnum);
-
-        return "mail/wirtemail";
-    }
-
-    /**
      * 发送邮件
      *
      * @throws IOException
@@ -817,48 +851,6 @@ public class MailController {
         return "mail/allmail";
     }
 
-    /**
-     * 查看邮件
-     */
-    @RequestMapping("smail")
-    public String index4(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model) {
-        User mu = udao.findOne(userId);
-        //邮件id
-        Long id = Long.parseLong(req.getParameter("id"));
-        //title
-        String title = req.getParameter("title");
-        //找到中间表信息
-        if (("收件箱").equals(title) || ("垃圾箱").equals(title)) {
-            Mailreciver mailr = mrdao.findbyReciverIdAndmailId(mu, id);
-            mailr.setRead(true);
-            mrdao.save(mailr);
-        }
-
-        //找到该邮件信息
-        Inmaillist mail = imdao.findOne(id);
-        String filetype = null;
-        if (!Objects.isNull(mail.getMailFileid())) {
-            String filepath = mail.getMailFileid().getAttachmentPath();
-            System.out.println(filepath);
-            if (mail.getMailFileid().getAttachmentType().startsWith("image")) {
-
-                filetype = "img";
-            } else {
-                filetype = "appli";
-
-            }
-            model.addAttribute("filepath", filepath);
-            model.addAttribute("filetype", filetype);
-        }
-
-        User pushuser = udao.findOne(mail.getMailUserid().getUserId());
-        model.addAttribute("pushname", pushuser.getUserName());
-        model.addAttribute("mail", mail);
-        model.addAttribute("mess", title);
-        model.addAttribute("file", mail.getMailFileid());
-
-        return "mail/seemail";
-    }
 
     /**
      *
@@ -907,6 +899,14 @@ public class MailController {
     private TypeServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
+    @Resource
+    private MailReciverServiceV2 mailReciverServiceV2;
+    @Resource
+    private InMailListServiceV2 inMailListServiceV2;
+    @Resource
+    private ProcessServiceV2 processServiceV2;
+    @Resource
+    private AttachmentServiceV2 attachmentServiceV2;
 
     /**
      * 账号管理
@@ -966,7 +966,6 @@ public class MailController {
         return "mail/addaccounts";
     }
 
-
     /**
      * 存邮箱账号
      */
@@ -1004,4 +1003,236 @@ public class MailController {
         return "redirect:/accountmanage";
     }
 //-------------------------------------------
+
+    /**
+     * 邮件管理主页
+     *
+     * @return
+     */
+    @RequestMapping("mail")
+    public String index(@SessionAttribute("userId") Long userId, Model model,
+                        @RequestParam(value = "page", defaultValue = "0") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        //中间表信息找未读邮件
+        List<MailReciverPO> noReadMailReciverPOList = mailReciverServiceV2.getMailReciverPOByReadAndDelAndUserId(false, false, userId);
+        model.addAttribute("noread", noReadMailReciverPOList.size());//没有读的条数（收件箱）
+        //已创建但未发送
+        List<InMailListPO> noPushInMailListPOList = inMailListServiceV2.getInMailListPOListByPushAndDelAndUserId(false, false, userId);
+        model.addAttribute("nopush", noPushInMailListPOList.size());//没有发送的（草稿箱）
+        //已经发送的条数
+        List<InMailListPO> pushInMailListPOList = inMailListServiceV2.getInMailListPOListByPushAndDelAndUserId(true, false, userId);
+        model.addAttribute("push", pushInMailListPOList.size());//（发件箱）
+        // 已删除的条数
+        List<MailReciverPO> delMailReciverPO = mailReciverServiceV2.getDelMailReciverPOList(true, userId);
+        model.addAttribute("rubbish", delMailReciverPO.size());//垃圾箱
+
+        List<Pagemail> pagemailList = mailServiceV2.recive(page, size, userId, "收件箱");
+        PageInfo pageInfo = new PageInfo(pagemailList);
+        model.addAttribute("page", pageInfo);
+        List<Map<String, Object>> mapList = mailServiceV2.mail(pagemailList);
+        model.addAttribute("maillist", mapList);
+
+        model.addAttribute("url", "mailtitle");
+        model.addAttribute("mess", "收件箱");
+        model.addAttribute("sort", "&title=收件箱");
+        return "mail/mail";
+    }
+
+    /**
+     * 写信
+     */
+    @RequestMapping("wmail")
+    public String index2(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "size", defaultValue = "10") int size) {
+        //得到编辑过来的id
+        String id = null;
+        if (!StringUtil.isEmpty(request.getParameter("id"))) {
+            id = request.getParameter("id");
+        }
+        //回复那边过来的
+        String huifu = null;
+        if (!StringUtil.isEmpty(id)) {
+            Long mailId = Long.parseLong(id);
+            //找到这条邮件
+            InMailListPO inMailListPO = inMailListServiceV2.getInMailListPOByInMailListPOId(mailId);
+            if (!StringUtil.isEmpty(request.getParameter("huifu"))) {
+                huifu = request.getParameter("huifu");
+                model.addAttribute("title", huifu + inMailListPO.getMailTitle());//邮件主题
+                model.addAttribute("content", inMailListPO.getMailContent());//内容
+            } else {
+                model.addAttribute("title", inMailListPO.getMailTitle());
+                model.addAttribute("content", inMailListPO.getMailContent());
+            }
+            model.addAttribute("status", statusServiceV2.getStatusPOByStatusId(inMailListPO.getMailStatusId()));
+            model.addAttribute("type", typeServiceV2.getTypePOByTypeId(inMailListPO.getMailType()));
+            model.addAttribute("id", "回复");
+        } else {
+            List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
+            List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
+            model.addAttribute("typelist", typePOList);
+            model.addAttribute("statuslist", statusPOList);
+            model.addAttribute("id", "新发");
+        }
+        //查看该用户所创建的有效邮箱账号
+        List<MailNumberPO> mailNumberPOList = mailServiceV2.getMailNumberPOListByStatusAndMailUserId(userId, 1L);
+        processServiceV2.setModel(model, userId, page, size);//通讯录
+        model.addAttribute("mailnum", mailNumberPOList);
+        return "mail/wirtemail";
+    }
+
+
+    /**
+     * 删除邮件@SessionAttribute("userId") Long userId
+     */
+    @RequestMapping("alldelete")
+    public String delete(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "size", defaultValue = "10") int size) {
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        String title = req.getParameter("title");
+        List<Pagemail> pagemailList = null;
+        List<InMailListPO> inMailListPOList = null;
+        List<Map<String, Object>> mapList = null;
+        //得到删除邮件id
+        String ids = req.getParameter("ids");
+        if (("收件箱").equals(title)) {
+
+            StringTokenizer st = new StringTokenizer(ids, ",");
+            while (st.hasMoreElements()) {
+                //找到该用户联系邮件的中间记录
+                MailReciverPO mailReciverPO = mailReciverServiceV2.getMailReciverPOByMailIdAndUserId(userId, Long.parseLong(st.nextToken()));
+//                Mailreciver mailr = mrdao.findbyReciverIdAndmailId(user, Long.parseLong(st.nextToken()));
+                if (!Objects.isNull(mailReciverPO)) {
+                    //把删除的字段改为1
+                    mailReciverServiceV2.updateMailReciverPODel(mailReciverPO);
+                } else {
+                    return "redirect:/notlimit";
+                }
+            }
+            //分页及查找
+            pagemailList = mailServiceV2.recive(page, size, userId, title);
+            mapList = mailServiceV2.mail(pagemailList);
+        } else if (("发件箱").equals(title)) {
+            StringTokenizer st = new StringTokenizer(ids, ",");
+            while (st.hasMoreElements()) {
+                //找到该邮件
+                InMailListPO inMailListPO = inMailListServiceV2.getInMailListPOByInMailListPOId(Long.parseLong(st.nextToken()));
+                if (!Objects.isNull(inMailListPO)) {
+                    //把删除的字段改为1
+                    inMailListServiceV2.updateInMailListPODel(inMailListPO);
+                } else {
+                    return "redirect:/notlimit";
+                }
+            }
+            inMailListPOList = mailServiceV2.inmail(page, size, userId, title);
+            mapList = mailServiceV2.maillist(inMailListPOList);
+        } else if (("草稿箱").equals(title)) {
+            StringTokenizer st = new StringTokenizer(ids, ",");
+            while (st.hasMoreElements()) {
+                //找到该邮件
+                InMailListPO inMailListPO = inMailListServiceV2.getInMailListPOByInMailListPOId(Long.parseLong(st.nextToken()));
+                if (!Objects.isNull(inMailListPO)) {
+                    inMailListServiceV2.deleteInMailListPO(inMailListPO.getMailId());
+                } else {
+                    return "redirect:/notlimit";
+                }
+            }
+            inMailListPOList = mailServiceV2.inmail(page, size, userId, title);
+            mapList = mailServiceV2.maillist(inMailListPOList);
+        } else {
+            //垃圾箱
+            StringTokenizer st = new StringTokenizer(ids, ",");
+            while (st.hasMoreElements()) {
+                Long mailId = Long.parseLong(st.nextToken());
+                //查看中间表关于这条邮件的del字段
+                List<Boolean> delList = mailReciverServiceV2.getDelByMailReciverPOId(mailId);
+                //判断中间表中关于这条邮件是否还有del字段为false的
+                if (delList.contains(false)) {
+                    MailReciverPO mailReciverPO = mailReciverServiceV2.getMailReciverPOByMailIdAndUserId(userId, mailId);
+                    if (!Objects.isNull(mailReciverPO)) {
+                        mailReciverServiceV2.deleteMailReciverPO(mailReciverPO.getPkId());
+                    } else {
+                        return "redirect:/notlimit";
+                    }
+                } else {
+                    InMailListPO inMailListPO = inMailListServiceV2.getInMailListPOByInMailListPOId(mailId);
+
+                    //判断这条邮件的del字段是为true
+                    if (inMailListPO.getMailDel().equals(1)) {
+                        List<MailReciverPO> mailReciverPOList = mailReciverServiceV2.getMailReciverPOByMailId(mailId);
+                        //循环删除关于这条邮件的所有中间表信息
+                        for (MailReciverPO mailReciverPO : mailReciverPOList) {
+                            mailReciverServiceV2.deleteMailReciverPO(mailReciverPO.getPkId());
+                        }
+                        inMailListServiceV2.deleteInMailListPO(mailId);
+                    } else {
+                        //这条邮件的del字段为false，则删除中间表信息
+                        MailReciverPO mailReciverPO = mailReciverServiceV2.getMailReciverPOByMailIdAndUserId(userId, mailId);
+                        if (!Objects.isNull(mailReciverPO)) {
+                            mailReciverServiceV2.deleteMailReciverPO(mailReciverPO.getPkId());
+                        } else {
+                            return "redirect:/notlimit";
+                        }
+                    }
+                }
+            }
+            pagemailList = mailServiceV2.recive(page, size, userId, title);
+            mapList = mailServiceV2.mail(pagemailList);
+        }
+
+        if (!Objects.isNull(pagemailList)) {
+            model.addAttribute("page", pagemailList);
+        } else {
+            model.addAttribute("page", inMailListPOList);
+        }
+        model.addAttribute("maillist", mapList);
+        model.addAttribute("url", "mailtitle");
+        model.addAttribute("mess", title);
+        return "mail/mailbody";
+
+    }
+
+    /**
+     * 查看邮件
+     */
+    @RequestMapping("smail")
+    public String index4(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model) {
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        Long mailId = Long.parseLong(req.getParameter("id"));//邮件ID
+        //title
+        String title = req.getParameter("title");
+
+        //找到中间表信息
+        if (("收件箱").equals(title) || ("垃圾箱").equals(title)) {
+            MailReciverPO mailReciverPO = mailReciverServiceV2.getMailReciverPOByMailIdAndUserId(userId, mailId);
+            mailReciverServiceV2.updateMailReciverPORead(mailReciverPO);
+        }
+        //找到该邮件信息
+        InMailListPO inMailListPO = inMailListServiceV2.getInMailListPOByInMailListPOId(mailId);
+        String fileType = null;
+
+        if (!Objects.isNull(inMailListPO.getMailFileId())) {
+            AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(inMailListPO.getMailFileId());//附件信息
+            String filePath = attachmentListPO.getAttachmentPath();
+            if (attachmentListPO.getAttachmentType().startsWith("image")) {
+                fileType = "img";
+            } else {
+                fileType = "appli";
+
+            }
+            model.addAttribute("filepath", filePath);
+            model.addAttribute("filetype", fileType);
+            model.addAttribute("file", attachmentListPO);//附件信息
+        }
+        //发件人信息
+        UserPO pushUserPO = userServiceV2.getUserPOByUserId(inMailListPO.getMailInPushUserId());
+        model.addAttribute("pushname", pushUserPO.getUserName());//发件人名
+        model.addAttribute("mail", inMailListPO);//邮件信息
+        model.addAttribute("mess", title);
+        return "mail/seemail";
+    }
+
+
 }

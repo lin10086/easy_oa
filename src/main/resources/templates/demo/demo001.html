@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>二级联动</title>
+
+</head>
+<body>
+<select id="proId">
+    <option id="optionId1">Volvo</option>
+    <option>Saab</option>
+    <option>Mercedes</option>
+    <option>Audi</option>
+</select>
+
+<select id="province" onchange="func(this)"></select>
+<!--<select id="city"></select>-->
+</body>
+<script>
+    var optionId1 = document.getElementById("optionId1");
+    optionId1.innerHTML="123";
+    
+    data ={
+        "河北省":["单产","廊坊"],
+        "北京":["朝阳" ,"海淀","南开"],
+        "陕西":["西安","咸阳","宝鸡","渭南"]
+    }
+    var pro = document.getElementById("province");
+    for (var i in data){
+        var province_option = document.createElement("option");
+        province_option.innerHTML=i;
+        pro.appendChild("province_option");
+    }
+</script>
+</html>

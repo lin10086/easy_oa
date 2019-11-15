@@ -1,21 +1,14 @@
 package cn.gson.oasys.controller.process;
 
 import cn.gson.oasys.ServiceV2.*;
-import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.ByProcessPOIdServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.DetailsburseServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.EvectionMoneyServiceV2;
+import cn.gson.oasys.ServiceV2.processServiceV2.*;
 import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.dao.attendcedao.AttendceDao;
 import cn.gson.oasys.model.dao.notedao.AttachmentDao;
 import cn.gson.oasys.model.dao.plandao.TrafficDao;
-import cn.gson.oasys.model.dao.processdao.*;
 import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.process.*;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.services.process.ProcessService;
 import cn.gson.oasys.vo.*;
@@ -48,48 +41,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.sql.Timestamp;
-import java.util.*;
 
 
 //.................................
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.ResourceUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.github.pagehelper.util.StringUtil;
-
-import cn.gson.oasys.model.dao.attendcedao.AttendceDao;
-import cn.gson.oasys.model.dao.notedao.AttachmentDao;
-import cn.gson.oasys.model.dao.plandao.TrafficDao;
 import cn.gson.oasys.model.dao.processdao.BursementDao;
 import cn.gson.oasys.model.dao.processdao.DetailsBurseDao;
 import cn.gson.oasys.model.dao.processdao.EvectionDao;
@@ -102,29 +62,6 @@ import cn.gson.oasys.model.dao.processdao.ResignDao;
 import cn.gson.oasys.model.dao.processdao.ReviewedDao;
 import cn.gson.oasys.model.dao.processdao.StayDao;
 import cn.gson.oasys.model.dao.processdao.SubjectDao;
-import cn.gson.oasys.model.dao.system.StatusDao;
-import cn.gson.oasys.model.dao.system.TypeDao;
-import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.attendce.Attends;
-import cn.gson.oasys.model.entity.note.Attachment;
-import cn.gson.oasys.model.entity.process.AubUser;
-import cn.gson.oasys.model.entity.process.Bursement;
-import cn.gson.oasys.model.entity.process.DetailsBurse;
-import cn.gson.oasys.model.entity.process.Evection;
-import cn.gson.oasys.model.entity.process.EvectionMoney;
-import cn.gson.oasys.model.entity.process.Holiday;
-import cn.gson.oasys.model.entity.process.Overtime;
-import cn.gson.oasys.model.entity.process.ProcessList;
-import cn.gson.oasys.model.entity.process.Regular;
-import cn.gson.oasys.model.entity.process.Resign;
-import cn.gson.oasys.model.entity.process.Reviewed;
-import cn.gson.oasys.model.entity.process.Stay;
-import cn.gson.oasys.model.entity.process.Subject;
-import cn.gson.oasys.model.entity.process.Traffic;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.user.User;
-import cn.gson.oasys.services.process.ProcessService;
 
 @Slf4j
 @Controller
