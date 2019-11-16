@@ -16,25 +16,25 @@
 					<h5 class="fonts">
 						<span id="ctl00_cphMain_lblFrom" class="mailbox-read-time">发送：<i>${pushname}</i>
 							&nbsp;&nbsp;接收：<i>${(mail.inReceiver)!''}</i></span> <span id="ctl00_cphMain_lblDate"
-							class="mailbox-read-time pull-right">${mail.mailCreateTime}</span>
+							class="mailbox-read-time pull-right">${mailCreateTime}</span>
 					</h5>
 				</div>
 				<div class="mailbox-read-message">
 					<span id="ctl00_cphMain_lblDescription">邮件描述：</span> 
 					<span id="ctl00_cphMain_lblFeedback">
 						<div style="padding-left: 64px;">
-							<p>${mail.content}</p>
+							<p>${mail.mailContent}</p>
 						</div>
 					</span>
 					<span id="ctl00_cphMain_lblDescription">附件信息：</span> 
 					<span id="ctl00_cphMain_lblFeedback">
 						<div style="padding-left: 64px;">
-							<p><#if mail.mailFileid??>
+							<p><#if mail.mailFileId??>
 							<#if filetype=="img">
 							<a href="javacript:void(0);" class="label xiugai yulan" title="图片预览">
 							<span class="glyphicon glyphicon-search"></span> 预览</a>
 							</#if>
-							<a href="file?fileid=${(mail.mailFileid.attachmentId)!''}" class="label xiugai">
+							<a href="file?fileid=${(attachmentListPO.getAttachmentId())!''}" class="label xiugai">
 							<span class="glyphicon glyphicon-download-alt"></span> 下载</a>
 							</#if></p>
 						</div>

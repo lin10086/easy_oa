@@ -37,28 +37,28 @@
 			<ul class="nav nav-pills nav-stacked files ">
 				<li style="border-left: 3px solid blue;" class="getmail"><span
 					class="glyphicon glyphicon-inbox le"> 收件箱</span>
-					<#if noread==0>
+					<#if noReadSize==0>
 					<#else>
-					 <span class="pull-right uncheck"><i class="btn btn-xs btn-primary">${noread}</i></span>
+					 <span class="pull-right uncheck"><i class="btn btn-xs btn-primary">${noReadSize}</i></span>
 					</#if>
 				</li>
 				<li class="setmail"><span class="glyphicon glyphicon-envelope le"> 发件箱</span>
-					<#if push==0>
+					<#if pushSize==0>
 					<#else>
-					<span class="pull-right uncheck"><i class="btn btn-xs btn-primary">${push}</i></span>
+					<span class="pull-right uncheck"><i class="btn btn-xs btn-primary">${pushSize}</i></span>
 					</#if>
 				
 				</li>
 				<li class="caogao"><span class="glyphicon glyphicon-list-alt le"> 草稿箱</span> 
-					<#if nopush==0>
+					<#if noPushSize==0>
 					<#else>
-					<span class="pull-right uncheck"><i class="btn btn-xs btn-primary">${nopush}</i></span>
+					<span class="pull-right uncheck"><i class="btn btn-xs btn-primary">${noPushSize}</i></span>
 					</#if>
 				</li >	
 				<li class=" rubbish"><span class="glyphicon glyphicon-trash le"> 垃圾箱</span>
-					<#if rubbish==0>
+					<#if dustbinSize==0>
 					<#else>
-					<span class="pull-right uncheck"><i class="btn btn-xs btn-primary">${rubbish}</i></span>
+					<span class="pull-right uncheck"><i class="btn btn-xs btn-primary">${dustbinSize}</i></span>
 					</#if>
 				</li>
 			</ul>

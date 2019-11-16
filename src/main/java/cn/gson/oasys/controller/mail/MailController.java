@@ -2,6 +2,7 @@ package cn.gson.oasys.controller.mail;
 
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import cn.gson.oasys.ServiceV2.mailV2.MailReciverServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.ProcessServiceV2;
+import cn.gson.oasys.model.entity.system.SystemStatusList;
+import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.mailV2.MailNumberV2;
 import com.github.pagehelper.PageHelper;
@@ -249,10 +252,53 @@ public class MailController {
     }
 */
 
+    /**
+     * 最近邮件
+     */
+ /*   @RequestMapping("amail")
+    public String index3(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "size", defaultValue = "10") int size) {
+        Pageable pa = new PageRequest(page, size);
+        User mu = udao.findOne(userId);
+        String mess = req.getParameter("title");
+
+        Page<Pagemail> pagelist = null;
+        Page<Inmaillist> pagemail = null;
+        List<Map<String, Object>> maillist = null;
+        if (("收件箱").equals(mess)) {
+            //分页及查找
+            pagelist = mservice.recive(page, size, mu, null, mess);
+            maillist = mservice.mail(pagelist);
+        } else if (("发件箱").equals(mess)) {
+            pagemail = mservice.inmail(page, size, mu, null, mess);
+            maillist = mservice.maillist(pagemail);
+        } else if (("草稿箱").equals(mess)) {
+            pagemail = mservice.inmail(page, size, mu, null, mess);
+            maillist = mservice.maillist(pagemail);
+        } else {
+            //垃圾箱
+            //分页及查找
+            pagelist = mservice.recive(page, size, mu, null, mess);
+            maillist = mservice.mail(pagelist);
+        }
+        if (!Objects.isNull(pagelist)) {
+            model.addAttribute("page", pagelist);
+        } else {
+            model.addAttribute("page", pagemail);
+        }
+        model.addAttribute("sort", "&title=" + mess);
+        model.addAttribute("maillist", maillist);
+        model.addAttribute("url", "mailtitle");
+        model.addAttribute("mess", mess);
+        return "mail/allmail";
+    }
+
+*/
 
     /**
      * 写信
-     *//*
+     */
     @RequestMapping("wmail")
     public String index2(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                          @RequestParam(value = "page", defaultValue = "0") int page,
@@ -294,7 +340,7 @@ public class MailController {
 
         return "mail/wirtemail";
     }
-*/
+
 
     /**
      * 删除邮件@SessionAttribute("userId") Long userId
@@ -806,51 +852,6 @@ public class MailController {
 
     }
 
-    /**
-     * 最近邮件
-     */
-    @RequestMapping("amail")
-    public String index3(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model,
-                         @RequestParam(value = "page", defaultValue = "0") int page,
-                         @RequestParam(value = "size", defaultValue = "10") int size) {
-        Pageable pa = new PageRequest(page, size);
-        User mu = udao.findOne(userId);
-        String mess = req.getParameter("title");
-
-        Page<Pagemail> pagelist = null;
-        Page<Inmaillist> pagemail = null;
-        List<Map<String, Object>> maillist = null;
-        if (("收件箱").equals(mess)) {
-            //分页及查找
-            pagelist = mservice.recive(page, size, mu, null, mess);
-            maillist = mservice.mail(pagelist);
-        } else if (("发件箱").equals(mess)) {
-            pagemail = mservice.inmail(page, size, mu, null, mess);
-            maillist = mservice.maillist(pagemail);
-        } else if (("草稿箱").equals(mess)) {
-            pagemail = mservice.inmail(page, size, mu, null, mess);
-            maillist = mservice.maillist(pagemail);
-        } else {
-            //垃圾箱
-            //分页及查找
-            pagelist = mservice.recive(page, size, mu, null, mess);
-            maillist = mservice.mail(pagelist);
-
-        }
-
-        if (!Objects.isNull(pagelist)) {
-            model.addAttribute("page", pagelist);
-        } else {
-            model.addAttribute("page", pagemail);
-
-        }
-        model.addAttribute("sort", "&title=" + mess);
-        model.addAttribute("maillist", maillist);
-        model.addAttribute("url", "mailtitle");
-        model.addAttribute("mess", mess);
-        return "mail/allmail";
-    }
-
 
     /**
      *
@@ -1016,22 +1017,23 @@ public class MailController {
         UserPO userPO = userServiceV2.getUserPOByUserId(userId);
         //中间表信息找未读邮件
         List<MailReciverPO> noReadMailReciverPOList = mailReciverServiceV2.getMailReciverPOByReadAndDelAndUserId(false, false, userId);
-        model.addAttribute("noread", noReadMailReciverPOList.size());//没有读的条数（收件箱）
-        //已创建但未发送
-        List<InMailListPO> noPushInMailListPOList = inMailListServiceV2.getInMailListPOListByPushAndDelAndUserId(false, false, userId);
-        model.addAttribute("nopush", noPushInMailListPOList.size());//没有发送的（草稿箱）
-        //已经发送的条数
-        List<InMailListPO> pushInMailListPOList = inMailListServiceV2.getInMailListPOListByPushAndDelAndUserId(true, false, userId);
-        model.addAttribute("push", pushInMailListPOList.size());//（发件箱）
+        model.addAttribute("noReadSize", noReadMailReciverPOList.size());//没有读的条数（收件箱没有读的条数）
         // 已删除的条数
         List<MailReciverPO> delMailReciverPO = mailReciverServiceV2.getDelMailReciverPOList(true, userId);
-        model.addAttribute("rubbish", delMailReciverPO.size());//垃圾箱
+        model.addAttribute("dustbinSize", delMailReciverPO.size());//垃圾箱
 
-        List<Pagemail> pagemailList = mailServiceV2.recive(page, size, userId, "收件箱");
-        PageInfo pageInfo = new PageInfo(pagemailList);
+        //已创建但未发送
+        List<InMailListPO> noPushInMailListPOList = inMailListServiceV2.getInMailListPOListByPushAndDelAndUserId(false, false, userId);
+        model.addAttribute("noPushSize", noPushInMailListPOList.size());//没有发送的（草稿箱）
+        //已经发送的条数
+        List<InMailListPO> pushInMailListPOList = inMailListServiceV2.getInMailListPOListByPushAndDelAndUserId(true, false, userId);
+        model.addAttribute("pushSize", pushInMailListPOList.size());//（发件箱）
+
+        List<Pagemail> pageMailList = mailServiceV2.recive(page, size, userId, "收件箱");
+        PageInfo pageInfo = new PageInfo(pageMailList);
         model.addAttribute("page", pageInfo);
-        List<Map<String, Object>> mapList = mailServiceV2.mail(pagemailList);
-        model.addAttribute("maillist", mapList);
+        List<Map<String, Object>> mapList = mailServiceV2.mail(pageMailList);
+        model.addAttribute("mapList", mapList);
 
         model.addAttribute("url", "mailtitle");
         model.addAttribute("mess", "收件箱");
@@ -1040,9 +1042,49 @@ public class MailController {
     }
 
     /**
+     * 邮件管理的收，发，草，垃圾
+     *
+     * @param req
+     * @param userId
+     * @param model
+     * @param page
+     * @param size
+     * @return
+     */
+    @RequestMapping("amail")
+    public String index3(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "size", defaultValue = "10") int size) {
+        PageHelper.startPage(page, size);
+        String title = req.getParameter("title");
+        List<Pagemail> pagemailList = null;
+        List<InMailListPO> inMailListPOList = null;
+        List<Map<String, Object>> mapList = null;
+        if (("收件箱").equals(title) || ("垃圾箱").equals(title)) {
+            pagemailList = mailServiceV2.recive(page, size, userId, title);
+            mapList = mailServiceV2.mail(pagemailList);
+        } else if (("发件箱").equals(title) || ("草稿箱").equals(title)) {
+            inMailListPOList = mailServiceV2.inmail(page, size, userId, title);
+            mapList = mailServiceV2.maillist(inMailListPOList);
+        }
+
+        if (!Objects.isNull(pagemailList)) {
+            model.addAttribute("page", pagemailList);
+        } else {
+            model.addAttribute("page", inMailListPOList);
+        }
+
+        model.addAttribute("sort", "&title=" + title);
+        model.addAttribute("mapList", mapList);
+        model.addAttribute("url", "mailtitle");
+        model.addAttribute("mess", title);
+        return "mail/allmail";
+    }
+
+    /**
      * 写信
      */
-    @RequestMapping("wmail")
+ /*   @RequestMapping("wmail")
     public String index2(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
                          @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -1081,7 +1123,7 @@ public class MailController {
         model.addAttribute("mailnum", mailNumberPOList);
         return "mail/wirtemail";
     }
-
+*/
 
     /**
      * 删除邮件@SessionAttribute("userId") Long userId
@@ -1220,16 +1262,16 @@ public class MailController {
                 fileType = "img";
             } else {
                 fileType = "appli";
-
             }
             model.addAttribute("filepath", filePath);
             model.addAttribute("filetype", fileType);
-            model.addAttribute("file", attachmentListPO);//附件信息
+            model.addAttribute("attachmentListPO", attachmentListPO);//附件信息
         }
         //发件人信息
         UserPO pushUserPO = userServiceV2.getUserPOByUserId(inMailListPO.getMailInPushUserId());
         model.addAttribute("pushname", pushUserPO.getUserName());//发件人名
         model.addAttribute("mail", inMailListPO);//邮件信息
+        model.addAttribute("mailCreateTime", new Timestamp(inMailListPO.getMailCreateTime().getTime()));//邮件的创建时间
         model.addAttribute("mess", title);
         return "mail/seemail";
     }

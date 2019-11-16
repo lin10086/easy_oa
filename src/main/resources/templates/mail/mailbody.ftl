@@ -32,12 +32,13 @@
 						<th scope="col">状态</th>
 						<th scope="col">操作</th>
 					</tr>
-					<#if (maillist?size gte 0) >
-					<#list maillist as mail>
+					<#if (mapList?size gte 0) >
+					<#list mapList as mail>
 					<tr>
 						<td >
 						<span class="labels"><label><input name="items" type="checkbox"><i>✓</i></label></span>
 						</td>
+						<#--星标-->
 						<#if mail.star==true>			
 							<td class="em"><span class="glyphicon glyphicon-star"
 								style="width: 25px;"></span></td>
@@ -45,27 +46,30 @@
 							<td class="em"><span class="glyphicon glyphicon-star-empty"
 								style="width: 25px;"></span></td>
 						</#if>
-						<#if mail.typename=="公告">
-						<td><span style="color:red;">${(mail.typename)!''}</span></td>
+
+						<#if mail.typeName=="公告">
+						<td><span style="color:red;">${(mail.typeName)!''}</span></td>
 						<#else>
-						<td><span>${(mail.typename)!''}</span></td>
+						<td><span>${(mail.typeName)!''}</span></td>
 						</#if>
-						<td><span>${(mail.reciver)!''}</span></td>
+
+						<td><span>${(mail.receive)!''}</span></td>
 						<#if mail.read==true>
 						<td><span>${(mail.title)!''}</span></td>
 						<#else>
 						<td><span><strong class="read">${(mail.title)!''}</strong></span></td>
 						</#if>
+
 						<td><span>${(mail.time)!''}</span></td>
-						<#if mail.fileid??>
-						<td><span class="glyphicon glyphicon-paperclip">附件ID：${(mail.fileid)}</span></td>
+						<#if mail.fileId??>
+						<td><span class="glyphicon glyphicon-paperclip">附件ID：${(mail.fileId)}</span></td>
 						<#else>
 						<td><span>无附件</span></td>
 						</#if>
 						<td>
-							<div class="label ${mail.statuscolor}">${(mail.statusname)!''}</div>
+							<div class="label ${mail.statusColor}">${(mail.statusName)!''}</div>
 						</td>
-						<td class="mailid" style="display:none;"><span>${mail.mailid}</span></td>
+						<td class="mailid" style="display:none;"><span>${mail.mailId}</span></td>
 						<td><a href="##" class="label xiugai lab"><span
 								class="glyphicon glyphicon-search"></span> 查看</a>
 							<#if mess=="草稿箱">

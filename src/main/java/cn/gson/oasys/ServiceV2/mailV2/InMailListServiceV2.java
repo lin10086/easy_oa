@@ -41,6 +41,14 @@ public class InMailListServiceV2 {
 
     }
 
+    /**
+     * 根据创建时间降序，是否推送，是否删除，发件人ID找内部邮件
+     *
+     * @param userId
+     * @param push
+     * @param del
+     * @return
+     */
     public List<InMailListPO> getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(Long userId, Boolean push, Boolean del) {
         InMailListPOExample inMailListPOExample = new InMailListPOExample();
         inMailListPOExample.setOrderByClause("mail_create_time DESC");

@@ -203,13 +203,12 @@ public class MailServiceV2 {
 
 
     /**
-     * 收件箱
+     * 收件箱(垃圾箱）
      */
     public List<Pagemail> recive(int page, int size, Long userId, String title) {
 
         PageHelper.startPage(page, size);
-        List<Pagemail> pagemailList = new ArrayList<>();
-
+        List<Pagemail> pageMailList = new ArrayList<>();
 //        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
 //        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
         List<MailReciverPO> mailReciverPOList = null;
@@ -224,20 +223,20 @@ public class MailServiceV2 {
             for (InMailListPO inMailListPO : inMailListPOList) {
                 if (mailReciverPO.getMailId().equals(inMailListPO.getMailId())) {
                     Pagemail pagemail = new Pagemail();
-                    pagemail.setMailType((long) mailReciverPO.getIsStar());
-                    pagemail.setRead(mailReciverPO.getIsRead() == 0 ? false : true);
-                    pagemail.setMailId(inMailListPO.getMailId());
-                    pagemail.setMailType(inMailListPO.getMailType());
-                    pagemail.setMailStatusid(inMailListPO.getMailStatusId());
-                    pagemail.setMailTitle(inMailListPO.getMailTitle());
-                    pagemail.setInReceiver(inMailListPO.getInReceiver());
-                    pagemail.setMailFileid(inMailListPO.getMailFileId());
-                    pagemail.setMailCreateTime(inMailListPO.getMailCreateTime());
-                    pagemailList.add(pagemail);
+                    pagemail.setRead(mailReciverPO.getIsRead() == 0 ? false : true);//是否已读
+                    pagemail.setStar(mailReciverPO.getIsStar() == 0 ? false : true);//是否星标
+                    pagemail.setMailType(inMailListPO.getMailType());//邮件类型
+                    pagemail.setMailId(inMailListPO.getMailId());//邮件ID
+                    pagemail.setMailStatusid(inMailListPO.getMailStatusId());//邮件的状态ID
+                    pagemail.setMailTitle(inMailListPO.getMailTitle());// 邮件主题
+                    pagemail.setInReceiver(inMailListPO.getInReceiver());// 发件人
+                    pagemail.setMailFileid(inMailListPO.getMailFileId());//邮件的附件ID
+                    pagemail.setMailCreateTime(inMailListPO.getMailCreateTime());//邮件的创建时间
+                    pageMailList.add(pagemail);
                 }
             }
         }
-        return pagemailList;
+        return pageMailList;
     }
 
     /**
@@ -247,18 +246,18 @@ public class MailServiceV2 {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Pagemail pagemail : pageMailList) {
             Map<String, Object> result = new HashMap<>();
-            String typeName = typeServiceV2.getTypePOByTypeId(pagemail.getMailType()).getTypeName();
+            String typeName = typeServiceV2.getTypePOByTypeId(pagemail.getMailType()).getTypeName();//邮件的类型
             StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(pagemail.getMailStatusid());
-            result.put("typename", typeName);
-            result.put("statusname", statusPO.getStatusName());
-            result.put("statuscolor", statusPO.getStatusColor());
-            result.put("star", pagemail.getStar());
-            result.put("read", pagemail.getRead());
-            result.put("time", new Timestamp(pagemail.getMailCreateTime().getTime()));
-            result.put("reciver", pagemail.getInReceiver());
-            result.put("title", pagemail.getMailTitle());
-            result.put("mailid", pagemail.getMailId());
-            result.put("fileid", pagemail.getMailFileid());
+            result.put("typeName", typeName);//类型名
+            result.put("statusName", statusPO.getStatusName());// 状态名
+            result.put("statusColor", statusPO.getStatusColor());//状态颜色
+            result.put("star", pagemail.getStar());// 是否星标
+            result.put("read", pagemail.getRead());//是否已读
+            result.put("time", new Timestamp(pagemail.getMailCreateTime().getTime()));//创建时间
+            result.put("receive", pagemail.getInReceiver());//接收人
+            result.put("title", pagemail.getMailTitle());//邮件主题
+            result.put("mailId", pagemail.getMailId());//邮件ID
+            result.put("fileId", pagemail.getMailFileid());//邮件的附件ID
             list.add(result);
         }
         return list;
@@ -267,16 +266,16 @@ public class MailServiceV2 {
     /**
      * 发件箱
      */
-    public List<InMailListPO> inmail(int page, int size, Long userId,String title) {
+    public List<InMailListPO> inmail(int page, int size, Long userId, String title) {
         PageHelper.startPage(page, size);
         List<InMailListPO> inMailListPOList = null;
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
-        if ("发件箱".equals(title)){
-        inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(userId, true, false);
-        }else {
+        if ("发件箱".equals(title)) {
+            inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(userId, true, false);
+        } else {
 //            草稿箱
-        inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(userId, false, false);
+            inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(userId, false, false);
 
         }
         return inMailListPOList;
@@ -292,16 +291,16 @@ public class MailServiceV2 {
             Map<String, Object> result = new HashMap<>();
             String typeName = typeServiceV2.getTypePOByTypeId(inMailListPO.getMailType()).getTypeName();
             StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(inMailListPO.getMailStatusId());
-            result.put("typename", typeName);
-            result.put("statusname", statusPO.getStatusName());
-            result.put("statuscolor", statusPO.getStatusColor());
-            result.put("star", inMailListPO.getMailStar() == 0 ? false : true);
-            result.put("read", true);
-            result.put("time", new Timestamp(inMailListPO.getMailCreateTime().getTime()));
-            result.put("reciver", inMailListPO.getInReceiver());
-            result.put("title", inMailListPO.getMailTitle());
-            result.put("mailid", inMailListPO.getMailId());
-            result.put("fileid", inMailListPO.getMailFileId());
+            result.put("typeName", typeName);//类型名
+            result.put("statusName", statusPO.getStatusName());//状态名
+            result.put("statusColor", statusPO.getStatusColor());//状态颜色
+            result.put("star", inMailListPO.getMailStar() == 0 ? false : true);//是否星标
+            result.put("read", true);//  是否已读
+            result.put("time", new Timestamp(inMailListPO.getMailCreateTime().getTime()));//创建时间
+            result.put("receive", inMailListPO.getInReceiver());//发件人ID
+            result.put("title", inMailListPO.getMailTitle());//邮件主题
+            result.put("mailId", inMailListPO.getMailId());//邮件ID
+            result.put("fileId", inMailListPO.getMailFileId());//附件ID
             list.add(result);
 
         }

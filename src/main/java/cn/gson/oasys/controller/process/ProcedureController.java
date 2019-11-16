@@ -114,7 +114,7 @@ public class ProcedureController {
     @PostConstruct
     public void UserpanelController() {
         try {
-            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main//resources/attachment");
+            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
         }
