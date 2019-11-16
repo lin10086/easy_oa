@@ -209,9 +209,10 @@ public class MailServiceV2 {
 
         PageHelper.startPage(page, size);
         List<Pagemail> pageMailList = new ArrayList<>();
-//        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
-//        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
+        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
         List<MailReciverPO> mailReciverPOList = null;
+
         if ("收件箱".equals(title)) {
             mailReciverPOList = mailReciverServiceV2.getDelMailReciverPOList(false, userId);
         } else {

@@ -3,11 +3,7 @@ package cn.gson.oasys.controller.mail;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -253,7 +249,7 @@ public class MailController {
 */
 
     /**
-     * 最近邮件
+     * 邮件管理的收，发，草，垃圾
      */
  /*   @RequestMapping("amail")
     public String index3(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model,
@@ -292,6 +288,59 @@ public class MailController {
         model.addAttribute("url", "mailtitle");
         model.addAttribute("mess", mess);
         return "mail/allmail";
+    }
+
+*/
+
+    /**
+     * 邮箱管理的类型（邮件，通知，公告）
+     */
+  /*  @RequestMapping("mailtitle")
+    public String serch(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
+                        @RequestParam(value = "page", defaultValue = "0") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        User user = udao.findOne(userId);
+        String title = req.getParameter("title");
+        String val = null;
+        Page<Pagemail> pagelist = null;
+        Page<Inmaillist> pagemail = null;
+        List<Map<String, Object>> maillist = null;
+
+        if (!StringUtil.isEmpty(req.getParameter("val"))) {
+            val = req.getParameter("val");
+        }
+        if (("收件箱").equals(title)) {
+            pagelist = mservice.recive(page, size, user, val, title);
+            maillist = mservice.mail(pagelist);
+
+        } else if (("发件箱").equals(title)) {
+
+            pagemail = mservice.inmail(page, size, user, val, title);
+            maillist = mservice.maillist(pagemail);
+        } else if (("草稿箱").equals(title)) {
+
+            pagemail = mservice.inmail(page, size, user, val, title);
+            maillist = mservice.maillist(pagemail);
+        } else {
+            //垃圾箱
+            pagelist = mservice.recive(page, size, user, val, title);
+            maillist = mservice.mail(pagelist);
+        }
+
+        if (!Objects.isNull(pagelist)) {
+            model.addAttribute("page", pagelist);
+        } else {
+            model.addAttribute("page", pagemail);
+        }
+        if (val != null) {
+            model.addAttribute("sort", "&title=" + title + "&val=" + val);
+        } else {
+            model.addAttribute("sort", "&title=" + title);
+        }
+        model.addAttribute("maillist", maillist);
+        model.addAttribute("url", "mailtitle");
+        model.addAttribute("mess", title);
+        return "mail/mailbody";
     }
 
 */
@@ -632,57 +681,6 @@ public class MailController {
             model.addAttribute("page", pagelist);
         } else {
             model.addAttribute("page", pagemail);
-        }
-        model.addAttribute("maillist", maillist);
-        model.addAttribute("url", "mailtitle");
-        model.addAttribute("mess", title);
-        return "mail/mailbody";
-    }
-
-    /**
-     * 邮箱条件查找
-     */
-    @RequestMapping("mailtitle")
-    public String serch(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
-                        @RequestParam(value = "page", defaultValue = "0") int page,
-                        @RequestParam(value = "size", defaultValue = "10") int size) {
-        User user = udao.findOne(userId);
-        String title = req.getParameter("title");
-        String val = null;
-        Page<Pagemail> pagelist = null;
-        Page<Inmaillist> pagemail = null;
-        List<Map<String, Object>> maillist = null;
-
-        if (!StringUtil.isEmpty(req.getParameter("val"))) {
-            val = req.getParameter("val");
-        }
-        if (("收件箱").equals(title)) {
-            pagelist = mservice.recive(page, size, user, val, title);
-            maillist = mservice.mail(pagelist);
-
-        } else if (("发件箱").equals(title)) {
-
-            pagemail = mservice.inmail(page, size, user, val, title);
-            maillist = mservice.maillist(pagemail);
-        } else if (("草稿箱").equals(title)) {
-
-            pagemail = mservice.inmail(page, size, user, val, title);
-            maillist = mservice.maillist(pagemail);
-        } else {
-            //垃圾箱
-            pagelist = mservice.recive(page, size, user, val, title);
-            maillist = mservice.mail(pagelist);
-        }
-
-        if (!Objects.isNull(pagelist)) {
-            model.addAttribute("page", pagelist);
-        } else {
-            model.addAttribute("page", pagemail);
-        }
-        if (val != null) {
-            model.addAttribute("sort", "&title=" + title + "&val=" + val);
-        } else {
-            model.addAttribute("sort", "&title=" + title);
         }
         model.addAttribute("maillist", maillist);
         model.addAttribute("url", "mailtitle");
@@ -1080,6 +1078,67 @@ public class MailController {
         model.addAttribute("mess", title);
         return "mail/allmail";
     }
+
+    /**
+     * 邮箱管理的类型（邮件，通知，公告)
+     *
+     * @param userId
+     * @param model
+     * @param req
+     * @param page
+     * @param size
+     * @return
+     */
+    @RequestMapping("mailtitle")
+    public String serch(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
+                        @RequestParam(value = "page", defaultValue = "0") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        String title = req.getParameter("title");// (收发草拉）
+        String val = null;//(邮件，通知，公告）
+        if (!StringUtil.isEmpty(req.getParameter("val"))) {
+            val = req.getParameter("val");
+        }
+        List<Pagemail> pagemailList = null;
+        List<Pagemail> pagemailList2 = new ArrayList<>();//过滤后的
+        List<InMailListPO> inMailListPOList = null;
+        List<InMailListPO> inMailListPOList2 = new ArrayList<>();//过滤后的
+        List<Map<String, Object>> mapListAll = null;
+        String typeName = null;
+        if (("收件箱").equals(title) || ("垃圾箱").equals(title)) {
+            pagemailList = mailServiceV2.recive(page, size, userId, title);
+            for (Pagemail pagemail : pagemailList) {
+                typeName = typeServiceV2.getTypePOByTypeId(pagemail.getMailType()).getTypeName();
+                if (val.equals(typeName)) {
+                    pagemailList2.add(pagemail);
+                }
+            }
+            mapListAll = mailServiceV2.mail(pagemailList2);
+        } else if (("发件箱").equals(title) || ("草稿箱").equals(title)) {
+            inMailListPOList = mailServiceV2.inmail(page, size, userId, title);
+            for (InMailListPO inMailListPO : inMailListPOList) {
+                typeName = typeServiceV2.getTypePOByTypeId(inMailListPO.getMailType()).getTypeName();
+                if (val.equals(typeName)) {
+                    inMailListPOList2.add(inMailListPO);
+                }
+            }
+            mapListAll = mailServiceV2.maillist(inMailListPOList2);
+        }
+        if (!Objects.isNull(pagemailList)) {
+            model.addAttribute("page", pagemailList);
+        } else {
+            model.addAttribute("page", inMailListPOList);
+        }
+        if (val != null) {
+            model.addAttribute("sort", "&title=" + title + "&val=" + val);
+        } else {
+            model.addAttribute("sort", "&title=" + title);
+        }
+        model.addAttribute("mapList", mapListAll);
+        model.addAttribute("url", "mailtitle");
+        model.addAttribute("mess", title);
+        return "mail/mailbody";
+    }
+
 
     /**
      * 写信
