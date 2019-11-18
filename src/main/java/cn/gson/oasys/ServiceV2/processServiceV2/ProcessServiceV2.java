@@ -403,7 +403,7 @@ public class ProcessServiceV2 {
         if (!StringUtil.isEmpty(filePath.getOriginalFilename())) {
             //上传附件
             AttachmentListPO attachmentListPO = mailServiceV2.uploadAttachmentListPO(filePath, applyUserPO);
-            attachmentServiceV2.insertAttachmentListPO(attachmentListPO);
+            attachmentServiceV2.insertAttachmentListPOSetModel(attachmentListPO,"aoa_bursement");
             return attachmentListPO;
         }
         return null;

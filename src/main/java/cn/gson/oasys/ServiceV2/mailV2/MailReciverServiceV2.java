@@ -3,26 +3,13 @@ package cn.gson.oasys.ServiceV2.mailV2;
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
 import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.mappers.MailReciverPOMapper;
-import cn.gson.oasys.model.entity.mail.Pagemail;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.MailReciverPO;
 import cn.gson.oasys.model.po.MailReciverPOExample;
-import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.model.po.TypePO;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.util.StringUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MailReciverServiceV2 {
@@ -139,8 +126,18 @@ public class MailReciverServiceV2 {
      *
      * @param mailReciverPO
      */
-    public void updateMailReciverPORead(MailReciverPO mailReciverPO) {
-        mailReciverPO.setIsRead(1);
+    public void updateMailReciverPORead(MailReciverPO mailReciverPO,Integer read) {
+        mailReciverPO.setIsRead(read);
+        mailReciverPOMapper.updateByPrimaryKeySelective(mailReciverPO);
+
+    }
+    /**
+     * 修改邮件中间表的str字段
+     *
+     * @param mailReciverPO
+     */
+    public void updateMailReciverPOStar(MailReciverPO mailReciverPO,Integer star) {
+        mailReciverPO.setIsStar(star);
         mailReciverPOMapper.updateByPrimaryKeySelective(mailReciverPO);
 
     }
@@ -167,4 +164,19 @@ public class MailReciverServiceV2 {
         return mailReciverPOList;
     }
 
+    /**
+     * 插入邮件中间表
+     *
+     * @param mailId
+     * @param userId
+     */
+    public void insertMailReciverPO(Long mailId, Long userId) {
+        MailReciverPO mailReciverPO = new MailReciverPO();
+        mailReciverPO.setIsRead(0);
+        mailReciverPO.setIsDel(0);
+        mailReciverPO.setIsStar(0);
+        mailReciverPO.setMailId(mailId);
+        mailReciverPO.setMailReciverId(userId);
+        mailReciverPOMapper.insertSelective(mailReciverPO);
+    }
 }

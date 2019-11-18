@@ -12,7 +12,7 @@ import java.util.Date;
 
 @ToString
 @Data
-public class MailNumberV2 {
+public class MailNumberVO {
 
     private Long mailNumberId; //邮箱的主键id
 

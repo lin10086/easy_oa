@@ -3,6 +3,9 @@ package cn.gson.oasys.ServiceV2.mailV2;
 import cn.gson.oasys.mappers.InMailListPOMapper;
 import cn.gson.oasys.model.po.InMailListPO;
 import cn.gson.oasys.model.po.InMailListPOExample;
+import cn.gson.oasys.model.po.MailNumberPO;
+import cn.gson.oasys.model.po.MailReciverPO;
+import cn.gson.oasys.vo.mailV2.InMailListVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -87,5 +90,43 @@ public class InMailListServiceV2 {
     public void deleteInMailListPO(Long mailId) {
         inMailListPOMapper.deleteByPrimaryKey(mailId);
     }
+
+    /**
+     * 插入内部邮件
+     *
+     * @param inMailListVO 邮件的信息
+     * @return
+     */
+    public InMailListPO insertInMailListPO(InMailListVO inMailListVO) {
+        InMailListPO inMailListPO = new InMailListPO();
+        inMailListPO.setMailContent(inMailListVO.getContent());//邮件内容
+        inMailListPO.setMailCreateTime(inMailListVO.getMailCreateTime());//邮件的创建时间
+        inMailListPO.setMailFileId(inMailListVO.getMailFile().getAttachmentId());// 邮件的附件ID
+        inMailListPO.setMailTitle(inMailListVO.getMailTitle());// 邮件主题
+        inMailListPO.setMailType(inMailListVO.getMailType());//邮件类型
+        inMailListPO.setMailInPushUserId(inMailListVO.getMailUserVOId().getUserId());//发件人ID
+        inMailListPO.setInReceiver(inMailListVO.getInReceiver());//接收人名
+        inMailListPO.setMailStatusId(inMailListVO.getMailStatusId());//邮件状态
+        if (inMailListVO.getMailNumberId() != null) {
+            inMailListPO.setMailNumberId(inMailListVO.getMailNumberId().getMailNumberId());//外部邮箱ID
+        }
+        inMailListPO.setMailDel(inMailListVO.getDel() == false ? 0 : 1);//是否删除
+        inMailListPO.setMailPush(inMailListVO.getPush() == false ? 0 : 1);// 是否发送
+        inMailListPO.setMailStar(inMailListVO.getStar() == false ? 0 : 1);// 是否星标
+        inMailListPOMapper.insertSelective(inMailListPO);
+        return inMailListPO;
+    }
+
+    /**
+     * 修改邮件中间表的str字段
+     *
+     * @param inMailListPO
+     */
+    public void updateInMailListPOStar(InMailListPO inMailListPO, Integer star) {
+        inMailListPO.setMailStar(star);
+        inMailListPOMapper.updateByPrimaryKeySelective(inMailListPO);
+
+    }
+
 
 }

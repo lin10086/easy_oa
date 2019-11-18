@@ -12,14 +12,6 @@ public class AttachmentServiceV2 {
     private AttachmentListPOMapper attachmentListPOMapper;
 
     /**
-     * 插入附件到附件表
-     */
-    public void insertAttachmentListPO(AttachmentListPO attachmentListPO) {
-        attachmentListPO.setModel("aoa_bursement");
-        attachmentListPOMapper.insertSelective(attachmentListPO);
-    }
-
-    /**
      * 根据附件ID找附件信息
      *
      * @param attachmentListPOId
@@ -40,5 +32,15 @@ public class AttachmentServiceV2 {
         AttachmentListPO attachmentListPO = attachmentListPOMapper.selectByPrimaryKey(attachmentListPOId);
         String attachmentPath = attachmentListPO.getAttachmentPath();
         return attachmentPath;
+    }
+
+    /**
+     * 设置附件的model信息并插入附近
+     *
+     * @param attachmentListPO
+     */
+    public void insertAttachmentListPOSetModel(AttachmentListPO attachmentListPO, String setModel) {
+        attachmentListPO.setModel(setModel);
+        attachmentListPOMapper.insertSelective(attachmentListPO);
     }
 }
