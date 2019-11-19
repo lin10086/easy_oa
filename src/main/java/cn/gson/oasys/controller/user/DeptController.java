@@ -239,7 +239,7 @@ public class DeptController {
     @RequestMapping("deptmanage")
     public String deptManage(Model model) {
         //所有的部门列表
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
+        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
         List<DeptVO> deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
         model.addAttribute("depts", deptVOList);
         return "user/deptmanage";
@@ -291,7 +291,7 @@ public class DeptController {
             deptVOManage = UserFactoryVO.createUserVO(deptManage);
             model.addAttribute("deptVOManage", deptVOManage);
         }
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
+        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
         List<DeptVO> deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
         //不是以经理结尾的职位列表
         List<PositionPO> positionPOList = positionServiceV2.getPositionPOListByDeptIdAndNameNotLike();

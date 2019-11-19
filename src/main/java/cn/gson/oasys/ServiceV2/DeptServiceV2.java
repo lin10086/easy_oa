@@ -34,7 +34,7 @@ public class DeptServiceV2 {
      *
      * @return
      */
-    public List<DeptPO> getDeptPOList() {
+    public List<DeptPO> getDeptPOListAll() {
         DeptPOExample deptPOExample = new DeptPOExample();
         List<DeptPO> deptPOList = deptPOMapper.selectByExample(deptPOExample);
         return deptPOList;

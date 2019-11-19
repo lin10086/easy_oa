@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import cn.gson.oasys.vo.taskVO2.TaskListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,19 +55,19 @@ public class ValidatorController {
 	private RoleDao rdao;
 	
 	@RequestMapping("ck_addtask")
-	public String addtask(HttpServletRequest request,@Valid Tasklist tlist,BindingResult br,HttpSession session,
-			@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "size", defaultValue = "10") int size){
-		request.setAttribute("tasklist", tlist);
+	public String addtask(HttpServletRequest request, @Valid TaskListVO taskListVO, BindingResult br, HttpSession session,
+						  @RequestParam(value = "page", defaultValue = "0") int page,
+						  @RequestParam(value = "size", defaultValue = "10") int size){
+		request.setAttribute("taskListVO", taskListVO);
 		Pageable pa=new PageRequest(page, size);
 		
 		// 这里返回ResultVO对象，如果校验通过，ResultEnum.SUCCESS.getCode()返回的值为200；否则就是没有通过；
 		ResultVO res = BindingResultVOUtil.hasErrors(br);
-		System.out.println("tlist:"+tlist);
+		System.out.println("tlist:"+taskListVO);
 		if (!ResultEnum.SUCCESS.getCode().equals(res.getCode())) {
 			List<Object> list = new MapToList<>().mapToList(res.getData());
 			request.setAttribute("errormess", list.get(0).toString());
-			System.out.println("list错误的实体类信息：" + tlist);
+			System.out.println("list错误的实体类信息：" + taskListVO);
 			System.out.println("list错误详情:" + list);
 			System.out.println("list错误第一条:" + list.get(0));
 			System.out.println("啊啊啊错误的信息——：" + list.get(0).toString());
@@ -74,13 +75,10 @@ public class ValidatorController {
 			log.info("getData:{}", res.getData());
 			log.info("getCode:{}", res.getCode());
 			log.info("getMsg:{}", res.getMsg());
-			
-			
-			
+
+
 			String userId = ((String) session.getAttribute("userId")).trim();
 			Long userid = Long.parseLong(userId);
-
-			
 			// 查询类型表
 			Iterable<SystemTypeList> typelist = tydao.findAll();
 			// 查询状态表
@@ -99,8 +97,7 @@ public class ValidatorController {
 			request.setAttribute("deptlist", deptlist);
 			request.setAttribute("rolelist", rolelist);
 			return "task/addtask";
-		}
-		else{
+		} else{
 			
 			return "forward:/addtasks";
 		}

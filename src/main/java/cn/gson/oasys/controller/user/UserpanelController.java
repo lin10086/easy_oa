@@ -70,7 +70,7 @@ public class UserpanelController {
 	@PostConstruct
 	public void UserpanelController(){
 		try {
-			rootpath= ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/","/src/main//resources/static");
+			rootpath= ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/","/src/main/resources/static");
 			System.out.println(rootpath);
 
 		}catch (IOException e){

@@ -186,5 +186,21 @@
             <columnOverride column="mail_id" javaType="Long"/>
         </table>
 
+        <!--任务表-->
+        <table tableName="aoa_task_list" domainObjectName="TaskListPO">
+            <generatedKey column="task_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="task_id" javaType="Long"/>
+        </table>
+        <!--任务接收人联系表-->
+        <table tableName="aoa_task_user" domainObjectName="TaskUserPO">
+            <generatedKey column="pk_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="pk_id" javaType="Long"/>
+        </table>
+        <!--任务日志表-->
+        <table tableName="aoa_task_logger" domainObjectName="TaskLoggerPO">
+            <generatedKey column="logger_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="logger_id" javaType="Long"/>
+        </table>
+
     </context>
 </generatorConfiguration>

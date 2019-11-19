@@ -89,11 +89,11 @@ a:hover {
 						</div>
 						<div class="col-md-6 form-group">
 							<label class="control-label">开始日期</label> <input id="starTime" name="starTime"
-								class="form-control"  value="${task.starTime}"/>
+								class="form-control"  value="${taskStarTime}"/>
 						</div>
 						<div class="col-md-6 form-group">
 							<label class="control-label">结束日期</label> <input id="endTime" name="endTime"
-								class="form-control" value="${task.endTime}"/>
+								class="form-control" value="${taskEndTime}"/>
 						</div>
 						<div class="col-md-6 form-group">
 
@@ -119,7 +119,7 @@ a:hover {
 						</div>
 						<div class="col-md-6 form-group ">
 							<label class="control-label">置顶</label> <br /> 
-								<#if task.top==true>
+								<#if taskIsTop==true>
 									<span class="labels">
 									<label>
 									   <input type="checkbox" name="top" class="val" checked><i>✓</i>
@@ -134,7 +134,7 @@ a:hover {
 
 						<div class="col-md-6  form-group"> 
 							<label class="control-label">取消</label> <br />
-							<#if task.cancel==true>
+							<#if taskIsCancel==true>
 									<span class="labels">
 									<label>
 									   <input type="checkbox" name="cancel" class="val" checked><i>✓</i>

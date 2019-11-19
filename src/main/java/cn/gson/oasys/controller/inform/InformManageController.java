@@ -1,8 +1,6 @@
 package cn.gson.oasys.controller.inform;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,11 +16,10 @@ import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.ServiceV2.noticeServiceV2.InfrommanageServiceV2;
 import cn.gson.oasys.ServiceV2.noticeServiceV2.NoticeUserRelationServiceV2;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.noticeV2.NoticeListVO;
+import cn.gson.oasys.vo.noticeVO2.NoticeListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -45,11 +42,6 @@ import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.notice.NoticeUserRelation;
-import cn.gson.oasys.model.entity.notice.NoticesList;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.inform.InformRelationService;
 import cn.gson.oasys.services.inform.InformService;
 

@@ -22,8 +22,8 @@ import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.factoryvo.AttachmentFactoryVO;
 import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
 import cn.gson.oasys.vo.factoryvo.mailFactory.MailNumberVOFactory;
-import cn.gson.oasys.vo.mailV2.InMailListVO;
-import cn.gson.oasys.vo.mailV2.MailNumberVO;
+import cn.gson.oasys.vo.mailVO2.InMailListVO;
+import cn.gson.oasys.vo.mailVO2.MailNumberVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +54,7 @@ import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.PositionDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.mail.Inmaillist;
-import cn.gson.oasys.model.entity.mail.Mailnumber;
-import cn.gson.oasys.model.entity.mail.Mailreciver;
 import cn.gson.oasys.model.entity.mail.Pagemail;
-import cn.gson.oasys.model.entity.note.Attachment;
 import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.Position;
 import cn.gson.oasys.model.entity.user.User;
@@ -697,10 +693,10 @@ public class MailController {
 */
 
 
-    /**
+    /*  *//**
      * 账号各种排序
      * 和查询
-     */
+     *//*
     @RequestMapping("mailpaixu")
     public String paixu(HttpServletRequest request, @SessionAttribute("userId") Long userId, Model model,
                         @RequestParam(value = "page", defaultValue = "0") int page,
@@ -720,7 +716,7 @@ public class MailController {
         model.addAttribute("url", "mailpaixu");
 
         return "mail/mailtable";
-    }
+    }*/
 
 
     /**
@@ -745,8 +741,6 @@ public class MailController {
             if (!StringUtil.isEmpty(request.getParameter("fasong"))) {
                 name = request.getParameter("fasong");
             }
-
-
             if (!StringUtil.isEmpty(name)) {
                 if (!StringUtil.isEmpty(file.getOriginalFilename())) {
                     attaid = mservice.upload(file, tu);
@@ -769,7 +763,6 @@ public class MailController {
             }
             //存邮件
             Inmaillist imail = imdao.save(mail);
-
             if (!StringUtil.isEmpty(name)) {
                 if (mservice.isContainChinese(mail.getInReceiver())) {
                     // 分割任务接收人
@@ -856,10 +849,9 @@ public class MailController {
 
     }
 
-
     /**
-     *
-     */
+     * 恢复删除
+     *//*
     @RequestMapping("refresh")
     public String refresh(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model,
                           @RequestParam(value = "page", defaultValue = "0") int page,
@@ -893,7 +885,7 @@ public class MailController {
 
         return "mail/mailbody";
 
-    }
+    }*/
     //===========================================
 
     @Resource
@@ -924,9 +916,9 @@ public class MailController {
                           @RequestParam(value = "size", defaultValue = "10") int size) {
         UserPO userPO = userServiceV2.getUserPOByUserId(userId);
         PageHelper.startPage(page, size);
-        List<MailNumberPO> mailNumberPOList = mailServiceV2.getMailNumberPOListByUserId(userPO);
+        List<MailNumberPO> mailNumberPOList = mailNumberServiceV2.getMailNumberPOListByUserId(userPO);
         PageInfo pageInfo = new PageInfo(mailNumberPOList);
-        List<Map<String, Object>> mapList = mailServiceV2.encapsulationMailNumberPO(mailNumberPOList);
+        List<Map<String, Object>> mapList = mailNumberServiceV2.encapsulationMailNumberPO(mailNumberPOList);
         model.addAttribute("mapList", mapList);
         model.addAttribute("page", pageInfo);
         model.addAttribute("url", "mailpaixu");
@@ -988,7 +980,7 @@ public class MailController {
             System.out.println("list错误第一条:" + list.get(0));
             System.out.println("啊啊啊错误的信息——：" + list.get(0).toString());
         } else {
-            mailServiceV2.insertOrUpdateMailNumberPO(mailNumberV2, userId);
+            mailNumberServiceV2.insertOrUpdateMailNumberPO(mailNumberV2, userId);
             request.setAttribute("success", "执行成功！");
         }
         return "forward:/addaccount";
@@ -1003,7 +995,7 @@ public class MailController {
         Long mailNumberPOId = Long.parseLong(request.getParameter("id"));
         MailNumberPO mailNumberPO = mailNumberServiceV2.getMailNumberPOByMailNumberPOId(mailNumberPOId);
         if (mailNumberPO.getMailNumUserId().equals(userId)) {
-            mailServiceV2.deleteMailNumberPO(mailNumberPO.getMailNumberId());
+            mailNumberServiceV2.deleteMailNumberPO(mailNumberPO.getMailNumberId());
         } else {
             return "redirect:/notlimit";
         }
@@ -1038,8 +1030,8 @@ public class MailController {
         PageInfo pageInfo = new PageInfo(pageMailList);
         model.addAttribute("page", pageInfo);
         List<Map<String, Object>> mapList = mailServiceV2.mail(pageMailList);
-        model.addAttribute("mapList", mapList);
 
+        model.addAttribute("mapList", mapList);
         model.addAttribute("url", "mailtitle");
         model.addAttribute("mess", "收件箱");
         model.addAttribute("sort", "&title=收件箱");
@@ -1193,7 +1185,6 @@ public class MailController {
         return "mail/wirtemail";
     }
 
-
     /**
      * 发送邮件
      *
@@ -1254,25 +1245,21 @@ public class MailController {
                     mailReciverPO.setMailReciverId(reciverUserPO.getUserId());
                     mailReciverServiceV2.insertMailReciverPO(inMailListPO.getMailId(), reciverUserPO.getUserId());
                 }
-//                }
-//                else {
-//                    if (inMailListVO.getInReceiver().contains(";")) {
-//                        st = new StringTokenizer(inMailListVO.getInReceiver(), ";");
-//                    } else {
-//                        st = new StringTokenizer(inMailListVO.getInReceiver(), "；");
-//                    }
-//
-//                    while (st.hasMoreElements()) {
-//                        if (!StringUtil.isEmpty(file.getOriginalFilename())) {
-//                            mailServiceV2.pushmail(mailNumberPO.getMailAccount(), mailNumberPO.getPassword(), st.nextToken(), mailNumberPO.getMailUserName(), inMailListVO.getMailTitle(),
-//                                    inMailListVO.getContent(), attachmentListPO.getAttachmentPath(), attachmentListPO.getAttachmentName());
-//
-//                        } else {
-//                            mailServiceV2.pushmail(mailNumberPO.getMailAccount(), mailNumberPO.getPassword(), st.nextToken(), mailNumberPO.getMailUserName(), inMailListVO.getMailTitle(),
-//                                    inMailListVO.getContent(), null, null);
-//                        }
-//                    }
-//                }
+            } else {
+                if (inMailListVO.getInReceiver().contains(";")) {
+                    st = new StringTokenizer(inMailListVO.getInReceiver(), ";");
+                } else {
+                    st = new StringTokenizer(inMailListVO.getInReceiver(), "；");
+                }
+                while (st.hasMoreElements()) {
+                    if (!StringUtil.isEmpty(file.getOriginalFilename())) {
+                        mailServiceV2.pushmail(mailNumberPO.getMailAccount(), mailNumberPO.getPassword(), st.nextToken(), mailNumberPO.getMailUserName(), inMailListVO.getMailTitle(),
+                                inMailListVO.getContent(), attachmentListPO.getAttachmentPath(), attachmentListPO.getAttachmentName());
+                    } else {
+                        mailServiceV2.pushmail(mailNumberPO.getMailAccount(), mailNumberPO.getPassword(), st.nextToken(), mailNumberPO.getMailUserName(), inMailListVO.getMailTitle(),
+                                inMailListVO.getContent(), null, null);
+                    }
+                }
             }
         }
         return "redirect:/mail";
@@ -1297,10 +1284,9 @@ public class MailController {
             while (st.hasMoreElements()) {
                 //找到该用户联系邮件的中间记录
                 MailReciverPO mailReciverPO = mailReciverServiceV2.getMailReciverPOByMailIdAndUserId(userId, Long.parseLong(st.nextToken()));
-//                Mailreciver mailr = mrdao.findbyReciverIdAndmailId(user, Long.parseLong(st.nextToken()));
                 if (!Objects.isNull(mailReciverPO)) {
                     //把删除的字段改为1
-                    mailReciverServiceV2.updateMailReciverPODel(mailReciverPO);
+                    mailReciverServiceV2.updateMailReciverPODel(mailReciverPO, 1);
                 } else {
                     return "redirect:/notlimit";
                 }
@@ -1439,8 +1425,6 @@ public class MailController {
         String ids = req.getParameter("ids");//多个邮件ID
         List<Pagemail> pageMailList = null;
         List<Map<String, Object>> mapList = null;
-
-
         if (("收件箱").equals(title) || ("垃圾箱").equals(title)) {
             StringTokenizer st = new StringTokenizer(ids, ",");
             while (st.hasMoreElements()) {
@@ -1448,6 +1432,8 @@ public class MailController {
                 MailReciverPO mailReciverPO = mailReciverServiceV2.getMailReciverPOByMailIdAndUserId(userId, Long.parseLong(st.nextToken()));
                 if (mailReciverPO.getIsRead().equals(0)) {
                     mailReciverServiceV2.updateMailReciverPORead(mailReciverPO, 1);
+                } else {
+                    mailReciverServiceV2.updateMailReciverPORead(mailReciverPO, 0);
                 }
             }
             //分页及查找
@@ -1480,6 +1466,8 @@ public class MailController {
                 MailReciverPO mailReciverPO = mailReciverServiceV2.getMailReciverPOByMailIdAndUserId(userId, Long.parseLong(st.nextToken()));
                 if (mailReciverPO.getIsStar().equals(0)) {
                     mailReciverServiceV2.updateMailReciverPOStar(mailReciverPO, 1);
+                } else {
+                    mailReciverServiceV2.updateMailReciverPOStar(mailReciverPO, 0);
                 }
             }
             pageMailList = mailServiceV2.recive(page, size, userId, title);
@@ -1508,5 +1496,63 @@ public class MailController {
         return "mail/mailbody";
     }
 
+
+    /**
+     * 恢复删除
+     */
+    @RequestMapping("refresh")
+    public String refresh(HttpServletRequest req, @SessionAttribute("userId") Long userId, Model model,
+                          @RequestParam(value = "page", defaultValue = "0") int page,
+                          @RequestParam(value = "size", defaultValue = "10") int size) {
+        String title = req.getParameter("title");
+        String ids = req.getParameter("ids");
+        List<Pagemail> pageMailList = null;
+        List<Map<String, Object>> mapList = null;
+
+        StringTokenizer st = new StringTokenizer(ids, ",");
+        while (st.hasMoreElements()) {
+            //找到该用户联系邮件的中间记录
+            MailReciverPO mailReciverPO = mailReciverServiceV2.getMailReciverPOByMailIdAndUserId(userId, Long.parseLong(st.nextToken()));
+
+            if (!Objects.isNull(mailReciverPO)) {
+                mailReciverServiceV2.updateMailReciverPODel(mailReciverPO, 0);
+            } else {
+                return "redirect:/notlimit";
+            }
+        }
+        //分页及查找
+        pageMailList = mailServiceV2.recive(page, size, userId, title);
+        mapList = mailServiceV2.mail(pageMailList);
+        model.addAttribute("page", pageMailList);
+        model.addAttribute("mapList", mapList);
+        model.addAttribute("url", "mailtitle");
+        model.addAttribute("mess", title);
+        return "mail/mailbody";
+
+    }
+
+    /**
+     * 账号各种排序
+     * 和查询
+     */
+    @RequestMapping("mailpaixu")
+    public String paixu(HttpServletRequest request, @SessionAttribute("userId") Long userId, Model model,
+                        @RequestParam(value = "page", defaultValue = "0") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        //得到传过来的值
+        String val = null;
+        if (!StringUtil.isEmpty(request.getParameter("val"))) {
+            val = request.getParameter("val");
+        }
+        List<MailNumberPO>mailNumberPOList = mailNumberServiceV2.selectMailNumberPO(page,size,val,model);
+        PageInfo pageInfo = new PageInfo(mailNumberPOList);
+        List<Map<String, Object>> mapList = mailNumberServiceV2.encapsulationMailNumberPO(mailNumberPOList);
+        model.addAttribute("mapList", mapList);
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("url", "mailpaixu");
+
+        return "mail/mailtable";
+    }
 
 }

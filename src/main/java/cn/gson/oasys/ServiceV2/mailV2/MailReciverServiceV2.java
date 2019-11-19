@@ -116,8 +116,8 @@ public class MailReciverServiceV2 {
      *
      * @param mailReciverPO
      */
-    public void updateMailReciverPODel(MailReciverPO mailReciverPO) {
-        mailReciverPO.setIsDel(1);
+    public void updateMailReciverPODel(MailReciverPO mailReciverPO,Integer del) {
+        mailReciverPO.setIsDel(del);
         mailReciverPOMapper.updateByPrimaryKeySelective(mailReciverPO);
     }
 

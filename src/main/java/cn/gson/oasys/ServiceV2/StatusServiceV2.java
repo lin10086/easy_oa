@@ -49,5 +49,15 @@ public class StatusServiceV2 {
         return statusPO;
     }
 
+    /**
+     * 获取所有状态
+     *
+     * @return
+     */
+    public List<StatusPO> getStatusPOListAll() {
+        StatusPOExample statusPOExample = new StatusPOExample();
+        List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
+        return statusPOList;
+    }
 
 }

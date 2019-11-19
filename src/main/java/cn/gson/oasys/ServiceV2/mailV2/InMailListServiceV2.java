@@ -3,9 +3,7 @@ package cn.gson.oasys.ServiceV2.mailV2;
 import cn.gson.oasys.mappers.InMailListPOMapper;
 import cn.gson.oasys.model.po.InMailListPO;
 import cn.gson.oasys.model.po.InMailListPOExample;
-import cn.gson.oasys.model.po.MailNumberPO;
-import cn.gson.oasys.model.po.MailReciverPO;
-import cn.gson.oasys.vo.mailV2.InMailListVO;
+import cn.gson.oasys.vo.mailVO2.InMailListVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

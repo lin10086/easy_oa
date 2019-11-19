@@ -10,7 +10,6 @@ import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.entity.mail.Pagemail;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.mailV2.MailNumberVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +67,8 @@ public class MailServiceV2 {
     private MailReciverServiceV2 mailReciverServiceV2;
     @Resource
     private InMailListServiceV2 inMailListServiceV2;
+    @Resource
+    private MailNumberServiceV2 mailNumberServiceV2;
 
     private String rootPath;
 
@@ -124,77 +125,6 @@ public class MailServiceV2 {
         return null;
     }
 
-
-    /**
-     * 根据用户ID找邮箱账号
-     *
-     * @param userPO
-     * @return
-     */
-    public List<MailNumberPO> getMailNumberPOListByUserId(UserPO userPO) {
-        MailNumberPOExample mailNumberPOExample = new MailNumberPOExample();
-        mailNumberPOExample.createCriteria().andMailNumUserIdEqualTo(userPO.getUserId());
-        List<MailNumberPO> mailNumberPOList = mailNumberPOMapper.selectByExample(mailNumberPOExample);
-        return mailNumberPOList;
-    }
-
-    /**
-     * 封装邮箱账号
-     *
-     * @param mailNumberPOList
-     * @return
-     */
-    public List<Map<String, Object>> encapsulationMailNumberPO(List<MailNumberPO> mailNumberPOList) {
-        List<Map<String, Object>> mapList = new ArrayList<>();
-        for (MailNumberPO mailNumberPO : mailNumberPOList) {
-            Map<String, Object> map = new HashMap<>();
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(mailNumberPO.getStatus());
-
-            map.put("mailNumberPOId", mailNumberPO.getMailNumberId());
-            map.put("typeName", tydao.findname(mailNumberPO.getMailType()));
-            map.put("statusName", statusPO.getStatusName());
-            map.put("statusColor", statusPO.getStatusColor());
-            map.put("mailNumberPOName", mailNumberPO.getMailUserName());
-            map.put("mailCreateTime", new Timestamp(mailNumberPO.getMailCreateTime().getTime()));
-            mapList.add(map);
-        }
-        return mapList;
-    }
-
-
-    /**
-     * 插入或更新邮箱
-     *
-     * @param mailNumberV2
-     */
-    public void insertOrUpdateMailNumberPO(MailNumberVO mailNumberV2, Long userId) {
-        MailNumberPO mailNumberPO = new MailNumberPO();
-        mailNumberPO.setMailType(mailNumberV2.getMailType());
-        mailNumberPO.setStatus(mailNumberV2.getStatus());
-        mailNumberPO.setMailUserName(mailNumberV2.getMailUserName());
-        mailNumberPO.setMailAccount(mailNumberV2.getMailAccount());
-        mailNumberPO.setPassword(mailNumberV2.getPassword());
-        mailNumberPO.setMailDes(mailNumberV2.getMailDes());
-        mailNumberPO.setMailNumUserId(userId);
-
-        if (mailNumberV2.getMailNumberId() == null) {
-            mailNumberPO.setMailCreateTime(new Date());
-            mailNumberPOMapper.insertSelective(mailNumberPO);
-        } else {
-            mailNumberPO.setMailNumberId(mailNumberV2.getMailNumberId());
-            mailNumberPO.setMailCreateTime(mailNumberV2.getMailCreateTime());
-            mailNumberPOMapper.updateByPrimaryKeySelective(mailNumberPO);
-        }
-    }
-
-    /**
-     * 根据邮箱账号ID删除邮箱账号
-     *
-     * @param mailNumberPOId
-     */
-    public void deleteMailNumberPO(Long mailNumberPOId) {
-        mailNumberPOMapper.deleteByPrimaryKey(mailNumberPOId);
-    }
 
 
     /**
@@ -441,5 +371,6 @@ public class MailServiceV2 {
 
         return message;
     }
+
 
 }

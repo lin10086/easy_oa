@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.factoryvo.mailFactory;
 
 import cn.gson.oasys.model.po.MailNumberPO;
-import cn.gson.oasys.vo.mailV2.MailNumberVO;
+import cn.gson.oasys.vo.mailVO2.MailNumberVO;
 
 import java.util.ArrayList;
 import java.util.List;

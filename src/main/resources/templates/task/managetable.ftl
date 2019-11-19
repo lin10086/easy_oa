@@ -34,7 +34,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<#list tasklist as task>
+					<#list mapList as task>
 					<tr>
 						<td><span>${task.typename}</span></td>
 						<td><span>${task.title}</span></td>

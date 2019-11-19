@@ -126,6 +126,7 @@ public class TaskService {
 		return tasklist;
 		
 	}
+
 	public List<Map<String, Object>>  index2(Page<Tasklist> tasklist,User user){
 		String username = user.getUserName();
 		String deptname = ddao.findname(user.getDept().getDeptId());

@@ -45,7 +45,7 @@ public class TypeServiceV2 {
     }
 
     /**
-     * 在类型列表里面找类型ID和类型名
+     * 在类型列表里面找类型ID和类型名通过类型列表
      *
      * @param typePOList 类型列表
      * @return
@@ -67,5 +67,16 @@ public class TypeServiceV2 {
     public TypePO getTypePOByTypeId(Long typeId) {
         TypePO typePO = typePOMapper.selectByPrimaryKey(typeId);
         return typePO;
+    }
+
+    /**
+     * 获取所有类型
+     *
+     * @return
+     */
+    public List<TypePO> getTypePOListAll() {
+        TypePOExample typePOExample = new TypePOExample();
+        List<TypePO> typePOList = typePOMapper.selectByExample(typePOExample);
+        return typePOList;
     }
 }

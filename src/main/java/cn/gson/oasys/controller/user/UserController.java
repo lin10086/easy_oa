@@ -286,10 +286,10 @@ public class UserController {
             model.addAttribute("user", userVO);
         }
 
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
+        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
         List<DeptVO>deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
 
-        List<PositionPO> positionPOList = positionServiceV2.getPositionList();
+        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();
         List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
 
         List<RolePO> rolePOList = roleServiceV2.getRoleList();

@@ -6,7 +6,7 @@ import cn.gson.oasys.mappers.ProcessListPOMapper;
 import cn.gson.oasys.mappers.ReviewedPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.processV2.ProcessAuditVO;
+import cn.gson.oasys.vo.processVO2.ProcessAuditVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;

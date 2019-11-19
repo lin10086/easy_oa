@@ -2,15 +2,10 @@ package cn.gson.oasys.ServiceV2.processServiceV2;
 
 import cn.gson.oasys.ServiceV2.*;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.ByProcessPOIdServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.ProcessAuditVOServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.ReviewedServiceV2;
 import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.*;
-import cn.gson.oasys.vo.factoryvo.*;
-import cn.gson.oasys.vo.processV2.*;
+import cn.gson.oasys.vo.processVO2.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
@@ -708,8 +703,8 @@ public class ProcessServiceV2 {
         PageHelper.startPage(page, size);
         List<UserPO> userPOList = userServiceV2.getUserAll();//获取所有用户信息
         PageInfo pageInfo = new PageInfo(userPOList);// 可以获取分页信息
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();//获取所有的部门信息
-        List<PositionPO> positionPOList = positionServiceV2.getPositionList();//获取所有的职位信息
+        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();//获取所有的部门信息
+        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();//获取所有的职位信息
         model.addAttribute("page", pageInfo);//可以用户的一些分页信息
         model.addAttribute("emplist", userPOList);//所有用户信息
         model.addAttribute("deptlist", deptPOList);//所有的部门信息

@@ -4,7 +4,7 @@ import cn.gson.oasys.ServiceV2.*;
 import cn.gson.oasys.mappers.NoticeListPOMapper;
 import cn.gson.oasys.mappers.NoticeUserRelationPOMapper;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.noticeV2.NoticeListVO;
+import cn.gson.oasys.vo.noticeVO2.NoticeListVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 

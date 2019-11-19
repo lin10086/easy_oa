@@ -25,7 +25,7 @@ public class PositionServiceV2 {
      *
      * @return
      */
-    public List<PositionPO> getPositionList() {
+    public List<PositionPO> getPositionListAll() {
         PositionPOExample positionPOExample = new PositionPOExample();
         List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
         return positionPOList;

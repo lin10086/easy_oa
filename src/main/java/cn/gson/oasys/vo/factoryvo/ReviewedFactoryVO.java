@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.factoryvo;
 
 import cn.gson.oasys.model.po.ReviewedPO;
-import cn.gson.oasys.vo.processV2.ReviewedVO;
+import cn.gson.oasys.vo.processVO2.ReviewedVO;
 
 import java.util.ArrayList;
 import java.util.List;

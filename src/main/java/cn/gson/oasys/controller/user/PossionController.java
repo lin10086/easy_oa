@@ -97,7 +97,7 @@ public class PossionController {
 
     @RequestMapping("positionmanage")
     public String positionmanage(Model model) {
-        List<PositionPO> positionPOList = positionServiceV2.getPositionList();
+        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();
         List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
         model.addAttribute("positions", positionVOList);
         return "user/positionmanage";
@@ -116,7 +116,7 @@ public class PossionController {
             model.addAttribute("positionDept", deptVO);
             model.addAttribute("position", positionVO);
         }
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOList();
+        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
         model.addAttribute("depts", deptPOList);
         return "user/positionedit";
     }
