@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import cn.gson.oasys.ServiceV2.*;
+import cn.gson.oasys.ServiceV2.taskV2.TaskListServiceV2;
 import cn.gson.oasys.ServiceV2.taskV2.TaskLoggerServiceV2;
 import cn.gson.oasys.ServiceV2.taskV2.TaskServiceV2;
 import cn.gson.oasys.ServiceV2.taskV2.TaskUserServiceV2;
@@ -106,9 +107,10 @@ public class TaskController {
 		return "task/taskmanage";
 	}
 */
-    /**
+
+    /*   *//**
      * 各种排序
-     */
+     *//*
     @RequestMapping("paixu")
     public String paixu(HttpServletRequest request,
                         @SessionAttribute("userId") Long userId, Model model,
@@ -132,7 +134,7 @@ public class TaskController {
         return "task/managetable";
 
     }
-
+*/
 
     /* *//**
      * 点击新增任务
@@ -316,9 +318,9 @@ public class TaskController {
     }*/
 //---------------------------------------------------------
 
-    /**
+    /* *//**
      * 我的任务
-     */
+     *//*
     @RequestMapping("mytask")
     public String index5(@SessionAttribute("userId") Long userId, Model model,
                          @RequestParam(value = "page", defaultValue = "0") int page,
@@ -338,14 +340,14 @@ public class TaskController {
         }
         model.addAttribute("url", "mychaxun");
         return "task/mytask";
-
     }
+*/
 
-    /**
+    /*  *//**
      * 在我的任务里面进行查询
      *
      * @throws ParseException
-     */
+     *//*
     @RequestMapping("mychaxun")
     public String select(HttpServletRequest request, @SessionAttribute("userId") Long userId, Model model,
                          @RequestParam(value = "page", defaultValue = "0") int page,
@@ -363,8 +365,15 @@ public class TaskController {
         model.addAttribute("sort", "&title=" + title);
         return "task/mytasklist";
     }
+*/
 
-
+    /**
+     * 我任务里面的查看
+     *
+     * @param req
+     * @param userId
+     * @return
+     *//*
     @RequestMapping("myseetasks")
     public ModelAndView myseetask(HttpServletRequest req, @SessionAttribute("userId") Long userId) {
 
@@ -382,13 +391,11 @@ public class TaskController {
         Long ustatus = tudao.findByuserIdAndTaskId(userId, ltaskid);
 
         SystemStatusList status = sdao.findOne(ustatus);
-        /*System.out.println(status);*/
-
+        *//*System.out.println(status);*//*
         // 查看发布人
         User user = udao.findOne(task.getUsersId().getUserId());
         // 查看任务日志表
         List<Tasklogger> logger = tldao.findByTaskId(ltaskid);
-
         mav.addObject("task", task);
         mav.addObject("user", user);
         mav.addObject("status", status);
@@ -396,16 +403,15 @@ public class TaskController {
         mav.addObject("loggerlist", logger);
         return mav;
 
-    }
+    }*/
 
-    /**
+    /* *//**
      * 从我的任务查看里面修改状态和日志
-     */
+     *//*
     @RequestMapping("uplogger")
     public String updatelo(Tasklogger logger, @SessionAttribute("userId") Long userId) {
         System.out.println(logger.getLoggerStatusid());
         // 获取用户id
-
         // 查找用户
         User user = udao.findOne(userId);
         // 查任务
@@ -414,7 +420,6 @@ public class TaskController {
         logger.setUsername(user.getUserName());
         // 存日志
         tldao.save(logger);
-
         // 修改任务中间表状态
         Long pkid = udao.findpkId(logger.getTaskId().getTaskId(), userId);
         Taskuser tasku = new Taskuser();
@@ -422,15 +427,12 @@ public class TaskController {
         tasku.setTaskId(task);
         tasku.setUserId(user);
         if (!Objects.isNull(logger.getLoggerStatusid())) {
-
             tasku.setStatusId(logger.getLoggerStatusid());
         }
         // 存任务中间表
         tudao.save(tasku);
-
         // 修改任务状态
         // 通过任务id查看总状态
-
         List<Integer> statu = tudao.findByTaskId(logger.getTaskId().getTaskId());
         System.out.println(statu);
         // 选出最小的状态id 修改任务表里面的状态
@@ -440,27 +442,24 @@ public class TaskController {
                 min = integer;
             }
         }
-
         int up = tservice.updateStatusid(logger.getTaskId().getTaskId(), min);
-		/*System.out.println(logger.getTaskId().getTaskId() + "aaaa");
+		*//*System.out.println(logger.getTaskId().getTaskId() + "aaaa");
 		System.out.println(min + "wwww");
-		System.out.println(up + "pppppp");*/
+		System.out.println(up + "pppppp");*//*
         if (up > 0) {
             System.out.println("任务状态修改成功!");
         }
-
         return "redirect:/mytask";
+    }*/
+    /*
 
-    }
-/*
-
-    */
+     */
 /**
-     * 根据发布人这边删除任务和相关联系
-     *
-     * @param req
-     * @return
-     *//*
+ * 根据发布人这边删除任务和相关联系
+ *
+ * @param req
+ * @return
+ *//*
 
     @RequestMapping("shanchu")
     public String delete(HttpServletRequest req, @SessionAttribute("userId") Long userId) {
@@ -494,7 +493,7 @@ public class TaskController {
     /**
      * 接收人这边删除
      */
-    @RequestMapping("myshanchu")
+  /*  @RequestMapping("myshanchu")
     public String mydelete(HttpServletRequest req, @SessionAttribute("userId") Long userId) {
         // 用户id
         // 得到任务的 id
@@ -502,10 +501,9 @@ public class TaskController {
         Long ltaskid = Long.parseLong(taskid);
         Long pkid = udao.findpkId(ltaskid, userId);
         tservice.delete(pkid);
-
         return "redirect:/mytask";
-
     }
+*/
 
     //================================================
     @Resource
@@ -514,6 +512,8 @@ public class TaskController {
     private TaskServiceV2 taskServiceV2;
     @Resource
     private TaskUserServiceV2 taskUserServiceV2;
+    @Resource
+    private TaskListServiceV2 taskListServiceV2;
     @Resource
     private TypeServiceV2 typeServiceV2;
     @Resource
@@ -547,6 +547,33 @@ public class TaskController {
         model.addAttribute("url", "paixu");
         return "task/taskmanage";
     }
+
+    /**
+     * 任务管理中各种排序
+     */
+    @RequestMapping("paixu")
+    public String paixu(HttpServletRequest request,
+                        @SessionAttribute("userId") Long userId, Model model,
+                        @RequestParam(value = "page", defaultValue = "0") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        String val = null;
+        if (!StringUtil.isEmpty(request.getParameter("val"))) {
+            val = request.getParameter("val").trim();
+            model.addAttribute("sort", "&val=" + val);
+        }
+        List<TaskListPO> taskListPOList = taskServiceV2.selectTackListPO(page, size, val, userId);
+        PageInfo pageInfo = new PageInfo(taskListPOList);
+        List<Map<String, Object>> mapList = taskServiceV2.packageTaskListPO(taskListPOList, userId);
+
+
+        model.addAttribute("mapList", mapList);
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("url", "paixu");
+
+        return "task/managetable";
+
+    }
+
 
     /**
      * 点击新增任务
@@ -607,7 +634,8 @@ public class TaskController {
      * @param request
      * @return
      */
-    @RequestMapping("addtasks")
+//    @RequestMapping("addtasks")
+    @RequestMapping("ck_addtask")
     public String addtask(@SessionAttribute("userId") Long userId, @Valid TaskListVO taskListVO, BindingResult br, HttpServletRequest request) {
         request.getAttribute("success");
         TaskListPO taskListPO = taskServiceV2.insertOrUpdateTaskListPO(taskListVO, userId);//插入任务表
@@ -633,7 +661,7 @@ public class TaskController {
         // 得到链接中的任务id
         Long taskId = Long.parseLong(req.getParameter("id"));
         // 通过任务id得到相应的任务
-        TaskListPO taskListPO = taskServiceV2.getTaskListPOByTaskListPOId(taskId);
+        TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);
 //        Tasklist task = tdao.findOne(ltaskid);
         // 得到状态id
         Long statusId = taskListPO.getStatusId().longValue();
@@ -701,37 +729,29 @@ public class TaskController {
         ModelAndView mav = new ModelAndView("task/seetask");
         // 得到任务的 id
         Long taskId = Long.parseLong(req.getParameter("id"));
-        // 通过任务id得到相应的任务
-        TaskListPO taskListPO = taskServiceV2.getTaskListPOByTaskListPOId(taskId);
-        Long statusId = taskListPO.getStatusId().longValue();
-        StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();
-        UserPO userPO = userServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
-        List<TaskLoggerPO> taskLoggerPOList = taskLoggerServiceV2.getTaskLoggerPOByTaskListPOId(taskId);
-        List<TaskLoggerVO> taskLoggerVOList = TaskLoggerFactoryVO.createTaskLoggerVOList(taskLoggerPOList);
-        for (TaskLoggerVO taskLoggerVO : taskLoggerVOList) {
-            taskLoggerVO.setUsername(userServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId()).getUserName());
-            taskLoggerVO.setCreateTime(new Timestamp(taskListPO.getPublishTime().getTime()));
+
+        TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);// 通过任务id得到相应的任务
+        Long statusId = taskListPO.getStatusId().longValue();//任务表里面的状态ID
+        StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);//根据任务表里的状态ID获取状态信息
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//获取所有的状态信息
+        UserPO pushUserPO = userServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
+        List<TaskLoggerPO> taskLoggerPOList = taskLoggerServiceV2.getTaskLoggerPOByTaskListPOId(taskId);//根据任务ID获取日志列表
+        List<TaskLoggerVO> taskLoggerVOList = null;
+        if (taskLoggerPOList != null) {
+            taskLoggerVOList = TaskLoggerFactoryVO.createTaskLoggerVOList(taskLoggerPOList);
+//            for (TaskLoggerVO taskLoggerVO : taskLoggerVOList) {
+////                taskLoggerVO.setUsername();
+//                taskLoggerVO.setCreateTime(new Timestamp(taskListPO.getPublishTime().getTime()));
+//            }
         }
-////        Tasklist task = tdao.findOne(ltaskid);
-//        Long statusid = task.getStatusId().longValue();
-//
-//        // 根据状态id查看状态表
-//        SystemStatusList status = sdao.findOne(statusid);
-//        // 查看状态表
-//        Iterable<SystemStatusList> statuslist = sdao.findAll();
-//        // 查看发布人
-//        User user = udao.findOne(task.getUsersId().getUserId());
-//        // 查看任务日志表
-//        List<Tasklogger> logger = tldao.findByTaskId(ltaskid);
-        mav.addObject("task", taskListPO);
-        mav.addObject("taskStarTime", new Timestamp(taskListPO.getStarTime().getTime()));
-        mav.addObject("taskEndTime", new Timestamp(taskListPO.getEndTime().getTime()));
-        mav.addObject("taskPushTime", new Timestamp(taskListPO.getPublishTime().getTime()));
-        mav.addObject("user", userPO);
-        mav.addObject("status", statusPO);
-        mav.addObject("loggerlist", taskLoggerVOList);
-        mav.addObject("statuslist", statusPOList);
+        mav.addObject("task", taskListPO);//任务信息
+        mav.addObject("taskStarTime", new Timestamp(taskListPO.getStarTime().getTime()));//任务开始时间
+        mav.addObject("taskEndTime", new Timestamp(taskListPO.getEndTime().getTime()));//任务结束时间
+        mav.addObject("taskPushTime", new Timestamp(taskListPO.getPublishTime().getTime()));//任务发布时间
+        mav.addObject("user", pushUserPO);//任务发布人
+        mav.addObject("status", statusPO);//任务的状态信息
+        mav.addObject("loggerlist", taskLoggerVOList);//任务的日志信息
+        mav.addObject("statuslist", statusPOList);//所有的状态信息
         return mav;
     }
 
@@ -742,16 +762,14 @@ public class TaskController {
      * @return
      */
     @RequestMapping("tasklogger")
-    public String tasklogger(TaskLoggerVO taskLoggerVO, @SessionAttribute("userId") Long userId,HttpServletRequest req) {
-        // 得到任务的 id
-        Long taskId = Long.parseLong(req.getParameter("taskId"));
-        TaskListPO taskListPO = taskServiceV2.getTaskListPOByTaskListPOId(taskId);
+    public String tasklogger(TaskLoggerVO taskLoggerVO, @SessionAttribute("userId") Long userId, HttpServletRequest req) {
+        Long taskId = Long.parseLong(req.getParameter("taskId"));// 得到任务的 id
+        TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);
         UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-        //更新任务日志
-        taskLoggerServiceV2.insertTaskLoggerPO(taskLoggerVO, userPO,taskListPO);
+
+        taskLoggerServiceV2.insertTaskLoggerPO(taskLoggerVO, userPO, taskId);//更新任务日志
         // 修改任务状态
         taskServiceV2.updateTaskListPOStatus(taskId, taskLoggerVO.getLoggerStatusId().longValue());
-//        tservice.updateStatusid(logger.getTaskId().getTaskId(), logger.getLoggerStatusid());
         // 修改任务中间表状态
         taskServiceV2.updateTaskListUserPOStatus(taskId, taskLoggerVO.getLoggerStatusId().longValue());
 //        tservice.updateUStatusid(logger.getTaskId().getTaskId(), logger.getLoggerStatusid());
@@ -770,13 +788,13 @@ public class TaskController {
         // 得到任务的 id
         Long taskId = Long.parseLong(req.getParameter("id"));
         // 根据任务id找出这条任务
-        TaskListPO taskListPO = taskServiceV2.getTaskListPOByTaskListPOId(taskId);
-        if (taskListPO.getTaskPushUserId().equals(userId)){
+        TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);
+        if (taskListPO.getTaskPushUserId().equals(userId)) {
             taskLoggerServiceV2.deleteTaskLoggerPOByTaskId(taskId);
-            StringTokenizer st = new StringTokenizer(taskListPO.getReciverlist(),";");
-            while(st.hasMoreElements()){
+            StringTokenizer st = new StringTokenizer(taskListPO.getReciverlist(), ";");
+            while (st.hasMoreElements()) {
                 UserPO receverUserPO = userServiceV2.getUserPOByUsername(st.nextToken());
-                taskUserServiceV2.deleteTaskUserPOByTaskListPOIdAndUserId(taskId,receverUserPO.getUserId());
+                taskUserServiceV2.deleteTaskUserPOByTaskListPOIdAndUserId(taskId, receverUserPO.getUserId());
             }
             taskServiceV2.deleteTaskListPOByTaskId(taskId);
         } else {
@@ -784,6 +802,134 @@ public class TaskController {
             return "redirect:/notlimit";
         }
         return "redirect:/taskmanage";
+    }
+
+//---------------------------
+
+    /**
+     * 我的任务
+     */
+    @RequestMapping("mytask")
+    public String myTasks(@SessionAttribute("userId") Long userId, Model model,
+                          @RequestParam(value = "page", defaultValue = "0") int page,
+                          @RequestParam(value = "size", defaultValue = "10") int size) {
+        PageHelper.startPage(page, size);
+        List<TaskListPO> taskListPOList = taskServiceV2.sortTaskListPO(userId, null, page, size);
+        PageInfo pageInfo = new PageInfo(taskListPOList);
+
+        if (taskListPOList != null) {
+            List<Map<String, Object>> mapList = taskServiceV2.packageTaskListPOList(taskListPOList, userId);
+            model.addAttribute("page", pageInfo);
+            model.addAttribute("tasklist", mapList);
+        } else {
+            PageHelper.startPage(page, size);
+            List<TaskListPO> taskListPOList2 = taskListServiceV2.getTaskListPOByTickingIsNotNull();
+            PageInfo pageInfo2 = new PageInfo(taskListPOList2);
+            List<Map<String, Object>> mapList = taskServiceV2.packageTaskListPOList(taskListPOList2, userId);
+            model.addAttribute("page", pageInfo2);
+            model.addAttribute("tasklist", mapList);
+        }
+        model.addAttribute("url", "mychaxun");
+        return "task/mytask";
+    }
+
+
+    /**
+     * 接收人这边删除(我的任务）
+     */
+    @RequestMapping("myshanchu")
+    public String mydelete(HttpServletRequest req, @SessionAttribute("userId") Long userId) {
+        Long taskId = Long.parseLong(req.getParameter("taskId"));// 得到任务的 id
+        Long pkId = taskUserServiceV2.getPkIdByUserIdAndTaskListId(userId, taskId);
+        taskUserServiceV2.deleteTaskUserPOByPkId(pkId);
+        return "redirect:/mytask";
+    }
+
+    /**
+     * 我任务里面的查看
+     *
+     * @param req
+     * @param userId
+     * @return
+     */
+    @RequestMapping("myseetasks")
+    public ModelAndView mySeeTask(HttpServletRequest req, @SessionAttribute("userId") Long userId) {
+        ModelAndView mav = new ModelAndView("task/myseetask");
+        Long taskId = Long.parseLong(req.getParameter("taskId"));// 得到任务的 id
+        TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);// 通过任务id得到相应的任务
+        Long statusId = taskListPO.getStatusId().longValue();// 任务表里的状态ID
+        StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);//根据任务表里的状态ID获取状态信息
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//获取所有的状态信息
+        UserPO userPO = userServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
+        List<TaskLoggerPO> taskLoggerPOList = taskLoggerServiceV2.getTaskLoggerPOByTaskListPOId(taskId);//根据任务ID找任务日志
+        List<TaskLoggerVO> taskLoggerVOList = TaskLoggerFactoryVO.createTaskLoggerVOList(taskLoggerPOList);//
+        for (TaskLoggerVO taskLoggerVO : taskLoggerVOList) {
+            taskLoggerVO.setUsername(userServiceV2.getUserPOByUserId(userId).getUserName());
+            taskLoggerVO.setCreateTime(new Timestamp(new Date().getTime()));
+        }
+        mav.addObject("task", taskListPO);
+        mav.addObject("taskStarTime", new Timestamp(taskListPO.getStarTime().getTime()));
+        mav.addObject("taskEndTime", new Timestamp(taskListPO.getEndTime().getTime()));
+        mav.addObject("taskPushTime", new Timestamp(taskListPO.getPublishTime().getTime()));
+        mav.addObject("user", userPO);
+        mav.addObject("status", statusPO);
+        mav.addObject("loggerlist", taskLoggerVOList);
+        mav.addObject("statuslist", statusPOList);
+        return mav;
+    }
+
+    /**
+     * 从我的任务查看里面修改状态和日志
+     */
+    @RequestMapping("uplogger")
+    public String updatelo(TaskLoggerVO taskLoggerVO, @SessionAttribute("userId") Long userId, HttpServletRequest req) {
+        Long taskId = Long.parseLong(req.getParameter("taskId"));
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);// 查找用户
+        TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);// 查任务
+        taskLoggerServiceV2.insertTaskLoggerPO(taskLoggerVO, userPO, taskId);//插入日志
+        // 修改任务中间表状态
+        Long pkId = taskUserServiceV2.getPkIdByUserIdAndTaskListId(userId, taskId);
+        taskServiceV2.updateTaskListUserPOStatus(taskId, taskLoggerVO.getLoggerStatusId().longValue());
+        taskUserServiceV2.updateTaskListUserPO(pkId, taskId, taskLoggerVO.getLoggerStatusId().longValue(), userId);// 存任务中间表;
+        // 通过任务id查看总状态
+        List<Long> statusIdList = taskUserServiceV2.getStatusIdList(taskId);
+        // 选出最小的状态id 修改任务表里面的状态
+        Long min = statusIdList.get(0);
+        for (Long m : statusIdList) {
+            if (m < min) {
+                min = m;
+            }
+        }
+        Integer rows = taskListServiceV2.updateTaskListPOStatus(taskId, min);
+        if (rows > 0) {
+            System.out.println("任务状态修改成功!");
+        }
+        return "redirect:/mytask";
+    }
+
+    /**
+     * 在我的任务里面进行查询
+     *
+     * @throws ParseException
+     */
+    @RequestMapping("mychaxun")
+    public String select(HttpServletRequest request, @SessionAttribute("userId") Long userId, Model model,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "size", defaultValue = "10") int size) throws ParseException {
+        String title = null;//输入的名词
+        if (!StringUtil.isEmpty(request.getParameter("title"))) {
+            title = request.getParameter("title").trim();
+        }
+
+        PageHelper.startPage(page, size);
+        List<TaskListPO> taskListPOList = taskServiceV2.sortTaskListPO(userId, title, page, size);
+        PageInfo pageInfo = new PageInfo(taskListPOList);
+        List<Map<String, Object>> mapList = taskServiceV2.packageTaskListPOList(taskListPOList, userId);
+        model.addAttribute("tasklist", mapList);
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("url", "mychaxun");
+        model.addAttribute("sort", "&title=" + title);
+        return "task/mytasklist";
     }
 
 

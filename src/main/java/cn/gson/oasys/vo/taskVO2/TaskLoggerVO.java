@@ -20,5 +20,5 @@ public class TaskLoggerVO {
 
     private String username;//任务日志生成人username
 
-    private Integer loggerStatusId; //状态id(logger_statusid0
+    private Integer loggerStatusId; //状态id(logger_statusid
 }

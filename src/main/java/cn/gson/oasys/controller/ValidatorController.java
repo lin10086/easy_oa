@@ -54,7 +54,7 @@ public class ValidatorController {
 	@Autowired
 	private RoleDao rdao;
 	
-	@RequestMapping("ck_addtask")
+	/*@RequestMapping("ck_addtask")
 	public String addtask(HttpServletRequest request, @Valid TaskListVO taskListVO, BindingResult br, HttpSession session,
 						  @RequestParam(value = "page", defaultValue = "0") int page,
 						  @RequestParam(value = "size", defaultValue = "10") int size){
@@ -101,11 +101,11 @@ public class ValidatorController {
 			
 			return "forward:/addtasks";
 		}
-		
-		
-		
-		
-		
 	}
+		*/
+
+
+
+
 
 }

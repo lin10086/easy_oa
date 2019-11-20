@@ -63,7 +63,7 @@ a:hover {
 								
 									<span id="ctl00_cphMain_lblFrom" class="mailbox-read-time">发布人：<i>${user.userName}</i> &nbsp;&nbsp;参加人员：<i>${task.reciverlist}</i></span>
 								
-									<span id="ctl00_cphMain_lblDate" class="mailbox-read-time pull-right">${task.publishTime}</span>
+									<span id="ctl00_cphMain_lblDate" class="mailbox-read-time pull-right">${taskPushTime}</span>
 								</h5>
 								</#if>
 							</div>
@@ -71,19 +71,19 @@ a:hover {
 								<span id="ctl00_cphMain_lblDescription">任务描述：${task.taskDescribe}</span>
 								<span id="ctl00_cphMain_lblFeedback">
 									<h5 style="margin-top: 20px;">
-										任务进度（${task.starTime}至 ${task.endTime}）
-										<small class="pull-right">${status.statusPrecent}</small>
+										任务进度（${taskStarTime}至 ${taskEndTime}）
+										<small class="pull-right">${status.sortPrecent}</small>
 									</h5>
 									<div class="progress xs" style="margin: 10px 0;">
-										<div class="progress-bar progress-bar-aqua" style="width: ${status.statusPrecent}" role="progressbar" 
+										<div class="progress-bar progress-bar-aqua" style="width: ${status.sortPrecent}" role="progressbar"
 											aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
 											</div>
 									</div>
 									<#list loggerlist as logger>
-									<#if logger.loggerStatusid??>
+									<#if logger.loggerStatusId??>
 									<#list statuslist as statu>
 										
-										   <#if logger.loggerStatusid==statu.statusId>
+										   <#if logger.loggerStatusId==statu.statusId>
 											<div>
 												${logger.username}
 													<span style="font-size:8pt; color:#999; margin-left:3px;">${logger.createTime}</span>
@@ -93,7 +93,7 @@ a:hover {
 									
 										</#list>
 										</#if>
-										<#if logger.loggerTicking!=''>
+										<#if logger.loggerTicking??>
 											<div>
 												${logger.username}
 													<span style="font-size:8pt; color:#999; margin-left:3px;">${logger.createTime}</span>
@@ -110,13 +110,13 @@ a:hover {
 										<span id="ctl00_cphMain_Label1">状态</span>
 								</label>
 								<div class="form-group">
-									<select name="loggerStatusid" id="ctl00_cphMain_ddlStatus" class="form-control select2 ddlstatus">
+									<select name="loggerStatusId" id="ctl00_cphMain_ddlStatus" class="form-control select2 ddlstatus">
 										<option value="${status.statusId}">${status.statusName}</option>
 										<#if status.statusId ==3>
 										<#else>
 										<option value="3">新任务</option>
 										</#if>
-										<#if status.statusId ==4>
+										<#if status.statusId ==4>I
 										<#else>
 										<option value="4">已接收</option>
 										</#if>

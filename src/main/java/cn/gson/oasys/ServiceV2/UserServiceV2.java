@@ -154,6 +154,9 @@ public class UserServiceV2 {
         UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserNameEqualTo(username);
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        if (userPOList.size() == 0) {
+            return null;
+        }
         return userPOList.get(0);
     }
 

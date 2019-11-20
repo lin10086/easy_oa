@@ -14,6 +14,7 @@ public class TaskLoggerFactoryVO {
         taskLoggerVO.setLoggerId(taskLoggerPO.getLoggerId());
         taskLoggerVO.setLoggerStatusId(taskLoggerPO.getLoggerStatusid());
         taskLoggerVO.setLoggerTicking(taskLoggerPO.getLoggerTicking());
+        taskLoggerVO.setUsername(taskLoggerPO.getUsername());
         return taskLoggerVO;
     }
 

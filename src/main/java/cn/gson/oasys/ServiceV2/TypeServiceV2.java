@@ -33,6 +33,23 @@ public class TypeServiceV2 {
     }
 
     /**
+     * 根据类型模型和类型名找唯一类型对象
+     *
+     * @param typeModel
+     * @param typeName
+     * @return
+     */
+    public TypePO getTypePOByTypeModelAndTypeName(String typeModel, String typeName) {
+        TypePOExample typePOExample = new TypePOExample();
+        typePOExample.createCriteria().andTypeModelEqualTo(typeModel).andTypeNameEqualTo(typeName);
+        List<TypePO> typePOList = typePOMapper.selectByExample(typePOExample);
+        if (typePOList.size()==0){
+            return null;
+        }
+        return typePOList.get(0);
+    }
+
+    /**
      * 根据类型ID查找类型名
      *
      * @param typeId 类型ID

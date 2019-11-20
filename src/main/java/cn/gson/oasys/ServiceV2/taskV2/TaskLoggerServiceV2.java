@@ -51,17 +51,17 @@ public class TaskLoggerServiceV2 {
     }
 
     /**
-     * 更新日志
+     * 插入日志
      *
      * @param taskLoggerVO
      * @param userPO
      */
-    public void insertTaskLoggerPO(TaskLoggerVO taskLoggerVO, UserPO userPO, TaskListPO taskListPO) {
+    public void insertTaskLoggerPO(TaskLoggerVO taskLoggerVO, UserPO userPO, Long taskId) {
         TaskLoggerPO taskLoggerPO = new TaskLoggerPO();
         taskLoggerPO.setCreateTime(new Date());
-        taskLoggerPO.setUsername(userPO.getUserName());
+        taskLoggerPO.setUsername(userPO.getUserName());//更新日志的人名
         taskLoggerPO.setLoggerTicking(taskLoggerVO.getLoggerTicking());
-        taskLoggerPO.setTaskId(taskListPO.getTaskId());
+        taskLoggerPO.setTaskId(taskId);
         taskLoggerPO.setLoggerStatusid(taskLoggerVO.getLoggerStatusId());
         taskLoggerPOMapper.insertSelective(taskLoggerPO);
     }

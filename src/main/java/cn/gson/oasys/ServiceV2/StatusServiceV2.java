@@ -33,8 +33,11 @@ public class StatusServiceV2 {
     public StatusPO getStatusPOByTypeModelAndTypeName(String statusModel, String statusName) {
         StatusPOExample statusPOExample = new StatusPOExample();
         statusPOExample.createCriteria().andStatusModelEqualTo(statusModel).andStatusNameEqualTo(statusName);
-        StatusPO statusPO = statusPOMapper.selectByExample(statusPOExample).get(0);
-        return statusPO;
+        List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
+        if (statusPOList.size()==0){
+            return null;
+        }
+        return statusPOList.get(0);
 
     }
 

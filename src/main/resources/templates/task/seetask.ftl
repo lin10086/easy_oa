@@ -83,27 +83,29 @@
                                          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
 									</div>
 								</div>
-                            <#list loggerlist as logger>
-                                <#if logger.loggerStatusid??>
-                                    <#list statuslist as statu>
-                                        <#if logger.loggerStatusid==statu.statusId>
-                                            <div>
+                            <#if loggerlist??>
+                                <#list loggerlist as logger>
+                                    <#if logger.loggerStatusId??>
+                                        <#list statuslist as statu>
+                                            <#if logger.loggerStatusId==statu.statusId>
+                                                <div>
 										${logger.username}
 											<span style="font-size:8pt; color:#999; margin-left:3px;">${logger.createTime}</span>
 											：将状态改为【${statu.statusName}】
 									</div>
-                                        </#if>
-                                    </#list>
-                                </#if>
+                                            </#if>
+                                        </#list>
+                                    </#if>
 									
 									<#if logger.loggerTicking??>
-                                <div>
+                                    <div>
 										${logger.username}
 											<span style="font-size:8pt; color:#999; margin-left:3px;">${logger.createTime}</span>
 											：${logger.loggerTicking}
 									</div>
-                             </#if>
-                            </#list>
+                                </#if>
+                                </#list>
+                            </#if>
 							</span> <span id="ctl00_cphMain_lblNote"></span>
                     </div>
                     <div class="page-header page"></div>

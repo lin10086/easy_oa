@@ -163,61 +163,47 @@ public class TaskService {
 		SystemStatusList status = sdao.findByStatusModelAndStatusName("aoa_task_list", title);
 		// 找用户
 		User user = udao.findByUserName(title);
-
 		if (StringUtil.isEmpty(title)) {
 			orders.addAll(Arrays.asList(new Order(Direction.ASC, "cancel"), new Order(Direction.ASC, "statusId")));
 			Sort sort = new Sort(orders);
 			pa=new PageRequest(page, size, sort);
 			if(taskid.size()>0){
-				
 				tasklist=tdao.findTaskByTaskIds(taskid,pa);
 			}
 		} else if (!Objects.isNull(type)) {
-
 			tasklist = tdao.findtaskTypeIdAndTaskId(type.getTypeId(), taskid,pa);
-				
 		} else if (!Objects.isNull(status)) {
 			// Long转换成Integer
 			Integer statusid = Integer.parseInt(status.getStatusId().toString());
 			// 根据找出的taskid和状态id查找任务
 			tasklist = tdao.findtaskStatusIdAndCancelAndTaskId(statusid, taskid,pa);
-				
 		} else if (("已取消").equals(title)) {
 			tasklist = tdao.findtaskCancelAndTaskId(true,  taskid,pa);
-			
 		} else if (!Objects.isNull(user)) {
-			
 			tasklist = tdao.findtaskUsersIdAndTaskId(user, taskid,pa);
-			
 		} else {
 			// 根据title和taskid进行模糊查询
 			tasklist = tdao.findtaskByTitleLikeAndTaskId(taskid, title,pa);
-
-			
 		}
-	
 		return tasklist;
 	}
 	
 	public List<Map<String, Object>> index4(Page<Tasklist> tasklist,Long userid){
 		List<Map<String, Object>> list = new ArrayList<>();
 		if(tasklist!=null){
-			
+
 			List<Tasklist> task= tasklist.getContent();
-			
+
 				for (int i = 0; i < task.size(); i++) {
 					Map<String, Object> result = new HashMap<>();
 					// 查询任务id
 					Long tid = task.get(i).getTaskId();
-					
 					// 查询接收人的任务状态id
 					Long statusid = tudao.findByuserIdAndTaskId(userid, tid);
-					
 					// 查询发布人
 					User ptu = udao.findOne(task.get(i).getUsersId().getUserId());
 					String username = ptu.getUserName();
 					String deptname = ddao.findname(ptu.getDept().getDeptId());
-					
 					result.put("taskid", tid);
 					result.put("typename", tydao.findname(task.get(i).getTypeId()));
 					result.put("statusname", sdao.findname(statusid));
@@ -228,11 +214,9 @@ public class TaskService {
 					result.put("cancel", task.get(i).getCancel());
 					result.put("username", username);
 					result.put("deptname", deptname);
-					
 					list.add(result);
 				}
 			}
-		
 		return list;
 	}
 
