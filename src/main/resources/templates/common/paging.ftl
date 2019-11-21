@@ -69,7 +69,7 @@
         if (${page.isIsFirstPage()?string('true','false')}==false
     )
         {
-            $('.thistable').load('${url}?page=0${(sort)!''}');
+            <#--$('.thistable').load('${url}?page=0${(sort)!''}');-->
         }
     });
     $('.tableup').on('click', function () {

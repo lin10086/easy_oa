@@ -936,7 +936,7 @@ public class MailController {
         MailNumberPO mailNumberPO = null;
         if (StringUtil.isEmpty(req.getParameter("id"))) {
             List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_mailnumber");
-            List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_mailnumber");
+            List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_mailnumber");
             model.addAttribute("typePOList", typePOList);
             model.addAttribute("statusPOList", statusPOList);
 
@@ -1173,7 +1173,7 @@ public class MailController {
             model.addAttribute("type", typeServiceV2.getTypePOByTypeId(inMailListPO.getMailType()));
         } else {
             List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
-            List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
+            List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
             model.addAttribute("typelist", typePOList);
             model.addAttribute("statuslist", statusPOList);
             model.addAttribute("id", "新发");

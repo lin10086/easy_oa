@@ -134,7 +134,7 @@ public class MailServiceV2 {
 
         PageHelper.startPage(page, size);
         List<Pagemail> pageMailList = new ArrayList<>();
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
         List<MailReciverPO> mailReciverPOList = null;
 
@@ -195,7 +195,7 @@ public class MailServiceV2 {
     public List<InMailListPO> inmail(int page, int size, Long userId, String title) {
         PageHelper.startPage(page, size);
         List<InMailListPO> inMailListPOList = null;
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_in_mail_list");
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
         if ("发件箱".equals(title)) {
             inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(userId, true, false);

@@ -341,7 +341,7 @@ public class InformManageController {
     public String infromEdit(HttpServletRequest req, HttpSession session, Model model) {
         session.removeAttribute("noticeId");// 移除上次session里面的通知主表ID
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("inform");//根据类型模型找类型列表
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("inform");//根据状态模型找状态列表
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("inform");//根据状态模型找状态列表
         if (!StringUtils.isEmpty(req.getAttribute("errormess"))) {
             req.setAttribute("errormess", req.getAttribute("errormess"));
         }

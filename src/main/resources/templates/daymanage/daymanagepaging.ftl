@@ -44,8 +44,8 @@
 						</span></td>
 						<td><span>${(schedule.title)!''}</span></td>
 						<td><span>${(schedule.createTime?string("yyyy-MM-dd HH:mm:ss"))!''}</span></td>
-						<td><span>${(schedule.user.userName)!''}</span></td>
-						<td><span>${(schedule.user.dept.deptName)!''}</span></td>
+						<td><span>${(username)!''}</span></td>
+						<td><span>${(deptName)!''}</span></td>
 						<td>
 							<#list statuses as status>
 								<#if schedule.statusId == status.statusId>
@@ -55,10 +55,10 @@
 						</td>
 						<#if ismyday??>
 							<td>
-								<a  href="dayedit?rcid=${schedule.rcId}" class="label xiugai"><span
+								<a  href="dayedit?rcId=${schedule.rcId}" class="label xiugai"><span
 									class="glyphicon glyphicon-edit"></span> 修改</a> <a
 								onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};" 
-								href="dayremove?rcid=${schedule.rcId}" class="label shanchu"><span
+								href="dayremove?rcId=${schedule.rcId}" class="label shanchu"><span
 									class="glyphicon glyphicon-remove"></span> 删除</a>
 							</td>
 						</#if>

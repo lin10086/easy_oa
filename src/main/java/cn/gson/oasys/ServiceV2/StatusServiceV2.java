@@ -16,7 +16,7 @@ public class StatusServiceV2 {
     private StatusPOMapper statusPOMapper;
 
     //根据状态模型找状态列表
-    public List<StatusPO> getStatusPOByTypeModel(String statusModel) {
+    public List<StatusPO> getStatusPOByStatusModel(String statusModel) {
         StatusPOExample statusPOExample = new StatusPOExample();
         statusPOExample.createCriteria().andStatusModelEqualTo(statusModel);
         List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);

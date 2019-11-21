@@ -155,11 +155,10 @@ public class Test1 {
         String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         Random random = new Random();
         StringBuilder stringBuilder = new StringBuilder(5);
-        for (int i = 0; i<5; i++){
-            stringBuilder.append(str.charAt(random.nextInt(str.length()-1)));
+        for (int i = 0; i < 5; i++) {
+            stringBuilder.append(str.charAt(random.nextInt(str.length() - 1)));
         }
-        log.info("stringBuilder={}",stringBuilder);
+        log.info("stringBuilder={}", stringBuilder);
     }
-
 
 }

@@ -1534,7 +1534,7 @@ public class ProcedureController {
         List<ProcessListVO> processListVOList = ProcessListFactoryVO.createProcessListVOList(processListPOList);
         PageInfo<ProcessListPO> pageInfo = new PageInfo<>(processListPOList);
         //23未处理,24处理中,25已批准,26未通过
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByTypeModel("aoa_process_list");
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_process_list");
         //22正常,23重要,24紧急
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
         model.addAttribute("page", pageInfo);//分页信息

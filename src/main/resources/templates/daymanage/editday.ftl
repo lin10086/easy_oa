@@ -72,12 +72,12 @@ a:hover {
 							<div class="col-md-6 form-group">
 								<label class="control-label">开始日期</label>
 								<input name="startTime" class="form-control" id="starTime" 
-									value="${(rc.startTime?string('yyyy-MM-dd HH:mm:ss'))!''}"/>
+									value="${(startTime?string('yyyy-MM-dd HH:mm:ss'))!''}"/>
 							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label">结束日期</label> <input
 									name="endTime" class="form-control" id="endTime" 
-									value="${(rc.endTime?string('yyyy-MM-dd HH:mm:ss'))!''}"/>
+									value="${(endTime?string('yyyy-MM-dd HH:mm:ss'))!''}"/>
 							</div>
 	
 							<div class="col-md-6 form-group">
@@ -85,7 +85,7 @@ a:hover {
 									name="title" class="form-control" value="${(rc.title)!''}"/>
 							</div>
 	
-							<div class="col-md-6 form-group">
+							<#--<div class="col-md-6 form-group">
 								<label class="control-label"><span>接收</span></label> 
 									<input name="shareuser" type="text" id="recive_list" style="background-color: #fff;"
 									class="form-control" readonly="readonly" placeholder="共享：" />
@@ -93,18 +93,31 @@ a:hover {
 									<span class="label label-success glyphicon glyphicon-plus"
 										data-toggle="modal" data-target="#myModal">新增</span>
 								</div>
+							</div>-->
+
+							<div class="col-md-6 form-group" style="position: relative;">
+								<label class="control-label" data-toggle="modal" data-target="#myModal">接收人</label>
+								<input name="shareuser" type="text" id="recive_list"
+									   class="form-control " readonly="readonly" style="background-color:#fff;" placeholder="共享人："/>
+
+								<div class="reciver">
+								<span class="label label-success glyphicon glyphicon-plus"
+									  data-toggle="modal" data-target="#myModal">新增</span>
+								</div>
 							</div>
-	
+
+
+
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span>描述</span></label>
 								<textarea rows="5" cols="20" class="form-control"
-									name="describe" style="margin: 0px -0.5px 0px 0px; height: 114px; width: 522px;">${(rc.describe)!''}</textarea>
+									name="describe" style="margin: 0px -0.5px 0px 0px; height: 114px; width: 522px;">${(rc.miaoshu)!''}</textarea>
 							</div>
 	
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span>提醒</span></label> <br> 
-								<#if rc??>
-									<#if rc.isRemind>
+								<#if isRemind??>
+									<#if isRemind>
 										<span class="labels"><label><input name="isRemind" type="checkbox" checked/><i>✓</i></label></span>
 									<#else>
 										<span class="labels"><label><input name="isRemind" type="checkbox"/><i>✓</i></label></span>

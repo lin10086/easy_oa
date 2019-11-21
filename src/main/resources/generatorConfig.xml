@@ -201,6 +201,16 @@
             <generatedKey column="logger_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="logger_id" javaType="Long"/>
         </table>
+ <!--日程表-->
+        <table tableName="aoa_schedule_list" domainObjectName="SchedulePO">
+            <generatedKey column="rc_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="rc_id" javaType="Long"/>
+        </table>
+<!--日程关联用户表-->
+        <table tableName="aoa_schedule_user" domainObjectName="ScheduleUserPO">
+            <generatedKey column="sche_user_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="sche_user_id" javaType="Long"/>
+        </table>
 
     </context>
 </generatorConfiguration>

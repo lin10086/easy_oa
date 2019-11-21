@@ -92,6 +92,8 @@ a:hover {
 							<label class="control-label">标题</label> <input name="title"
 								type="text" id="title_Name" class="form-control" />
 						</div>
+
+
 						<div class="col-md-6 form-group" style="position: relative;">
 							<label class="control-label" data-toggle="modal" data-target="#myModal">接收人</label>
 							 <input name="reciverlist" type="text" id="recive_list"
@@ -101,6 +103,8 @@ a:hover {
 									data-toggle="modal" data-target="#myModal">通讯录</span>
 							</div>
 						</div>
+
+
 						<div class="col-md-6 form-group">
 							<label class="control-label">描述</label>
 							<textarea class="form-control text" name="taskDescribe"></textarea>

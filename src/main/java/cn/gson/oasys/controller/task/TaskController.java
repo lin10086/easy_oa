@@ -592,16 +592,16 @@ public class TaskController {
         PageHelper.startPage(page, size);
         List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
         PageInfo pageInfo = new PageInfo(userVOList);
+        mav.addObject("page", pageInfo);
+        mav.addObject("userVOList", userVOList);
 
         mav.addObject("typelist", typePOList);
         mav.addObject("statuslist", statusPOList);
         mav.addObject("emplist", userPOList);
         mav.addObject("deptlist", deptPOList);
         mav.addObject("poslist", positionPOList);
-        mav.addObject("page", pageInfo);
         mav.addObject("url", "names");
         mav.addObject("qufen", "任务");
-        mav.addObject("userVOList", userVOList);
         return mav;
     }
 

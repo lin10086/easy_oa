@@ -116,9 +116,10 @@ public class IndexController {
 
         //获取session
         HttpSession session = req.getSession();
-//        session.setAttribute("userId",5L);
-        session.setAttribute("userId",3L);//5的上司
+        session.setAttribute("userId",5L);
+//        session.setAttribute("userId",3L);//5的上司
 //        session.setAttribute("userId",4L);
+//        session.setAttribute("userId",1L);
 //        session.setAttribute("userId",14L);//5的下属
         // 判断用户ID是否为空
         if (StringUtils.isEmpty(session.getAttribute("userId"))) {
@@ -132,7 +133,7 @@ public class IndexController {
         User user = uDao.findOne(userId);
 
         menuService.findMenuSys(req, user);
-
+/*
         List<ScheduleList> aboutmenotice = dayser.aboutmeschedule(userId);
         for (ScheduleList scheduleList : aboutmenotice) {
             if (scheduleList.getIsreminded() != null && !scheduleList.getIsreminded()) {
@@ -167,7 +168,7 @@ public class IndexController {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
 
         List<NoticeUserRelation> notice = irdao.findByReadAndUserId(false, user);//通知
         List<Mailreciver> mail = mdao.findByReadAndDelAndReciverId(false, false, user);//邮件
