@@ -3,10 +3,24 @@ package cn.gson.oasys.controller.plan;
 import java.io.IOException;
 import java.util.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import cn.gson.oasys.ServiceV2.DeptServiceV2;
+import cn.gson.oasys.ServiceV2.StatusServiceV2;
+import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.planV2.PlanServiceV2;
+import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.vo.DeptVO;
+import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
+import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
+import cn.gson.oasys.vo.factoryvo.planFactory.PlanListVOFactory;
+import cn.gson.oasys.vo.planVO2.PlanListVO;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +99,7 @@ public class PlanController {
 
 	}
 
+/*
 	// 计划管理
 	@RequestMapping(value="planview", method = RequestMethod.GET)
 	public String test(Model model, HttpSession session, 
@@ -98,6 +113,7 @@ public class PlanController {
 		sortpaging(model, session, page, baseKey, type, status, time, icon);
 		return "plan/planview";
 	}
+*/
 
 	
 
@@ -144,7 +160,7 @@ public class PlanController {
 
 	
 
-	// 我的编辑
+	/*// 我的编辑
 	@RequestMapping("planedit")
 	public String test3(HttpServletRequest request, Model model) {
 		long pid = Long.valueOf(request.getParameter("pid"));
@@ -167,7 +183,7 @@ public class PlanController {
 
 		typestatus(model);
 		return "plan/planedit";
-	}
+	}*/
 
 
 	@RequestMapping(value = "plansave", method = RequestMethod.GET)
@@ -241,7 +257,7 @@ public class PlanController {
 		return "forward:/planedit";
 	}
 
-
+/*
 	private void typestatus(Model model) {
 		List<SystemTypeList> type = (List<SystemTypeList>) typeDao.findByTypeModel("aoa_plan_list");
 		List<SystemStatusList> status = (List<SystemStatusList>) statusDao.findByStatusModel("aoa_plan_list");
@@ -258,7 +274,7 @@ public class PlanController {
 		model.addAttribute("plist", page2.getContent());
 		model.addAttribute("page", page2);
 		model.addAttribute("url", "planviewtable");
-	}
+	}*/
 	
 	//计划报表
 	private void plantablepaging(HttpServletRequest request, Model model, HttpSession session, int page,
@@ -341,5 +357,89 @@ public class PlanController {
 		model.addAttribute("page", uListpage);
 		model.addAttribute("url", "realplantable");
 	}
-	
+
+	//==============================================
+	@Resource
+	private UserServiceV2 userServiceV2;
+	@Resource
+	private PlanServiceV2 planServiceV2;
+	@Resource
+	private TypeServiceV2 typeServiceV2;
+	@Resource
+	private StatusServiceV2 statusServiceV2;
+	@Resource
+	private DeptServiceV2 deptServiceV2;
+
+
+	// 计划管理
+	@RequestMapping(value="planview", method = RequestMethod.GET)
+	public String test(Model model, HttpSession session,
+					   @RequestParam(value = "page", defaultValue = "0") int page,
+					   @RequestParam(value = "baseKey", required = false) String baseKey,
+					   @RequestParam(value = "type", required = false) String type,
+					   @RequestParam(value = "status", required = false) String status,
+					   @RequestParam(value = "time", required = false) String time,
+					   @RequestParam(value = "icon", required = false) String icon) {
+		System.out.println("11"+baseKey);
+		sortpaging(model, session, page, baseKey, type, status, time, icon);
+		return "plan/planview";
+	}
+
+
+
+	private void sortpaging(Model model, HttpSession session, int page, String baseKey, String type, String status,
+							String time, String icon) {
+		new AttendceController().setModelSomething(baseKey, type, status, time, icon, model);
+		Long userId = Long.valueOf(session.getAttribute("userId") + "");
+		List<PlanListPO>planListPOS = planServiceV2.sortAndGetPlan(page,baseKey,userId,type,status,time);
+		List<PlanListVO>planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
+		for (PlanListPO planListPO : planListPOS){
+			for (PlanListVO planListVO : planListVOS){
+				UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+				DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+				DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+				UserVO userVO = UserFactoryVO.createUserVO(userPO);
+				userVO.setDeptVO(deptVO);
+				planListVO.setUserVO(userVO);
+			}
+		}
+		PageInfo pageInfo = new PageInfo(planListPOS);
+		typestatus(model);
+		model.addAttribute("plist", planListVOS);
+		model.addAttribute("page", pageInfo);
+		model.addAttribute("url", "planviewtable");
+	}
+
+	private void typestatus(Model model) {
+		List<TypePO>typePOList = typeServiceV2.getTypePOByTypeModel("aoa_plan_list");
+		List<StatusPO>statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_plan_list");
+		model.addAttribute("typelist", typePOList);
+		model.addAttribute("statuslist", statusPOList);
+	}
+
+
+	// 我的编辑
+	@RequestMapping("planedit")
+	public String test3(HttpServletRequest request, Model model) {
+		long pid = Long.valueOf(request.getParameter("pid"));
+		if (!StringUtils.isEmpty(request.getAttribute("errormess"))) {
+			request.setAttribute("errormess", request.getAttribute("errormess"));
+			request.setAttribute("plan", request.getAttribute("plan2"));
+		} else if (!StringUtils.isEmpty(request.getAttribute("success"))) {
+			request.setAttribute("success", request.getAttribute("success"));
+			request.setAttribute("plan", request.getAttribute("plan2"));
+		}
+		// 新建
+		if (pid == -1) {
+			model.addAttribute("plan", null);
+			model.addAttribute("pid", pid);
+		} else if (pid > 0) {
+			Plan plan = planDao.findOne(pid);
+			model.addAttribute("plan", plan);
+			model.addAttribute("pid", pid);
+		}
+
+		typestatus(model);
+		return "plan/planedit";
+	}
 }

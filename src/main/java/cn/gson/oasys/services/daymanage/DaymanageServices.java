@@ -23,12 +23,10 @@ public class DaymanageServices {
 
 	
 	public List<ScheduleList> aboutmeschedule(Long userId){
-		
 		User user = udao.findOne(userId);
 		List<User> users = new ArrayList<>();
 		users.add(user);
 		List<ScheduleList> aboutmerc = new ArrayList<>();
-		
 		List<ScheduleList> myschedule = daydao.findByUser(user);
 		List<ScheduleList> otherschedule = daydao.findByUsers(users);
 		

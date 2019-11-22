@@ -1,14 +1,24 @@
 package cn.gson.oasys.controller;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import cn.gson.oasys.ServiceV2.mailV2.MailReciverServiceV2;
+import cn.gson.oasys.ServiceV2.notice2.NoticeServiceV2;
+import cn.gson.oasys.ServiceV2.notice2.NoticeUserRelationServiceV2;
+import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleServiceV2;
+import cn.gson.oasys.ServiceV2.taskV2.TaskUserServiceV2;
+import cn.gson.oasys.ServiceV2.userV2.UserLogServiceV2;
+import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +118,20 @@ public class IndexController {
     @Autowired
     private InformRelationService informrelationservice;
 
+    @Resource
+    private ScheduleServiceV2 scheduleServiceV2;
+    @Resource
+    private NoticeServiceV2 noticeServiceV2;
+    @Resource
+    private NoticeUserRelationServiceV2 noticeUserRelationServiceV2;
+    @Resource
+    private MailReciverServiceV2 mailReciverServiceV2;
+    @Resource
+    private TaskUserServiceV2 taskUserServiceV2;
+    @Resource
+    private UserLogServiceV2 userLogServiceV2;
+
+
     // 格式转化导入
     DefaultConversionService service = new DefaultConversionService();
 
@@ -116,7 +140,7 @@ public class IndexController {
 
         //获取session
         HttpSession session = req.getSession();
-        session.setAttribute("userId",5L);
+        session.setAttribute("userId", 5L);
 //        session.setAttribute("userId",3L);//5的上司
 //        session.setAttribute("userId",4L);
 //        session.setAttribute("userId",1L);
@@ -133,54 +157,94 @@ public class IndexController {
         User user = uDao.findOne(userId);
 
         menuService.findMenuSys(req, user);
-/*
-        List<ScheduleList> aboutmenotice = dayser.aboutmeschedule(userId);
-        for (ScheduleList scheduleList : aboutmenotice) {
-            if (scheduleList.getIsreminded() != null && !scheduleList.getIsreminded()) {
-                System.out.println(scheduleList.getStartTime());
 
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");//24小时制
-//				simpleDateFormat.parse(scheduleList.getStartTime()).getTime();  
-                String start = simpleDateFormat.format(scheduleList.getStartTime());
+        List<ScheduleListVO> scheduleListVOS = scheduleServiceV2.scheduleListVOS(userId);//我的所有日程
+        for (ScheduleListVO scheduleListVO : scheduleListVOS) {
+            if (scheduleListVO.getIsreminded() != null && !scheduleListVO.getIsreminded()) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+                String startTime = simpleDateFormat.format(scheduleListVO.getStartTime());
                 String now = simpleDateFormat.format(new Date());
                 try {
-                    long now2 = simpleDateFormat.parse(now).getTime();
-                    long start2 = simpleDateFormat.parse(start).getTime();
-                    long cha = start2 - now2;
-                    if (0 < cha && cha < 86400000) {
-                        NoticesList remindnotices = new NoticesList();
-                        remindnotices.setTypeId(11l);
-                        remindnotices.setStatusId(15l);
-                        remindnotices.setTitle("您有一个日程即将开始");
-                        remindnotices.setUrl("/daycalendar");
-                        remindnotices.setUserId(userId);
-                        remindnotices.setNoticeTime(new Date());
-
-                        NoticesList remindnoticeok = informService.save(remindnotices);
-
-                        informrelationservice.save(new NoticeUserRelation(remindnoticeok, user, false));
-
-                        scheduleList.setIsreminded(true);
-                        daydao.save(scheduleList);
+                    Long startTime2 = simpleDateFormat.parse(startTime).getTime();
+                    Long now2 = simpleDateFormat.parse(now).getTime();
+                    Long difference = startTime2 - now2;
+//                    86400000 ==1 天
+                    if (0 < difference && difference < 86400000) {
+                        NoticeListPO noticeListPO = noticeServiceV2.insertNoticeListPOByUserId(userId);
                     }
                 } catch (ParseException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
-        }*/
+        }
+        //根据用户和是否已读找通知中间表信息
+        List<NoticeUserRelationPO> noticeUserRelationPOList =noticeUserRelationServiceV2.getNoticeUserRelationPOByIsReadAndUserId(userId,false);
+       //收件箱（未读，未删除，用户id）
+        List<MailReciverPO>mailReciverPOList = mailReciverServiceV2.getMailReciverPOByReadAndDelAndUserId(false,false,userId);
+        //任务接收人联系表找新任务（3l)
+        List<TaskUserPO>taskUserPOList = taskUserServiceV2.getTaskUserPOByUserIdAndStatusId(userId,3L);
 
-        List<NoticeUserRelation> notice = irdao.findByReadAndUserId(false, user);//通知
-        List<Mailreciver> mail = mdao.findByReadAndDelAndReciverId(false, false, user);//邮件
-        List<Taskuser> task = tadao.findByUserIdAndStatusId(user, 3);//新任务
-        model.addAttribute("notice", notice.size());
-        model.addAttribute("mail", mail.size());
-        model.addAttribute("task", task.size());
+
+
+        model.addAttribute("notice", noticeUserRelationPOList.size());//未读的通知
+        model.addAttribute("mail", mailReciverPOList.size());//未读的邮件
+        model.addAttribute("task", taskUserPOList.size());//新任务
         model.addAttribute("user", user);
         //展示用户操作记录 由于现在没有登陆 不能获取用户id
-        List<UserLog> userLogs = userLogDao.findByUser(userId);
-        req.setAttribute("userLogList", userLogs);
+        PageHelper.startPage(0,10);
+        List<UserLogPO>userLogPOList = userLogServiceV2.getUserLogByUserId(userId);
+        for (UserLogPO userLogPO : userLogPOList){
+            userLogPO.setLogTime(new Timestamp(userLogPO.getLogTime().getTime()));
+        }
+        req.setAttribute("userLogList", userLogPOList);
         return "index/index";
+
+//        List<ScheduleList> aboutmenotice = dayser.aboutmeschedule(userId);
+//        for (ScheduleList scheduleList : aboutmenotice) {
+//            if (scheduleList.getIsreminded() != null && !scheduleList.getIsreminded()) {
+//                System.out.println(scheduleList.getStartTime());
+//
+//                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");//24小时制
+////				simpleDateFormat.parse(scheduleList.getStartTime()).getTime();
+//                String start = simpleDateFormat.format(scheduleList.getStartTime());
+//                String now = simpleDateFormat.format(new Date());
+//                try {
+//                    long now2 = simpleDateFormat.parse(now).getTime();
+//                    long start2 = simpleDateFormat.parse(start).getTime();
+//                    long cha = start2 - now2;
+//                    if (0 < cha && cha < 86400000) {
+//                        NoticesList remindnotices = new NoticesList();
+//                        remindnotices.setTypeId(11l);
+//                        remindnotices.setStatusId(15l);
+//                        remindnotices.setTitle("您有一个日程即将开始");
+//                        remindnotices.setUrl("/daycalendar");
+//                        remindnotices.setUserId(userId);
+//                        remindnotices.setNoticeTime(new Date());
+//
+//                        NoticesList remindnoticeok = informService.save(remindnotices);
+//
+//                        informrelationservice.save(new NoticeUserRelation(remindnoticeok, user, false));
+//
+//                        scheduleList.setIsreminded(true);
+//                        daydao.save(scheduleList);
+//                    }
+//                } catch (ParseException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//        List<NoticeUserRelation> notice = irdao.findByReadAndUserId(false, user);//通知
+//        List<Mailreciver> mail = mdao.findByReadAndDelAndReciverId(false, false, user);//邮件
+//        List<Taskuser> task = tadao.findByUserIdAndStatusId(user, 3);//新任务
+//        model.addAttribute("notice", notice.size());
+//        model.addAttribute("mail", mail.size());
+//        model.addAttribute("task", task.size());
+//        model.addAttribute("user", user);
+//        //展示用户操作记录 由于现在没有登陆 不能获取用户id
+//        List<UserLog> userLogs = userLogDao.findByUser(userId);
+//        req.setAttribute("userLogList", userLogs);
+//        return "index/index";
     }
 
     /**

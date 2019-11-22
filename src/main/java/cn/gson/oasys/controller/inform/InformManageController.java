@@ -13,8 +13,8 @@ import javax.validation.Valid;
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
 import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
-import cn.gson.oasys.ServiceV2.noticeServiceV2.InfrommanageServiceV2;
-import cn.gson.oasys.ServiceV2.noticeServiceV2.NoticeUserRelationServiceV2;
+import cn.gson.oasys.ServiceV2.notice2.NoticeServiceV2;
+import cn.gson.oasys.ServiceV2.notice2.NoticeUserRelationServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.noticeVO2.NoticeListVO;
 import org.slf4j.Logger;
@@ -307,7 +307,7 @@ public class InformManageController {
     //=======================================================自己改的
 
     @Resource
-    private InfrommanageServiceV2 infromManageServiceV2;
+    private NoticeServiceV2 infromManageServiceV2;
     @Resource
     private TypeServiceV2 typeServiceV2;
     @Resource
@@ -404,7 +404,7 @@ public class InformManageController {
                 infromManageServiceV2.updateNoticeListPO(session, noticeListVO, userId);
             } else {
 //                插入通知主表信息
-                NoticeListPO noticeListPO = infromManageServiceV2.insertNoticeListPO(noticeListVO, userId);
+                NoticeListPO noticeListPO = infromManageServiceV2.insertNoticeListPOByNoticeListVOAndUserId(noticeListVO, userId);
                 //新公告给下属用户，标记为未读
                 infromManageServiceV2.insertNoticeUserRelation(noticeListPO, userId);
             }

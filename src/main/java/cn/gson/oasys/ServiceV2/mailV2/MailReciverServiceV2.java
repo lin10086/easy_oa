@@ -21,7 +21,7 @@ public class MailReciverServiceV2 {
     private TypeServiceV2 typeServiceV2;
 
     /**
-     * 根据用户和是否已读是否删除找中间表
+     * 根据用户和是否已读是否删除找中间表（收件箱未读的条数）
      *
      * @param read
      * @param del
@@ -116,7 +116,7 @@ public class MailReciverServiceV2 {
      *
      * @param mailReciverPO
      */
-    public void updateMailReciverPODel(MailReciverPO mailReciverPO,Integer del) {
+    public void updateMailReciverPODel(MailReciverPO mailReciverPO, Integer del) {
         mailReciverPO.setIsDel(del);
         mailReciverPOMapper.updateByPrimaryKeySelective(mailReciverPO);
     }
@@ -126,17 +126,18 @@ public class MailReciverServiceV2 {
      *
      * @param mailReciverPO
      */
-    public void updateMailReciverPORead(MailReciverPO mailReciverPO,Integer read) {
+    public void updateMailReciverPORead(MailReciverPO mailReciverPO, Integer read) {
         mailReciverPO.setIsRead(read);
         mailReciverPOMapper.updateByPrimaryKeySelective(mailReciverPO);
 
     }
+
     /**
      * 修改邮件中间表的str字段
      *
      * @param mailReciverPO
      */
-    public void updateMailReciverPOStar(MailReciverPO mailReciverPO,Integer star) {
+    public void updateMailReciverPOStar(MailReciverPO mailReciverPO, Integer star) {
         mailReciverPO.setIsStar(star);
         mailReciverPOMapper.updateByPrimaryKeySelective(mailReciverPO);
 

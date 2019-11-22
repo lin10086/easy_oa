@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import cn.gson.oasys.ServiceV2.*;
 import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleListServiceV2;
+import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleServiceV2;
 import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleUserServiceV2;
 import cn.gson.oasys.model.po.SchedulePO;
 import cn.gson.oasys.model.po.StatusPO;
@@ -92,9 +93,7 @@ public class DaymanageController {
     @RequestMapping("daymanagepaging")
     private String daymanagepaging(@SessionAttribute("userId") Long userid,
                                    Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-                                   @RequestParam(value = "size", defaultValue = "10") int size
-    ) {
-
+                                   @RequestParam(value = "size", defaultValue = "10") int size) {
         List<SystemTypeList> types = typedao.findByTypeModel("aoa_schedule_list");
         List<SystemStatusList> statuses = statusdao.findByStatusModel("aoa_schedule_list");
 
@@ -143,7 +142,6 @@ public class DaymanageController {
     public String aboutmedaypaging(@SessionAttribute("userId") Long userid,
                                    Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                                    @RequestParam(value = "size", defaultValue = "10") int size) {
-
         List<SystemTypeList> types = typedao.findByTypeModel("aoa_schedule_list");
         List<SystemStatusList> statuses = statusdao.findByStatusModel("aoa_schedule_list");
 
@@ -160,7 +158,6 @@ public class DaymanageController {
         model.addAttribute("types", types);
         model.addAttribute("statuses", statuses);
         model.addAttribute("page", aboutmeday);
-
         model.addAttribute("url", "aboutmedaypaging");
 
         return "daymanage/daymanagepaging";
@@ -227,10 +224,10 @@ public class DaymanageController {
      *
      * @return
      */
-    @RequestMapping("daycalendar")
+   /* @RequestMapping("daycalendar")
     private String daycalendar() {
         return "daymanage/daycalendar";
-    }
+    }*/
 
 //	@RequestMapping("mycalendarload")
 //	public void mycalendarload(@SessionAttribute("userId") Long userid,HttpServletResponse response) throws IOException{
@@ -246,14 +243,13 @@ public class DaymanageController {
 //		response.getWriter().write(json);
 //		
 //	}
-
-    @RequestMapping("mycalendarload")
+   /* @RequestMapping("mycalendarload")
     public @ResponseBody
     List<ScheduleList> mycalendarload(@SessionAttribute("userId") Long userid, HttpServletResponse response) throws IOException {
         List<ScheduleList> se = dayser.aboutmeschedule(userid);
 
         return se;
-    }
+    }*/
 
     //==================================================
 
@@ -271,6 +267,8 @@ public class DaymanageController {
     private ScheduleListServiceV2 scheduleListServiceV2;
     @Resource
     private ScheduleUserServiceV2 scheduleUserServiceV2;
+    @Resource
+    private ScheduleServiceV2 scheduleServiceV2;
 
     /**
      * 日程管理
@@ -307,7 +305,7 @@ public class DaymanageController {
     }
 
     /**
-     * 日程管理的增加
+     * 日程管理的增加，修改
      *
      * @param rcId
      * @param page
@@ -362,7 +360,7 @@ public class DaymanageController {
                                   @SessionAttribute("userId") Long userId) {
         UserPO userPO = userServiceV2.getUserPOByUserId(userId);//登录人
         SchedulePO schedulePO = scheduleListServiceV2.insertOrUpdateSchedulePO(scheduleListVO, userId);//插入或更新日程表
-        scheduleUserServiceV2.deleteScheduleUserPO(scheduleListVO.getRcId());//根据日程id删除日程用户关联表信息
+        scheduleUserServiceV2.deleteScheduleUserPO(schedulePO.getRcId());//根据日程id删除日程用户关联表信息
         List<Long> UserIds = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(shareuser, ";");//分割接收人
         while (st.hasMoreElements()) {
@@ -388,5 +386,28 @@ public class DaymanageController {
         return "/daymanage";
     }
 
+    /**
+     * 日程管理》我的日历
+     *
+     * @return
+     */
+    @RequestMapping("daycalendar")
+    private String dayCalendar() {
+        return "daymanage/daycalendar";
+    }
+
+    /**
+     *
+     * @param userId
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping("mycalendarload")
+    public @ResponseBody
+    List<ScheduleListVO> mycalendarload(@SessionAttribute("userId") Long userId, HttpServletResponse response) throws IOException {
+        List<ScheduleListVO>scheduleListVOS = scheduleServiceV2.scheduleListVOS(userId);
+        return scheduleListVOS;
+    }
 
 }

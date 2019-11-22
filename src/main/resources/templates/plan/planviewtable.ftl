@@ -57,10 +57,10 @@
 															${plan.createTime}
 														</td>
 														<td>
-															${plan.user.userName}
+															${plan.userVO.userName}
 														</td>
 														<td>
-															${plan.user.dept.deptName}
+															${plan.userVO.deptVO.deptName}
 														</td>
 														<td>
 															 <#list statuslist as s>
@@ -68,8 +68,8 @@
 															 </#list>
 														</td>
 														<td>
-															<#if plan.attachId??>
-																<a style="color:#337ab7;"href="down?paid=${plan.attachId}">
+															<#if plan.attachmentId??>
+																<a style="color:#337ab7;"href="down?paid=${plan.attachmentId}">
 																<span class="glyphicon glyphicon-paperclip"></span>
 															</#if>
 														</td>

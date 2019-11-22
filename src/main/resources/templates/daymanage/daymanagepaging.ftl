@@ -6,6 +6,8 @@
 				<span class="glyphicon glyphicon-plus"></span> 新增
 			</a>
 		</h3>
+
+
 		<div class="box-tools">
 			<div class="input-group" style="width: 150px;">
 				<input type="text" class="form-control input-sm"
@@ -16,6 +18,22 @@
 				</div>
 			</div>
 		</div>
+
+
+
+		<#--<div class="box-tools">
+			<div class="input-group" style="width: 150px;">
+				<input type="text" class="form-control input-sm cha"
+					   placeholder="查找..." />
+				<div class="input-group-btn chazhao">
+					<a class="btn btn-sm btn-default"><span
+								class="glyphicon glyphicon-search"></span></a>
+				</div>
+			</div>
+		</div>-->
+
+
+
 	</div>
 	<!--盒子身体-->
 	<div class="box-body no-padding">

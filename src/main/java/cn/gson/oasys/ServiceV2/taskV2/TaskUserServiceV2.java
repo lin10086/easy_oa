@@ -46,6 +46,20 @@ public class TaskUserServiceV2 {
     }
 
     /**
+     * 根据用户id和状态id找任务中间表信息
+     *
+     * @param userId
+     * @param statusId
+     * @return
+     */
+    public List<TaskUserPO> getTaskUserPOByUserIdAndStatusId(Long userId, Long statusId) {
+        TaskUserPOExample taskUserPOExample = new TaskUserPOExample();
+        taskUserPOExample.createCriteria().andTaskReciveUserIdEqualTo(userId).andStatusIdEqualTo(statusId);
+        List<TaskUserPO> taskUserPOList = taskUserPOMapper.selectByExample(taskUserPOExample);
+        return taskUserPOList;
+    }
+
+    /**
      * 根据任务表ID删除任务用户表里的数据
      *
      * @param taskListPOId
@@ -55,6 +69,17 @@ public class TaskUserServiceV2 {
         taskUserPOExample.createCriteria().andTaskIdEqualTo(taskListPOId);
         taskUserPOMapper.deleteByExample(taskUserPOExample);
     }
+
+
+    /**
+     * 根据中间表ID删除中间表信息
+     *
+     * @param pkId
+     */
+    public void deleteTaskUserPOByPkId(Long pkId) {
+        taskUserPOMapper.deleteByPrimaryKey(pkId);
+    }
+
 
     /**
      * 根据任务ID和接收人ID删除任务中间表
@@ -67,16 +92,6 @@ public class TaskUserServiceV2 {
         taskUserPOExample.createCriteria().andTaskIdEqualTo(taskListPOId).andTaskReciveUserIdEqualTo(userId);
         taskUserPOMapper.deleteByExample(taskUserPOExample);
     }
-
-    /**
-     * 根据中间表ID删除中间表信息
-     *
-     * @param pkId
-     */
-    public void deleteTaskUserPOByPkId(Long pkId) {
-        taskUserPOMapper.deleteByPrimaryKey(pkId);
-    }
-
 
     /**
      * 根据用户ID和任务表ID返回关联表的状态ID
@@ -139,6 +154,7 @@ public class TaskUserServiceV2 {
         }
         return taskIdList;
     }
+
 
     /**
      * 更新任务中间表

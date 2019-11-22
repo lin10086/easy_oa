@@ -1,4 +1,4 @@
-package cn.gson.oasys.ServiceV2.noticeServiceV2;
+package cn.gson.oasys.ServiceV2.notice2;
 
 import cn.gson.oasys.ServiceV2.*;
 import cn.gson.oasys.mappers.NoticeListPOMapper;
@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Service
-public class InfrommanageServiceV2 {
+public class NoticeServiceV2 {
     @Resource
     private NoticeListPOMapper noticeListPOMapper;
     @Resource
@@ -102,12 +102,12 @@ public class InfrommanageServiceV2 {
     }
 
     /**
-     * 插入通知主表信息
+     * 根据页面获取到的信息插入通知主表信息
      *
      * @param menu
      * @param userId
      */
-    public NoticeListPO insertNoticeListPO(NoticeListVO menu, Long userId) {
+    public NoticeListPO insertNoticeListPOByNoticeListVOAndUserId(NoticeListVO menu, Long userId) {
         NoticeListPO noticeListPO = new NoticeListPO();
         noticeListPO.setUserId(userId);
         noticeListPO.setNoticeTime(new Timestamp(new Date().getTime()));
@@ -118,6 +118,24 @@ public class InfrommanageServiceV2 {
         noticeListPO.setTitle(menu.getTitle());
         noticeListPO.setTypeId(menu.getTypeId());
         noticeListPO.setUrl(menu.getUrl());
+        noticeListPOMapper.insertSelective(noticeListPO);
+        return noticeListPO;
+    }
+
+    /**
+     * 插入一条新的日程通知
+     *
+     * @param userId
+     * @return
+     */
+    public NoticeListPO insertNoticeListPOByUserId(Long userId) {
+        NoticeListPO noticeListPO = new NoticeListPO();
+        noticeListPO.setTypeId(11l);
+        noticeListPO.setStatusId(15l);
+        noticeListPO.setTitle("您有一个日程即将开始");
+        noticeListPO.setUrl("/daycalendar");
+        noticeListPO.setUserId(userId);
+        noticeListPO.setNoticeTime(new Date());
         noticeListPOMapper.insertSelective(noticeListPO);
         return noticeListPO;
     }

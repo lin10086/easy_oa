@@ -457,20 +457,20 @@ public class AttendceController {
     }
 
 
-        // 修改保存
-        @RequestMapping(value = "attendcesave", method = RequestMethod.POST)
-        public String updateSave(Model model, HttpSession session, HttpServletRequest request) {
-            Long userid = Long.parseLong(session.getAttribute("userId") + "");
-            String remark = request.getParameter("remark");
-            String statusname = request.getParameter("status");
-            SystemStatusList statusList = statusDao.findByStatusModelAndStatusName("aoa_attends_list", statusname);
-            long id = Long.parseLong(request.getParameter("id"));
-            Attends attends = attenceDao.findOne(id);
-            attends.setAttendsRemark(remark);
-            attenceDao.save(attends);
-            //attendceService.updatereamrk(remark, id);
-            return "redirect:/attendceatt";
-        }
+    // 修改保存
+    @RequestMapping(value = "attendcesave", method = RequestMethod.POST)
+    public String updateSave(Model model, HttpSession session, HttpServletRequest request) {
+        Long userid = Long.parseLong(session.getAttribute("userId") + "");
+        String remark = request.getParameter("remark");
+        String statusname = request.getParameter("status");
+        SystemStatusList statusList = statusDao.findByStatusModelAndStatusName("aoa_attends_list", statusname);
+        long id = Long.parseLong(request.getParameter("id"));
+        Attends attends = attenceDao.findOne(id);
+        attends.setAttendsRemark(remark);
+        attenceDao.save(attends);
+        //attendceService.updatereamrk(remark, id);
+        return "redirect:/attendceatt";
+    }
 
 /*
     // 修改保存
@@ -547,11 +547,11 @@ public class AttendceController {
      * 设置model里面的属性
      *
      * @param baseKey
-     * @param type考勤类型
-     * @param status考勤状态
-     * @param time考勤时间
+     * @param type    考勤类型
+     * @param status  考勤状态
+     * @param time    考勤时间
      * @param icon
-     * @param model模型
+     * @param model   模型
      */
     public void setModelSomething(String baseKey, Object type, Object status, Object time, Object icon, Model model) {
         if (!StringUtils.isEmpty(icon)) {

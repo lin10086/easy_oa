@@ -1,4 +1,4 @@
-package cn.gson.oasys.ServiceV2.noticeServiceV2;
+package cn.gson.oasys.ServiceV2.notice2;
 
 import cn.gson.oasys.mappers.NoticeUserRelationPOMapper;
 import cn.gson.oasys.model.po.NoticeUserRelationPO;
@@ -47,5 +47,19 @@ public class NoticeUserRelationServiceV2 {
      */
     public void deleteNoticeUserRelationPOByNoticeUserRelationPOId(Long noticeUserRelationPOId) {
         noticeUserRelationPOMapper.deleteByPrimaryKey(noticeUserRelationPOId);
+    }
+
+    /**
+     * 根据用户和是否已读找中间表信息
+     *
+     * @param userId 用户id
+     * @param isRead 是否已读
+     * @return
+     */
+    public List<NoticeUserRelationPO> getNoticeUserRelationPOByIsReadAndUserId(Long userId, Boolean isRead) {
+        NoticeUserRelationPOExample noticeUserRelationPOExample = new NoticeUserRelationPOExample();
+        noticeUserRelationPOExample.createCriteria().andRelatinUserIdEqualTo(userId).andIsReadEqualTo(isRead == false ? 0 : 1);
+        List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationPOMapper.selectByExample(noticeUserRelationPOExample);
+        return noticeUserRelationPOList;
     }
 }
