@@ -589,12 +589,8 @@ public class PlanController {
         model.addAttribute("status", statusPOList);
 
         Set<Long> longSet = new HashSet<>();
-//        List<Plan> plans = new ArrayList<>();
         Long typeId = 13L;//默认为日计划
         Long choose;//默认选择
-//        Plan plan2;
-//        long typeid = 13;
-//        Long choose;
 
         service.addConverter(new StringtoDate());
         String starttime = request.getParameter("starttime");
@@ -650,7 +646,7 @@ public class PlanController {
         // 将下属用户名和计划绑定在一起
         Long userId = Long.valueOf(session.getAttribute("userId") + "");
         PageHelper.startPage(page, 10);
-        List<UserPO> userPOList = userServiceV2.getUserPOListByFatherId(userId);//获取下属信息
+        List<UserPO> userPOList = userServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, baseKey);//获取下属信息
         List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
         for (UserVO userVO : userVOList) {
             for (UserPO userPO : userPOList) {

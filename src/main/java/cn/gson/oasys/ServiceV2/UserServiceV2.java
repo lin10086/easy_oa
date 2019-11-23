@@ -350,6 +350,26 @@ public class UserServiceV2 {
     }
 
     /**
+     * 根据上司ID,用户名和用户的真实姓名模糊查找，找下属用户列表
+     *
+     * @param fatherId
+     * @param baseKey
+     * @return
+     */
+    public List<UserPO> getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(Long fatherId, String baseKey) {
+        UserPOExample userPOExample = new UserPOExample();
+        if (baseKey != null) {
+            userPOExample.createCriteria().andFatherIdEqualTo(fatherId).andUserNameLike("%" + baseKey + "%");
+            UserPOExample.Criteria criteria2 = userPOExample.createCriteria().andFatherIdEqualTo(fatherId).andRealNameLike("%" + baseKey + "%");
+            userPOExample.or(criteria2);
+        } else {
+            userPOExample.createCriteria().andFatherIdEqualTo(fatherId);
+        }
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
+
+    /**
      * 根据上司ID找下属用户ID
      *
      * @param fatherId

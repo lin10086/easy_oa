@@ -140,11 +140,11 @@ public class IndexController {
 
         //获取session
         HttpSession session = req.getSession();
-//        session.setAttribute("userId", 5L);
-        session.setAttribute("userId",14L);//5的下属
+        session.setAttribute("userId", 5L);
+//        session.setAttribute("userId",14L);//5的下属
+//        session.setAttribute("userId", 15L);
 //        session.setAttribute("userId",3L);//5的上司
 //        session.setAttribute("userId",4L);
-//        session.setAttribute("userId",1L);
         // 判断用户ID是否为空
         if (StringUtils.isEmpty(session.getAttribute("userId"))) {
             //为空返回登录页面
@@ -178,12 +178,11 @@ public class IndexController {
             }
         }
         //根据用户和是否已读找通知中间表信息
-        List<NoticeUserRelationPO> noticeUserRelationPOList =noticeUserRelationServiceV2.getNoticeUserRelationPOByIsReadAndUserId(userId,false);
-       //收件箱（未读，未删除，用户id）
-        List<MailReciverPO>mailReciverPOList = mailReciverServiceV2.getMailReciverPOByReadAndDelAndUserId(false,false,userId);
+        List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationServiceV2.getNoticeUserRelationPOByIsReadAndUserId(userId, false);
+        //收件箱（未读，未删除，用户id）
+        List<MailReciverPO> mailReciverPOList = mailReciverServiceV2.getMailReciverPOByReadAndDelAndUserId(false, false, userId);
         //任务接收人联系表找新任务（3l)
-        List<TaskUserPO>taskUserPOList = taskUserServiceV2.getTaskUserPOByUserIdAndStatusId(userId,3L);
-
+        List<TaskUserPO> taskUserPOList = taskUserServiceV2.getTaskUserPOByUserIdAndStatusId(userId, 3L);
 
 
         model.addAttribute("notice", noticeUserRelationPOList.size());//未读的通知
@@ -191,9 +190,9 @@ public class IndexController {
         model.addAttribute("task", taskUserPOList.size());//新任务
         model.addAttribute("user", user);
         //展示用户操作记录 由于现在没有登陆 不能获取用户id
-        PageHelper.startPage(0,10);
-        List<UserLogPO>userLogPOList = userLogServiceV2.getUserLogByUserId(userId);
-        for (UserLogPO userLogPO : userLogPOList){
+        PageHelper.startPage(0, 10);
+        List<UserLogPO> userLogPOList = userLogServiceV2.getUserLogByUserId(userId);
+        for (UserLogPO userLogPO : userLogPOList) {
             userLogPO.setLogTime(new Timestamp(userLogPO.getLogTime().getTime()));
         }
         req.setAttribute("userLogList", userLogPOList);
