@@ -21,13 +21,13 @@
 							<#list ulist as user>
 								<tr>
 						  			<#if userName==user.userName>
-						    			<td>${user.dept.deptName}</td>
+						    			<td>${user.deptVO.deptName}</td>
 										<td>${user.userName}</td>
 				     	   					<td><#if uMap["${userName}"]??>
-				     	   					<div>【${uMap["${userName}"].label}】${uMap["${userName}"].title}</div>
-				     	   					<div>${uMap["${userName}"].planContent}
+				     	   					<div>标签：【${uMap["${userName}"].label}】；标题：${uMap["${userName}"].title}</div>
+				     	   					<div>内容：${uMap["${userName}"].planContent}
 				     	   					<#if uMap["${userName}"].attachId??>
-												<a style="color:#337ab7;"href="down?paid=${uMap["${userName}"].attachId}">
+												<a style="color:#337ab7;"href="file?fileid=${uMap["${userName}"].attachId}">
 												<span class="glyphicon glyphicon-paperclip"></span>
 															</#if></div>
 				     	   					

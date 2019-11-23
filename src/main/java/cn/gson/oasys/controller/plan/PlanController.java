@@ -22,12 +22,12 @@ import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
 import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
 import cn.gson.oasys.vo.factoryvo.planFactory.PlanListVOFactory;
 import cn.gson.oasys.vo.planVO2.PlanListVO;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -50,10 +50,6 @@ import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.dao.user.UserService;
-import cn.gson.oasys.model.entity.plan.Plan;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.file.FileServices;
 
 @Controller
@@ -77,8 +73,8 @@ public class PlanController {
     @Autowired
     AttachmentDao attachmentDao;
 
-    List<Plan> pList;
-    List<User> uList;
+
+    List<UserPO> uList;
     Date startDate, endDate;
     String choose2;
     Logger log = LoggerFactory.getLogger(getClass());
@@ -139,7 +135,7 @@ public class PlanController {
         return "plan/plantable";
     }*/
 
-    // 真正的报表
+   /* // 真正的报表
     @RequestMapping("realplantable")
     public String test23(HttpServletRequest request, Model model, HttpSession session,
                          @RequestParam(value = "pid", required = false) String pid,
@@ -157,7 +153,7 @@ public class PlanController {
             planDao.save(plan);
         }
         return "plan/realplantable";
-    }
+    }*/
 
 	
 
@@ -187,9 +183,9 @@ public class PlanController {
 	}*/
 
 
-    @RequestMapping(value = "plansave", method = RequestMethod.GET)
-    public void Datagr() {
-    }
+//    @RequestMapping(value = "plansave", method = RequestMethod.GET)
+//    public void Datagr() {
+//    }
 
    /* @RequestMapping(value = "plansave", method = RequestMethod.POST)
     public String testMess(@RequestParam("file") MultipartFile file, HttpServletRequest req, @Valid Plan plan2,
@@ -540,10 +536,11 @@ public class PlanController {
                 attachmentListPOId = attachmentListPO.getAttachmentId();
             }
             if (planId == -1) {// 新建
-                planListPO = planServiceV2.insertUpdatePlanListPO(typeId, statusId, attachmentListPOId, start, end, planListVO, userId);
+                planListPO = planServiceV2.insertOrUpdatePlanListPO(typeId, statusId, attachmentListPOId, start, end, planListVO, userId);
             }
             if (planId > 0) {
-                planListPO = planServiceV2.insertUpdatePlanListPO(typeId, statusId, attachmentListPOId, start, end, planListVO, userId);
+                planListVO.setPlanId(planId);//前后端名称不对称
+                planListPO = planServiceV2.insertOrUpdatePlanListPO(typeId, statusId, attachmentListPOId, start, end, planListVO, userId);
             }
             req.setAttribute("success", "后台验证成功");
         }
@@ -586,21 +583,27 @@ public class PlanController {
     //计划报表
     private void plantablepaging(HttpServletRequest request, Model model, HttpSession session, int page,
                                  String baseKey) {
-        List<SystemTypeList> type = (List<SystemTypeList>) typeDao.findByTypeModel("aoa_plan_list");
-        List<SystemStatusList> status = (List<SystemStatusList>) statusDao.findByStatusModel("aoa_plan_list");
-        List<Plan> plans = new ArrayList<>();
-        // 利用set过滤掉重复的plan_user_id 因为set不能重复
-        Set<Long> number = new HashSet();
-        Plan plan2;
-        long typeid = 13;
-        Long choose;
+        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_plan_list");//根据类型模型找类型列表
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_plan_list");//根据状态模型找状态列表
+        model.addAttribute("type", typePOList);
+        model.addAttribute("status", statusPOList);
+
+        Set<Long> longSet = new HashSet<>();
+//        List<Plan> plans = new ArrayList<>();
+        Long typeId = 13L;//默认为日计划
+        Long choose;//默认选择
+//        Plan plan2;
+//        long typeid = 13;
+//        Long choose;
+
         service.addConverter(new StringtoDate());
         String starttime = request.getParameter("starttime");
         String endtime = request.getParameter("endtime");
-        System.out.println(starttime + ";" + endtime);
         Date start = service.convert(starttime, Date.class);
         Date end = service.convert(endtime, Date.class);
-        String choose1 = request.getParameter("choose");
+
+        String choose1 = request.getParameter("choose");//从前端获取的选择
+
         //分页的时候记住
         if (start == null && end == null && choose1 == null) {
             start = startDate;
@@ -613,63 +616,97 @@ public class PlanController {
             choose2 = choose1;
         }
         // 1是日计划2是周计划3是月计划
-        if (choose1 == null || choose1.length() == 0)
+        if (choose1 == null || choose1.length() == 0) {
             choose = 1l;
-        else
+        } else {
             choose = Long.valueOf(choose1);
+        }
         if (choose == 1) {
-            typeid = 13l;
+            typeId = 13l;//日计划
         }
         if (choose == 2) {
-            typeid = 14l;
+            typeId = 14l;// 周计划
         }
         if (choose == 3) {
-            typeid = 15l;
+            typeId = 15l;//月计划
         }
-        pList = (List<Plan>) planDao.findAll();
-        Long userid = Long.valueOf(session.getAttribute("userId") + "");
-        Page<User> uListpage = userService.findmyemployuser(page, baseKey, userid);
-        for (Plan plan : pList) {
-            number.add(plan.getUser().getUserId());
+
+
+        List<PlanListPO> planListPOSAll = planServiceV2.planListPOSAll();//所有计划
+        Set<Long> number = new HashSet();// 利用set过滤掉重复的plan_user_id 因为set不能重复
+        for (PlanListPO planListPO1 : planListPOSAll) {
+            number.add(planListPO1.getPlanUserId());//添加所有计划里用户id
         }
-        System.out.println(number);
-        // 找到相对应的计划记录
+
+        List<PlanListPO> planListPOSFirst = new ArrayList<>();//用于添加用户的第一个计划记录
+        // 找到用户相对应的根据创建时间降序第一个计划相对应的计划记录
+        PlanListPO planListPO;
         for (Long num : number) {
-            plan2 = planDao.findlatest(start, end, num, typeid);
-            if (plan2 != null)
-                plans.add(plan2);
+            planListPO = planServiceV2.getPlanListPOByUserIdAndTypeIdAndCreateTime(num, start, end, typeId);
+            if (planListPO != null)
+                planListPOSFirst.add(planListPO);
         }
-        System.out.println("有没有plan" + plans);
-        // 将用户名和list绑定在一起
-        Map<String, Plan> uMap = new HashMap<>();
-        for (User user : uListpage) {
-            if (plans.size() == 0)
-                uMap.put(user.getUserName(), null);
-            for (Plan plan : plans) {
-                if (Objects.equals(user.getUserId(), plan.getUser().getUserId())) {
-                    uMap.put(user.getUserName(), plan);
+
+        // 将下属用户名和计划绑定在一起
+        Long userId = Long.valueOf(session.getAttribute("userId") + "");
+        PageHelper.startPage(page, 10);
+        List<UserPO> userPOList = userServiceV2.getUserPOListByFatherId(userId);//获取下属信息
+        List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
+        for (UserVO userVO : userVOList) {
+            for (UserPO userPO : userPOList) {
+                userVO.setDeptVO(DeptFactoryVO.createDeptVO(deptServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
+            }
+        }
+        PageInfo pageInfo = new PageInfo(userPOList);
+        Map<String, PlanListPO> uMap = new HashMap<>();// 用户名和计划对应
+        for (UserPO userPO : userPOList) {//遍历下属用户
+            if (planListPOSFirst.size() == 0) {
+                uMap.put(userPO.getUserName(), null);
+            }
+            for (PlanListPO planListPO1 : planListPOSFirst) {
+                //下属用户id和发布计划用户id
+                if (Objects.equals(userPO.getUserId(), planListPO1.getPlanUserId())) {
+                    uMap.put(userPO.getUserName(), planListPO1);
                     break;
                 } else {
-                    uMap.put(user.getUserName(), null);
+                    uMap.put(userPO.getUserName(), null);
                 }
             }
-            System.out.println("map" + uMap);
         }
-        System.out.println(uListpage.getContent());
-
+//可以根据下属用户id找出下属用户发布的计划（根据发布时间降序第一条）（下次改写）
         //记住开始时间和结束时间以及选择
         model.addAttribute("starttime", starttime);
         model.addAttribute("endtime", endtime);
         model.addAttribute("choose", choose1);
 
-        model.addAttribute("uMap", uMap);
-        model.addAttribute("type", type);
-        model.addAttribute("status", status);
-        model.addAttribute("plans", plans);
-        model.addAttribute("plist", pList);
-        model.addAttribute("ulist", uListpage.getContent());
-        model.addAttribute("page", uListpage);
-        model.addAttribute("url", "realplantable");
+        model.addAttribute("uMap", uMap);//用户名和计划对应
+        model.addAttribute("plans", planListPOSFirst);//用户的第一条计划
+        model.addAttribute("plist", planListPOSAll);//所有计划
+
+        model.addAttribute("ulist", userVOList);//下属用户信息
+        model.addAttribute("page", pageInfo);//分页信息
+
+        model.addAttribute("url", "realplantable");//真正报表信息
+    }
+
+    // 真正的报表
+    @RequestMapping("realplantable")
+    public String test23(HttpServletRequest request, Model model, HttpSession session,
+                         @RequestParam(value = "pid", required = false) String pid,
+                         @RequestParam(value = "comment", required = false) String comment,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "baseKey", required = false) String baseKey) {
+        plantablepaging(request, model, session, page, baseKey);
+        if (!StringUtils.isEmpty(pid)) {
+            PlanListPO planListPO = planServiceV2.getPlanListPOByPlanId(Long.valueOf(pid));
+            if (planListPO.getPlanComment() == null) {
+                planListPO.setPlanComment(comment);
+            } else {
+                planListPO.setPlanComment(planListPO.getPlanComment());
+            }
+            planServiceV2.updatePlanListPOCommentByPlanListPO(planListPO, comment);
+        }
+        return "plan/realplantable";
     }
 
 }

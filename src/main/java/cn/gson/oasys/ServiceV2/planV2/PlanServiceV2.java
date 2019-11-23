@@ -2,6 +2,7 @@ package cn.gson.oasys.ServiceV2.planV2;
 
 import cn.gson.oasys.mappers.PlanListPOMapper;
 import cn.gson.oasys.model.po.PlanListPO;
+import cn.gson.oasys.model.po.PlanListPOExample;
 import cn.gson.oasys.vo.planVO2.PlanListVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,7 @@ public class PlanServiceV2 {
      * @param userId             用户id
      * @return
      */
-    public PlanListPO insertUpdatePlanListPO(Long typeId, Long statusId, Long attachmentListPOId, Date start, Date end, PlanListVO planListVO, Long userId) {
+    public PlanListPO insertOrUpdatePlanListPO(Long typeId, Long statusId, Long attachmentListPOId, Date start, Date end, PlanListVO planListVO, Long userId) {
         PlanListPO planListPO = new PlanListPO();
         planListPO.setTypeId(typeId);
         planListPO.setStatusId(statusId);
@@ -101,7 +102,6 @@ public class PlanServiceV2 {
             planListPOMapper.updateByPrimaryKeySelective(planListPO);
         } else {
             planListPOMapper.insertSelective(planListPO);
-
         }
         return planListPO;
     }
@@ -118,6 +118,22 @@ public class PlanServiceV2 {
     }
 
     /**
+     * 更新评价
+     *
+     * @param planListPO
+     * @param comment
+     */
+    public void updatePlanListPOCommentByPlanListPO(PlanListPO planListPO, String comment) {
+        if (planListPO.getPlanComment() == null) {
+            planListPO.setPlanComment(comment);
+        } else {
+            planListPO.setPlanComment(planListPO.getPlanComment() + comment);
+        }
+        planListPOMapper.updateByPrimaryKeySelective(planListPO);
+    }
+
+
+    /**
      * 根据计划表id删除计划表信息
      *
      * @param planListPOId
@@ -125,4 +141,39 @@ public class PlanServiceV2 {
     public void deletePlanListPOByPlanListPOId(Long planListPOId) {
         planListPOMapper.deleteByPrimaryKey(planListPOId);
     }
+
+    /**
+     * 找出所有计划
+     *
+     * @return
+     */
+    public List<PlanListPO> planListPOSAll() {
+        PlanListPOExample planListPOExample = new PlanListPOExample();
+        List<PlanListPO> planListPOS = planListPOMapper.selectByExample(planListPOExample);
+        return planListPOS;
+    }
+
+    /**
+     * 根据用户id，   创建时间>开始时间，<结束时间，类型id,在根据发布时间降序取第一个
+     *
+     * @param userId
+     * @param startTime
+     * @param endTime
+     * @param typeId
+     * @return
+     */
+    public PlanListPO getPlanListPOByUserIdAndTypeIdAndCreateTime(Long userId, Date startTime, Date endTime, Long typeId) {
+        PlanListPOExample planListPOExample = new PlanListPOExample();
+        planListPOExample.setOrderByClause("create_time DESC");
+        if (startTime == null || endTime == null) {
+            return null;
+        }
+        planListPOExample.createCriteria().andPlanUserIdEqualTo(userId).andCreateTimeBetween(startTime, endTime).andTypeIdEqualTo(typeId);
+        List<PlanListPO> planListPOS = planListPOMapper.selectByExample(planListPOExample);
+        if (planListPOS.size() == 0) {
+            return null;
+        }
+        return planListPOS.get(0);
+    }
+
 }
