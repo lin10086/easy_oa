@@ -5,20 +5,11 @@ import cn.gson.oasys.ServiceV2.StatusServiceV2;
 import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.mappers.TaskListPOMapper;
-import cn.gson.oasys.mappers.TaskLoggerPOMapper;
 import cn.gson.oasys.mappers.TaskUserPOMapper;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.task.Tasklist;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.taskVO2.TaskListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.util.StringUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -202,7 +193,7 @@ public class TaskServiceV2 {
         UserPO userPO = null;
         if (title != null) {
             typePO = typeServiceV2.getTypePOByTypeModelAndTypeName("aoa_task_list", title);
-            statusPO = statusServiceV2.getStatusPOByTypeModelAndTypeName("aoa_task_list", title);
+            statusPO = statusServiceV2.getStatusPOByTypeModelAndStatusName("aoa_task_list", title);
             userPO = userServiceV2.getUserPOByUsername(title);
         }
         if (StringUtil.isEmpty(title)) {

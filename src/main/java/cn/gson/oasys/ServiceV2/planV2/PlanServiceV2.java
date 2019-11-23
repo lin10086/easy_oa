@@ -2,11 +2,13 @@ package cn.gson.oasys.ServiceV2.planV2;
 
 import cn.gson.oasys.mappers.PlanListPOMapper;
 import cn.gson.oasys.model.po.PlanListPO;
+import cn.gson.oasys.vo.planVO2.PlanListVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,11 +22,10 @@ public class PlanServiceV2 {
     //分页
     public List<PlanListPO> sortAndGetPlan(int page, String baseKey, long userId, Object type, Object status, Object time) {
         PageHelper.startPage(page, 10);
-//        if(!StringUtils.isEmpty(baseKey)){
-//
-//            System.out.println("进来了");
-//            return planListServiceV2.getPlanListPOSByUserIdAndBaseKey(baseKey,userId);
-//        }
+        if (!StringUtils.isEmpty(baseKey)) {
+            System.out.println("进来了");
+            return planListServiceV2.getPlanListPOSByUserIdAndBaseKey(userId, baseKey);
+        }
 
         if (!StringUtils.isEmpty(type)) {
             if (type.toString().equals("0")) {
@@ -56,4 +57,72 @@ public class PlanServiceV2 {
 
     }
 
+
+    /**
+     * 根据计划主键找计划表
+     *
+     * @param planId
+     * @return
+     */
+    public PlanListPO getPlanListPOByPlanId(Long planId) {
+        PlanListPO planListPO = planListPOMapper.selectByPrimaryKey(planId);
+        return planListPO;
+    }
+
+
+    /**
+     * 新增计划
+     *
+     * @param typeId             类型id
+     * @param statusId           状态id
+     * @param attachmentListPOId 附近id
+     * @param start              开始时间
+     * @param end                结束时间
+     * @param planListVO         从前端接收的数据
+     * @param userId             用户id
+     * @return
+     */
+    public PlanListPO insertUpdatePlanListPO(Long typeId, Long statusId, Long attachmentListPOId, Date start, Date end, PlanListVO planListVO, Long userId) {
+        PlanListPO planListPO = new PlanListPO();
+        planListPO.setTypeId(typeId);
+        planListPO.setStatusId(statusId);
+        planListPO.setAttachId(attachmentListPOId);
+        planListPO.setStartTime(start);
+        planListPO.setEndTime(end);
+        planListPO.setTitle(planListVO.getTitle());
+        planListPO.setLabel(planListVO.getLabel());
+        planListPO.setPlanContent(planListVO.getPlanContent());
+        planListPO.setPlanSummary(planListVO.getPlanSummary());
+        planListPO.setPlanComment(planListVO.getPlanComment());
+        planListPO.setPlanUserId(userId);
+        planListPO.setCreateTime(new Date());
+        if (planListVO.getPlanId() != null) {
+            planListPO.setPlanId(planListVO.getPlanId());
+            planListPOMapper.updateByPrimaryKeySelective(planListPO);
+        } else {
+            planListPOMapper.insertSelective(planListPO);
+
+        }
+        return planListPO;
+    }
+
+    /**
+     * 修改计划表的附件id
+     *
+     * @param attachmentId
+     * @param planListPO
+     */
+    public void updateAttachmentIdByPlanListPO(Long attachmentId, PlanListPO planListPO) {
+        planListPO.setAttachId(attachmentId);
+        planListPOMapper.updateByPrimaryKeySelective(planListPO);
+    }
+
+    /**
+     * 根据计划表id删除计划表信息
+     *
+     * @param planListPOId
+     */
+    public void deletePlanListPOByPlanListPOId(Long planListPOId) {
+        planListPOMapper.deleteByPrimaryKey(planListPOId);
+    }
 }

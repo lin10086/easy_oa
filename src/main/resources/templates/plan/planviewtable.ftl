@@ -22,6 +22,7 @@
 										<span class="glyphicon ${icon}"></span>
 										</#if>
 									</th>
+												<th scope="col">标签</th>
 												<th scope="col">标题</th>
 												<th scope="col"><span class="paixu thistime" style="color:blue;">发布时间
 						<#if time?? && icon??>
@@ -50,7 +51,12 @@
 														
 														<td >
 															<#if plan.label??>
-															【${plan.label}】${plan.title}
+															【${plan.label}】
+															</#if>
+														</td>
+														<td >
+															<#if plan.title??>
+															${plan.title}
 															</#if>
 														</td>
 														<td>
@@ -69,7 +75,7 @@
 														</td>
 														<td>
 															<#if plan.attachmentId??>
-																<a style="color:#337ab7;"href="down?paid=${plan.attachmentId}">
+																<a style="color:#337ab7;"href="file?fileid=${plan.attachmentId}">
 																<span class="glyphicon glyphicon-paperclip"></span>
 															</#if>
 														</td>

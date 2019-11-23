@@ -35,7 +35,7 @@ public class AttachmentServiceV2 {
     }
 
     /**
-     * 设置附件的model信息并插入附近
+     * 设置附件的model信息并插入附件
      *
      * @param attachmentListPO
      */
@@ -43,4 +43,14 @@ public class AttachmentServiceV2 {
         attachmentListPO.setModel(setModel);
         attachmentListPOMapper.insertSelective(attachmentListPO);
     }
+
+    /**
+     * 插入附件
+     *
+     * @param attachmentListPO
+     */
+    public void insertAttachmentListPO(AttachmentListPO attachmentListPO) {
+        attachmentListPOMapper.insertSelective(attachmentListPO);
+    }
+
 }

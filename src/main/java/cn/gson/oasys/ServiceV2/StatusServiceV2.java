@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -15,13 +16,38 @@ public class StatusServiceV2 {
     @Resource
     private StatusPOMapper statusPOMapper;
 
-    //根据状态模型找状态列表
+
+    /**
+     * 根据状态模型找状态列表
+     *
+     * @param statusModel 状态模型
+     * @return
+     */
     public List<StatusPO> getStatusPOByStatusModel(String statusModel) {
         StatusPOExample statusPOExample = new StatusPOExample();
         statusPOExample.createCriteria().andStatusModelEqualTo(statusModel);
         List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
         return statusPOList;
     }
+
+
+    /**
+     * 根据状态名找状态id
+     *
+     * @param statusName 状态名
+     * @return
+     */
+    public List<Long> getStatusPOIdListByStatusName(String statusName) {
+        StatusPOExample statusPOExample = new StatusPOExample();
+        statusPOExample.createCriteria().andStatusNameLike(statusName);
+        List<Long> longList = new ArrayList<>();
+        List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
+        for (StatusPO statusPO : statusPOList) {
+            longList.add(statusPO.getStatusId());
+        }
+        return longList;
+    }
+
 
     /**
      * 根据状态模型和状态名找状态
@@ -30,11 +56,11 @@ public class StatusServiceV2 {
      * @param statusName  状态名
      * @return
      */
-    public StatusPO getStatusPOByTypeModelAndTypeName(String statusModel, String statusName) {
+    public StatusPO getStatusPOByTypeModelAndStatusName(String statusModel, String statusName) {
         StatusPOExample statusPOExample = new StatusPOExample();
         statusPOExample.createCriteria().andStatusModelEqualTo(statusModel).andStatusNameEqualTo(statusName);
         List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
-        if (statusPOList.size()==0){
+        if (statusPOList.size() == 0) {
             return null;
         }
         return statusPOList.get(0);
