@@ -5,6 +5,7 @@ import cn.gson.oasys.mappers.TypePOMapper;
 import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.po.TypePO;
 import cn.gson.oasys.model.po.TypePOExample;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +37,12 @@ public class TypeServiceV2 {
     /**
      * 根据类型名找类型
      *
-     * @param typeName
-     * @return
+     * @param typeName 类型名
+     * @return 返回类型id
      */
     public List<Long> getTypePOIdByTypeName(String typeName) {
         TypePOExample typePOExample = new TypePOExample();
-        typePOExample.createCriteria().andTypeNameLike(typeName);
+        typePOExample.createCriteria().andTypeNameEqualTo(typeName);
         List<TypePO> typePOList = typePOMapper.selectByExample(typePOExample);
         List<Long> longList = new ArrayList<>();
         for (TypePO typePO : typePOList) {

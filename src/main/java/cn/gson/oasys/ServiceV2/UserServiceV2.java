@@ -52,9 +52,6 @@ public class UserServiceV2 {
 //查询到的下属用户,已经分页
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
 
-//        List<User> userList = UserFactory.create(userPOList);
-//        PageInfo pageInfo = new PageInfo(userList);
-//        log.info("total={}, pageInfo={},list={}", pageInfo.getTotal(), pageInfo, userList);
         return userPOList;
     }
 
@@ -386,4 +383,56 @@ public class UserServiceV2 {
         return userIdList;
     }
 
+    /**
+     * 根据部门id列表查找用户id列表
+     *
+     * @param deptIds
+     * @return
+     */
+    public List<Long> getUserPOIdsByDeptPOIds(List<Long> deptIds) {
+        List<Long> userIds = new ArrayList<>();
+        for (Long deptId : deptIds) {
+            UserPOExample userPOExample = new UserPOExample();
+            userPOExample.createCriteria().andDeptIdEqualTo(deptId);
+            List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+            for (UserPO userPO : userPOList) {
+                userIds.add(userPO.getUserId());
+            }
+        }
+        return userIds;
+    }
+
+    /**
+     * 根据部门id找这个部门用户ids
+     *
+     * @param deptId
+     * @return
+     */
+    public List<Long> getUserPOIdsByDeptPOId(Long deptId) {
+        List<Long> userPOIds = new ArrayList<>();
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andDeptIdEqualTo(deptId);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        for (UserPO userPO : userPOList) {
+            userPOIds.add(userPO.getUserId());
+        }
+        return userPOIds;
+    }
+
+    /**
+     * 根据用户名模糊查找用户的id
+     *
+     * @param username
+     * @return 返回用户们的id
+     */
+    public List<Long> getUserIdsByUsernameLike(String username) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserNameLike("%" + username + "%");
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        List<Long> userIds = new ArrayList<>();
+        for (UserPO userPO : userPOList) {
+            userIds.add(userPO.getUserId());
+        }
+        return userIds;
+    }
 }

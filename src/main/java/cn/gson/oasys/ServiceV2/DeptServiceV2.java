@@ -1,21 +1,20 @@
 package cn.gson.oasys.ServiceV2;
 
+import cn.gson.oasys.ServiceV2.planV2.PlanServiceV2;
 import cn.gson.oasys.factory.DeptFactory;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.po.DeptPO;
+import cn.gson.oasys.model.po.*;
 
-import cn.gson.oasys.model.po.DeptPOExample;
-import cn.gson.oasys.model.po.PositionPO;
-import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.DeptVO;
 import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -27,6 +26,10 @@ public class DeptServiceV2 {
     private PositionPOMapper positionPOMapper;
     @Resource
     private UserPOMapper userPOMapper;
+    @Resource
+    private UserServiceV2 userServiceV2;
+    @Resource
+    private PlanServiceV2 planServiceV2;
 
 
     /**
@@ -104,6 +107,19 @@ public class DeptServiceV2 {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
         DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
         return deptPO;
+    }
+
+    /**
+     * 根据部门名找部门id
+     *
+     * @param selectDeptName
+     * @return
+     */
+    public Long getDeptPOIdByDeptName(String selectDeptName) {
+        DeptPOExample deptPOExample = new DeptPOExample();
+        deptPOExample.createCriteria().andDeptNameEqualTo(selectDeptName);
+        List<DeptPO> deptPOList = deptPOMapper.selectByExample(deptPOExample);
+        return deptPOList.get(0).getDeptId();//因为部门名是下拉选选择的所以存在不用判断
     }
 }
 

@@ -1,6 +1,7 @@
 package cn.gson.oasys.controller.plan;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -13,10 +14,12 @@ import cn.gson.oasys.ServiceV2.StatusServiceV2;
 import cn.gson.oasys.ServiceV2.TypeServiceV2;
 import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
+import cn.gson.oasys.ServiceV2.planV2.PlanListServiceV2;
 import cn.gson.oasys.ServiceV2.planV2.PlanServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.DeptVO;
+import cn.gson.oasys.vo.SelectVO;
 import cn.gson.oasys.vo.UserVO;
 import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
 import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
@@ -74,7 +77,6 @@ public class PlanController {
     AttachmentDao attachmentDao;
 
 
-    List<UserPO> uList;
     Date startDate, endDate;
     String choose2;
     Logger log = LoggerFactory.getLogger(getClass());
@@ -261,7 +263,8 @@ public class PlanController {
 		model.addAttribute("typelist", type);
 		model.addAttribute("statuslist", status);
 	}
-	private void sortpaging(Model model, HttpSession session, int page, String baseKey, String type, String status,
+	*/
+/*	private void sortpaging(Model model, HttpSession session, int page, String baseKey, String type, String status,
 			String time, String icon) {
 		new AttendceController().setModelSomething(baseKey, type, status, time, icon, model);
 		Long userid = Long.valueOf(session.getAttribute("userId") + "");
@@ -271,8 +274,8 @@ public class PlanController {
 		model.addAttribute("plist", page2.getContent());
 		model.addAttribute("page", page2);
 		model.addAttribute("url", "planviewtable");
-	}*/
-
+	}
+*/
    /* //计划报表
     private void plantablepaging(HttpServletRequest request, Model model, HttpSession session, int page,
                                  String baseKey) {
@@ -368,6 +371,8 @@ public class PlanController {
     @Resource
     private PlanServiceV2 planServiceV2;
     @Resource
+    private PlanListServiceV2 planListServiceV2;
+    @Resource
     private TypeServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
@@ -380,34 +385,24 @@ public class PlanController {
 
 
     // 计划管理
-    @RequestMapping(value = "planview", method = RequestMethod.GET)
+ /*   @RequestMapping(value = "planview", method = RequestMethod.GET)
     public String test(Model model, HttpSession session,
                        @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "baseKey", required = false) String baseKey,
+                       SelectVO selectVO,
                        @RequestParam(value = "type", required = false) String type,
                        @RequestParam(value = "status", required = false) String status,
                        @RequestParam(value = "time", required = false) String time,
                        @RequestParam(value = "icon", required = false) String icon) {
         System.out.println("11" + baseKey);
-        sortpaging(model, session, page, baseKey, type, status, time, icon);
+        sortpaging(model, session, page, baseKey, type, status, time, icon, selectVO);
         return "plan/planview";
     }
+*/
 
 
-    /**
-     * 模糊搜索
-     *
-     * @param model
-     * @param session
-     * @param page
-     * @param baseKey
-     * @param type
-     * @param status
-     * @param time
-     * @param icon
-     * @return
-     */
-    @RequestMapping(value = "planviewtable", method = RequestMethod.GET)
+     // 模糊搜索
+  /*  @RequestMapping(value = "planviewtable", method = RequestMethod.GET)
     public String testdd(Model model, HttpSession session,
                          @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "baseKey", required = false) String baseKey,
@@ -418,32 +413,36 @@ public class PlanController {
         System.out.println("222" + baseKey);
         sortpaging(model, session, page, baseKey, type, status, time, icon);
         return "plan/planviewtable";
-    }
+    }*/
 
-    /**
-     * @param model
-     * @param session
-     * @param page
-     * @param baseKey
-     * @param type
-     * @param status
-     * @param time
-     * @param icon
-     */
-    private void sortpaging(Model model, HttpSession session, int page, String baseKey, String type, String status,
+    //   /**
+//     * @param model
+//     * @param session
+//     * @param page
+//     * @param baseKey
+//     * @param type
+//     * @param status
+//     * @param time
+//     * @param icon
+//     */
+   /* private void sortpaging(Model model, HttpSession session, int page, String baseKey, String type, String status,
                             String time, String icon) {
         new AttendceController().setModelSomething(baseKey, type, status, time, icon, model);
         Long userId = Long.valueOf(session.getAttribute("userId") + "");
-        List<PlanListPO> planListPOS = planServiceV2.sortAndGetPlan(page, baseKey, userId, type, status, time);
+        PageHelper.startPage(page, 10);
+//        List<PlanListPO> planListPOS = planServiceV2.sortAndGetPlan(page, baseKey, userId, type, status, time);
+        List<PlanListPO> planListPOS = planServiceV2.getPlanListPOSAll();
         List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
         for (PlanListPO planListPO : planListPOS) {
             for (PlanListVO planListVO : planListVOS) {
-                UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
-                DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
-                DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
-                UserVO userVO = UserFactoryVO.createUserVO(userPO);
-                userVO.setDeptVO(deptVO);
-                planListVO.setUserVO(userVO);
+                if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
+                    UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+                    UserVO userVO = UserFactoryVO.createUserVO(userPO);
+                    DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+                    DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+                    userVO.setDeptVO(deptVO);
+                    planListVO.setUserVO(userVO);
+                }
             }
         }
         PageInfo pageInfo = new PageInfo(planListPOS);
@@ -452,7 +451,7 @@ public class PlanController {
         model.addAttribute("page", pageInfo);
         model.addAttribute("url", "planviewtable");
     }
-
+*/
     private void typestatus(Model model) {
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_plan_list");
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_plan_list");
@@ -628,7 +627,7 @@ public class PlanController {
         }
 
 
-        List<PlanListPO> planListPOSAll = planServiceV2.planListPOSAll();//所有计划
+        List<PlanListPO> planListPOSAll = planServiceV2.getPlanListPOSAll();//所有计划
         Set<Long> number = new HashSet();// 利用set过滤掉重复的plan_user_id 因为set不能重复
         for (PlanListPO planListPO1 : planListPOSAll) {
             number.add(planListPO1.getPlanUserId());//添加所有计划里用户id
@@ -704,5 +703,202 @@ public class PlanController {
         }
         return "plan/realplantable";
     }
+
+    //====================================================
+    // 计划管理
+    @RequestMapping(value = "planview")
+    public String test(Model model, HttpSession session,
+                       @RequestParam(value = "page", defaultValue = "0") int page,
+                       @RequestParam(value = "baseKey", required = false) String baseKey,
+                       SelectVO selectVO,
+                       @RequestParam(value = "type", required = false) String type,
+                       @RequestParam(value = "status", required = false) String status,
+                       @RequestParam(value = "time", required = false) String time,
+                       @RequestParam(value = "icon", required = false) String icon) throws ParseException {
+        System.out.println("11" + baseKey);
+        sortpaging(model, session, page, baseKey, type, status, time, icon, selectVO);
+        return "plan/planview";
+    }
+
+
+    /**
+     * 模糊搜索
+     *
+     * @param model
+     * @param session
+     * @param page
+     * @param baseKey
+     * @param type
+     * @param status
+     * @param time
+     * @param icon
+     * @return
+     */
+  /*  @RequestMapping(value = "planviewtable", method = RequestMethod.GET)
+    public String testdd(Model model, HttpSession session,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "baseKey", required = false) String baseKey,
+                         @RequestParam(value = "type", required = false) String type,
+                         @RequestParam(value = "status", required = false) String status,
+                         @RequestParam(value = "time", required = false) String time,
+                         @RequestParam(value = "icon", required = false) String icon) {
+        System.out.println("222" + baseKey);
+        sortpaging(model, session, page, baseKey, type, status, time, icon);
+        return "plan/planviewtable";
+    }*/
+
+    //   /**
+//     * @param model
+//     * @param session
+//     * @param page
+//     * @param baseKey
+//     * @param type
+//     * @param status
+//     * @param time
+//     * @param icon
+//     */
+   /* private void sortpaging(Model model, HttpSession session, int page, String baseKey, String type, String status,
+                            String time, String icon) {
+        new AttendceController().setModelSomething(baseKey, type, status, time, icon, model);
+        Long userId = Long.valueOf(session.getAttribute("userId") + "");
+        PageHelper.startPage(page, 10);
+//        List<PlanListPO> planListPOS = planServiceV2.sortAndGetPlan(page, baseKey, userId, type, status, time);
+        List<PlanListPO> planListPOS = planServiceV2.getPlanListPOSAll();
+        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
+        for (PlanListPO planListPO : planListPOS) {
+            for (PlanListVO planListVO : planListVOS) {
+                if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
+                    UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+                    UserVO userVO = UserFactoryVO.createUserVO(userPO);
+                    DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+                    DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+                    userVO.setDeptVO(deptVO);
+                    planListVO.setUserVO(userVO);
+                }
+            }
+        }
+        PageInfo pageInfo = new PageInfo(planListPOS);
+        typestatus(model);
+        model.addAttribute("plist", planListVOS);
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("url", "planviewtable");
+    }
+*/
+
+
+
+
+   /* @RequestMapping("dimSelect")
+    public String dinSelect(Model model,
+                            @RequestParam(value = "page", defaultValue = "0") int page,
+                            @RequestParam(value = "selectTypeName", required = false) String selectTypeName) {
+        System.out.println(selectTypeName);
+        PageHelper.startPage(page, 10);
+
+        List<PlanListPO> planListPOS = planServiceV2.dimSelect(page, selectTypeName);
+        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
+        for (PlanListPO planListPO : planListPOS) {
+            for (PlanListVO planListVO : planListVOS) {
+                if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
+                    UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+                    UserVO userVO = UserFactoryVO.createUserVO(userPO);
+                    DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+                    DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+                    userVO.setDeptVO(deptVO);
+                    planListVO.setUserVO(userVO);
+                }
+            }
+        }
+        PageInfo pageInfo = new PageInfo(planListPOS);
+        typestatus(model);
+        model.addAttribute("plist", planListVOS);
+        model.addAttribute("page", pageInfo);
+//        model.addAttribute("url", "planviewtable");
+        return "plan/planviewtable";
+    }*/
+
+//模糊查询
+    @RequestMapping(value = "dimSelect")
+    public String dimSelect(Model model, HttpSession session,
+                            @RequestParam(value = "page", defaultValue = "0") int page,
+                            @RequestParam(value = "baseKey", required = false) String baseKey,
+                            SelectVO selectVO,
+                            @RequestParam(value = "type", required = false) String type,
+                            @RequestParam(value = "status", required = false) String status,
+                            @RequestParam(value = "time", required = false) String time,
+                            @RequestParam(value = "icon", required = false) String icon) throws ParseException {
+        System.out.println("222" + baseKey);
+        sortpaging(model, session, page, baseKey, type, status, time, icon, selectVO);
+        return "plan/planview";
+    }
+
+    //   /**
+//     * @param model
+//     * @param session
+//     * @param page
+//     * @param baseKey
+//     * @param type
+//     * @param status
+//     * @param time
+//     * @param icon
+//     */
+    private void sortpaging(Model model, HttpSession session, int page, String baseKey, String type, String status,
+                            String time, String icon, SelectVO selectVO) throws ParseException {
+        new AttendceController().setModelSomething(baseKey, type, status, time, icon, model);
+        PageHelper.startPage(page, 10);
+        List<PlanListPO> planListPOS = null;
+        if (selectVO.getSelectTypeName() != null && !("").equals(selectVO.getSelectTypeName())) {
+            //根据类型名查找
+            planListPOS = planListServiceV2.getPlanListPOSByTypeName(page, selectVO.getSelectTypeName());
+        } else if (selectVO.getSelectDeptName() != null && !("").equals(selectVO.getSelectDeptName())) {
+//            PageHelper.startPage(page, 10);
+            //根据部门名查找
+            planListPOS = planListServiceV2.getPlanListPOBySelectDeptName(page, selectVO.getSelectDeptName());
+        } else if (selectVO.getSelectTitle() != null && !("").equals(selectVO.getSelectTitle())) {
+            //根据标题模糊查找
+            planListPOS = planListServiceV2.getPlanListPOByTitleLike(page, selectVO.getSelectTitle());
+        } else if (selectVO.getSelectPushUsername() != null && !("").equals(selectVO.getSelectPushUsername())) {
+            //根据用户名模糊查找
+            planListPOS = planListServiceV2.getPlanListPOSBySelectUsername(page, selectVO.getSelectPushUsername());
+        } else if (selectVO.getSelectStatusName() != null && !("").equals(selectVO.getSelectStatusName())) {
+            //根据状态名查找
+            planListPOS = planListServiceV2.getPlanListPOByStatusNameLike(page, selectVO.getSelectStatusName());
+        } else if (selectVO.getSelectLabel() != null && !("").equals(selectVO.getSelectLabel())) {
+            planListPOS = planListServiceV2.getPlanListPOByLabelLike(page, selectVO.getSelectLabel());
+        } else if (selectVO.getSelectStartTime() != null && !("").equals(selectVO.getSelectStartTime()) && selectVO.getSelectEndTime() != null && !("").equals(selectVO.getSelectEndTime())) {
+            //开始时间和结束时间都存在（查找在两个时间之间的计划）
+            planListPOS = planListServiceV2.getPlanListPOByCreateTimeBetween(page, selectVO.getSelectStartTime(), selectVO.getSelectEndTime());
+        } else if (selectVO.getSelectStartTime() != null && !("").equals(selectVO.getSelectStartTime()) && (selectVO.getSelectEndTime() == null || ("").equals(selectVO.getSelectEndTime()))) {
+            //只有开始时间没有结束时间
+            planListPOS = planListServiceV2.getPlanListPOByCreateTimeGreaterThanOrEqualTo(page, selectVO.getSelectStartTime());
+        } else if ((selectVO.getSelectStartTime() == null || ("").equals(selectVO.getSelectStartTime())) && selectVO.getSelectEndTime() != null && !("").equals(selectVO.getSelectEndTime())) {
+            //没有开始时间只有结束时间
+            planListPOS = planListServiceV2.getPlanListPOByCreateTimeLessThanOrEqualTo(page, selectVO.getSelectEndTime());
+        } else {
+            //所有计划
+            planListPOS = planServiceV2.getPlanListPOSAll();
+        }
+        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
+        for (PlanListPO planListPO : planListPOS) {
+            for (PlanListVO planListVO : planListVOS) {
+                if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
+                    UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+                    UserVO userVO = UserFactoryVO.createUserVO(userPO);
+                    DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+                    DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+                    userVO.setDeptVO(deptVO);
+                    planListVO.setUserVO(userVO);
+                }
+            }
+        }
+        PageInfo pageInfo = new PageInfo(planListPOS);
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("deptPOList", deptServiceV2.getDeptPOListAll());
+        typestatus(model);
+        model.addAttribute("plist", planListVOS);
+//        model.addAttribute("url", "planviewtable");
+        model.addAttribute("url", "dimSelect");
+    }
+
 
 }

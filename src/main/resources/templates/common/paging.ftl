@@ -4,8 +4,8 @@
              style="background: #fff; border: 0px; margin-top: 0px; padding: 2px; height: 25px;">
             <div style="width: 40%; float: left;">
                 <div class="pageInfo" style="margin-left: 5px;">
-                <#--共<span>${page.totalElements}</span>条 | 每页<span>${page.size}</span>条-->
-                <#--| 共<span>${page.totalPages}</span>页-->
+                    <#--共<span>${page.totalElements}</span>条 | 每页<span>${page.size}</span>条-->
+                    <#--| 共<span>${page.totalPages}</span>页-->
                     共<span>${page.getTotal()}</span>条 | 每页<span>${page.getPageSize()}</span>条
                     | 共<span>${page.getPages()}</span>页
                 </div>
@@ -15,7 +15,7 @@
                     <!--判断是否是第一页  -->
                     <#--<#if page.first==true>-->
                     <#if page.isIsFirstPage()==true>
-                        <#--Integer i = b == false ? 0 : 1;-->
+                    <#--Integer i = b == false ? 0 : 1;-->
                     <#--&lt;#&ndash;自己改的&ndash;&gt;-->
                         <a class="btn btn-sm btn-default no-padding tablefirst" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
@@ -32,12 +32,12 @@
                     <a disabled="disabled" class="btn btn-default no-padding" style="width: 30px; height: 20px;">
                         <#--<#if (page.number+1) gte page.totalPages>-->
                         <#--${page.totalPages}-->
-                            <#--自己的-->
+                        <#--自己的-->
                         <#if (page.getPageNum()+1) gte page.getPages()>
                             ${page.getPages()}
                         <#else>
-                            <#--${page.number+1}-->
-                            <#--自己的-->
+                        <#--${page.number+1}-->
+                        <#--自己的-->
                             ${page.getPageNum()+1}
                         </#if>
                     </a>
@@ -124,7 +124,7 @@
             $('.thistable').load('${url}?visitnum=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
         }
     });
-    /* 查找 */
+    /* 总查找 */
     $('.baseKetsubmit').on('click', function () {
         var baseKey = $('.baseKey').val();
         console.log(baseKey);

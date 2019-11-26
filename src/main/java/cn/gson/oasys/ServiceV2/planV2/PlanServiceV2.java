@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,6 +57,14 @@ public class PlanServiceV2 {
             return planListServiceV2.getPlanListPOByUserIdAndCreateTime("create_time DESC", userId);
         }
 
+    }
+
+    public List<PlanListPO> dimSelect(int page, String selectTypeName) {
+        List<PlanListPO> planListPOS = new ArrayList<>();
+        if (!StringUtils.isEmpty(selectTypeName)) {
+            return planListServiceV2.getPlanListPOSByTypeName(page,selectTypeName);
+        }
+        return planListPOS;
     }
 
 
@@ -143,12 +152,13 @@ public class PlanServiceV2 {
     }
 
     /**
-     * 找出所有计划
+     * 找出所有计划并按时间排序
      *
      * @return
      */
-    public List<PlanListPO> planListPOSAll() {
+    public List<PlanListPO> getPlanListPOSAll() {
         PlanListPOExample planListPOExample = new PlanListPOExample();
+        planListPOExample.setOrderByClause("create_time DESC");
         List<PlanListPO> planListPOS = planListPOMapper.selectByExample(planListPOExample);
         return planListPOS;
     }
@@ -175,5 +185,7 @@ public class PlanServiceV2 {
         }
         return planListPOS.get(0);
     }
+
+
 
 }

@@ -32,16 +32,16 @@ public class StatusServiceV2 {
 
 
     /**
-     * 根据状态名找状态id
+     * 根据模糊状态名找状态id
      *
-     * @param statusName 状态名
+     * @param selectStatusName 状态名
      * @return
      */
-    public List<Long> getStatusPOIdListByStatusName(String statusName) {
+    public List<Long> getStatusPOIdListByStatusNameLike(String selectStatusName) {
         StatusPOExample statusPOExample = new StatusPOExample();
-        statusPOExample.createCriteria().andStatusNameLike(statusName);
-        List<Long> longList = new ArrayList<>();
+        statusPOExample.createCriteria().andStatusNameLike("%" + selectStatusName + "%");
         List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
+        List<Long> longList = new ArrayList<>();
         for (StatusPO statusPO : statusPOList) {
             longList.add(statusPO.getStatusId());
         }
