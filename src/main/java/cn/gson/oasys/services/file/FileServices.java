@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import cn.gson.oasys.model.po.FileListPO;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -389,7 +390,7 @@ public class FileServices {
 	
 	/**
 	 * 复制和移动
-	 * @param ids
+	 * @param
 	 * @param fromwhere  1为移动  2 为复制
 	 */
 	@Transactional
@@ -434,7 +435,8 @@ public class FileServices {
 			}
 		}
 	}
-	
+
+
 	public void copypath(Long mcpathid,Long topathid,boolean isfirst,Long userid){
 		FilePath filepath = fpdao.findOne(mcpathid);
 
@@ -562,31 +564,7 @@ public class FileServices {
 		return showsonpath;
 	}
 	
-	/**
-	 * 重命名业务方法
-	 * @param name
-	 * @param renamefp
-	 * @param nowpathid
-	 * @param isfile
-	 */
-	public void rename(String name,Long renamefp,Long nowpathid,boolean isfile){
-		if(isfile){
-			//文件名修改
-			FileList fl = fldao.findOne(renamefp);
-			String newname = onlyname(name, fl.getFpath(), fl.getFileShuffix(), 1, isfile);
-			fl.setFileName(newname);
-			fldao.save(fl);
-		}else{
-			//文件夹名修改
-			FilePath fp = fpdao.findOne(renamefp);
-			FilePath filepath = fpdao.findOne(nowpathid);
-			String newname = onlyname(name, filepath, null, 1, false);
-			fp.setPathName(newname);
-			fpdao.save(fp);
-		}
-		
-	}
-	
+
 	
 	
 	/**
@@ -667,5 +645,30 @@ public class FileServices {
 		return AttDao.findByAttachmentPath(filePath);
 	}
 
+
+	/**
+	 * 重命名业务方法
+	 * @param name
+	 * @param renamefp
+	 * @param nowpathid
+	 * @param isfile
+	 */
+	public void rename(String name,Long renamefp,Long nowpathid,boolean isfile){
+		if(isfile){
+			//文件名修改F
+			FileList fl = fldao.findOne(renamefp);
+			String newname = onlyname(name, fl.getFpath(), fl.getFileShuffix(), 1, isfile);
+			fl.setFileName(newname);
+			fldao.save(fl);
+		}else{
+			//文件夹名修改
+			FilePath fp = fpdao.findOne(renamefp);
+			FilePath filepath = fpdao.findOne(nowpathid);
+			String newname = onlyname(name, filepath, null, 1, false);
+			fp.setPathName(newname);
+			fpdao.save(fp);
+		}
+
+	}
 	
 }

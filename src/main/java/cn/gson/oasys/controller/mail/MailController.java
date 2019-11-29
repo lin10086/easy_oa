@@ -16,7 +16,7 @@ import cn.gson.oasys.ServiceV2.mailV2.InMailListServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailNumberServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailReciverServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
+import cn.gson.oasys.ServiceV2.AttachmentServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.ProcessServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.factoryvo.AttachmentFactoryVO;

@@ -397,11 +397,11 @@ public class FileController {
 
         model.addAttribute("nowpath", filePathPO);//文件路径类
 
-        model.addAttribute("paths", filePathServiceV2.getFilePathPOListByParentId(filePathPO.getPathId()));//根据fu路径找出的路径集合
+        model.addAttribute("paths", filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L));//根据fu路径找出的路径集合
         model.addAttribute("files", fileListServiceV2.getFileListPOByFilePathIdAndIsTrash(filePathPO.getPathId()));//根据文件路径id找出的文件列表
 
         model.addAttribute("userrootpath", filePathPO);
-        model.addAttribute("mcpaths", filePathServiceV2.getFilePathPOListByParentId(filePathPO.getPathId()));
+        model.addAttribute("mcpaths", filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L));
         return "file/filemanage";
     }
 
@@ -465,16 +465,15 @@ public class FileController {
         List<FilePathPO> allFilePathPOList = new ArrayList<>();//当前路径的所有父级
         fileServiceV2.allFilePathPOParent(filePathPO, allFilePathPOList);
         Collections.reverse(allFilePathPOList);//反转数组
-
         model.addAttribute("allparentpaths", allFilePathPOList);//所有的父级路径
         model.addAttribute("nowpath", filePathPO);//当前目录
-        model.addAttribute("paths", filePathServiceV2.getFilePathPOListByParentId(filePathPO.getPathId()));//根据文件的父id找文件路径
+        model.addAttribute("paths", filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L));//根据文件的父id找文件路径
         model.addAttribute("files", fileListServiceV2.getFileListPOByFilePathIdAndIsTrash(filePathPO.getPathId()));//根据文件路径id找文件
 //        model.addAttribute("paths", fs.findpathByparent(filepath.getId()));
 //        model.addAttribute("files", fs.findfileBypath(filepath));
         //复制移动显示 目录
         model.addAttribute("userrootpath", userRootFilePathPO);// 根路径
-        model.addAttribute("mcpaths", filePathServiceV2.getFilePathPOListByParentId(userRootFilePathPO.getPathId()));//根据根路径id找路径
+        model.addAttribute("mcpaths", filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(userRootFilePathPO.getPathId(), 0L));//根据根路径id找路径
 //        model.addAttribute("mcpaths", fs.findpathByparent(userrootpath.getId()));
         return "file/filemanage";
     }
@@ -506,25 +505,6 @@ public class FileController {
 
 //----------------------------------------
 
-    /**
-     * 文件分享
-     *
-     * @param pathId       文件的路径id
-     * @param checkFileIds 文件id集合
-     * @param model
-     * @return
-     */
-    @RequestMapping("doshare")
-    public String doshare(@RequestParam("pathid") Long pathId,
-                          @RequestParam("checkfileids") List<Long> checkFileIds,
-                          Model model) {
-        if (!checkFileIds.isEmpty()) {
-            fileServiceV2.doShare(checkFileIds);
-        }
-        model.addAttribute("pathid", pathId);
-        model.addAttribute("message", "分享成功");
-        return "forward:/filetest";
-    }
 
     /**
      * 删除前台选择的文件以及文件夹
@@ -560,63 +540,6 @@ public class FileController {
     }
 
     /**
-     * 重命名
-     *
-     * @param name
-     * @param renamefp
-     * @param pathid
-     * @param model
-     * @return
-     */
-
-    @RequestMapping("rename")
-    public String rename(@RequestParam("name") String name,
-                         @RequestParam("renamefp") Long renamefp,
-                         @RequestParam("pathid") Long pathid,
-                         @RequestParam("isfile") boolean isfile,
-                         Model model) {
-
-        //这里调用重命名方法
-        fs.rename(name, renamefp, pathid, isfile);
-
-        model.addAttribute("pathid", pathid);
-        return "forward:/filetest";
-
-    }
-
-    /**
-     * 移动和复制
-     *
-     * @param mctoid
-     * @param model
-     * @return
-     */
-    @RequestMapping("mcto")
-    public String mcto(@SessionAttribute("userId") Long userid,
-                       @RequestParam("morc") boolean morc,
-                       @RequestParam("mctoid") Long mctoid,
-                       @RequestParam("pathid") Long pathid,
-                       @RequestParam("mcfileids") List<Long> mcfileids,
-                       @RequestParam("mcpathids") List<Long> mcpathids,
-                       Model model) {
-        System.out.println("--------------------");
-        System.out.println("mcfileids" + mcfileids);
-        System.out.println("mcpathids" + mcpathids);
-
-        if (morc) {
-            System.out.println("这里是移动！~~");
-            fs.moveAndcopy(mcfileids, mcpathids, mctoid, true, userid);
-        } else {
-            System.out.println("这里是复制！~~");
-            fs.moveAndcopy(mcfileids, mcpathids, mctoid, false, userid);
-        }
-
-        model.addAttribute("pathid", pathid);
-        return "forward:/filetest";
-    }
-
-
-    /**
      * 新建文件夹√
      *
      * @param userId   用户id
@@ -629,9 +552,81 @@ public class FileController {
     public String createpath(@SessionAttribute("userId") Long userId, @RequestParam("pathid") Long pathId, @RequestParam("pathname") String pathname,
                              Model model) {
         FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//根据路径id找路径
-        String newName = fileServiceV2.onlyname(pathname, filePathPO, null, 1, false);
+        String newName = fileServiceV2.onlyname(pathname, filePathPO.getPathId(), null, 1, false);
         //插入新路径
         filePathServiceV2.insertFilePathPOByNewNameAndParentId(pathId, newName, userId);
+        model.addAttribute("pathid", pathId);
+        return "forward:/filetest";
+    }
+
+    /**
+     * 文件分享
+     *
+     * @param pathId       文件的路径id
+     * @param checkFileIds 文件id集合
+     * @param model
+     * @return
+     */
+    @RequestMapping("doshare")
+    public String doshare(@RequestParam("pathid") Long pathId,
+                          @RequestParam("checkfileids") List<Long> checkFileIds,
+                          Model model) {
+        if (!checkFileIds.isEmpty()) {
+            fileServiceV2.doShare(checkFileIds);
+        }
+        model.addAttribute("pathid", pathId);
+        model.addAttribute("message", "分享成功");
+        return "forward:/filetest";
+    }
+
+
+    /**
+     * 重命名
+     *
+     * @param name     从前端接收的修改名字
+     * @param reNameFp 要修改的文件id或文件夹id
+     * @param pathId   文件夹路径id
+     * @param model
+     * @return
+     */
+
+    @RequestMapping("rename")
+    public String rename(@RequestParam("name") String name,
+                         @RequestParam("renamefp") Long reNameFp,
+                         @RequestParam("pathid") Long pathId,
+                         @RequestParam("isfile") boolean isFile,
+                         Model model) {
+
+        //这里调用重命名方法
+        fs.rename(name, reNameFp, pathId, isFile);
+
+        model.addAttribute("pathid", pathId);
+        return "forward:/filetest";
+
+    }
+
+    /**
+     * 移动和复制
+     *
+     * @param mctoid
+     * @param model
+     * @return
+     */
+    @RequestMapping("mcto")
+    public String mcto(@SessionAttribute("userId") Long userId,
+                       @RequestParam("morc") boolean morc,
+                       @RequestParam("mctoid") Long mctoid,
+                       @RequestParam("pathid") Long pathId,
+                       @RequestParam("mcfileids") List<Long> mcfileids,
+                       @RequestParam("mcpathids") List<Long> mcpathids,
+                       Model model) {
+        if (morc) {//是true为移动
+            System.out.println("这里是移动！~~");
+            fileServiceV2.moveAndCopy(mcfileids, mcpathids, mctoid, true, userId);
+        } else {
+            System.out.println("这里是复制！~~");
+            fileServiceV2.moveAndCopy(mcfileids, mcpathids, mctoid, false, userId);
+        }
         model.addAttribute("pathid", pathId);
         return "forward:/filetest";
     }

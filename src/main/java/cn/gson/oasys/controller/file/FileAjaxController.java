@@ -2,6 +2,13 @@ package cn.gson.oasys.controller.file;
 
 import java.util.List;
 
+import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.fileV2.FileListServiceV2;
+import cn.gson.oasys.ServiceV2.fileV2.FilePathServiceV2;
+import cn.gson.oasys.ServiceV2.fileV2.FileServiceV2;
+import cn.gson.oasys.model.po.FileListPO;
+import cn.gson.oasys.model.po.FilePathPO;
+import cn.gson.oasys.model.po.UserPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,19 +24,22 @@ import cn.gson.oasys.model.entity.file.FilePath;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.file.FileServices;
 
+import javax.annotation.Resource;
+
 @Controller
 @RequestMapping("/")
 public class FileAjaxController {
+
+    @Autowired
+    FileServices fs;
+    @Autowired
+    FileListdao fldao;
+    @Autowired
+    FilePathdao fpdao;
+    @Autowired
+    UserDao udao;
 	
-	@Autowired
-	FileServices fs;
-	@Autowired
-	FileListdao fldao;
-	@Autowired
-	FilePathdao fpdao;
-	@Autowired
-	UserDao udao;
-	
+/*
 	@RequestMapping("mcloadpath")
 	public String mcloadpath(@RequestParam("mctoid") Long mctoid,@RequestParam("mcpathids") List<Long> mcpathids,Model model){
 		System.out.println("进来了是吧！~~");
@@ -40,15 +50,16 @@ public class FileAjaxController {
 		model.addAttribute("mcpaths",showsonpaths);
 		return "file/mcpathload";
 	}
+*/
 
-	/**
-	 * 文件类型筛选显示load
-	 * @param userid
-	 * @param type
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping("filetypeload")
+    /**
+     * 文件类型筛选显示load
+     * @param userid
+     * @param type
+     * @param model
+     * @return
+     */
+	/*@RequestMapping("filetypeload")
 	public String filetypeload(@SessionAttribute("userId")Long userid,
 			@RequestParam("type") String type,
 			Model model){
@@ -122,8 +133,8 @@ public class FileAjaxController {
 		model.addAttribute("type", type);
 		return "file/filetypeload";
 	
-	}
-	
+	}*/
+	/*
 	
 	@RequestMapping("findfileandpath")
 	public String findfileandpath(@SessionAttribute("userId") Long userid,
@@ -219,14 +230,14 @@ public class FileAjaxController {
 		return "forward:/filetypeload";
 	}
 	
-	/**
-	 * load删除controller
-	 * @param type
-	 * @param checkpathids
-	 * @param checkfileids
-	 * @param model
-	 * @return
-	 */
+	*//**
+     * load删除controller
+     * @param type
+     * @param checkpathids
+     * @param checkfileids
+     * @param model
+     * @return
+     *//*
 	@RequestMapping("fileloaddeletefile")
 	public String fileloaddeletefile(@RequestParam("type") String type,
 			@RequestParam(value="checkpathids[]",required=false) List<Long> checkpathids,
@@ -246,15 +257,15 @@ public class FileAjaxController {
 		model.addAttribute("type", type);
 		return "forward:/filetypeload";
 	}
-	/**
-	 * 将文件放入回收战
-	 * @param userid
-	 * @param type
-	 * @param checkpathids
-	 * @param checkfileids
-	 * @param model
-	 * @return
-	 */
+	*//**
+     * 将文件放入回收战
+     * @param userid
+     * @param type
+     * @param checkpathids
+     * @param checkfileids
+     * @param model
+     * @return
+     *//*
 	@RequestMapping("fileloadtrashfile")
 	public String fileloadtrashfile(@SessionAttribute("userId") Long userid,
 			@RequestParam("type") String type,
@@ -277,16 +288,16 @@ public class FileAjaxController {
 		return "forward:/filetypeload";
 	}
 	
-	/**
-	 * load重命名
-	 * @param type
-	 * @param renamefp
-	 * @param creatpathinput
-	 * @param isfile
-	 * @param pathid
-	 * @param model
-	 * @return
-	 */
+	*//**
+     * load重命名
+     * @param type
+     * @param renamefp
+     * @param creatpathinput
+     * @param isfile
+     * @param pathid
+     * @param model
+     * @return
+     *//*
 	@RequestMapping("fileloadrename")
 	public String fileloadrename(@RequestParam("type") String type,
 			@RequestParam("renamefp") Long renamefp,
@@ -303,15 +314,17 @@ public class FileAjaxController {
 	}
 	
 	
-	/**
-	 * 回收站load 复原
-	 * @param userid
-	 * @param type
-	 * @param checkpathids
-	 * @param checkfileids
-	 * @param model
-	 * @return
-	 */
+	*/
+    /**
+     * 回收站load 复原
+     *
+     * @param userid
+     * @param type
+     * @param checkpathids
+     * @param checkfileids
+     * @param model
+     * @return
+     *//*
 	@RequestMapping("filereturnback")
 	public String filereturnback(@SessionAttribute("userId") Long userid,
 			@RequestParam("type") String type,
@@ -327,6 +340,314 @@ public class FileAjaxController {
 		
 		model.addAttribute("type", type);
 		return "forward:/filetypeload";
-		
-	}
+	}*/
+
+
+    //=====================================================================
+    @Resource
+    private FilePathServiceV2 filePathServiceV2;
+    @Resource
+    private FileServiceV2 fileServiceV2;
+    @Resource
+    private UserServiceV2 userServiceV2;
+    @Resource
+    private FileListServiceV2 fileListServiceV2;
+
+    /**
+     * 移动复制文件
+     *
+     * @param mctoid
+     * @param mcpathids
+     * @param model
+     * @return
+     */
+    @RequestMapping("mcloadpath")
+    public String mcloadpath(@RequestParam("mctoid") Long mctoid, @RequestParam("mcpathids") List<Long> mcpathids, Model model) {
+        List<FilePathPO> filePathPOList = fileServiceV2.mcpathload(mctoid, mcpathids);
+        model.addAttribute("mcpaths", filePathPOList);
+        return "file/mcpathload";
+    }
+
+    /**
+     * 文件类型筛选显示load
+     *
+     * @param userId
+     * @param type
+     * @param model
+     * @return
+     */
+    @RequestMapping("filetypeload")
+    public String filetypeload(@SessionAttribute("userId") Long userId,
+                               @RequestParam("type") String type,
+                               Model model) {
+        String contentType;
+        List<FileListPO> fileLists = null;
+        List<FilePathPO> filePaths = null;
+        switch (type) {
+
+            case "document":
+                fileLists = fileListServiceV2.getDocument(userId);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "picture":
+                contentType = "image/%";
+                fileLists = fileListServiceV2.getFileListPOByUserIdAndContentTypeLikeAndFileIsTrash(userId, contentType, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "music":
+                contentType = "audio/%";
+                fileLists = fileListServiceV2.getFileListPOByUserIdAndContentTypeLikeAndFileIsTrash(userId, contentType, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "video":
+                contentType = "video/%";
+                fileLists = fileListServiceV2.getFileListPOByUserIdAndContentTypeLikeAndFileIsTrash(userId, contentType, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+            case "yasuo":
+                contentType = "application/x%";
+                fileLists = fileListServiceV2.getFileListPOByUserIdAndContentTypeLikeAndFileIsTrash(userId, contentType, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "trash":
+                filePaths = filePathServiceV2.getFilePathPOUserIdAndIsTrash(userId, 1L);
+                fileLists = fileListServiceV2.getFileListPOByUserIdAndFileIsTrash(userId, 1L);
+
+                model.addAttribute("paths", filePaths);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("istrash", 1);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "share":
+                fileLists = fileListServiceV2.getFileListPOByFileIsShareAndFileIsTrash(1l, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isshare", 1);
+                model.addAttribute("isload", 1);
+                model.addAttribute("userid", userId);
+                break;
+            default:
+                break;
+        }
+
+        model.addAttribute("type", type);
+        return "file/filetypeload";
+
+    }
+
+
+    @RequestMapping("findfileandpath")
+    public String findfileandpath(@SessionAttribute("userId") Long userId,
+                                  @RequestParam(value = "findfileandpath", required = false) String findFileAndPath,
+                                  @RequestParam(value = "type", defaultValue = "all") String type,
+                                  Model model) {
+        String findLike = "%" + findFileAndPath + "%";
+        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByUserIdAndParentId(userId, 1L);
+        String contentType;
+        List<FileListPO> fileLists = null;
+        List<FilePathPO> filePaths = null;
+        System.out.println(type);
+        switch (type) {
+
+            case "document":
+                fileLists = fileListServiceV2.getDocumentLike(userId, findLike);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "picture":
+                contentType = "image/%";
+                fileLists = fileListServiceV2.getFileListPOSByUserIdAndFileIsTrashAndCountTypeLikeAndFileNameLike(userId, contentType, findLike, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "music":
+                contentType = "audio/%";
+                fileLists = fileListServiceV2.getFileListPOSByUserIdAndFileIsTrashAndCountTypeLikeAndFileNameLike(userId, contentType, findLike, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "video":
+                contentType = "video/%";
+                fileLists = fileListServiceV2.getFileListPOSByUserIdAndFileIsTrashAndCountTypeLikeAndFileNameLike(userId, contentType, findLike, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "yasuo":
+                contentType = "application/x%";
+                fileLists = fileListServiceV2.getFileListPOSByUserIdAndFileIsTrashAndCountTypeLikeAndFileNameLike(userId, contentType, findLike, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isload", 1);
+                break;
+
+            case "trash":
+                fileLists = fileListServiceV2.getFileListPOSByUserIdAndFileIsTrashAndCountTypeLikeAndFileNameLike(userId, "%%", findLike, 1L);
+                filePaths = filePathServiceV2.getFilePathPOByUserIdAndPathIsTrashAndPathNameLikeAndParentIdNot(userId, 1L, findLike, 1L);
+                model.addAttribute("istrash", 1);
+                model.addAttribute("isload", 1);
+                model.addAttribute("paths", filePaths);
+                model.addAttribute("files", fileLists);
+                break;
+
+            case "share":
+                fileLists = fileListServiceV2.getFileListPOSByFileIsShareAndFileNameLike(findLike, 1L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isshare", 1);
+                model.addAttribute("isload", 1);
+                break;
+
+            default:
+                filePaths = filePathServiceV2.getFilePathPOByUserIdAndPathIsTrashAndPathNameLikeAndParentIdNot(userId, 0L, findLike, 1L);
+                fileLists = fileListServiceV2.getFileListPOSByUserIdAndFileIsTrashAndFileNameLike(userId, findLike, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("paths", filePaths);
+                model.addAttribute("isload", 1);
+                break;
+        }
+
+        model.addAttribute("type", type);
+        return "file/filetypeload";
+
+    }
+
+    /**
+     * 把文件设置为分享文件
+     *
+     * @param type
+     * @param checkFileIds
+     * @param model
+     * @return
+     */
+    @RequestMapping("fileloadshare")
+    public String fileloadshare(@RequestParam("type") String type,
+                                @RequestParam(value = "checkfileids[]", required = false) List<Long> checkFileIds,
+                                Model model) {
+        if (checkFileIds != null) {
+            fileServiceV2.doShare(checkFileIds);
+        }
+
+        model.addAttribute("message", "分享成功");
+        model.addAttribute("type", type);
+        return "forward:/filetypeload";
+    }
+
+    /**
+     * load删除controller
+     * @param type
+     * @param checkPathIds
+     * @param checkFileIds
+     * @param model
+     * @return
+     */
+    @RequestMapping("fileloaddeletefile")
+    public String fileloaddeletefile(@RequestParam("type") String type,
+                                     @RequestParam(value = "checkpathids[]", required = false) List<Long> checkPathIds,
+                                     @RequestParam(value = "checkfileids[]", required = false) List<Long> checkFileIds,
+                                     Model model) {
+        if (checkFileIds != null) {
+            // 删除文件
+            fileServiceV2.deleteFile(checkFileIds);
+        }
+        if (checkPathIds != null) {
+            // 删除文件夹
+            fileServiceV2.deletePath(checkPathIds);
+        }
+        model.addAttribute("type", type);
+        return "forward:/filetypeload";
+    }
+
+
+    /**
+     * 将文件放入回收战
+     * @param userId
+     * @param type
+     * @param checkPathIds
+     * @param checkFileIds
+     * @param model
+     * @return
+     */
+    @RequestMapping("fileloadtrashfile")
+    public String fileloadtrashfile(@SessionAttribute("userId") Long userId,
+                                    @RequestParam("type") String type,
+                                    @RequestParam(value = "checkpathids[]", required = false) List<Long> checkPathIds,
+                                    @RequestParam(value = "checkfileids[]", required = false) List<Long> checkFileIds,
+                                    Model model) {
+
+        if (checkFileIds != null) {
+            // 文件放入回收站
+            fileServiceV2.trashFile(checkFileIds,1L,userId);
+        }
+        if (checkPathIds != null) {
+            // 删除文件夹
+            fileServiceV2.trashPath(checkPathIds,1L,true);
+        }
+        model.addAttribute("type", type);
+        return "forward:/filetypeload";
+    }
+
+    /**
+     * load重命名
+     *
+     * @param type
+     * @param renamefp
+     * @param creatpathinput
+     * @param isfile
+     * @param pathid
+     * @param model
+     * @return
+     */
+    @RequestMapping("fileloadrename")
+    public String fileloadrename(@RequestParam("type") String type,
+                                 @RequestParam("renamefp") Long renamefp,
+                                 @RequestParam("creatpathinput") String creatpathinput,
+                                 @RequestParam("isfile") boolean isfile,
+                                 @RequestParam(value = "pathid", required = false) Long pathid,
+                                 Model model) {
+        fileServiceV2.rename(creatpathinput,renamefp,pathid,isfile);
+        model.addAttribute("type", type);
+        return "forward:/filetypeload";
+    }
+
+
+
+    /**
+     * 回收站load复原
+     * @param userId
+     * @param type
+     * @param checkPathIds
+     * @param checkFileIds
+     * @param model
+     * @return
+     */
+    @RequestMapping("filereturnback")
+    public String filereturnback(@SessionAttribute("userId") Long userId,
+                                 @RequestParam("type") String type,
+                                 @RequestParam(value = "checkpathids[]", required = false) List<Long> checkPathIds,
+                                 @RequestParam(value = "checkfileids[]", required = false) List<Long> checkFileIds,
+                                 Model model) {
+        if (checkFileIds != null) {
+            fileServiceV2.filereturnback(checkFileIds,userId);
+        }
+        if (checkPathIds != null) {
+            fileServiceV2.pathreturnback(checkPathIds,userId);
+        }
+
+        model.addAttribute("type", type);
+        return "forward:/filetypeload";
+
+    }
+
+
 }

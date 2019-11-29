@@ -16,7 +16,7 @@ import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.planV2.PlanListServiceV2;
 import cn.gson.oasys.ServiceV2.planV2.PlanServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.AttachmentServiceV2;
+import cn.gson.oasys.ServiceV2.AttachmentServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.DeptVO;
 import cn.gson.oasys.vo.SelectVO;

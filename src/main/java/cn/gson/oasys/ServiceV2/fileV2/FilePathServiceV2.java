@@ -47,6 +47,25 @@ public class FilePathServiceV2 {
         return filePathPO;
     }
 
+    /**
+     * 根据路径id删除路径信息
+     *
+     * @param pathId
+     */
+    public void deleteFilePathPOByPathId(Long pathId) {
+        filePathPOMapper.deleteByPrimaryKey(pathId);
+    }
+
+    /**
+     * 根据文件夹新名字和要更新的文件夹路径信息修改文件夹名
+     *
+     * @param newName
+     * @param updateFilePathPO
+     */
+    public void updateFilePathPOPathName(String newName, FilePathPO updateFilePathPO) {
+        updateFilePathPO.setPathName(newName);
+        filePathPOMapper.updateByPrimaryKeySelective(updateFilePathPO);
+    }
 
     /**
      * 根据文件路径父路径和是垃圾
@@ -54,9 +73,9 @@ public class FilePathServiceV2 {
      * @param parentId
      * @return
      */
-    public List<FilePathPO> getFilePathPOListByParentId(Long parentId) {
+    public List<FilePathPO> getFilePathPOListByParentIdAndIsTrash(Long parentId, Long isTrash) {
         FilePathPOExample filePathPOExample = new FilePathPOExample();
-        filePathPOExample.createCriteria().andParentIdEqualTo(parentId).andPathIstrashEqualTo(0L);
+        filePathPOExample.createCriteria().andParentIdEqualTo(parentId).andPathIstrashEqualTo(isTrash);
         List<FilePathPO> filePathPOList = filePathPOMapper.selectByExample(filePathPOExample);
         return filePathPOList;
     }
@@ -100,11 +119,71 @@ public class FilePathServiceV2 {
         FilePathPOExample filePathPOExample = new FilePathPOExample();
         filePathPOExample.createCriteria().andPathNameEqualTo(pathName).andParentIdEqualTo(parentId);
         List<FilePathPO> filePathPOS = filePathPOMapper.selectByExample(filePathPOExample);
-        if (filePathPOS.size()!=0) {
-            filePathPOS.get(0);
+        if (filePathPOS.size() != 0) {
+            return filePathPOS.get(0);
         }
         return null;
     }
 
+    /**
+     * 根据文件路径用户id和是否是垃圾文件找路径列表
+     *
+     * @param userId
+     * @param isTrash
+     * @return
+     */
+    public List<FilePathPO> getFilePathPOUserIdAndIsTrash(Long userId, Long isTrash) {
+        FilePathPOExample filePathPOExample = new FilePathPOExample();
+        filePathPOExample.createCriteria().andPathUserIdEqualTo(userId).andPathIstrashEqualTo(isTrash);
+        List<FilePathPO> filePathPOS = filePathPOMapper.selectByExample(filePathPOExample);
+        return filePathPOS;
+    }
+
+
+    /**
+     * 根据用户id和路径的父id
+     *
+     * @param userId   用户id
+     * @param parentId 路径的父id
+     * @return
+     */
+    public FilePathPO getFilePathPOByUserIdAndParentId(Long userId, Long parentId) {
+        FilePathPOExample filePathPOExample = new FilePathPOExample();
+        filePathPOExample.createCriteria().andPathUserIdEqualTo(userId).andParentIdEqualTo(parentId);
+        List<FilePathPO> filePathPOS = filePathPOMapper.selectByExample(filePathPOExample);
+        if (filePathPOS.size() != 0) {
+            return filePathPOS.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * 根据父路径找下面所有的路径
+     *
+     * @param parentId
+     * @return
+     */
+    public List<FilePathPO> getFilePathPOByParentId(Long parentId) {
+        FilePathPOExample filePathPOExample = new FilePathPOExample();
+        filePathPOExample.createCriteria().andParentIdEqualTo(parentId);
+        List<FilePathPO> filePathPOS = filePathPOMapper.selectByExample(filePathPOExample);
+        return filePathPOS;
+    }
+
+    /**
+     * @param userId
+     * @param isTrash
+     * @param pathName
+     * @param parentId
+     * @return
+     */
+    public List<FilePathPO> getFilePathPOByUserIdAndPathIsTrashAndPathNameLikeAndParentIdNot(Long userId, Long isTrash, String pathName, Long parentId) {
+        FilePathPOExample filePathPOExample = new FilePathPOExample();
+        filePathPOExample.createCriteria().andPathUserIdEqualTo(userId).andPathIstrashEqualTo(isTrash)
+                .andPathNameLike(pathName).andParentIdEqualTo(parentId);
+        List<FilePathPO> filePathPOList = filePathPOMapper.selectByExample(filePathPOExample);
+        return filePathPOList;
+
+    }
 
 }
