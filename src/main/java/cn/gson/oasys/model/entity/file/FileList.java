@@ -46,10 +46,10 @@ public class FileList {
 	private String fileShuffix;	//文件后缀名
 	
 	@Column(name = "file_istrash")
-	private Long fileIstrash = 0L;
+	private Long fileIstrash = 0L;//是否在垃圾箱
 	
 	@Column(name = "file_isshare")
-	private Long fileIsshare = 0L;
+	private Long fileIsshare = 0L;//是否分享
 
 	
 	@ManyToOne

@@ -221,6 +221,16 @@
             <generatedKey column="plan_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="plan_id" javaType="Long"/>
         </table>
+        <!--文件路径-->
+        <table tableName="aoa_file_path" domainObjectName="FilePathPO">
+            <generatedKey column="path_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="path_id" javaType="Long"/>
+        </table>
+        <!--文件列表-->
+        <table tableName="aoa_file_list" domainObjectName="FileListPO">
+            <generatedKey column="file_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="file_id" javaType="Long"/>
+        </table>
 
     </context>
 </generatorConfiguration>

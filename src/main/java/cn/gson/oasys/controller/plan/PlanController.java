@@ -401,7 +401,7 @@ public class PlanController {
 */
 
 
-     // 模糊搜索
+    // 模糊搜索
   /*  @RequestMapping(value = "planviewtable", method = RequestMethod.GET)
     public String testdd(Model model, HttpSession session,
                          @RequestParam(value = "page", defaultValue = "0") int page,
@@ -460,7 +460,7 @@ public class PlanController {
     }
 
 
-    // 计划管理>增加或修改
+  /*  // 计划管理>增加或修改
     @RequestMapping("planedit")
     public String test3(HttpServletRequest request, Model model) {
         long planId = Long.valueOf(request.getParameter("pid"));
@@ -485,7 +485,7 @@ public class PlanController {
         typestatus(model);
         return "plan/planedit";
     }
-
+*/
     /**
      * 计划管理>增加或修改保存
      *
@@ -559,6 +559,7 @@ public class PlanController {
         Long loginUserId = Long.valueOf(session.getAttribute("userId") + "");//登录人id
         Long planId = Long.valueOf(request.getParameter("pid"));//计划id
         Long planUserId = planServiceV2.getPlanListPOByPlanId(planId).getPlanUserId();//发布计划人id
+        //根据登录用户和发布人用户相同才能删除
         if (loginUserId.equals(planUserId)) {
             planServiceV2.deletePlanListPOByPlanListPOId(planId);
 
@@ -582,6 +583,9 @@ public class PlanController {
     //计划报表
     private void plantablepaging(HttpServletRequest request, Model model, HttpSession session, int page,
                                  String baseKey) {
+//        String choose2=null;
+//        Date startDate = null;
+//        Date endDate=null;
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_plan_list");//根据类型模型找类型列表
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_plan_list");//根据状态模型找状态列表
         model.addAttribute("type", typePOList);
@@ -704,7 +708,8 @@ public class PlanController {
         return "plan/realplantable";
     }
 
-    //====================================================
+    //===========================================================
+    //二次修改的
     // 计划管理
     @RequestMapping(value = "planview")
     public String test(Model model, HttpSession session,
@@ -786,8 +791,7 @@ public class PlanController {
 */
 
 
-
-
+//-----------------------------------------------------------
    /* @RequestMapping("dimSelect")
     public String dinSelect(Model model,
                             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -851,7 +855,7 @@ public class PlanController {
             //根据类型名查找
             planListPOS = planListServiceV2.getPlanListPOSByTypeName(page, selectVO.getSelectTypeName());
         } else if (selectVO.getSelectDeptName() != null && !("").equals(selectVO.getSelectDeptName())) {
-//            PageHelper.startPage(page, 10);
+            PageHelper.startPage(page, 10);
             //根据部门名查找
             planListPOS = planListServiceV2.getPlanListPOBySelectDeptName(page, selectVO.getSelectDeptName());
         } else if (selectVO.getSelectTitle() != null && !("").equals(selectVO.getSelectTitle())) {
@@ -898,6 +902,35 @@ public class PlanController {
         model.addAttribute("plist", planListVOS);
 //        model.addAttribute("url", "planviewtable");
         model.addAttribute("url", "dimSelect");
+    }
+
+
+    // 计划管理>增加或修改
+    @RequestMapping("planedit")
+    public String test3(HttpServletRequest request, Model model) {
+        typestatus(model);
+        long planId = Long.valueOf(request.getParameter("pid"));//从planviewtable 页面获取pid(增加=-1和修改>0）
+        if (!StringUtils.isEmpty(request.getAttribute("errormess"))) {
+            request.setAttribute("errormess", request.getAttribute("errormess"));
+            request.setAttribute("plan", request.getAttribute("plan2"));
+        } else if (!StringUtils.isEmpty(request.getAttribute("success"))) {
+            request.setAttribute("success", request.getAttribute("success"));
+            request.setAttribute("plan", request.getAttribute("plan2"));
+        }
+        // 新建
+        if (planId == -1) {
+            model.addAttribute("plan", null);
+            model.addAttribute("pid", planId);
+        return "plan/planadd";
+        } else if (planId > 0) {
+            PlanListPO planListPO = planServiceV2.getPlanListPOByPlanId(planId);
+            PlanListVO planListVO = PlanListVOFactory.createPlanListVO(planListPO);
+            model.addAttribute("plan", planListVO);
+            model.addAttribute("pid", planId);
+        return "plan/planedit";
+        }
+        return null;
+
     }
 
 

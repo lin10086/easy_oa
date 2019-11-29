@@ -14,7 +14,7 @@
 		<#else>
 			<li><a class="open">打开</a></li>
 			<li><a class="downloadfile">下载</a></li>
-			<li><a class="doshare" href="doshare?pathid=${nowpath.id}&">分享</a></li>
+			<li><a class="doshare" href="doshare?pathid=${nowpath.pathId}&">分享</a></li>
 			<li><a class="movefile">移动到</a></li>
 			<li><a class="copyfile">复制到</a></li>
 			<li><a class="menurename">重命名</a></li>
@@ -56,10 +56,10 @@
 				<h3 class="box-title" style="font-size: 12px;">${nowpath.pathName}</h3>
 			<#else>
 				<h3 class="box-title" style="font-size: 12px;">
-					<a style="font-size: 12px;" href="filetest?pathid=${nowpath.parentId}">返回上一层 </a>
+					<a style="font-size: 12px;" href="filetest?pathid=${nowpath.pathId}">返回上一层 </a>
 					>
 					<#list allparentpaths as allparenth>
-					<a style="font-size: 12px;" href="filetest?pathid=${allparenth.id}">${allparenth.pathName}</a>
+					<a style="font-size: 12px;" href="filetest?pathid=${allparenth.pathId}">${allparenth.pathName}</a>
 					>
 					</#list>
 					${nowpath.pathName}
@@ -98,7 +98,7 @@
 						</a> 
 					</#if>
 				<#else>
-					<a onclick="{return confirm('文件将放入回收站，确定删除吗？');};"  class="btn btn-sm btn-default topdelete" href="deletefile?pathid=${nowpath.id}&checkpathids=&checkfileids=" title="删除">
+					<a onclick="{return confirm('文件将放入回收站，确定删除吗？');};"  class="btn btn-sm btn-default topdelete" href="deletefile?pathid=${nowpath.pathId}&checkpathids=&checkfileids=" title="删除">
 						<span class="iconfont icon-lajitong"></span>
 					</a> 
 					<a class="btn btn-sm btn-default topcreatepath" href="javascript:void(0);" title="新建文件夹">
@@ -123,7 +123,7 @@
 						<div class="file-name" style="text-align: left;">
 							<form action="createpath">
 								<input class="creatpathinput" type="text" name="pathname" value="新建文件夹"/>
-								<input type="hidden" name="pathid" value="${nowpath.id}"/>
+								<input type="hidden" name="pathid" value="${nowpath.pathId}"/>
 								<button class="btn btn-default">
 									<em class="glyphicon glyphicon-ok" style="font-size: 12px;"></em>
 								</button>
@@ -147,7 +147,7 @@
 										<img src="images/fileimg/Folder.png" />
 									</a>
 								<#else>
-									<a href="filetest?pathid=${path.id}">
+									<a href="filetest?pathid=${path.pathId}">
 										<img src="images/fileimg/Folder.png" />
 									</a>
 								</#if>
@@ -160,14 +160,14 @@
 									</div>
 								<#else>
 									<div class="filename">
-										<a href="filetest?pathid=${path.id}" style="font-size: 12px;">${path.pathName}</a>
+										<a href="filetest?pathid=${path.pathId}" style="font-size: 12px;">${path.pathName}</a>
 									</div>
 								</#if>
 								
 								<div class="pathtextarea rename diplaynone" style="position: absolute;top: 97px;left: -5px;z-index:100;">
 									<#if isload??>
 										<input class="creatpathinput" type="text" name="name" value="${path.pathName}"/>
-										<input class="renamefp" type="hidden" name="renamefp" value="${path.id}"/>
+										<input class="renamefp" type="hidden" name="renamefp" value="${path.pathId}"/>
 										<input class="pathid" type="hidden" name="pathid" value="${path.parentId}"/>
 										<input class="isfile" type="hidden" name="isfile" value="false"/>
 										<button class="btn btn-default okfilerename">
@@ -179,8 +179,8 @@
 									<#else>
 										<form action="rename">
 											<input class="creatpathinput" type="text" name="name" value="${path.pathName}"/>
-											<input type="hidden" name="renamefp" value="${path.id}"/>
-											<input type="hidden" name="pathid" value="${nowpath.id}"/>
+											<input type="hidden" name="renamefp" value="${path.pathId}"/>
+											<input type="hidden" name="pathid" value="${nowpath.pathId}"/>
 											<input type="hidden" name="isfile" value="false"/>
 											<button class="btn btn-default">
 												<em class="glyphicon glyphicon-ok" style="font-size: 12px;"></em>
@@ -192,7 +192,7 @@
 									</#if>
 								</div>
 							</div>
-							<input type="hidden" class = "pathmessage" value="${path.id}">
+							<input type="hidden" class = "pathmessage" value="${path.pathId}">
 							<span class="file-check"> 
 								<span class = "iconfont icon-xuanze" style="height:1.5em;width:1.5em"></span>
 							</span>
@@ -249,7 +249,7 @@
 								<form action="rename">
 									<input class="creatpathinput" type="text" name="name" value="${file.fileName}"/>
 									<input type="hidden" name="renamefp" value="${file.fileId}"/>
-									<input type="hidden" name="pathid" value="${nowpath.id}"/>
+									<input type="hidden" name="pathid" value="${nowpath.pathId}"/>
 									<input type="hidden" name="isfile" value="true"/>
 									<button class="btn btn-default">
 										<em class="glyphicon glyphicon-ok" style="font-size: 12px;"></em>

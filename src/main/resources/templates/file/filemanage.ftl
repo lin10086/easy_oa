@@ -108,7 +108,7 @@ li.activee>a {
 					style="position: relative; overflow: hidden;width: 100%; margin-bottom: 20px;">
 					<i class="glyphicon glyphicon-open"></i> 上传 
 					<input type="file" name="file" style="opacity: 0; position: absolute; top: 0; right: 0; min-width: 100%; min-height: 100%;" />
-					<input type="hidden" name="pathid" value="${nowpath.id}"/>
+					<input type="hidden" name="pathid" value="${nowpath.pathId}"/>
 				</div>
 			</form>
 			<div class="bgc-w box box-solid">
@@ -179,11 +179,11 @@ li.activee>a {
 							<!-- <img class="mcfloorimg" src="images/fileimg/Folder.png" /> -->
 							<div class="mcflooropen"></div>
 							<h3 class="box-title" style="font-size:12px;">${userrootpath.pathName}</h3>
-							<input class="mctopathid" type="hidden" value="${userrootpath.id}" />
+							<input class="mctopathid" type="hidden" value="${userrootpath.pathId}" />
 						</div>
 						<ul class="nav nav-pills nav-stacked mm" style="padding-left:15px;">
 							<#list mcpaths as path>
-								<div class="pathidcompare" pathId="${path.id}">
+								<div class="pathidcompare" pathId="${path.pathId}">
 									<div class="box-header no-padding">
 										<span class="btn btn-default btn-xs des mm"> 
 											<i class="jiajian glyphicon-plus"></i>
@@ -191,7 +191,7 @@ li.activee>a {
 										<span class="openpath modalajax">
 											<div class="mcflooropen"></div>
 											<h3 class="box-title" style="font-size:12px;">${path.pathName}</h3>
-											<input class="mctopathid" type="hidden" value="${path.id}" />
+											<input class="mctopathid" type="hidden" value="${path.pathId}" />
 										</span>
 									</div>
 									<ul class="nav nav-pills nav-stacked mm modalajaxdata" style="padding-left:15px;display:none;">
@@ -238,12 +238,12 @@ li.activee>a {
 						</ul>
 					</div>
 					<div class="box-footer" style="text-align:right;">
-						<input class="userrootpath" type="hidden" name="userrootpath" value="${userrootpath.id}"/>
+						<input class="userrootpath" type="hidden" name="userrootpath" value="${userrootpath.pathId}"/>
 						<form action="mcto" method="get">
-							<input class="mctoid" type="hidden" name="mctoid" value="${userrootpath.id}"/>
+							<input class="mctoid" type="hidden" name="mctoid" value="${userrootpath.pathId}"/>
 							<input class="mcfileids" type="hidden" name="mcfileids" value=""/>
 							<input class="mcpathids" type="hidden" name="mcpathids" value=""/>
-							<input type="hidden" name="pathid" value="${nowpath.id}"/>
+							<input type="hidden" name="pathid" value="${nowpath.pathId}"/>
 							<input class="morc" type="hidden" name="morc" value=""/>
 							<button type="submit" class="btn btn-primary"
 								>确定</button>

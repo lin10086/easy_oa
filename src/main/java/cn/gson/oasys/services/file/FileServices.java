@@ -248,7 +248,7 @@ public class FileServices {
 	 * 根据文件id 将文件放入回收站
 	 * @param fileids
 	 */
-	
+
 	@Transactional
 	public void trashfile(List<Long> fileids,Long setistrashhowmany,Long userid){
 		for (Long fileid : fileids) {
@@ -260,7 +260,6 @@ public class FileServices {
 			
 			fldao.save(fileList);
 		}
-		
 	}
 	
 //	public void trashPath(List<Long> pathids){

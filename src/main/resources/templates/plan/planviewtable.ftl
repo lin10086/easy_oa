@@ -147,10 +147,11 @@
                                 <td>
                                     <a href="planedit?pid=${plan.planId}" class="label xiugai"><span
                                                 class="glyphicon glyphicon-edit"></span> 修改</a>
-                                    <a onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};"
+
+                                    <#--<a onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};"-->
                                     <#--<a onclick="{return alert('删除该记录将不能恢复，确定删除吗？');};"-->
                                     <#--<a onclick="{return del_sure('删除该记录将不能恢复，确定删除吗？');};"-->
-                                       href="plandelete?pid=${plan.planId}" class="label shanchu"><span
+                                      <a href="plandelete?pid=${plan.planId}" class="label shanchu"><span
                                                 class="glyphicon glyphicon-remove"></span> 删除</a>
                                 </td>
                             </tr>

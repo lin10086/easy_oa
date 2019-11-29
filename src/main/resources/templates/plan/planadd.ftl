@@ -146,14 +146,7 @@
 						<textarea class="form-control text" placeholder="至少20个字" name="planSummary" ><#if plan??>${plan.planSummary}</#if></textarea>
 					</div>
 				</div>
-				
-				<div class="row">
-					<div class="col-md-6 form-group">
-						<label class="control-label">评价</label>
-						<#--disabled="disabled"禁止输入-->
-						<textarea class="form-control text" name="planComment" ><#if plan??>${(plan.planComment)!''}</#if></textarea>
-					</div>
-				</div>
+
 				<div class="row">
 					<div class="col-md-6 form-group">
 						<div class="btn btn-default ">
