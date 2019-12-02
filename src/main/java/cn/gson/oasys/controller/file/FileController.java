@@ -388,26 +388,28 @@ public class FileController {
      */
     @RequestMapping("filemanage")
     public String usermanage(@SessionAttribute("userId") Long userId, Model model) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathName(userPO.getUserName());
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//根据用户id找出用户信息
+        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathName(userPO.getUserName());//根据用户名找用户的文件夹信息
         if (filePathPO == null) {
-            filePathPO = filePathServiceV2.insertFilePathPO(userPO);
+            //如果文件夹不纯在就根据用户信息新建一个
+            filePathPO = filePathServiceV2.insertFilePathPOByUserPO(userPO);
         }
+        //根据文件夹父id和文件夹是否是垃圾文件夹找文件夹下的所有文件夹
+        List<FilePathPO> filePathPOS = filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L);
+        //根据用户的文件夹id找用户下的问价夹列表
+        List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOSByFilePathIdAndFileIsTrash(filePathPO.getPathId(), 0L);
+        model.addAttribute("nowpath", filePathPO);//单个用户的根文件夹信息
+        model.addAttribute("paths", filePathPOS);//文件夹下的所有文件
+        model.addAttribute("files", fileListPOS);//根据文件路径id找出的文件列表
 
-
-        model.addAttribute("nowpath", filePathPO);//文件路径类
-
-        model.addAttribute("paths", filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L));//根据fu路径找出的路径集合
-        model.addAttribute("files", fileListServiceV2.getFileListPOByFilePathIdAndIsTrash(filePathPO.getPathId()));//根据文件路径id找出的文件列表
-
-        model.addAttribute("userrootpath", filePathPO);
-        model.addAttribute("mcpaths", filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L));
+        model.addAttribute("userrootpath", filePathPO);//单个用户的根文件夹信息
+        model.addAttribute("mcpaths", filePathPOS);//文件夹下的所有文件
         return "file/filemanage";
     }
 
 
     /**
-     * 图片预览
+     * 图片预览（找出图片的具体位置）
      *
      * @param response
      * @param fileId
@@ -420,7 +422,7 @@ public class FileController {
     }
 
     /**
-     * 写文件 方法
+     * 写文件方法
      *
      * @param response
      * @param file
@@ -432,11 +434,11 @@ public class FileController {
         try {
             aa = new FileInputStream(file);
             sos = response.getOutputStream();
-            // 读取文件问字节码
+            // 读取文件的字节码
             byte[] data = new byte[(int) file.length()];
-            IOUtils.readFully(aa, data);
+            IOUtils.readFully(aa, data);//根据文件的长度从头读取文件
             // 将文件流输出到浏览器
-            IOUtils.write(data, sos);
+            IOUtils.write(data, sos);//根据文件长度写文件
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -453,28 +455,33 @@ public class FileController {
     /**
      * 进入指定文件夹 的controller方法
      *
-     * @param pathId
+     * @param pathId 当前文件夹id
      * @param model
      * @return
      */
     @RequestMapping("filetest")
     public String text(@SessionAttribute("userId") Long userId, @RequestParam("pathid") Long pathId, Model model) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-        FilePathPO userRootFilePathPO = filePathServiceV2.getFilePathPOByPathName(userPO.getUserName());//根路径
-        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//当前目录
-        List<FilePathPO> allFilePathPOList = new ArrayList<>();//当前路径的所有父级
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//根据用户id找用户信息
+        FilePathPO userRootFilePathPO = filePathServiceV2.getFilePathPOByPathName(userPO.getUserName());//用户文件夹
+        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//当前所在文件夹
+        List<FilePathPO> allFilePathPOList = new ArrayList<>();//当前路径的所有父级文件夹
         fileServiceV2.allFilePathPOParent(filePathPO, allFilePathPOList);
-        Collections.reverse(allFilePathPOList);//反转数组
-        model.addAttribute("allparentpaths", allFilePathPOList);//所有的父级路径
-        model.addAttribute("nowpath", filePathPO);//当前目录
-        model.addAttribute("paths", filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L));//根据文件的父id找文件路径
-        model.addAttribute("files", fileListServiceV2.getFileListPOByFilePathIdAndIsTrash(filePathPO.getPathId()));//根据文件路径id找文件
-//        model.addAttribute("paths", fs.findpathByparent(filepath.getId()));
-//        model.addAttribute("files", fs.findfileBypath(filepath));
+        Collections.reverse(allFilePathPOList);//反转数组（当前文件夹的正确所有路径）
+        model.addAttribute("allparentpaths", allFilePathPOList);//当前文件夹的所有的父级文件夹
+        model.addAttribute("nowpath", filePathPO);//当前文件夹
+
+//       把当前文件夹id当做它的父级id，根据上级文件夹id和文件夹是否是垃圾文件夹,返回当前文件夹的下级文件夹
+        List<FilePathPO> filePathPOS = filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L);
+        model.addAttribute("paths", filePathPOS);//下级文件夹
+        //根据当前文件夹id和是否是垃圾文件，找当前文件夹下的所有的非垃圾文件
+        List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOSByFilePathIdAndFileIsTrash(filePathPO.getPathId(), 0L);
+        model.addAttribute("files", fileListPOS);
+
         //复制移动显示 目录
-        model.addAttribute("userrootpath", userRootFilePathPO);// 根路径
-        model.addAttribute("mcpaths", filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(userRootFilePathPO.getPathId(), 0L));//根据根路径id找路径
-//        model.addAttribute("mcpaths", fs.findpathByparent(userrootpath.getId()));
+        model.addAttribute("userrootpath", userRootFilePathPO);// 用户的根路径
+        //根据用户文件夹id和是否是垃圾文件，找用户下的所有非垃圾文件夹
+        List<FilePathPO> filePathPOList = filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(userRootFilePathPO.getPathId(), 0L);
+        model.addAttribute("mcpaths", filePathPOList);
         return "file/filemanage";
     }
 
@@ -585,7 +592,7 @@ public class FileController {
      *
      * @param name     从前端接收的修改名字
      * @param reNameFp 要修改的文件id或文件夹id
-     * @param pathId   文件夹路径id
+     * @param pathId   文件的文件夹id或文件夹的上级文件夹id
      * @param model
      * @return
      */
@@ -597,18 +604,22 @@ public class FileController {
                          @RequestParam("isfile") boolean isFile,
                          Model model) {
 
-        //这里调用重命名方法
-        fs.rename(name, reNameFp, pathId, isFile);
-
-        model.addAttribute("pathid", pathId);
-        return "forward:/filetest";
-
+        //这里调用重命名方法（ifFile文件是true,文件夹是false)
+        fileServiceV2.rename(name, reNameFp, pathId, isFile);
+        model.addAttribute("pathid", pathId);//所属文件夹id
+        return "forward:/filetest";// 转发到进入文件夹控制器
     }
+
 
     /**
      * 移动和复制
      *
-     * @param mctoid
+     * @param userId    用户id
+     * @param morc      true 为移动
+     * @param mctoid    要移动到的文件夹id
+     * @param pathId    用户文件夹id
+     * @param mcfileids 要移动的文件id
+     * @param mcpathids
      * @param model
      * @return
      */

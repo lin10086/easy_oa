@@ -356,7 +356,7 @@ public class FileAjaxController {
     /**
      * 移动复制文件
      *
-     * @param mctoid
+     * @param mctoid 点击要进入的文件夹id
      * @param mcpathids
      * @param model
      * @return

@@ -16,16 +16,34 @@ public class FilePathServiceV2 {
 
 
     /**
-     * 插入文件路径
+     * 根据用户名和用户id插入用户文件夹
      *
      * @param userPO
      * @return
      */
-    public FilePathPO insertFilePathPO(UserPO userPO) {
+    public FilePathPO insertFilePathPOByUserPO(UserPO userPO) {
         FilePathPO filePathPO = new FilePathPO();
-        filePathPO.setParentId(1L);
-        filePathPO.setPathName(userPO.getUserName());
-        filePathPO.setPathUserId(userPO.getUserId());
+        filePathPO.setParentId(1L);//把父文件夹设为1L（即根目录，1L相当于最外层的文件夹）
+        filePathPO.setPathName(userPO.getUserName());//把用户名设为路径名
+        filePathPO.setPathUserId(userPO.getUserId());//把用户id设为创建文件夹的的用户id
+        filePathPOMapper.insertSelective(filePathPO);
+        return filePathPO;
+    }
+
+    /**
+     * 插入一个新的文件夹
+     *
+     * @param parentId 文件夹父级id
+     * @param pathName 文件夹名
+     * @param userId   用户id
+     * @return
+     */
+    public FilePathPO insertNewFilePathPO(Long parentId, String pathName, Long userId) {
+        FilePathPO filePathPO = new FilePathPO();
+        filePathPO.setParentId(parentId);
+        filePathPO.setPathName(pathName);
+        filePathPO.setPathUserId(userId);
+        filePathPO.setPathIstrash(0L);
         filePathPOMapper.insertSelective(filePathPO);
         return filePathPO;
     }
@@ -57,21 +75,34 @@ public class FilePathServiceV2 {
     }
 
     /**
-     * 根据文件夹新名字和要更新的文件夹路径信息修改文件夹名
+     * 更新文件夹名
      *
-     * @param newName
+     * @param newPathName      新的文件夹名
      * @param updateFilePathPO
      */
-    public void updateFilePathPOPathName(String newName, FilePathPO updateFilePathPO) {
-        updateFilePathPO.setPathName(newName);
+    public void updateFilePathPOPathName(String newPathName, FilePathPO updateFilePathPO) {
+        updateFilePathPO.setPathName(newPathName);
         filePathPOMapper.updateByPrimaryKeySelective(updateFilePathPO);
     }
 
     /**
-     * 根据文件路径父路径和是垃圾
+     * 更新文件夹名和路径的父级id
      *
-     * @param parentId
-     * @return
+     * @param newPathName
+     * @param toPathId
+     * @param updateFilePathPO
+     */
+    public void updateFilePathPOPathNameAndPathParentId(String newPathName, Long toPathId, FilePathPO updateFilePathPO) {
+        updateFilePathPO.setPathName(newPathName);
+        updateFilePathPO.setParentId(toPathId);
+        filePathPOMapper.updateByPrimaryKeySelective(updateFilePathPO);
+    }
+
+    /**
+     * 根据上级文件夹id和文件夹是否是垃圾文件夹
+     *
+     * @param parentId 上级文件夹id
+     * @return 找文件夹下的所有文件夹
      */
     public List<FilePathPO> getFilePathPOListByParentIdAndIsTrash(Long parentId, Long isTrash) {
         FilePathPOExample filePathPOExample = new FilePathPOExample();
@@ -81,9 +112,9 @@ public class FilePathServiceV2 {
     }
 
     /**
-     * 根据文件路径名找唯一文件路径
+     * 根据用户名找用户的文件夹
      *
-     * @param pathName
+     * @param pathName 文件夹名
      * @return
      */
     public FilePathPO getFilePathPOByPathName(String pathName) {
@@ -91,16 +122,16 @@ public class FilePathServiceV2 {
         filePathPOExample.createCriteria().andPathNameEqualTo(pathName);
         List<FilePathPO> filePathPOList = filePathPOMapper.selectByExample(filePathPOExample);
         FilePathPO filePathPO = null;
-        if (filePathPOList != null) {
+        if (filePathPOList.size() > 0) {
             filePathPO = filePathPOList.get(0);
         }
         return filePathPO;
     }
 
     /**
-     * 根据文件路径id找文件当前路径
+     * 根据文件夹id找文件当前文件夹信息
      *
-     * @param pathId
+     * @param pathId 文件夹id
      * @return
      */
     public FilePathPO getFilePathPOByPathId(Long pathId) {
@@ -111,11 +142,11 @@ public class FilePathServiceV2 {
     /**
      * 根据路径名和路径的父id找路径
      *
-     * @param parentId
-     * @param pathName
+     * @param parentId 文件id
+     * @param pathName 文件夹名
      * @return
      */
-    public FilePathPO getFilePathPOByFilePathNameAndParentId(Long parentId, String pathName) {
+    public FilePathPO getFilePathPOByFilePathNameAndParentId(String pathName, Long parentId) {
         FilePathPOExample filePathPOExample = new FilePathPOExample();
         filePathPOExample.createCriteria().andPathNameEqualTo(pathName).andParentIdEqualTo(parentId);
         List<FilePathPO> filePathPOS = filePathPOMapper.selectByExample(filePathPOExample);

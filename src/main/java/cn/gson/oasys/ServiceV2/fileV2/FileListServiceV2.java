@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -32,6 +33,30 @@ public class FileListServiceV2 {
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
         }
+    }
+
+    /**
+     * 插入新文件
+     *
+     * @param newFileName     文件名
+     * @param filePath        文件真实路径
+     * @param suffix          文件后缀
+     * @param fileSize        文件大小
+     * @param FilePathId      文件夹id
+     * @param fileContentType 文件类型
+     * @param userId          用户id
+     */
+    public void insertFileListPO(String newFileName, String filePath, String suffix, Long fileSize, Long FilePathId, String fileContentType, Long userId) {
+        FileListPO fileListPO = new FileListPO();
+        fileListPO.setFileName(newFileName);
+        fileListPO.setFilePath(filePath);
+        fileListPO.setFileShuffix(suffix);
+        fileListPO.setSize(fileSize);
+        fileListPO.setUploadTime(new Date());
+        fileListPO.setPathId(FilePathId);
+        fileListPO.setContentType(fileContentType);
+        fileListPO.setFileUserId(userId);
+        fileListPOMapper.insertSelective(fileListPO);
     }
 
     /**
@@ -71,23 +96,37 @@ public class FileListServiceV2 {
     /**
      * 修改文件名
      *
-     * @param fileListPO 文件信息
-     * @param newName    新的文件名
+     * @param fileListPO  文件信息
+     * @param newFileName 新的文件名
      */
-    public void updateFileListPOFileName(FileListPO fileListPO, String newName) {
-        fileListPO.setFileName(newName);
+    public void updateFileListPOFileName(FileListPO fileListPO, String newFileName) {
+        fileListPO.setFileName(newFileName);
         fileListPOMapper.updateByPrimaryKeySelective(fileListPO);
     }
 
     /**
-     * 根据文件路径和文件是否是垃圾
+     * 修改文件名和文件路径
      *
-     * @param filePathId
-     * @return
+     * @param fileListPO  文件信息
+     * @param newFileName 文件名
+     * @param filePathId  文件路径
      */
-    public List<FileListPO> getFileListPOByFilePathIdAndIsTrash(Long filePathId) {
+    public void updateFileListPOFileNameAndFilePathId(FileListPO fileListPO, String newFileName, Long filePathId) {
+        fileListPO.setFileName(newFileName);
+        fileListPO.setPathId(filePathId);
+        fileListPOMapper.updateByPrimaryKeySelective(fileListPO);
+    }
+
+    /**
+     * 根据文件夹路径和文件是否是垃圾文件
+     *
+     * @param filePathId  文件夹路径id
+     * @param fileIsTrash 是否是垃圾文件 0不是1是
+     * @return 找文件夹下的文件列表
+     */
+    public List<FileListPO> getFileListPOSByFilePathIdAndFileIsTrash(Long filePathId, Long fileIsTrash) {
         FileListPOExample fileListPOExample = new FileListPOExample();
-        fileListPOExample.createCriteria().andPathIdEqualTo(filePathId).andFileIstrashEqualTo(0L);
+        fileListPOExample.createCriteria().andPathIdEqualTo(filePathId).andFileIstrashEqualTo(fileIsTrash);
         List<FileListPO> fileListPOS = fileListPOMapper.selectByExample(fileListPOExample);
         return fileListPOS;
     }

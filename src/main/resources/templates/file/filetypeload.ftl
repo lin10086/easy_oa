@@ -230,8 +230,8 @@
 						<div class="file-name">
 							<div class="filename">
 								<a>${file.fileName}</a>
-								<input type="hidden" class="fileuserid" id="${(file.user.userId)!''}"/>
-								<input type="hidden" class="nowuserid" id="${(userid)!''}"/>
+								<input type="hidden" class="fileuserid" id="${(file.user.userId)!'文件用户id'}"/>
+								<input type="hidden" class="nowuserid" id="${(userid)!'用户id'}"/>
 							</div>
 							<div class="pathtextarea rename diplaynone" style="position: absolute;top: 97px;left: -5px;z-index:100;">
 								<#if isload??>

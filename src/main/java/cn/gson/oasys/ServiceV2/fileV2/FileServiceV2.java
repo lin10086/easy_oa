@@ -5,8 +5,6 @@ import cn.gson.oasys.ServiceV2.UserServiceV2;
 import cn.gson.oasys.mappers.AttachmentListPOMapper;
 import cn.gson.oasys.mappers.FileListPOMapper;
 import cn.gson.oasys.mappers.FilePathPOMapper;
-import cn.gson.oasys.model.entity.file.FileList;
-import cn.gson.oasys.model.entity.file.FilePath;
 import cn.gson.oasys.model.po.AttachmentListPO;
 import cn.gson.oasys.model.po.FileListPO;
 import cn.gson.oasys.model.po.FilePathPO;
@@ -118,30 +116,32 @@ public class FileServiceV2 {
     /**
      * 文件以及路径得同名处理
      *
-     * @param name
-     * @param pathId  路径id
-     * @param shuffix
+     * @param name    从前端接收的修改名字
+     * @param pathId  文件的文件夹id或文件夹的上级文件夹id
+     * @param shuffix 文件后缀
      * @param num
      * @return
      */
-    public String onlyname(String name, Long pathId, String shuffix, int num, boolean isfile) {
+    public String onlyname(String name, Long pathId, String shuffix, int num, boolean isFile) {
         Object f = null;
-        if (isfile) {
-            //根据文件名和路径id找文件
+        if (isFile) {//是文件
+            //根据接收的文件名和要修改的文件夹id找文件
             f = fileListServiceV2.getFileListPOByFileNameAndPathId(name, pathId);
         } else {
             //根据路径名和父id找路径
-            f = filePathServiceV2.getFilePathPOByFilePathNameAndParentId(pathId, name);
+            f = filePathServiceV2.getFilePathPOByFilePathNameAndParentId(name, pathId);
         }
         if (f != null) {
             int num2 = num - 1;
-            if (shuffix == null) {
+            if (shuffix == null) {//文件夹
                 name = name.replace("(" + num2 + ")", "") + "(" + num + ")";
-            } else {
+            } else {//文件
+                //先把后缀换成""，再把（num2）换成""，在加上（num)和后缀
+//                name = name.replace("." + shuffix, "").replace("(" + num2 + ")", "") + "(" + num + ")" + "." + shuffix;
                 name = name.replace("." + shuffix, "").replace("(" + num2 + ")", "") + "(" + num + ")" + "." + shuffix;
             }
             num += 1;
-            return onlyname(name, pathId, shuffix, num, isfile);
+            return onlyname(name, pathId, shuffix, num, isFile);
         }
         return name;
     }
@@ -176,14 +176,16 @@ public class FileServiceV2 {
     /**
      * 找当前文件的所有父级附录
      *
-     * @param filePathPO
-     * @param filePathPOList
+     * @param presentFilePathPO 当前所在文件夹
+     * @param filePathPOList    当前文件夹的父级文件夹
      */
-    public void allFilePathPOParent(FilePathPO filePathPO, List<FilePathPO> filePathPOList) {
-        if (filePathPO.getParentId() != 1L) {
-            FilePathPO filePathPO1 = filePathServiceV2.getFilePathPOByPathId(filePathPO.getParentId());//根据路径id找路径信息
-            filePathPOList.add(filePathPO1);
-            allFilePathPOParent(filePathPO1, filePathPOList);
+    public void allFilePathPOParent(FilePathPO presentFilePathPO, List<FilePathPO> filePathPOList) {
+//        presentFilePathPO.getParentId() == 1L 代表用户的根文件夹
+        if (presentFilePathPO.getParentId() != 1L) {
+            //根据当前文件夹的父级文件夹id找父级文件夹信息
+            FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(presentFilePathPO.getParentId());//根据路径id找路径信息
+            filePathPOList.add(filePathPO);
+            allFilePathPOParent(filePathPO, filePathPOList);
         }
     }
 
@@ -283,62 +285,60 @@ public class FileServiceV2 {
     /**
      * 重命名业务方法
      *
-     * @param name      从前端接收的修改名字
-     * @param reNameFp  要修改的文件id或文件夹id
-     * @param nowPathId 文件夹路径id
-     * @param isFile    是不是文件
+     * @param name     从前端接收的修改名字
+     * @param reNameFp 要修改的文件id或文件夹id
+     * @param pathId   文件的文件夹id或文件夹的上级文件夹id
+     * @param isFile   是不是文件
      */
-    public void rename(String name, Long reNameFp, Long nowPathId, boolean isFile) {
+    public void rename(String name, Long reNameFp, Long pathId, boolean isFile) {
         if (isFile) {
             //文件名修改
             FileListPO fileListPO = fileListServiceV2.getFileListPOByFileListPOId(reNameFp);//根据要修改的文件id找文件
-            String newName = onlyname(name, fileListPO.getPathId(), fileListPO.getFileShuffix(), 1, isFile);//新名字
+            String newName = onlyname(name, pathId, fileListPO.getFileShuffix(), 1, isFile);//新名字
             fileListServiceV2.updateFileListPOFileName(fileListPO, newName);// 更新文件名字
         } else {
             //文件夹名修改
-            FilePathPO updateFilePathPO = filePathServiceV2.getFilePathPOByPathId(reNameFp);//根据要修改的文件夹id找文件夹路径
-            FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(nowPathId);//文件夹的路径id找文件夹路径信息
-            String newName = onlyname(name, filePathPO.getPathId(), null, 1, false);
+            FilePathPO updateFilePathPO = filePathServiceV2.getFilePathPOByPathId(reNameFp);//根据要修改的文件夹id找文件夹信息
+            String newName = onlyname(name, pathId, null, 1, isFile);
             filePathServiceV2.updateFilePathPOPathName(newName, updateFilePathPO);//根据文件夹新名字和要更新的文件夹路径信息修改文件夹名
         }
     }
 
 
-
-    /* */
-
     /**
      * 复制和移动
      *
-     * @param fromWhere 1为移动  2 为复制
+     * @param mcFileIds 要移动或复制的文件id
+     * @param mcPathIds 要移动或复制的文件夹id
+     * @param toPathId  要移动到的文件夹id
+     * @param fromWhere 1为移动true  2 为复制flase
+     * @param userId    用户id
      */
     @Transactional
     public void moveAndCopy(List<Long> mcFileIds, List<Long> mcPathIds, Long toPathId, boolean fromWhere, Long userId) {
-        FilePathPO topath = filePathServiceV2.getFilePathPOByPathId(toPathId);
+        FilePathPO toPath = filePathServiceV2.getFilePathPOByPathId(toPathId);//根据移动或复制到的文件夹id找文件夹信息(目标文件夹
         if (fromWhere) {//移动
-            if (!mcFileIds.isEmpty()) {
+            if (!mcFileIds.isEmpty()) {//移动文件
                 for (Long mcFileId : mcFileIds) {
-                    FileListPO fileListPO = fileListServiceV2.getFileListPOByFileListPOId(mcFileId);
-                    String fileName = onlyname(fileListPO.getFileName(), topath.getPathId(), fileListPO.getFileShuffix(), 1, true);
-                    fileListPO.setPathId(topath.getPathId());
-                    fileListPO.setFileName(fileName);
-                    fileListPOMapper.updateByPrimaryKeySelective(fileListPO);
+                    FileListPO fileListPO = fileListServiceV2.getFileListPOByFileListPOId(mcFileId);  //根据要移动的文件id找文件信息
+                    //要移动的文件名，要移动的文件夹id，文件后缀，1，是否是文件，作用防止移动到新的文件夹后重命
+                    String newFileName = onlyname(fileListPO.getFileName(), toPathId, fileListPO.getFileShuffix(), 1, true);
+                    fileListServiceV2.updateFileListPOFileNameAndFilePathId(fileListPO, newFileName, toPathId);
                 }
             }
-            if (!mcPathIds.isEmpty()) {
+            if (!mcPathIds.isEmpty()) {//移动文件夹
                 for (Long mcPathId : mcPathIds) {
-                    FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(mcPathId);
-                    String name = onlyname(filePathPO.getPathName(), toPathId, null, 1, false);
-                    filePathPO.setParentId(toPathId);
-                    filePathPO.setPathName(name);
-                    filePathPOMapper.updateByPrimaryKeySelective(filePathPO);
+                    FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(mcPathId);//根据要移动的文件夹id找到文件夹信息
+                    //文件夹名，文件夹的父级id
+                    String newPathName = onlyname(filePathPO.getPathName(), toPathId, null, 1, false);
+                    filePathServiceV2.updateFilePathPOPathNameAndPathParentId(newPathName, toPathId, filePathPO);//更新文件夹名和路径名
                 }
             }
         } else {//复制
             if (!mcFileIds.isEmpty()) {
                 for (Long mcFileId : mcFileIds) {
-                    FileListPO fileListPO = fileListServiceV2.getFileListPOByFileListPOId(mcFileId);
-                    copyFile(fileListPO, topath, true);
+                    FileListPO fileListPO = fileListServiceV2.getFileListPOByFileListPOId(mcFileId);//根据要复制的文件id找到要复制的文件信息
+                    copyFile(fileListPO, toPath, true);
                 }
             }
             if (!mcPathIds.isEmpty()) {
@@ -349,70 +349,75 @@ public class FileServiceV2 {
         }
     }
 
+    /**
+     * 文件夹复制
+     *
+     * @param mcPathId 要复制的文件夹id
+     * @param toPathId 目标文件夹id
+     * @param isFirst  为true，作用：只给它要复制的文件夹加拷贝，里面的文件或文件夹不加
+     * @param userId   用户id
+     */
     public void copyPath(Long mcPathId, Long toPathId, boolean isFirst, Long userId) {
-        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(mcPathId);
-        FilePathPO copyPath = new FilePathPO();
-        copyPath.setParentId(toPathId);
+        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(mcPathId);//根据要复制的文件夹id找文件夹信息
         String copyPathName = filePathPO.getPathName();
         if (isFirst) {
             copyPathName = "拷贝 " + filePathPO.getPathName().replace("拷贝 ", "");
         }
-        copyPath.setPathName(copyPathName);
-        copyPath.setPathUserId(userId);
-        filePathPOMapper.insertSelective(filePathPO);
+        FilePathPO newFilePathPO = filePathServiceV2.insertNewFilePathPO(toPathId, copyPathName, userId);//复制的新的文件夹
 
-        //这一个文件夹下的文件的复制
-        List<FileListPO> filelists = fileListServiceV2.getFileListPOByFilePathIdAndIsTrash(filePathPO.getPathId());
-        for (FileListPO fileList : filelists) {
-            copyFile(fileList, copyPath, false);
+        //找到要复制文件夹下的非垃圾文件
+        List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOSByFilePathIdAndFileIsTrash(filePathPO.getPathId(), 0L);
+        if (!fileListPOS.isEmpty()){//判断文件夹下有没有文件
+            for (FileListPO fileList : fileListPOS) {
+                //文件夹下的文件，已经复制的新文件夹， false代表他它是要复制文件夹下的文件
+                copyFile(fileList, newFilePathPO, false);
+            }
         }
+        //把要复制的文件夹id当做父级id查询它下面是否有非垃圾文件夹
         List<FilePathPO> filePathPOList = filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L);
-
         if (!filePathPOList.isEmpty()) {
-            for (FilePathPO filepathson : filePathPOList) {
-                copyPath(filepathson.getPathId(), copyPath.getPathId(), false, userId);
+            for (FilePathPO filePathSon : filePathPOList) {
+                // 要复制的文件id，已经复制好的新的文件夹id，false代表不是直接复制的文件夹，用户id
+                copyPath(filePathSon.getPathId(), newFilePathPO.getPathId(), false, userId);
             }
         }
 
     }
 
+
     /**
      * 文件复制
      *
-     * @param fileListPO
+     * @param fileListPO 要复制的文件信息
+     * @param toPathPO   目的地文件夹信息
+     * @param isFileIn   是直接要复制的文件（true)还是要复制的文件夹内的文件（false)
      */
     public void copyFile(FileListPO fileListPO, FilePathPO toPathPO, boolean isFileIn) {
-        File s = getFile(fileListPO.getFilePath());
-        UserPO userPO = userServiceV2.getUserPOByUserId(fileListPO.getFileUserId());
+        File oldFile = getFile(fileListPO.getFilePath());//根据文件的具体路径获取文件
+        UserPO userPO = userServiceV2.getUserPOByUserId(fileListPO.getFileUserId());//根据文件的用户id找用户信息
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM");
-        File root = new File(this.rootPath, simpleDateFormat.format(new Date()));
-        File savepath = new File(root, userPO.getUserName());
+        File root = new File(this.rootPath, simpleDateFormat.format(new Date()));//原路径+新的年月（修改了文件的部分名称年月）
+        File savepath = new File(root, userPO.getUserName());//  新的完整路径
         if (!savepath.exists()) {
             savepath.mkdirs();
         }
-        String shuffix = fileListPO.getFileShuffix();
-        log.info("shuffix:{}", shuffix);
-        String newFileName = UUID.randomUUID().toString().toLowerCase() + "." + shuffix;
-        File t = new File(savepath, newFileName);
-        copyFileIo(s, t);
 
-        FileListPO fileListPO1 = new FileListPO();
+        String shuffix = fileListPO.getFileShuffix();//文件后缀
+        String newUUIDFileName = UUID.randomUUID().toString().toLowerCase() + "." + shuffix;//新的文件名
+        File newFile = new File(savepath, newUUIDFileName); //文件路径+文件名
+        copyFileIO(oldFile, newFile);// 把文件复制了一份
+
         String fileName = "";
         if (isFileIn) {
             fileName = "拷贝 " + fileListPO.getFileName().replace("拷贝 ", "");
         } else {
             fileName = fileListPO.getFileName();
         }
-        fileName = onlyname(fileName, toPathPO.getPathId(), shuffix, 1, true);
-        fileListPO1.setFileName(fileName);
-        fileListPO1.setFilePath(t.getAbsolutePath().replace("\\", "/").replace(this.rootPath, ""));
-        fileListPO1.setFileShuffix(shuffix);
-        fileListPO1.setSize(fileListPO.getSize());
-        fileListPO1.setUploadTime(new Date());
-        fileListPO1.setPathId(toPathPO.getPathId());
-        fileListPO1.setContentType(fileListPO.getContentType());
-        fileListPO1.setFileUserId(userPO.getUserId());
-        fileListPOMapper.insertSelective(fileListPO1);
+        //防止复制后的文件名到新的文件夹同名
+        String newFileName = onlyname(fileName, toPathPO.getPathId(), shuffix, 1, true);
+        String filePath = newFile.getAbsolutePath().replace("\\", "/").replace(this.rootPath, "");
+        //插入新文件
+        fileListServiceV2.insertFileListPO(newFileName, filePath, shuffix, fileListPO.getSize(), toPathPO.getPathId(), fileListPO.getContentType(), userPO.getUserId());
     }
 
     /**
@@ -432,7 +437,7 @@ public class FileServiceV2 {
      * @param s
      * @param t
      */
-    public void copyFileIo(File s, File t) {
+    public void copyFileIO(File s, File t) {
         InputStream fis = null;
         OutputStream fos = null;
 
@@ -460,17 +465,19 @@ public class FileServiceV2 {
     /**
      * 移动复制文件树点击加载
      *
-     * @param mctoId
-     * @param mcPathIds
+     * @param mctoId    要移动到哪个里面的的文件夹id
+     * @param mcPathIds 要复制的文件夹ids
      * @return
      */
     public List<FilePathPO> mcpathload(Long mctoId, List<Long> mcPathIds) {
-        List<FilePathPO> showsonpath = new ArrayList<>();
-        List<FilePathPO> sonpaths = filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(mctoId, 0L);
+        List<FilePathPO> showsonpath = new ArrayList<>();//要进入文件夹内子文件夹
+        //把要进入的文件夹id当做父级id找它下面的非垃圾文件夹
+        List<FilePathPO> sonpaths = filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(mctoId, 0L);//找到 mctoId 下的非垃圾文件夹
         for (FilePathPO sonpath : sonpaths) {
             boolean nosame = true;
             for (Long mcPathId : mcPathIds) {
                 if (sonpath.getPathId().equals(mcPathId)) {
+                    //为了防止把文件夹复制到自己的的文件夹内
                     nosame = false;
                     break;
                 }

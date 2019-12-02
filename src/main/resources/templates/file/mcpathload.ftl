@@ -1,6 +1,6 @@
 <#if mcpaths?? &mcpaths?size gt 0  >
 	<#list mcpaths as path>
-		<div class="pathidcompare" pathId="${path.id}">
+		<div class="pathidcompare" pathId="${path.pathId}">
 			<div class="box-header no-padding">
 				<span class="btn btn-default btn-xs des mm"> 
 					<i class="jiajian glyphicon-plus"></i>
@@ -8,7 +8,7 @@
 				<span class="openpath modalajax">
 					<div class="mcflooropen"></div>
 					<h3 class="box-title" style="font-size:12px;">${path.pathName}</h3>
-					<input class="mctopathid" type="hidden" value="${path.id}" />
+					<input class="mctopathid" type="hidden" value="${path.pathId}" />
 				</span>
 			</div>
 			<ul class="nav nav-pills nav-stacked mm modalajaxdata" style="padding-left:15px;display:none;">

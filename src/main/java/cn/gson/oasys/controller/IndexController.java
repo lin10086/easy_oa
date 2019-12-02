@@ -140,10 +140,10 @@ public class IndexController {
 
         //获取session
         HttpSession session = req.getSession();
-        session.setAttribute("userId", 5L);
+//        session.setAttribute("userId", 5L);
 //        session.setAttribute("userId",14L);//5的下属
 //        session.setAttribute("userId", 15L);
-//        session.setAttribute("userId",3L);//5的上司
+        session.setAttribute("userId",3L);//5的上司
 //        session.setAttribute("userId",4L);
         // 判断用户ID是否为空
         if (StringUtils.isEmpty(session.getAttribute("userId"))) {
