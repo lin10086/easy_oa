@@ -56,7 +56,7 @@ public class FilePathServiceV2 {
      * @param userId  用户id
      * @return
      */
-    public FilePathPO insertFilePathPOByNewNameAndParentId(Long pathId, String newName, Long userId) {
+    public FilePathPO insertFilePathPOByNewNameAndParentIdAndUserId(Long pathId, String newName, Long userId) {
         FilePathPO filePathPO = new FilePathPO();
         filePathPO.setParentId(pathId);//新路径的上级路径
         filePathPO.setPathName(newName);//新文件名
@@ -95,6 +95,20 @@ public class FilePathServiceV2 {
     public void updateFilePathPOPathNameAndPathParentId(String newPathName, Long toPathId, FilePathPO updateFilePathPO) {
         updateFilePathPO.setPathName(newPathName);
         updateFilePathPO.setParentId(toPathId);
+        filePathPOMapper.updateByPrimaryKeySelective(updateFilePathPO);
+    }
+
+    /**
+     * 更新文件夹是否是垃圾文件夹
+     *
+     * @param isTrash          是否是垃圾文件夹
+     * @param updateFilePathPO 文件夹信息
+     */
+    public void updateFilePathPOPathIsTrashAndPathParentId(Boolean isTrash, FilePathPO updateFilePathPO) {
+        updateFilePathPO.setPathIstrash(isTrash == false ? 0L : 1L);
+        if (isTrash) {
+            updateFilePathPO.setParentId(0L);
+        }
         filePathPOMapper.updateByPrimaryKeySelective(updateFilePathPO);
     }
 
@@ -180,7 +194,11 @@ public class FilePathServiceV2 {
      */
     public FilePathPO getFilePathPOByUserIdAndParentId(Long userId, Long parentId) {
         FilePathPOExample filePathPOExample = new FilePathPOExample();
-        filePathPOExample.createCriteria().andPathUserIdEqualTo(userId).andParentIdEqualTo(parentId);
+        if (userId != null) {
+            filePathPOExample.createCriteria().andPathUserIdEqualTo(userId).andParentIdEqualTo(parentId);
+        } else {
+            filePathPOExample.createCriteria().andParentIdEqualTo(parentId);
+        }
         List<FilePathPO> filePathPOS = filePathPOMapper.selectByExample(filePathPOExample);
         if (filePathPOS.size() != 0) {
             return filePathPOS.get(0);
@@ -202,10 +220,10 @@ public class FilePathServiceV2 {
     }
 
     /**
-     * @param userId
-     * @param isTrash
-     * @param pathName
-     * @param parentId
+     * @param userId  用户id
+     * @param isTrash 是否是垃圾文件
+     * @param pathName 输入的文件名
+     * @param parentId 父级id
      * @return
      */
     public List<FilePathPO> getFilePathPOByUserIdAndPathIsTrashAndPathNameLikeAndParentIdNot(Long userId, Long isTrash, String pathName, Long parentId) {

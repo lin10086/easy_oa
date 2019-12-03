@@ -52,10 +52,12 @@ public class FileListServiceV2 {
         fileListPO.setFilePath(filePath);
         fileListPO.setFileShuffix(suffix);
         fileListPO.setSize(fileSize);
-        fileListPO.setUploadTime(new Date());
         fileListPO.setPathId(FilePathId);
         fileListPO.setContentType(fileContentType);
         fileListPO.setFileUserId(userId);
+        fileListPO.setUploadTime(new Date());
+        fileListPO.setFileIsshare(0L);
+        fileListPO.setFileIstrash(0L);
         fileListPOMapper.insertSelective(fileListPO);
     }
 
@@ -76,9 +78,10 @@ public class FileListServiceV2 {
      * @param fileListPO
      */
     public void updateFileListPOByIsTrash(Long userId, Long setIsTrashHowMany, FileListPO fileListPO) {
-        if (userId != null) {
-            fileListPO.setPathId(null);
-        }
+//        if (userId != null) {//不能生效
+//            //用户id存在就代表是直接删除的文件，把文件的文件夹设为null
+//            fileListPO.setPathId(null);
+//        }
         fileListPO.setFileIstrash(setIsTrashHowMany);
         fileListPOMapper.updateByPrimaryKeySelective(fileListPO);
     }
@@ -185,7 +188,7 @@ public class FileListServiceV2 {
     //---------------
 
     /**
-     * 根据用户id和文件类型找文件
+     * 根据用户id和文件名和是否删除非图片，音乐，视频 找文档
      *
      * @param userId 用户id
      * @return
@@ -201,7 +204,7 @@ public class FileListServiceV2 {
 
 
     /**
-     * 根据用户id和文件名和是否删除
+     * 根据用户id和文件名像和是否删除非图片，音乐，视频 找文档
      *
      * @param userId
      * @param fileName
@@ -209,7 +212,7 @@ public class FileListServiceV2 {
      */
     public List<FileListPO> getDocumentLike(Long userId, String fileName) {
         FileListPOExample fileListPOExample = new FileListPOExample();
-        fileListPOExample.createCriteria().andFileUserIdEqualTo(userId).andFileIstrashEqualTo(0L).andFileNameEqualTo(fileName)
+        fileListPOExample.createCriteria().andFileUserIdEqualTo(userId).andFileIstrashEqualTo(0L).andFileNameLike(fileName)
                 .andContentTypeNotLike("image/" + "%").andContentTypeNotLike("application/" + "%")
                 .andContentTypeNotLike("video/" + "%").andContentTypeNotLike("audio/" + "%");
         List<FileListPO> fileListPOS = fileListPOMapper.selectByExample(fileListPOExample);
@@ -231,7 +234,6 @@ public class FileListServiceV2 {
                 .andContentTypeLike(contentType);
         List<FileListPO> fileListPOS = fileListPOMapper.selectByExample(fileListPOExample);
         return fileListPOS;
-
     }
 
     /**
@@ -268,14 +270,14 @@ public class FileListServiceV2 {
     /**
      * @param userId    用户id
      * @param countType 类型名
-     * @param fileName  文件名
+     * @param fileName  输入框内容
      * @param isTrash   是否是垃圾文件
      * @return
      */
     public List<FileListPO> getFileListPOSByUserIdAndFileIsTrashAndCountTypeLikeAndFileNameLike(Long userId, String countType, String fileName, Long isTrash) {
         FileListPOExample fileListPOExample = new FileListPOExample();
         fileListPOExample.createCriteria().andFileUserIdEqualTo(userId).andFileIstrashEqualTo(isTrash)
-                .andContentTypeLike(countType).andFileNameEqualTo(fileName);
+                .andContentTypeLike(countType).andFileNameLike(fileName);
         List<FileListPO> fileListPOS = fileListPOMapper.selectByExample(fileListPOExample);
         return fileListPOS;
 

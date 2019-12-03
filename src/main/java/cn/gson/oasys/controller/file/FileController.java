@@ -396,7 +396,7 @@ public class FileController {
         }
         //根据文件夹父id和文件夹是否是垃圾文件夹找文件夹下的所有文件夹
         List<FilePathPO> filePathPOS = filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(filePathPO.getPathId(), 0L);
-        //根据用户的文件夹id找用户下的问价夹列表
+        //根据用户的文件夹id找用户下的文件夹列表
         List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOSByFilePathIdAndFileIsTrash(filePathPO.getPathId(), 0L);
         model.addAttribute("nowpath", filePathPO);//单个用户的根文件夹信息
         model.addAttribute("paths", filePathPOS);//文件夹下的所有文件
@@ -412,7 +412,7 @@ public class FileController {
      * 图片预览（找出图片的具体位置）
      *
      * @param response
-     * @param fileId
+     * @param fileId   要显示的文件id
      */
     @RequestMapping("imgshow")
     public void imgshow(HttpServletResponse response, @RequestParam("fileid") Long fileId) {
@@ -425,7 +425,7 @@ public class FileController {
      * 写文件方法
      *
      * @param response
-     * @param file
+     * @param file     要输出的文件
      * @throws IOException
      */
     public void writeFile(HttpServletResponse response, File file) {
@@ -500,13 +500,10 @@ public class FileController {
     public String uploadfile(@RequestParam("file") MultipartFile file, @RequestParam("pathid") Long pathId,
                              HttpSession session, Model model) throws IllegalStateException, IOException {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);
-        FileListPO uploadFile = (FileListPO) fileServiceV2.saveFile(file, userPO, filePathPO, true);// true 表示从文件使用上传
-
-        System.out.println(uploadFile);
-
-        model.addAttribute("pathid", pathId);
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//用户信息
+        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//所在文件夹信息
+        fileServiceV2.saveFile(file, userPO, filePathPO, true);// true 表示从文件使用上传
+        model.addAttribute("pathid", pathId);//上传文件的所属文件夹id
         return "forward:/filetest";
     }
 
@@ -516,10 +513,10 @@ public class FileController {
     /**
      * 删除前台选择的文件以及文件夹
      *
-     * @param userId
-     * @param pathId
-     * @param checkPathIds 删除前台选择的文件以及文件夹
-     * @param checkFileIds 文件
+     * @param userId       用户id
+     * @param pathId       所在文件夹
+     * @param checkPathIds 删除前台选择的文件夹ids
+     * @param checkFileIds 文件ids
      * @param model
      * @return
      */
@@ -537,6 +534,7 @@ public class FileController {
 //            fs.deleteFile(checkfileids);
         }
         if (!checkPathIds.isEmpty()) {
+            //文件夹ids,是否放入回收站，，是否是直接删除的最外层文件夹
             fileServiceV2.trashPath(checkPathIds, 1L, true);
             // 删除文件夹
             //fs.deletePath(checkpathids);
@@ -550,18 +548,18 @@ public class FileController {
      * 新建文件夹√
      *
      * @param userId   用户id
-     * @param pathId   文件路径id
-     * @param pathname
+     * @param pathId   所属的文件夹id（在哪个里面建文件夹）
+     * @param pathname 新建的文件夹名
      * @param model
      * @return
      */
     @RequestMapping("createpath")
     public String createpath(@SessionAttribute("userId") Long userId, @RequestParam("pathid") Long pathId, @RequestParam("pathname") String pathname,
                              Model model) {
-        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//根据路径id找路径
-        String newName = fileServiceV2.onlyname(pathname, filePathPO.getPathId(), null, 1, false);
+        //防止新建的文件夹名重命
+        String newPathName = fileServiceV2.onlyname(pathname, pathId, null, 1, false);
         //插入新路径
-        filePathServiceV2.insertFilePathPOByNewNameAndParentId(pathId, newName, userId);
+        filePathServiceV2.insertFilePathPOByNewNameAndParentIdAndUserId(pathId, newPathName, userId);
         model.addAttribute("pathid", pathId);
         return "forward:/filetest";
     }
@@ -642,5 +640,25 @@ public class FileController {
         return "forward:/filetest";
     }
 
+
+    /**
+     * 下载文件
+     *
+     * @param response
+     * @param fileId
+     */
+    @RequestMapping("downfile")
+    public void downFile(HttpServletResponse response, @RequestParam("fileid") Long fileId) {
+        try {
+            FileListPO fileListPO = fileListServiceV2.getFileListPOByFileListPOId(fileId);
+            File file = fileServiceV2.getFile(fileListPO.getFilePath());//根据文件路径获取文件
+            response.setContentLength(fileListPO.getSize().intValue());
+            response.setContentType(fileListPO.getContentType());
+            response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileListPO.getFileName().getBytes("UTF-8"), "ISO8859-1"));
+            writeFile(response, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

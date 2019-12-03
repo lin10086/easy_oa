@@ -8,7 +8,6 @@ import cn.gson.oasys.ServiceV2.fileV2.FilePathServiceV2;
 import cn.gson.oasys.ServiceV2.fileV2.FileServiceV2;
 import cn.gson.oasys.model.po.FileListPO;
 import cn.gson.oasys.model.po.FilePathPO;
-import cn.gson.oasys.model.po.UserPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +18,6 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import cn.gson.oasys.model.dao.filedao.FileListdao;
 import cn.gson.oasys.model.dao.filedao.FilePathdao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.file.FileList;
-import cn.gson.oasys.model.entity.file.FilePath;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.file.FileServices;
 
 import javax.annotation.Resource;
@@ -356,7 +352,7 @@ public class FileAjaxController {
     /**
      * 移动复制文件
      *
-     * @param mctoid 点击要进入的文件夹id
+     * @param mctoid    点击要进入的文件夹id
      * @param mcpathids
      * @param model
      * @return
@@ -418,6 +414,14 @@ public class FileAjaxController {
                 model.addAttribute("isload", 1);
                 break;
 
+            case "share":
+                fileLists = fileListServiceV2.getFileListPOByFileIsShareAndFileIsTrash(1l, 0L);
+                model.addAttribute("files", fileLists);
+                model.addAttribute("isshare", 1);
+                model.addAttribute("isload", 1);
+                model.addAttribute("userid", userId);
+                break;
+
             case "trash":
                 filePaths = filePathServiceV2.getFilePathPOUserIdAndIsTrash(userId, 1L);
                 fileLists = fileListServiceV2.getFileListPOByUserIdAndFileIsTrash(userId, 1L);
@@ -428,13 +432,6 @@ public class FileAjaxController {
                 model.addAttribute("isload", 1);
                 break;
 
-            case "share":
-                fileLists = fileListServiceV2.getFileListPOByFileIsShareAndFileIsTrash(1l, 0L);
-                model.addAttribute("files", fileLists);
-                model.addAttribute("isshare", 1);
-                model.addAttribute("isload", 1);
-                model.addAttribute("userid", userId);
-                break;
             default:
                 break;
         }
@@ -445,19 +442,25 @@ public class FileAjaxController {
     }
 
 
+    /**
+     * 搜索
+     *
+     * @param userId          用户id
+     * @param findFileAndPath 搜索框输入的内容
+     * @param type            all 指在哪里搜索
+     * @param model
+     * @return
+     */
     @RequestMapping("findfileandpath")
     public String findfileandpath(@SessionAttribute("userId") Long userId,
                                   @RequestParam(value = "findfileandpath", required = false) String findFileAndPath,
                                   @RequestParam(value = "type", defaultValue = "all") String type,
                                   Model model) {
         String findLike = "%" + findFileAndPath + "%";
-        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByUserIdAndParentId(userId, 1L);
         String contentType;
         List<FileListPO> fileLists = null;
         List<FilePathPO> filePaths = null;
-        System.out.println(type);
         switch (type) {
-
             case "document":
                 fileLists = fileListServiceV2.getDocumentLike(userId, findLike);
                 model.addAttribute("files", fileLists);
@@ -545,6 +548,7 @@ public class FileAjaxController {
 
     /**
      * load删除controller
+     *
      * @param type
      * @param checkPathIds
      * @param checkFileIds
@@ -571,6 +575,7 @@ public class FileAjaxController {
 
     /**
      * 将文件放入回收战
+     *
      * @param userId
      * @param type
      * @param checkPathIds
@@ -587,11 +592,11 @@ public class FileAjaxController {
 
         if (checkFileIds != null) {
             // 文件放入回收站
-            fileServiceV2.trashFile(checkFileIds,1L,userId);
+            fileServiceV2.trashFile(checkFileIds, 1L, userId);
         }
         if (checkPathIds != null) {
             // 删除文件夹
-            fileServiceV2.trashPath(checkPathIds,1L,true);
+            fileServiceV2.trashPath(checkPathIds, 1L, true);
         }
         model.addAttribute("type", type);
         return "forward:/filetypeload";
@@ -615,15 +620,15 @@ public class FileAjaxController {
                                  @RequestParam("isfile") boolean isfile,
                                  @RequestParam(value = "pathid", required = false) Long pathid,
                                  Model model) {
-        fileServiceV2.rename(creatpathinput,renamefp,pathid,isfile);
+        fileServiceV2.rename(creatpathinput, renamefp, pathid, isfile);
         model.addAttribute("type", type);
         return "forward:/filetypeload";
     }
 
 
-
     /**
      * 回收站load复原
+     *
      * @param userId
      * @param type
      * @param checkPathIds
@@ -638,10 +643,10 @@ public class FileAjaxController {
                                  @RequestParam(value = "checkfileids[]", required = false) List<Long> checkFileIds,
                                  Model model) {
         if (checkFileIds != null) {
-            fileServiceV2.filereturnback(checkFileIds,userId);
+            fileServiceV2.fileReturnBack(checkFileIds, userId);
         }
         if (checkPathIds != null) {
-            fileServiceV2.pathreturnback(checkPathIds,userId);
+            fileServiceV2.pathReturnBack(checkPathIds, userId);
         }
 
         model.addAttribute("type", type);

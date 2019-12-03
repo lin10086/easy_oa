@@ -108,16 +108,16 @@
 <div class="row" style="padding-top: 15px;">
     <div class="col-md-3">
         <form class="fileuploadform" action="fileupload" method="post" enctype="multipart/form-data">
-            <!-- <a class="btn btn-primary" href="##"
-                style="width: 100%; margin-bottom: 20px;"><span
-                class="glyphicon glyphicon-open"></span> 上传</a> -->
+            <#--<a class="btn btn-primary" href="##"
+               style="width: 100%; margin-bottom: 20px;"><span
+                        class="glyphicon glyphicon-open"></span> 上传</a>-->
             <div class="btn btn-primary uploadfile"
-                 style="position: relative; overflow: hidden;width: 100%; margin-bottom: 20px;">
-                <i class="glyphicon glyphicon-open"></i> 上传
-                <input type="file" name="file"
-                       style="opacity: 0; position: absolute; top: 0; right: 0; min-width: 100%; min-height: 100%;"/>
-                <input type="hidden" name="pathid" value="${nowpath.pathId}"/>
-            </div>
+                  style="position: relative; overflow: hidden;width: 100%; margin-bottom: 20px;">
+                 <i class="glyphicon glyphicon-open"></i> 上传
+                 <input type="file" name="file"
+                        style="opacity: 0; position: absolute; top: 0; right: 0; min-width: 100%; min-height: 100%;"/>
+                 <input type="hidden" name="pathid" value="${nowpath.pathId}"/>
+             </div>
         </form>
         <div class="bgc-w box box-solid">
             <div class="box-header">
@@ -127,7 +127,8 @@
 					</span>
             </div>
             <ul class="nav nav-pills nav-stacked mm">
-                <li class="activee filetypedocument"><a href="filemanage"> <span
+                <li class="activee"><a href="filemanage"> <span
+                <#--<li class="activee filetypedocument"><a href="filemanage"> <span-->
                                 class="iconfont icon-suoyougongneng"></span> 全部文件</a></li>
                 <li><a href="##" class="filetypedocument"><span class="iconfont icon-icon4"></span>
                         文档</a></li>

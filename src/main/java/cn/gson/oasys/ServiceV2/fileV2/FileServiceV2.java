@@ -60,56 +60,42 @@ public class FileServiceV2 {
     /**
      * 保存文件以及附件
      *
-     * @param file
-     * @param userPO
-     * @param nowpath
+     * @param file    要上传的文件
+     * @param userPO  用户信息
+     * @param nowpath 上传文件所属文件夹信息
      * @return
      * @throws IllegalStateException
      * @throws IOException
      */
-    public Object saveFile(MultipartFile file, UserPO userPO, FilePathPO nowpath, boolean isfile) throws IllegalStateException, IOException {
+    public void saveFile(MultipartFile file, UserPO userPO, FilePathPO nowpath, boolean isfile) throws IllegalStateException, IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM");
         File root = new File(this.rootPath, simpleDateFormat.format(new Date()));//根目录+日期年月
 
-        File savePath = new File(root, userPO.getUserName());
-        System.out.println(savePath.getPath());
-
+        File savePath = new File(root, userPO.getUserName());//根目录+日期年月+用户名
         if (!savePath.exists()) {
             savePath.mkdirs();
         }
-
-        String shuffix = FilenameUtils.getExtension(file.getOriginalFilename());//获取文件的扩展名
-        log.info("shuffix:{}", shuffix);
-        String newFileName = UUID.randomUUID().toString().toLowerCase() + "." + shuffix;
-        File targetFile = new File(savePath, newFileName);
+        String suffix = FilenameUtils.getExtension(file.getOriginalFilename());//获取文件的扩展名
+        String newUUIDFileName = UUID.randomUUID().toString().toLowerCase() + "." + suffix;//用UUID生成新的文件名
+        File targetFile = new File(savePath, newUUIDFileName);//项目路径+年月+用户名,UUID生成 的文件名
         file.transferTo(targetFile);//把文件存在项目里
 
+        String filename = file.getOriginalFilename();// 原始文件名
+        String newFilename = onlyname(filename, nowpath.getPathId(), suffix, 1, true);
+        String filePath = targetFile.getAbsolutePath().replace("\\", "/").replace(this.rootPath, "");
         if (isfile) {//使用上传
-            FileListPO fileListPO = new FileListPO();//新件文件
-            String filename = file.getOriginalFilename();// 原始文件名
-            filename = onlyname(filename, nowpath.getPathId(), shuffix, 1, true);
-            fileListPO.setFileName(filename);//文件名
-            fileListPO.setFilePath(targetFile.getAbsolutePath().replace("\\", "/").replace(this.rootPath, ""));//设置文件路径
-            fileListPO.setFileShuffix(shuffix);//文件扩展名
-            fileListPO.setSize(file.getSize());//文件大小
-            fileListPO.setUploadTime(new Date());//上传时间
-            fileListPO.setPathId(nowpath.getPathId());//文件路径id
-            fileListPO.setContentType(file.getContentType());//文件类型
-            fileListPO.setFileUserId(userPO.getUserId());
-            fileListPOMapper.insertSelective(fileListPO);
-            return fileListPO;
+            fileListServiceV2.insertFileListPO(newFilename, filePath, suffix, file.getSize(), nowpath.getPathId(), file.getContentType(), userPO.getUserId());
         } else {
             AttachmentListPO attachmentListPO = new AttachmentListPO();
-            attachmentListPO.setAttachmentName(file.getOriginalFilename());
-            attachmentListPO.setAttachmentPath(targetFile.getAbsolutePath().replace("\\", "/").replace(this.rootPath, ""));
-            attachmentListPO.setAttachmentShuffix(shuffix);
+            attachmentListPO.setAttachmentName(filename);
+            attachmentListPO.setAttachmentPath(filePath);
+            attachmentListPO.setAttachmentShuffix(suffix);
             attachmentListPO.setAttachmentSize(file.getSize() + "");
             attachmentListPO.setAttachmentType(file.getContentType());
             attachmentListPO.setUploadTime(new Date());
             attachmentListPO.setUserId(userPO.getUserId() + "");
             attachmentListPO.setModel("note");
             attachmentListPOMapper.insertSelective(attachmentListPO);
-            return attachmentListPO;
         }
     }
 
@@ -212,38 +198,33 @@ public class FileServiceV2 {
      * 根据文件夹id批量放入回收战
      *
      * @param pathIds           文件路径ids
-     * @param setistrashhaomany 是否是垃圾文件
+     * @param setIsTrashHowMany 是否是垃圾文件
      * @param isFirst
      */
-    public void trashPath(List<Long> pathIds, Long setistrashhaomany, boolean isFirst) {
+    public void trashPath(List<Long> pathIds, Long setIsTrashHowMany, boolean isFirst) {
         for (Long pathId : pathIds) {
-            FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);// 根据路径id获取当前的路径信息
-            List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOByFilePathId(filePathPO.getPathId());//根据路径id找文件列表
+            FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);// 根据文件夹id获取要操作的文件夹信息
+            List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOByFilePathId(filePathPO.getPathId());//根据文件夹id找问价夹下的文件列表
             //首先将此文件夹下的文件放入回收战
             if (!fileListPOS.isEmpty()) {
                 List<Long> fileIds = new ArrayList<>();
                 for (FileListPO fileListPO : fileListPOS) {
                     fileIds.add(fileListPO.getFileId());
                 }
+                //userId==null删除文件夹内的文件，文件的文件夹id保留(因为它是要删除的文件夹的内部文件，所以要知道他是那个文件夹下的）
                 trashFile(fileIds, 1L, null);
             }
-            //然后将此文件夹下的文件夹放入回收战
+
+            //然后将此文件夹下的文件夹放入回收战（根据要删除的文件夹id找出下级非垃圾文件夹）
             List<FilePathPO> filePathPOList = filePathServiceV2.getFilePathPOListByParentIdAndIsTrash(pathId, 0L);
             if (!filePathPOList.isEmpty()) {
-//				System.out.println("此文件夹下还有文件夹");
                 List<Long> pathIds2 = new ArrayList<>();
                 for (FilePathPO filePathPO1 : filePathPOList) {
                     pathIds2.add(filePathPO1.getPathId());
                 }
-//				System.out.println("接下来尽心递归调用");
                 trashPath(pathIds2, 1L, false);
             }
-//			System.out.println("此文件下下再无文件夹");
-            if (isFirst) {
-                filePathPO.setParentId(0L);
-            }
-            filePathPO.setPathIstrash(setistrashhaomany);
-            filePathPOMapper.updateByPrimaryKeySelective(filePathPO);
+            filePathServiceV2.updateFilePathPOPathIsTrashAndPathParentId(isFirst, filePathPO);
         }
     }
 
@@ -367,7 +348,7 @@ public class FileServiceV2 {
 
         //找到要复制文件夹下的非垃圾文件
         List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOSByFilePathIdAndFileIsTrash(filePathPO.getPathId(), 0L);
-        if (!fileListPOS.isEmpty()){//判断文件夹下有没有文件
+        if (!fileListPOS.isEmpty()) {//判断文件夹下有没有文件
             for (FileListPO fileList : fileListPOS) {
                 //文件夹下的文件，已经复制的新文件夹， false代表他它是要复制文件夹下的文件
                 copyFile(fileList, newFilePathPO, false);
@@ -499,8 +480,6 @@ public class FileServiceV2 {
     public void deleteFile(List<Long> fileIds) {
         for (Long fileId : fileIds) {
             FileListPO fileListPO = fileListServiceV2.getFileListPOByFileListPOId(fileId);
-//            FileList filelist = fldao.findOne(fileid);
-
             File file = new File(this.rootPath, fileListPO.getFilePath());
             if (file.exists() && file.isFile()) {
                 fileListServiceV2.deleteFileListPOByFileListPOId(fileId);//删除数据库文件
@@ -518,7 +497,7 @@ public class FileServiceV2 {
     @Transactional
     public void deletePath(List<Long> pathIds) {
         for (Long pathId : pathIds) {
-            FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//根据路径id找路径信息
+            FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//根据要删除的文件夹id找文件夹信息
             List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOByFilePathId(filePathPO.getPathId());//根据文件路径id找文件
 //			System.out.println("第一个文件夹："+filepath);
             //首先删除此文件夹下的文件
@@ -552,8 +531,8 @@ public class FileServiceV2 {
      * @param userId       用户id
      */
     @Transactional
-    public void filereturnback(List<Long> checkFileIds, Long userId) {
-        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByUserIdAndParentId(userId, 1L);
+    public void fileReturnBack(List<Long> checkFileIds, Long userId) {
+        FilePathPO filePathPO = filePathServiceV2.getFilePathPOByUserIdAndParentId(userId, 1L);//用户文件夹信息
         for (Long checkFileId : checkFileIds) {
             FileListPO fileListPO = fileListServiceV2.getFileListPOByFileListPOId(checkFileId);
             if (userId != null) {
@@ -574,39 +553,34 @@ public class FileServiceV2 {
      * @param pathIds 路径ids
      * @param userId  用户id
      */
-    public void pathreturnback(List<Long> pathIds, Long userId) {
+    public void pathReturnBack(List<Long> pathIds, Long userId) {
         for (Long pathId : pathIds) {
-            FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);
-            System.out.println("第一个文件夹：" + filePathPO);
+            FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//根据要回复的文件夹id找文件夹信息
             //首先将此文件夹下的文件还原
-            List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOByFilePathId(pathId);
+            List<FileListPO> fileListPOS = fileListServiceV2.getFileListPOByFilePathId(pathId);//找到此文件夹下的文件
             if (!fileListPOS.isEmpty()) {
-                System.out.println("找到第一个文件夹下的文件不为空！~~~");
-                System.out.println(fileListPOS);
                 List<Long> fileIds = new ArrayList<>();
                 for (FileListPO fileListPO : fileListPOS) {
                     fileIds.add(fileListPO.getFileId());
                 }
-                filereturnback(fileIds, null);
+                fileReturnBack(fileIds, null);
             }
             System.out.println("此文件夹内的文件还原成功");
             System.out.println("然后将此文件夹下的文件夹还原");
-            //然后将此文件夹下的文件夹还原
-            List<FilePathPO> filePathPOS = filePathServiceV2.getFilePathPOByParentId(pathId);
+            List<FilePathPO> filePathPOS = filePathServiceV2.getFilePathPOByParentId(pathId);//找到此文件夹下的文件夹
             if (!filePathPOS.isEmpty()) {
                 System.out.println("此文件夹下还有文件夹");
                 List<Long> pathIds2 = new ArrayList<>();
                 for (FilePathPO filePathPO1 : filePathPOS) {
                     pathIds2.add(filePathPO1.getPathId());
                 }
-                System.out.println("pathids2" + pathIds2);
                 System.out.println("接下来尽心递归调用");
-                pathreturnback(pathIds2, null);
+                pathReturnBack(pathIds2, null);
             }
             System.out.println("此文件夹下再无文件夹");
             if (userId != null) {
                 System.out.println("userid不为空表示是第一次进入的文件夹 现在还原");
-                FilePathPO filePathPO1 = filePathServiceV2.getFilePathPOByUserIdAndParentId(userId, 1L);
+                FilePathPO filePathPO1 = filePathServiceV2.getFilePathPOByUserIdAndParentId(userId, 1L);//用户文件夹
                 String name = onlyname(filePathPO.getPathName(), filePathPO1.getPathId(), null, 1, false);
                 filePathPO.setPathName(name);
                 filePathPO.setParentId(filePathPO1.getPathId());
