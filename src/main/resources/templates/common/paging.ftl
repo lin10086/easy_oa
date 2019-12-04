@@ -6,17 +6,17 @@
                 <div class="pageInfo" style="margin-left: 5px;">
                     <#--共<span>${page.totalElements}</span>条 | 每页<span>${page.size}</span>条-->
                     <#--| 共<span>${page.totalPages}</span>页-->
-                    共<span>${page.getTotal()}</span>条 | 每页<span>${page.getPageSize()}</span>条
-                    | 共<span>${page.getPages()}</span>页
+                    <#--共<span>${page.getTotal()}</span>条 | 每页<span>${page.getPageSize()}</span>条
+                    | 共<span>${page.getPages()}</span>页-->
+                    共<span>${page.totalCount}</span>条 | 每页<span>${page.pageSize}</span>条
+                    | 共<span>${page.totalPageCount}</span>页
                 </div>
             </div>
             <div style="width: 60%; float: left;">
                 <div class="pageOperation">
                     <!--判断是否是第一页  -->
                     <#--<#if page.first==true>-->
-                    <#if page.isIsFirstPage()==true>
-                    <#--Integer i = b == false ? 0 : 1;-->
-                    <#--&lt;#&ndash;自己改的&ndash;&gt;-->
+                    <#if page.isFirstPage()==true>
                         <a class="btn btn-sm btn-default no-padding tablefirst" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
                                     class="glyphicon glyphicon-backward"></span></a>
@@ -33,18 +33,18 @@
                         <#--<#if (page.number+1) gte page.totalPages>-->
                         <#--${page.totalPages}-->
                         <#--自己的-->
-                        <#if (page.getPageNum()+1) gte page.getPages()>
-                            ${page.getPages()}
+                        <#if (page.pageNo) gte page.totalPageCount>
+                            ${page.totalPageCount}
                         <#else>
                         <#--${page.number+1}-->
                         <#--自己的-->
-                            ${page.getPageNum()+1}
+                            ${page.pageNo}
                         </#if>
                     </a>
                     <!--判断是否是最后一页  -->
                     <#--<#if page.last==true>-->
                     <#--自己改的-->
-                    <#if page.isIsLastPage()==true>
+                    <#if page.isLastPage()==true>
                         <a class="btn btn-sm btn-default no-padding tabledown" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
                                     class="glyphicon glyphicon-triangle-right"></span></a>

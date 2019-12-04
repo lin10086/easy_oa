@@ -7,18 +7,31 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import cn.gson.oasys.ServiceV2.StatusServiceV2;
+import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.noteV2.CatalogPOServiceV2;
+import cn.gson.oasys.ServiceV2.noteV2.NoteListPOServiceV2;
+import cn.gson.oasys.ServiceV2.noteV2.NoteServiceV2;
+import cn.gson.oasys.model.bo.PageBO;
+import cn.gson.oasys.model.po.CatalogPO;
+import cn.gson.oasys.model.po.NoteListPO;
+import cn.gson.oasys.model.po.StatusPO;
+import cn.gson.oasys.model.po.TypePO;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -125,7 +138,7 @@ public class NoteController {
             setSomething(baseKey, type, status, time, icon, model, cid, null);
             Page<Note> upage = NoteService.sortpage(page, null, userid, collect, cid, null, type, status, time);
             model.addAttribute("url", "collectfind");
-            paging(model, upage);
+//            paging(model, upage);
             //获得数据之后就将cid重新设置
             if (cid == null)
                 cid = -2l;
@@ -136,7 +149,7 @@ public class NoteController {
             setSomething(baseKey, type, status, time, icon, model, cid, null);
             Page<Note> upage = NoteService.sortpage(page, null, userid, null, cid, null, type, status, time);
             model.addAttribute("url", "notewrite");
-            paging(model, upage);
+//            paging(model, upage);
             model.addAttribute("sort", "&userid=" + userid);
             model.addAttribute("sort2", "&userid=" + userid);
             model.addAttribute("collect", 1);
@@ -164,7 +177,7 @@ public class NoteController {
         setSomething(baseKey, type, status, time, icon, model, null, null);
         Page<Note> upage = NoteService.sortpage(page, null, userid, null, null, null, type, status, time);
         model.addAttribute("url", "notewrite");
-        paging(model, upage);
+//        paging(model, upage);
         model.addAttribute("sort", "&userid=" + userid);
         typestatus(request);
         return "note/notewrite";
@@ -455,7 +468,7 @@ public class NoteController {
         //没有就默认查找所有
         else
             request.setAttribute("sort", "&userid=" + userid);
-        paging(model, upage);
+//        paging(model, upage);
         model.addAttribute("url", "notewrite");
         return "note/notewrite";
     }
@@ -481,7 +494,7 @@ public class NoteController {
         if (cid == null)
             cid = -2l;
         request.setAttribute("sort2", "&id=" + cid + "&typeid=" + tid);
-        paging(model, upage);
+//        paging(model, upage);
         model.addAttribute("url", "notetype");
         typestatus(request);
         return "note/notewrite";
@@ -506,7 +519,7 @@ public class NoteController {
             setSomething(baseKey, type, status, time, icon, model, id, null);
             Page<Note> upage = NoteService.sortpage(page, baseKey, userid, null, id, null, type, status, time);
             request.setAttribute("sort2", "&id=" + cid);
-            paging(model, upage);
+//            paging(model, upage);
             model.addAttribute("url", "notecata");
             ////为-2就是按照最近查找
         }
@@ -654,19 +667,19 @@ public class NoteController {
             NoteService.delete(noteid);
     }
 
-    private void typestatus(HttpServletRequest request) {
+    /*private void typestatus(HttpServletRequest request) {
         type = (List<SystemTypeList>) typeDao.findByTypeModel("aoa_note_list");
         status = (List<SystemStatusList>) statusDao.findByStatusModel("aoa_note_list");
         request.setAttribute("typelist", type);
         request.setAttribute("statuslist", status);
-    }
+    }*/
 
-    //分页
+   /* //分页
     private void paging(Model model, Page<Note> upage) {
         model.addAttribute("nlist", upage.getContent());
         model.addAttribute("page", upage);
 //		model.addAttribute("url", "notewrite");
-    }
+    }*/
 
   /*  public void setSomething(String baseKey, String type, String status, String time, String icon, Model model, Long cataid, Long typeid) {
         if (!StringUtils.isEmpty(icon)) {
@@ -707,7 +720,7 @@ public class NoteController {
     }*/
 
 
-    private void setthree(String x, String name, String icon, Model model, Long cataid, Long typeid) {
+   /* private void setthree(String x, String name, String icon, Model model, Long cataid, Long typeid) {
         //单纯根据目录
         if (!StringUtils.isEmpty(cataid) && StringUtils.isEmpty(typeid))
             model.addAttribute("sort", "&" + x + "=" + name + "&icon=" + icon + "&id=" + cataid);
@@ -719,10 +732,21 @@ public class NoteController {
             model.addAttribute("sort", "&" + x + "=" + name + "&icon=" + icon + "&id=" + cataid + "&typeid=" + typeid);
         else if (StringUtils.isEmpty(cataid) && StringUtils.isEmpty(typeid))
             model.addAttribute("sort", "&" + x + "=" + name + "&icon=" + icon);
-    }
+    }*/
 
     //	===================================================
-// 笔记主界面
+    @Resource
+    private CatalogPOServiceV2 catalogPOServiceV2;
+    @Resource
+    private NoteListPOServiceV2 noteListPOServiceV2;
+    @Resource
+    private NoteServiceV2 noteServiceV2;
+    @Resource
+    private TypeServiceV2 typeServiceV2;
+    @Resource
+    private StatusServiceV2 statusServiceV2;
+
+    // 笔记主界面
     @RequestMapping(value = "noteview", method = RequestMethod.GET)
     public String test(Model model, HttpServletRequest request, HttpSession session,
                        @RequestParam(value = "page", defaultValue = "0") int page,
@@ -731,15 +755,16 @@ public class NoteController {
                        @RequestParam(value = "status", required = false) String status,
                        @RequestParam(value = "time", required = false) String time,
                        @RequestParam(value = "icon", required = false) String icon) {
-        Long userid = Long.parseLong(session.getAttribute("userId") + "");
-        cataloglist = (List<Catalog>) catalogDao.findcatauser(userid);
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");
+//        PageBO pageBO = new PageBO(page);
+        List<CatalogPO> catalogPOS = catalogPOServiceV2.getCatalogPOByUserId(userId);
         setSomething(baseKey, type, status, time, icon, model, null, null);
-        Page<Note> upage = NoteService.sortpage(page, baseKey, userid, null, null, null, type, status, time);
-        model.addAttribute("sort", "&userid=" + userid);
-        paging(model, upage);
+        List<NoteListPO> noteListPOS = noteServiceV2.sortPage(page, baseKey, userId, null, null, null, type, status, time);
+        model.addAttribute("sort", "&userid=" + userId);
+        paging(model, noteListPOS, page);
         typestatus(request);
         model.addAttribute("url", "notewrite");
-        model.addAttribute("calist", cataloglist);
+        model.addAttribute("calist", catalogPOS);
         return "note/noteview";
     }
 
@@ -779,4 +804,43 @@ public class NoteController {
             model.addAttribute("sort", "&baseKey=" + baseKey + "&id=" + cataid);
         }
     }
+
+    //分页
+    private void paging(Model model, List<NoteListPO> noteListPOS, int page) {
+        for (NoteListPO noteListPO : noteListPOS) {
+            noteListPO.setCreateTime(new Timestamp(noteListPO.getCreateTime().getTime()));
+        }
+        PageBO pageBO = new PageBO(page + 1);
+        int star = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
+        int end = pageBO.getPageNo() * pageBO.getPageSize();
+        pageBO.setTotalCount(noteListPOS.size());
+        if (noteListPOS.size() < end) {
+            end = noteListPOS.size();
+        }
+        List<NoteListPO> subList = noteListPOS.subList(star, end);
+        model.addAttribute("nlist", subList);
+        model.addAttribute("page", pageBO);
+    }
+
+    private void typestatus(HttpServletRequest request) {
+        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_note_list");
+        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_note_list");
+        request.setAttribute("typelist", typePOList);
+        request.setAttribute("statuslist", statusPOList);
+    }
+
+    private void setthree(String x, String name, String icon, Model model, Long cataid, Long typeid) {
+        //单纯根据目录
+        if (!StringUtils.isEmpty(cataid) && StringUtils.isEmpty(typeid))
+            model.addAttribute("sort", "&" + x + "=" + name + "&icon=" + icon + "&id=" + cataid);
+        //单纯的根据类型
+        if (StringUtils.isEmpty(cataid) && !StringUtils.isEmpty(typeid))
+            model.addAttribute("sort", "&" + x + "=" + name + "&icon=" + icon + "&typeid=" + typeid);
+        //根据目录和类型
+        if (!StringUtils.isEmpty(cataid) && !StringUtils.isEmpty(typeid))
+            model.addAttribute("sort", "&" + x + "=" + name + "&icon=" + icon + "&id=" + cataid + "&typeid=" + typeid);
+        else if (StringUtils.isEmpty(cataid) && StringUtils.isEmpty(typeid))
+            model.addAttribute("sort", "&" + x + "=" + name + "&icon=" + icon);
+    }
+
 }

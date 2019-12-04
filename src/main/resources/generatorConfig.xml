@@ -231,6 +231,22 @@
             <generatedKey column="file_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="file_id" javaType="Long"/>
         </table>
+        <!--笔记表-->
+        <table tableName="aoa_note_list" domainObjectName="NoteListPO">
+            <generatedKey column="note_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="note_id" javaType="Long"/>
+        </table>
+        <!--目录表-->
+        <table tableName="aoa_catalog" domainObjectName="CatalogPO">
+            <generatedKey column="catalog_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="catalog_id" javaType="Long"/>
+        </table>
+        <!--用户笔记关联表-->
+        <table tableName="aoa_receiver_note" domainObjectName="ReceiverNotePO">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="id" javaType="Long"/>
+        </table>
+
 
     </context>
 </generatorConfiguration>

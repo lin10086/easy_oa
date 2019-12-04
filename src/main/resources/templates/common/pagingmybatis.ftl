@@ -4,8 +4,8 @@
 			style="background: #fff; border: 0px; margin-top: 0px; padding: 2px; height: 25px;">
 			<div style="width: 40%; float: left;">
 				<div class="pageInfo" style="margin-left: 5px;">
-					共<span>${page.total}</span>条 | 每页<span>${page.size}</span>条
-					| 共<span>${page.pages}</span>页
+					共<span>${page.totalCount}</span>条 | 每页<span>${page.pageSize}</span>条
+					| 共<span>${page.totalPageCount}</span>页
 				</div>
 			</div>
 			<div style="width: 60%; float: left;">
@@ -49,17 +49,17 @@
 		});
 		$('.tableup').on('click',function(){
 			if(!${page.isFirstPage?string('true','false')}){
-				$('.thistable').load('${url}?pageNum=${(page.pageNum)-1}${(sort)!''}');
+				$('.thistable').load('${url}?pageNum=${(page.pageNo)-1}${(sort)!''}');
 			}
 		});
 		$('.tabledown').on('click',function(){
 			if(!${page.isLastPage?string('true','false')}){
-				$('.thistable').load('${url}?pageNum=${(page.pageNum)+1}${(sort)!''}');
+				$('.thistable').load('${url}?pageNum=${(page.pageNo)+1}${(sort)!''}');
 			}
 		});
 		$('.tablelast').on('click',function(){
 			if(!${page.isLastPage?string('true','false')}){
-				$('.thistable').load('${url}?pageNum=${(page.pages)}${(sort)!''}');
+				$('.thistable').load('${url}?pageNum=${(page.totalPageCount)}${(sort)!''}');
 			}
 			
 		});

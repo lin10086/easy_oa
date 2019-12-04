@@ -64,10 +64,10 @@ public class FilePathPO {
         }
         FilePathPO other = (FilePathPO) that;
         return (this.getPathId() == null ? other.getPathId() == null : this.getPathId().equals(other.getPathId()))
-                && (this.getParentId() == null ? other.getParentId() == null : this.getParentId().equals(other.getParentId()))
-                && (this.getPathName() == null ? other.getPathName() == null : this.getPathName().equals(other.getPathName()))
-                && (this.getPathUserId() == null ? other.getPathUserId() == null : this.getPathUserId().equals(other.getPathUserId()))
-                && (this.getPathIstrash() == null ? other.getPathIstrash() == null : this.getPathIstrash().equals(other.getPathIstrash()));
+            && (this.getParentId() == null ? other.getParentId() == null : this.getParentId().equals(other.getParentId()))
+            && (this.getPathName() == null ? other.getPathName() == null : this.getPathName().equals(other.getPathName()))
+            && (this.getPathUserId() == null ? other.getPathUserId() == null : this.getPathUserId().equals(other.getPathUserId()))
+            && (this.getPathIstrash() == null ? other.getPathIstrash() == null : this.getPathIstrash().equals(other.getPathIstrash()));
     }
 
     @Override
