@@ -496,10 +496,34 @@ public class NoteListPOServiceV2 {
      */
     public NoteListPO insertOrUpdateNoteListPOBy(NoteListPO noteListPO, Long noteListId) {
         if (noteListId > 0) {
-            noteListPOMapper.updateByPrimaryKey(noteListPO);
+            noteListPOMapper.updateByPrimaryKeySelective(noteListPO);
         } else {
             noteListPOMapper.insertSelective(noteListPO);
         }
         return noteListPO;
+    }
+
+    /**
+     * 根据笔记ID删除笔记
+     *
+     * @param noteId
+     */
+    public void deleteNoteListPOByNoteListPOId(Long noteId) {
+        noteListPOMapper.deleteByPrimaryKey(noteId);
+    }
+
+    /**
+     * 更新是否收藏
+     *
+     * @param isCollected 是否收藏
+     * @param noteId      笔记ID
+     * @return
+     */
+    public Integer updateCollected(Long isCollected, Long noteId) {
+        NoteListPO noteListPO = new NoteListPO();
+        noteListPO.setNoteId(noteId);
+        noteListPO.setIsCollected(isCollected);
+        Integer rows = noteListPOMapper.updateByPrimaryKeySelective(noteListPO);
+        return rows;
     }
 }

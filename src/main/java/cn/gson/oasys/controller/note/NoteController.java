@@ -423,101 +423,7 @@ public class NoteController {
       }
     */
 
-  /*  private void notedelete(long realuserId, long noteid) {
-        //删除共享笔记就是只删除中间表noteid对应的那个userid
-        Note note = noteDao.findOne(noteid);
-        if (note.getTypeId() == 7) {
-            noteUserDao.delete(noteUserDao.findid(noteid, realuserId));
-        }
-        //如果笔记的类型不是共享类型的就直接删除
-        else
-            NoteService.delete(noteid);
-    }*/
-
-    // 收藏查询
-    @RequestMapping("collectfind")
-    public String dsafdsf(Model model, HttpServletRequest request, @RequestParam("iscollect") String iscollected, @RequestParam("cata") Long cid,
-                          HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "baseKey", required = false) String baseKey
-            , @RequestParam(value = "type", required = false) String type,
-                          @RequestParam(value = "status", required = false) String status,
-                          @RequestParam(value = "time", required = false) String time,
-                          @RequestParam(value = "icon", required = false) String icon
-    ) {
-        if (cid == -2)
-            cid = null;
-        Long userid = Long.valueOf(session.getAttribute("userId") + "");
-        long collect = Long.valueOf(iscollected);
-
-        System.out.println("收集" + collect);
-        if (collect == 1) {
-            setSomething(baseKey, type, status, time, icon, model, cid, null);
-            Page<Note> upage = NoteService.sortpage(page, null, userid, collect, cid, null, type, status, time);
-            model.addAttribute("url", "collectfind");
-//            paging(model, upage);
-            //获得数据之后就将cid重新设置
-            if (cid == null)
-                cid = -2l;
-            model.addAttribute("sort", "&iscollect=" + collect + "&cata=" + cid);
-            model.addAttribute("sort2", "&iscollect=" + collect + "&cata=" + cid);
-            model.addAttribute("collect", 0);
-        } else if (collect == 0) {
-            setSomething(baseKey, type, status, time, icon, model, cid, null);
-            Page<Note> upage = NoteService.sortpage(page, null, userid, null, cid, null, type, status, time);
-            model.addAttribute("url", "notewrite");
-//            paging(model, upage);
-            model.addAttribute("sort", "&userid=" + userid);
-            model.addAttribute("sort2", "&userid=" + userid);
-            model.addAttribute("collect", 1);
-        }
-
-        typePOListAndStatusPOList(request);
-
-        return "note/notewrite";
-    }
-
-
-    // 收藏
-    @RequestMapping("collect")
-    public String dsaf(Model model, HttpServletRequest request,
-                       HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "baseKey", required = false) String baseKey
-            , @RequestParam(value = "type", required = false) String type,
-                       @RequestParam(value = "status", required = false) String status,
-                       @RequestParam(value = "time", required = false) String time,
-                       @RequestParam(value = "icon", required = false) String icon
-    ) {
-        Long userid = Long.valueOf(session.getAttribute("userId") + "");
-        String id = request.getParameter("id");
-        String iscollected = request.getParameter("iscollected");
-        NoteService.updatecollect(Long.valueOf(iscollected), Long.valueOf(id));
-        setSomething(baseKey, type, status, time, icon, model, null, null);
-        Page<Note> upage = NoteService.sortpage(page, null, userid, null, null, null, type, status, time);
-        model.addAttribute("url", "notewrite");
-//        paging(model, upage);
-        model.addAttribute("sort", "&userid=" + userid);
-        typePOListAndStatusPOList(request);
-        return "note/notewrite";
-    }
-
-    // 保存的get方法
-    @RequestMapping(value = "notesave", method = RequestMethod.GET)
-    public void testdfd(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-    }
-
-
-    // 笔记批量删除
-    @RequestMapping("notesomedelete")
-    public String dsafds(HttpServletRequest request, HttpSession session) {
-        long realuserId = Long.valueOf(session.getAttribute("userId") + "");
-        String sum = request.getParameter("sum");
-        String[] strings = sum.split(";");
-        for (String s : strings) {
-            long noteids = Long.valueOf(s);
-            notedelete(realuserId, noteids);
-        }
-        return "redirect:/noteview";
-    }
-
-    // 笔记删除
+     /*  // 笔记删除
     @RequestMapping("notedelete")
     public String testrw(Model model, HttpServletRequest request, HttpSession session) {
         long realuserId = Long.valueOf(session.getAttribute("userId") + "");
@@ -533,29 +439,33 @@ public class NoteController {
 
         }
 
-    }
+    }*/
 
-
-    // 目录删除
-    @RequestMapping("catadelete")
-    public String testrwd(Model model, HttpServletRequest request, HttpSession session) {
-        long realuserId = Long.valueOf(session.getAttribute("userId") + "");
-        String cid = request.getParameter("cid");
-        long catalogid = Long.valueOf(cid);
-//		Page<Note> upage= NoteService.paging(page, null, null, null, catalogid, null);
-//		paging(model, upage);
-        noteList = noteDao.findByCatalogId(catalogid, realuserId);
-        // 没有做级联删除 先删除目录下的笔记 再删除目录
-        for (Note note : noteList) {
-            NoteService.delete(note.getNoteId());
+  /*  private void notedelete(long realuserId, long noteid) {
+        //删除共享笔记就是只删除中间表noteid对应的那个userid
+        Note note = noteDao.findOne(noteid);
+        if (note.getTypeId() == 7) {
+            noteUserDao.delete(noteUserDao.findid(noteid, realuserId));
         }
-        catalogService.delete(catalogid);
+        //如果笔记的类型不是共享类型的就直接删除
+        else
+            NoteService.delete(noteid);
+    }*/
 
+  /*  // 笔记批量删除
+    @RequestMapping("notesomedelete")
+    public String dsafds(HttpServletRequest request, HttpSession session) {
+        long realuserId = Long.valueOf(session.getAttribute("userId") + "");
+        String sum = request.getParameter("sum");
+        String[] strings = sum.split(";");
+        for (String s : strings) {
+            long noteids = Long.valueOf(s);
+            notedelete(realuserId, noteids);
+        }
         return "redirect:/noteview";
-    }
+    }*/
 
-
-    // 显示具体信息
+  /*  // 显示具体信息
     @RequestMapping("noteinfo")
     public String test3(@Param("id") String id, HttpServletRequest Request, HttpServletResponse response,
                         HttpSession session) throws IOException {
@@ -605,7 +515,95 @@ public class NoteController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }*/
+
+   /* // 收藏
+    @RequestMapping("collect")
+    public String dsaf(Model model, HttpServletRequest request,
+                       HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "baseKey", required = false) String baseKey
+            , @RequestParam(value = "type", required = false) String type,
+                       @RequestParam(value = "status", required = false) String status,
+                       @RequestParam(value = "time", required = false) String time,
+                       @RequestParam(value = "icon", required = false) String icon) {
+        Long userid = Long.valueOf(session.getAttribute("userId") + "");
+        String id = request.getParameter("id");
+        String iscollected = request.getParameter("iscollected");
+        NoteService.updatecollect(Long.valueOf(iscollected), Long.valueOf(id));
+        setSomething(baseKey, type, status, time, icon, model, null, null);
+        Page<Note> upage = NoteService.sortpage(page, null, userid, null, null, null, type, status, time);
+        model.addAttribute("url", "notewrite");
+        paging(model, upage);
+        model.addAttribute("sort", "&userid=" + userid);
+        typePOListAndStatusPOList(request);
+        return "note/notewrite";
+    }*/
+
+    // 收藏查询
+    @RequestMapping("collectfind")
+    public String dsafdsf(Model model, HttpServletRequest request, @RequestParam("iscollect") String iscollected, @RequestParam("cata") Long cid,
+                          HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "baseKey", required = false) String baseKey
+            , @RequestParam(value = "type", required = false) String type,
+                          @RequestParam(value = "status", required = false) String status,
+                          @RequestParam(value = "time", required = false) String time,
+                          @RequestParam(value = "icon", required = false) String icon
+    ) {
+        if (cid == -2)
+            cid = null;
+        Long userid = Long.valueOf(session.getAttribute("userId") + "");
+        long collect = Long.valueOf(iscollected);
+
+        System.out.println("收集" + collect);
+        if (collect == 1) {
+            setSomething(baseKey, type, status, time, icon, model, cid, null);
+            Page<Note> upage = NoteService.sortpage(page, null, userid, collect, cid, null, type, status, time);
+            model.addAttribute("url", "collectfind");
+//            paging(model, upage);
+            //获得数据之后就将cid重新设置
+            if (cid == null)
+                cid = -2l;
+            model.addAttribute("sort", "&iscollect=" + collect + "&cata=" + cid);
+            model.addAttribute("sort2", "&iscollect=" + collect + "&cata=" + cid);
+            model.addAttribute("collect", 0);
+        } else if (collect == 0) {
+            setSomething(baseKey, type, status, time, icon, model, cid, null);
+            Page<Note> upage = NoteService.sortpage(page, null, userid, null, cid, null, type, status, time);
+            model.addAttribute("url", "notewrite");
+//            paging(model, upage);
+            model.addAttribute("sort", "&userid=" + userid);
+            model.addAttribute("sort2", "&userid=" + userid);
+            model.addAttribute("collect", 1);
+        }
+
+        typePOListAndStatusPOList(request);
+
+        return "note/notewrite";
     }
+
+
+    // 保存的get方法
+    @RequestMapping(value = "notesave", method = RequestMethod.GET)
+    public void testdfd(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    }
+
+
+    // 目录删除
+    @RequestMapping("catadelete")
+    public String testrwd(Model model, HttpServletRequest request, HttpSession session) {
+        long realuserId = Long.valueOf(session.getAttribute("userId") + "");
+        String cid = request.getParameter("cid");
+        long catalogid = Long.valueOf(cid);
+//		Page<Note> upage= NoteService.paging(page, null, null, null, catalogid, null);
+//		paging(model, upage);
+        noteList = noteDao.findByCatalogId(catalogid, realuserId);
+        // 没有做级联删除 先删除目录下的笔记 再删除目录
+        for (Note note : noteList) {
+            NoteService.delete(note.getNoteId());
+        }
+        catalogService.delete(catalogid);
+
+        return "redirect:/noteview";
+    }
+
 
     // 显示表格所有
     @RequestMapping(value = "notewrite", method = RequestMethod.GET)
@@ -760,16 +758,18 @@ public class NoteController {
     private FileServiceV2 fileServiceV2;
     @Resource
     private NoteListPOMapper noteListPOMapper;
+    @Resource
+    private AttachmentServiceV2 attachmentServiceV2;
 
     // 笔记主界面
     @RequestMapping(value = "noteview", method = RequestMethod.GET)
-    public String test(Model model, HttpServletRequest request, HttpSession session,
-                       @RequestParam(value = "page", defaultValue = "0") int page,
-                       @RequestParam(value = "baseKey", required = false) String baseKey,
-                       @RequestParam(value = "type", required = false) String type,
-                       @RequestParam(value = "status", required = false) String status,
-                       @RequestParam(value = "time", required = false) String time,
-                       @RequestParam(value = "icon", required = false) String icon) {
+    public String noteView(Model model, HttpServletRequest request, HttpSession session,
+                           @RequestParam(value = "page", defaultValue = "0") int page,
+                           @RequestParam(value = "baseKey", required = false) String baseKey,
+                           @RequestParam(value = "type", required = false) String type,
+                           @RequestParam(value = "status", required = false) String status,
+                           @RequestParam(value = "time", required = false) String time,
+                           @RequestParam(value = "icon", required = false) String icon) {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
         List<CatalogPO> catalogPOS = catalogPOServiceV2.getCatalogPOByUserId(userId);//根据用户id获取用户的目录信息（即笔记下面的目录）
         setSomething(baseKey, type, status, time, icon, model, null, null);
@@ -869,9 +869,9 @@ public class NoteController {
 
     // 编辑（新建，修改）
     @RequestMapping(value = "noteedit")
-    public String test4(HttpServletRequest Request, HttpSession session, Model model,
-                        @RequestParam(value = "page", defaultValue = "0") int page,
-                        @RequestParam(value = "size", defaultValue = "10") int size) {
+    public String noteEdit(HttpServletRequest Request, HttpSession session, Model model,
+                           @RequestParam(value = "page", defaultValue = "0") int page,
+                           @RequestParam(value = "size", defaultValue = "10") int size) {
         //验证的重载
         if (!StringUtils.isEmpty(Request.getAttribute("errormess"))) {
             Request.setAttribute("errormess", Request.getAttribute("errormess"));
@@ -950,10 +950,22 @@ public class NoteController {
         model.addAttribute("url", "namereceive");
     }
 
-    // 保存的post方法（笔记新建）
+
+    /**
+     * 保存的新建，修改的方法（笔记新建,修改）
+     *
+     * @param file    附件
+     * @param note2   前端的填写的笔记信息
+     * @param br
+     * @param request
+     * @param session
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
     @RequestMapping(value = "notesave", method = RequestMethod.POST)
-    public String testdfddf(@RequestParam("file") MultipartFile file, @Valid NoteListVO note2, BindingResult br,
-                            HttpServletRequest request, HttpSession session) throws IllegalStateException, IOException {
+    public String noteSave(@RequestParam("file") MultipartFile file, @Valid NoteListVO note2, BindingResult br,
+                           HttpServletRequest request, HttpSession session) throws IllegalStateException, IOException {
         NoteListPO noteListPO = new NoteListPO();//为插入或更新数据库笔记
         Long attachId = null;
         Set<UserPO> userPOS = null;
@@ -1093,18 +1105,124 @@ public class NoteController {
     /**
      * 删除笔记
      *
-     * @param realuserId
-     * @param noteid 笔记id
+     * @param userId 用户ID
+     * @param noteId 笔记id
      */
-    private void notedelete(long realuserId, long noteid) {
+    private void notedelete(long userId, long noteId) {
         //删除共享笔记就是只删除中间表noteid对应的那个userid
-        Note note = noteDao.findOne(noteid);
-        if (note.getTypeId() == 7) {
-            noteUserDao.delete(noteUserDao.findid(noteid, realuserId));
+        NoteListPO noteListPO = noteListPOServiceV2.getNoteListPOByNoteId(noteId);//笔记信息
+        Long receiverNotePOId = receiverNotePOServiceV2.getReceiverNotePOByUserIdAndNoteId(userId, noteId).getId();
+        if (noteListPO.getTypeId() == 7) {//共享笔记
+            receiverNotePOServiceV2.deleteReceiverNotePOByReceiverNotePO(receiverNotePOId);
+        } else {
+            receiverNotePOServiceV2.deleteReceiverNotePOByReceiverNotePO(receiverNotePOId);//先删除用户关联表的信息
+            //如果笔记的类型不是共享类型的就直接删除
+            noteListPOServiceV2.deleteNoteListPOByNoteListPOId(noteId);
         }
-        //如果笔记的类型不是共享类型的就直接删除
-        else
-            NoteService.delete(noteid);
+    }
+
+    // 笔记删除
+    @RequestMapping("notedelete")
+    public String noteDelete(Model model, HttpServletRequest request, HttpSession session) {
+        long userId = Long.valueOf(session.getAttribute("userId") + "");
+        Long noteId = Long.valueOf(request.getParameter("nid"));
+        //根据用户ID和笔记ID找关联表信息
+        ReceiverNotePO receiverNotePO = receiverNotePOServiceV2.getReceiverNotePOByUserIdAndNoteId(userId, noteId);
+        if (receiverNotePO != null) {//该笔记还在分享
+            notedelete(userId, noteId);
+            return "redirect:/noteview";
+        } else {
+            System.out.println("权限不匹配，不能删除");
+            return "redirect:/notlimit";
+
+        }
+
+    }
+
+    // 笔记批量删除
+    @RequestMapping("notesomedelete")
+    public String noteSomeDelete(HttpServletRequest request, HttpSession session) {
+        long userId = Long.valueOf(session.getAttribute("userId") + "");
+        String noteIds = request.getParameter("sum");
+        String[] strings = noteIds.split(";");
+        for (String stringNoteId : strings) {
+            long noteId = Long.valueOf(stringNoteId);
+            notedelete(userId, noteId);
+        }
+        return "redirect:/noteview";
+    }
+
+    // 显示具体信息
+    @RequestMapping("noteinfo")
+    public String noteInfo(@Param("id") String id, HttpServletRequest Request) {
+        Long noteId = Long.valueOf(id);//笔记ID
+        NoteListPO noteListPO = noteListPOServiceV2.getNoteListPOByNoteId(noteId);//笔记信息
+        UserPO userPO = userServiceV2.getUserPOByUserId(noteListPO.getCreatemanId()); // 笔记创建人信息
+        if (noteListPO.getAttachId() != null) {
+            AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(noteListPO.getAttachId());//附件信息
+            Request.setAttribute("att", attachmentListPO);
+        }
+        noteListPO.setCreateTime(new Timestamp(noteListPO.getCreateTime().getTime()));//设置时间格式
+        Request.setAttribute("note", noteListPO);
+        Request.setAttribute("user", userPO);
+        return "note/noteinfo";
+    }
+
+    // 下载文件
+    @RequestMapping("down")
+    public void down(HttpServletResponse response, HttpServletRequest request) {
+        AttachmentListPO attachmentListPO = null;
+//        if (StringUtils.isEmpty(request.getParameter("paid")) || request.getParameter("paid") == null
+//                || request.getParameter("paid").length() == 0) {
+        if (StringUtils.isEmpty(request.getParameter("attrid")) || request.getParameter("attrid") == null
+                || request.getParameter("attrid").length() == 0) {
+        } else {
+            Long attachmentListPOId = Long.valueOf(request.getParameter("attrid"));
+            attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(attachmentListPOId);//附件信息
+        }
+        if (StringUtils.isEmpty(request.getParameter("nid")) || request.getParameter("nid") == null
+                || request.getParameter("nid").length() == 0) {
+        } else {
+            Long noteId = Long.valueOf(request.getParameter("nid"));
+            NoteListPO noteListPO = noteListPOServiceV2.getNoteListPOByNoteId(noteId);//笔记信息
+            attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(noteListPO.getAttachId());
+        }
+        File file = fileServiceV2.getFile(attachmentListPO.getAttachmentPath());
+        try {
+            // 在浏览器里面显示
+            response.setContentLength(Integer.valueOf(attachmentListPO.getAttachmentSize()));//设置大小
+            response.setContentType(attachmentListPO.getAttachmentType());//设置格式
+            response.setHeader("Content-Disposition",
+                    "attachment;filename=" + new String(attachmentListPO.getAttachmentName().getBytes("UTF-8"), "ISO8859-1"));
+            ServletOutputStream sos = response.getOutputStream();
+            byte[] data = new byte[Integer.valueOf(attachmentListPO.getAttachmentSize())];
+            IOUtils.readFully(new FileInputStream(file), data);
+            IOUtils.write(data, sos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 收藏
+    @RequestMapping("collect")
+    public String collect(Model model, HttpServletRequest request,
+                          HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page,
+                          @RequestParam(value = "baseKey", required = false) String baseKey,
+                          @RequestParam(value = "type", required = false) String type,
+                          @RequestParam(value = "status", required = false) String status,
+                          @RequestParam(value = "time", required = false) String time,
+                          @RequestParam(value = "icon", required = false) String icon) {
+        Long userId = Long.valueOf(session.getAttribute("userId") + "");
+        String noteId = request.getParameter("id");//笔记id
+        String isCollected = request.getParameter("iscollected");
+        noteListPOServiceV2.updateCollected(Long.valueOf(isCollected),Long.valueOf(noteId));
+        setSomething(baseKey, type, status, time, icon, model, null, null);
+        List<NoteListPO>noteListPOS = noteServiceV2.sortPage(null,userId,null,null,null,type,status,time);
+        model.addAttribute("url", "notewrite");
+        paging(model,noteListPOS,page);
+        model.addAttribute("sort", "&userid=" + userId);
+        typePOListAndStatusPOList(request);
+        return "note/notewrite";
     }
 
 }
