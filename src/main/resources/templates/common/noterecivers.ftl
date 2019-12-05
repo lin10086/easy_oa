@@ -37,14 +37,14 @@
 															</span>
 												</td>
 												<#list deptlist as dept>
-												<#if emp.dept.deptId==dept.deptId>
+												<#if emp.deptId==dept.deptId>
 												<td class="col-xs-2">${dept.deptName}</td>
 												</#if>
 												</#list>
 												<td class=" col-xs-2">${emp.realName} </td>
 												<td class="col-xs-2 na">${emp.userName}</td>
 												<#list poslist as pos>
-												<#if emp.position.id==pos.id>
+												<#if emp.positionId==pos.positionId>
 												<td class=" col-xs-2">${pos.name}</td>
 												</#if>
 												</#list>

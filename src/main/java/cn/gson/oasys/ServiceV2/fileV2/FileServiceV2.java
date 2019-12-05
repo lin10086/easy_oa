@@ -67,7 +67,7 @@ public class FileServiceV2 {
      * @throws IllegalStateException
      * @throws IOException
      */
-    public void saveFile(MultipartFile file, UserPO userPO, FilePathPO nowpath, boolean isfile) throws IllegalStateException, IOException {
+    public Object saveFile(MultipartFile file, UserPO userPO, FilePathPO nowpath, boolean isfile) throws IllegalStateException, IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM");
         File root = new File(this.rootPath, simpleDateFormat.format(new Date()));//根目录+日期年月
 
@@ -81,10 +81,14 @@ public class FileServiceV2 {
         file.transferTo(targetFile);//把文件存在项目里
 
         String filename = file.getOriginalFilename();// 原始文件名
-        String newFilename = onlyname(filename, nowpath.getPathId(), suffix, 1, true);
+        String newFilename = null;
+        if (nowpath != null) {
+            newFilename = onlyname(filename, nowpath.getPathId(), suffix, 1, true);
+        }
         String filePath = targetFile.getAbsolutePath().replace("\\", "/").replace(this.rootPath, "");
         if (isfile) {//使用上传
-            fileListServiceV2.insertFileListPO(newFilename, filePath, suffix, file.getSize(), nowpath.getPathId(), file.getContentType(), userPO.getUserId());
+            FileListPO fileListPO = fileListServiceV2.insertFileListPO(newFilename, filePath, suffix, file.getSize(), nowpath.getPathId(), file.getContentType(), userPO.getUserId());
+            return fileListPO;
         } else {
             AttachmentListPO attachmentListPO = new AttachmentListPO();
             attachmentListPO.setAttachmentName(filename);
@@ -96,6 +100,7 @@ public class FileServiceV2 {
             attachmentListPO.setUserId(userPO.getUserId() + "");
             attachmentListPO.setModel("note");
             attachmentListPOMapper.insertSelective(attachmentListPO);
+            return attachmentListPO;
         }
     }
 
@@ -139,7 +144,6 @@ public class FileServiceV2 {
         File root = new File(this.rootPath, simpleDateFormat.format(new Date()));
 
         File savepath = new File(root, userVO.getUserName());
-        //System.out.println(savePath.getPath());
 
         if (!savepath.exists()) {
             savepath.mkdirs();

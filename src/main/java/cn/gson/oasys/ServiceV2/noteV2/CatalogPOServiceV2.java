@@ -16,10 +16,28 @@ public class CatalogPOServiceV2 {
     @Resource
     private CatalogPOMapper catalogPOMapper;
 
+    /**
+     * 根据用户id找用户目录列表
+     *
+     * @param userId 用户id
+     * @return
+     */
     public List<CatalogPO> getCatalogPOByUserId(Long userId) {
         CatalogPOExample catalogPOExample = new CatalogPOExample();
         catalogPOExample.createCriteria().andCataUserIdEqualTo(userId);
         List<CatalogPO> catalogPOS = catalogPOMapper.selectByExample(catalogPOExample);
         return catalogPOS;
     }
+
+    /**
+     * 根据目录id找目录信息
+     *
+     * @param catalogId 目录id
+     * @return
+     */
+    public CatalogPO getCatalogPOByCatalogId(Long catalogId) {
+        CatalogPO catalogPO = catalogPOMapper.selectByPrimaryKey(catalogId);
+        return catalogPO;
+    }
+
 }

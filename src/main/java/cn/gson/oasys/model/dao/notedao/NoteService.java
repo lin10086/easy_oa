@@ -49,7 +49,8 @@ public class NoteService {
         if (!StringUtils.isEmpty(baseKey) && !StringUtils.isEmpty(catalogId)) {
 
             return noteDao.findBytitleAndCatalogId(baseKey, userid, catalogId, pa);
-        }//0为降序 1为升序
+        }
+        //0为降序 1为升序
         if (!StringUtils.isEmpty(isCollected)) {
 
             if (!StringUtils.isEmpty(isCollected) && !StringUtils.isEmpty(catalogId)) {
@@ -86,6 +87,7 @@ public class NoteService {
                         return noteDao.findByTypeIdOrderByCreateTimeAsc(typeId, catalogId, userid, pa);
                 } else return noteDao.findByTypeIdOrderByCreateTimeDesc(typeId, catalogId, userid, pa);
             }
+
             if (!StringUtils.isEmpty(typeId) && StringUtils.isEmpty(catalogId)) {
                 System.out.println("单纯类型");
                 //为空就直接按照类型查找

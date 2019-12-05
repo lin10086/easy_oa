@@ -30,14 +30,9 @@
                             <span class="glyphicon glyphicon-triangle-left"></span></a>
                     </#if>
                     <a disabled="disabled" class="btn btn-default no-padding" style="width: 30px; height: 20px;">
-                        <#--<#if (page.number+1) gte page.totalPages>-->
-                        <#--${page.totalPages}-->
-                        <#--自己的-->
                         <#if (page.pageNo) gte page.totalPageCount>
                             ${page.totalPageCount}
                         <#else>
-                        <#--${page.number+1}-->
-                        <#--自己的-->
                             ${page.pageNo}
                         </#if>
                     </a>
@@ -66,31 +61,31 @@
     /* 分页插件按钮的点击事件 */
     /* url是从后台接收过来的链接，sort是记录排序规则 */
     $('.tablefirst').on('click', function () {
-        if (${page.isIsFirstPage()?string('true','false')}==false
+        if (${page.isFirstPage()?string('true','false')}==true
     )
         {
-            <#--$('.thistable').load('${url}?page=0${(sort)!''}');-->
+            $('.thistable').load('${url}?page=1${(sort)!''}');
         }
     });
     $('.tableup').on('click', function () {
-        if (${page.isIsFirstPage()?string('true','false')}==false
+        if (${page.isFirstPage()?string('true','false')}==false
     )
         {
-            $('.thistable').load('${url}?page=${(page.getPageNum())-1}${(sort)!''}');
+            $('.thistable').load('${url}?page=${(page.pageNo)-1}${(sort)!''}');
         }
     });
     $('.tabledown').on('click', function () {
-        if (${page.isIsLastPage()?string('true','false')}==false
+        if (${page.isLastPage()?string('true','false')}==false
     )
         {
-            $('.thistable').load('${url}?page=${(page.getPageNum())+1}${(sort)!''}');
+            $('.thistable').load('${url}?page=${(page.pageNo)+1}${(sort)!''}');
         }
     });
     $('.tablelast').on('click', function () {
-        if (${page.isIsLastPage()?string('true','false')}==false
+        if (${page.isLastPage()?string('true','false')}==true
     )
         {
-            $('.thistable').load('${url}?page=${(page.getPages())-1}${(sort)!''}');
+            $('.thistable').load('${url}?page=${(page.totalPageCount)}${(sort)!''}');
         }
 
     });

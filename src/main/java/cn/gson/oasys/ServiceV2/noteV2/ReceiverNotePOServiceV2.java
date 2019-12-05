@@ -36,8 +36,21 @@ public class ReceiverNotePOServiceV2 {
     public List<Long> getNoteIdByReceiverNotePO(List<ReceiverNotePO> receiverNotePOS) {
         List<Long> noteIds = new ArrayList<>();
         for (ReceiverNotePO receiverNotePO : receiverNotePOS) {
-            noteIds.add(receiverNotePO.getId());
+            noteIds.add(receiverNotePO.getNoteId());
         }
         return noteIds;
+    }
+
+    /**
+     * 笔记用户关联表插入接收人
+     *
+     * @param userId 接收用户ID
+     * @param noteId 笔记ID
+     */
+    public void insertReceiverNotePOByNoteIdAndUserId(Long userId, Long noteId) {
+        ReceiverNotePO receiverNotePO = new ReceiverNotePO();
+        receiverNotePO.setNoteId(noteId);
+        receiverNotePO.setUserId(userId);
+        receiverNotePOMapper.insertSelective(receiverNotePO);
     }
 }

@@ -8,7 +8,6 @@ import cn.gson.oasys.mappers.PlanListPOMapper;
 import cn.gson.oasys.model.po.PlanListPO;
 import cn.gson.oasys.model.po.PlanListPOExample;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
 
 @Service
 @Slf4j
@@ -48,7 +46,7 @@ public class PlanListServiceV2 {
         PlanListPOExample.Criteria criteria1 = planListPOExample.createCriteria().andTitleLike("%" + baseKey + "%").andPlanUserIdEqualTo(userId);
 
         //根据类型名模糊查找
-        List<Long> longList = typeServiceV2.getTypePOIdByTypeName("%" + baseKey + "%");
+        List<Long> longList = typeServiceV2.getTypePOIdByTypeNameLike("%" + baseKey + "%");
         PlanListPOExample.Criteria criteria2 = planListPOExample.createCriteria().andPlanUserIdEqualTo(userId).
                 andTypeIdIn(longList);
         //根据状态名模糊查找
@@ -137,7 +135,7 @@ public class PlanListServiceV2 {
      * @return
      */
     public List<PlanListPO> getPlanListPOSByTypeName(int page, String selectTypeName) {
-        List<Long> longList = typeServiceV2.getTypePOIdByTypeName(selectTypeName);
+        List<Long> longList = typeServiceV2.getTypePOIdByTypeNameLike(selectTypeName);
         PageHelper.startPage(page, 10);
         PlanListPOExample planListPOExample = new PlanListPOExample();
         planListPOExample.createCriteria().andTypeIdIn(longList);

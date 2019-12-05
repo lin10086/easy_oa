@@ -35,14 +35,14 @@ public class TypeServiceV2 {
     }
 
     /**
-     * 根据类型名找类型
+     * 根据类型模糊找类型
      *
      * @param typeName 类型名
      * @return 返回类型id
      */
-    public List<Long> getTypePOIdByTypeName(String typeName) {
+    public List<Long> getTypePOIdByTypeNameLike(String typeName) {
         TypePOExample typePOExample = new TypePOExample();
-        typePOExample.createCriteria().andTypeNameEqualTo(typeName);
+        typePOExample.createCriteria().andTypeNameLike("%" + typeName + "%");
         List<TypePO> typePOList = typePOMapper.selectByExample(typePOExample);
         List<Long> longList = new ArrayList<>();
         for (TypePO typePO : typePOList) {

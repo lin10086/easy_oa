@@ -45,8 +45,9 @@ public class FileListServiceV2 {
      * @param FilePathId      文件夹id
      * @param fileContentType 文件类型
      * @param userId          用户id
+     * @return
      */
-    public void insertFileListPO(String newFileName, String filePath, String suffix, Long fileSize, Long FilePathId, String fileContentType, Long userId) {
+    public FileListPO insertFileListPO(String newFileName, String filePath, String suffix, Long fileSize, Long FilePathId, String fileContentType, Long userId) {
         FileListPO fileListPO = new FileListPO();
         fileListPO.setFileName(newFileName);
         fileListPO.setFilePath(filePath);
@@ -59,6 +60,7 @@ public class FileListServiceV2 {
         fileListPO.setFileIsshare(0L);
         fileListPO.setFileIstrash(0L);
         fileListPOMapper.insertSelective(fileListPO);
+        return fileListPO;
     }
 
     /**
