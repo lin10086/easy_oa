@@ -56,6 +56,6 @@
 										</table>
 										</div>
 
-										<#include "/common/notepaging.ftl">
+										<#include "/common/paging.ftl">
 
 								

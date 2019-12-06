@@ -519,7 +519,7 @@ public class NoteListPOServiceV2 {
      * @param noteId      笔记ID
      * @return
      */
-    public Integer updateCollected(Long isCollected, Long noteId) {
+    public Integer updateNoteListPOByCollected(Long isCollected, Long noteId) {
         NoteListPO noteListPO = new NoteListPO();
         noteListPO.setNoteId(noteId);
         noteListPO.setIsCollected(isCollected);

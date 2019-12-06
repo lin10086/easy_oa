@@ -4,18 +4,12 @@
              style="background: #fff; border: 0px; margin-top: 0px; padding: 2px; height: 25px;">
             <div style="width: 40%; float: left;">
                 <div class="pageInfo" style="margin-left: 5px;">
-                    <#--共<span>${page.totalElements}</span>条 | 每页<span>${page.size}</span>条-->
-                    <#--| 共<span>${page.totalPages}</span>页-->
-                    <#--共<span>${page.getTotal()}</span>条 | 每页<span>${page.getPageSize()}</span>条
-                    | 共<span>${page.getPages()}</span>页-->
                     共<span>${page.totalCount}</span>条 | 每页<span>${page.pageSize}</span>条
                     | 共<span>${page.totalPageCount}</span>页
                 </div>
             </div>
             <div style="width: 60%; float: left;">
                 <div class="pageOperation">
-                    <!--判断是否是第一页  -->
-                    <#--<#if page.first==true>-->
                     <#if page.isFirstPage()==true>
                         <a class="btn btn-sm btn-default no-padding tablefirst" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
@@ -36,9 +30,6 @@
                             ${page.pageNo}
                         </#if>
                     </a>
-                    <!--判断是否是最后一页  -->
-                    <#--<#if page.last==true>-->
-                    <#--自己改的-->
                     <#if page.isLastPage()==true>
                         <a class="btn btn-sm btn-default no-padding tabledown" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
@@ -61,7 +52,7 @@
     /* 分页插件按钮的点击事件 */
     /* url是从后台接收过来的链接，sort是记录排序规则 */
     $('.tablefirst').on('click', function () {
-        if (${page.isFirstPage()?string('true','false')}==true
+        if (${page.isFirstPage()?string('true','false')}==false
     )
         {
             $('.thistable').load('${url}?page=1${(sort)!''}');
@@ -82,7 +73,7 @@
         }
     });
     $('.tablelast').on('click', function () {
-        if (${page.isLastPage()?string('true','false')}==true
+        if (${page.isLastPage()?string('true','false')}==false
     )
         {
             $('.thistable').load('${url}?page=${(page.totalPageCount)}${(sort)!''}');

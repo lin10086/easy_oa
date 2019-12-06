@@ -12,16 +12,16 @@
                 <div class="pageOperation">
                     <!--判断是否是第一页  -->
                     <#if page.isFirstPage()==true>
-                        <a class="btn btn-sm btn-default no-padding tablefirst1" disabled="disabled"
+                        <a class="btn btn-sm btn-default no-padding tablefirst" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
                                     class="glyphicon glyphicon-backward"></span></a>
-                        <a class="btn btn-sm btn-default no-padding tableup1" disabled="disabled"
+                        <a class="btn btn-sm btn-default no-padding tableup" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
                                     class="glyphicon glyphicon-triangle-left"></span></a>
                     <#else>
-                        <a class="btn btn-sm btn-default no-padding tablefirst1" style="width: 30px; height: 20px;">
+                        <a class="btn btn-sm btn-default no-padding tablefirst" style="width: 30px; height: 20px;">
                             <span class="glyphicon glyphicon-backward"></span></a>
-                        <a class="btn btn-sm btn-default no-padding tableup1" style="width: 30px; height: 20px;">
+                        <a class="btn btn-sm btn-default no-padding tableup" style="width: 30px; height: 20px;">
                             <span class="glyphicon glyphicon-triangle-left"></span></a>
                     </#if>
                     <a disabled="disabled" class="btn btn-default no-padding" style="width: 30px; height: 20px;">
@@ -33,17 +33,17 @@
                     </a>
                     <!--判断是否是最后一页  -->
                     <#if page.isLastPage()==true>
-                        <a class="btn btn-sm btn-default no-padding tabledown1" disabled="disabled"
+                        <a class="btn btn-sm btn-default no-padding tabledown" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
                                     class="glyphicon glyphicon-triangle-right"></span></a>
-                        <a class="btn btn-sm btn-default no-padding tablelast1" disabled="disabled"
+                        <a class="btn btn-sm btn-default no-padding tablelast" disabled="disabled"
                            style="width: 30px; height: 20px;"> <span
                                     class="glyphicon glyphicon-forward"></span></a>
                     <#else>
-                        <a class="btn btn-sm btn-default no-padding tabledown1"
+                        <a class="btn btn-sm btn-default no-padding tabledown"
                            style="width: 30px; height: 20px;"> <span
                                     class="glyphicon glyphicon-triangle-right"></span></a>
-                        <a class="btn btn-sm btn-default no-padding tablelast1"
+                        <a class="btn btn-sm btn-default no-padding tablelast"
                            style="width: 30px; height: 20px;"> <span
                                     class="glyphicon glyphicon-forward"></span></a>
                     </#if>
@@ -56,7 +56,7 @@
     /* 分页插件按钮的点击事件 */
     /* url是从后台接收过来的链接，sort是记录排序规则 */
     $('.tablefirst').on('click', function () {
-        if (${page.isFirstPage()?string('true','false')}==true
+        if (${page.isFirstPage()?string('true','false')}==false
     )
         {
             $('.thistable').load('${url}?page=1${(sort)!''}');
@@ -77,7 +77,7 @@
         }
     });
     $('.tablelast').on('click', function () {
-        if (${page.isLastPage()?string('true','false')}==true
+        if (${page.isLastPage()?string('true','false')}==false
     )
         {
             $('.thistable').load('${url}?page=${(page.totalPageCount)}${(sort)!''}');

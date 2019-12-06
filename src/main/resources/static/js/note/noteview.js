@@ -39,9 +39,8 @@ $(function () {
 
                 })
             })
-
     //收藏
-    $(".collect").on(
+    $(".collect").off().on(
         "click",
         function () {
             var $id = $(this).attr("id");
@@ -51,13 +50,13 @@ $(function () {
                     "glyphicon-star")
                 //已经收藏
                 iscollect = 1;
-                // alert("收藏成功")
+                alert("收藏成功")
             } else if ($(this).hasClass("glyphicon-star")) {
                 $(this).removeClass("glyphicon-star").addClass(
                     "glyphicon-star-empty")
                 //取消收藏
                 iscollect = 0;
-                // alert("取消收藏")
+                alert("取消收藏")
             }
             $.ajax({
                 type: "get",

@@ -17,6 +17,24 @@ public class CatalogPOServiceV2 {
     private CatalogPOMapper catalogPOMapper;
 
     /**
+     * 插入一条目录
+     *
+     * @param catalogPO 目录信息
+     */
+    public void insertCatalogPO(CatalogPO catalogPO) {
+        catalogPOMapper.insertSelective(catalogPO);
+    }
+
+    /**
+     * 根据目录ID删除目录信息
+     *
+     * @param catalogPOId 目录ID
+     */
+    public void deleteCatalogPOByCatalogId(Long catalogPOId) {
+        catalogPOMapper.deleteByPrimaryKey(catalogPOId);
+    }
+
+    /**
      * 根据用户id找用户目录列表
      *
      * @param userId 用户id

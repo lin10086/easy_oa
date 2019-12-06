@@ -33,12 +33,12 @@ public class NoteServiceV2 {
         if (!StringUtils.isEmpty(isCollected)) {
             //通过目录查找是否已经收藏
             if (!StringUtils.isEmpty(isCollected) && !StringUtils.isEmpty(catalogId)) {
-                List<NoteListPO> noteListPOS = noteListPOServiceV2.getNoteListPOSByNoteIdInAndCatalogIdAndCollected(noteIds, catalogId, catalogId);
+                List<NoteListPO> noteListPOS = noteListPOServiceV2.getNoteListPOSByNoteIdInAndCatalogIdAndCollected(noteIds, catalogId, isCollected);
                 return noteListPOS;
             }
             //单纯查找是否已经收藏
             if (!StringUtils.isEmpty(isCollected) && StringUtils.isEmpty(catalogId)) {
-                List<NoteListPO> noteListPOS = noteListPOServiceV2.getNoteListPOSByNoteIdInAndCollected(noteIds, catalogId);
+                List<NoteListPO> noteListPOS = noteListPOServiceV2.getNoteListPOSByNoteIdInAndCollected(noteIds, isCollected);
                 return noteListPOS;
             }
         }

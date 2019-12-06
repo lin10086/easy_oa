@@ -209,7 +209,7 @@
     </div>
 
 
-    <#include "/common/paging.ftl">
+    <#include "/common/notepaging.ftl">
 
 </div>
 				

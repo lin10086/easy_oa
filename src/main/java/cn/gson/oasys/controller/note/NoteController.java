@@ -3,10 +3,7 @@ package cn.gson.oasys.controller.note;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +29,6 @@ import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
 import cn.gson.oasys.vo.noteVO.NoteListVO;
-import com.github.pagehelper.PageInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -57,7 +53,6 @@ import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.MapToList;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
-import cn.gson.oasys.controller.attendce.AttendceController;
 import cn.gson.oasys.model.dao.notedao.AttachmentDao;
 import cn.gson.oasys.model.dao.notedao.CatalogDao;
 import cn.gson.oasys.model.dao.notedao.CatalogService;
@@ -72,7 +67,6 @@ import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.entity.note.Attachment;
 import cn.gson.oasys.model.entity.note.Catalog;
 import cn.gson.oasys.model.entity.note.Note;
-import cn.gson.oasys.model.entity.note.Noteuser;
 import cn.gson.oasys.model.entity.system.SystemStatusList;
 import cn.gson.oasys.model.entity.system.SystemTypeList;
 import cn.gson.oasys.model.entity.user.Dept;
@@ -539,7 +533,7 @@ public class NoteController {
     }*/
 
     // 收藏查询
-    @RequestMapping("collectfind")
+   /* @RequestMapping("collectfind")
     public String dsafdsf(Model model, HttpServletRequest request, @RequestParam("iscollect") String iscollected, @RequestParam("cata") Long cid,
                           HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "baseKey", required = false) String baseKey
             , @RequestParam(value = "type", required = false) String type,
@@ -577,88 +571,9 @@ public class NoteController {
         typePOListAndStatusPOList(request);
 
         return "note/notewrite";
-    }
+    }*/
 
-
-    // 保存的get方法
-    @RequestMapping(value = "notesave", method = RequestMethod.GET)
-    public void testdfd(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-    }
-
-
-    // 目录删除
-    @RequestMapping("catadelete")
-    public String testrwd(Model model, HttpServletRequest request, HttpSession session) {
-        long realuserId = Long.valueOf(session.getAttribute("userId") + "");
-        String cid = request.getParameter("cid");
-        long catalogid = Long.valueOf(cid);
-//		Page<Note> upage= NoteService.paging(page, null, null, null, catalogid, null);
-//		paging(model, upage);
-        noteList = noteDao.findByCatalogId(catalogid, realuserId);
-        // 没有做级联删除 先删除目录下的笔记 再删除目录
-        for (Note note : noteList) {
-            NoteService.delete(note.getNoteId());
-        }
-        catalogService.delete(catalogid);
-
-        return "redirect:/noteview";
-    }
-
-
-    // 显示表格所有
-    @RequestMapping(value = "notewrite", method = RequestMethod.GET)
-    public String test33(Model model, HttpServletRequest request, HttpSession session,
-                         @RequestParam(value = "page", defaultValue = "0") int page,
-                         @RequestParam(value = "baseKey", required = false) String baseKey,
-                         @RequestParam(value = "type", required = false) String type,
-                         @RequestParam(value = "status", required = false) String status,
-                         @RequestParam(value = "time", required = false) String time,
-                         @RequestParam(value = "icon", required = false) String icon) {
-        Long userid = Long.parseLong(session.getAttribute("userId") + "");
-
-        setSomething(baseKey, type, status, time, icon, model, null, null);
-        Page<Note> upage = NoteService.sortpage(page, baseKey, userid, null, null, null, type, status, time);
-        typePOListAndStatusPOList(request);
-        if (baseKey != null) {
-            //如果有搜索关键字那么就记住它
-            request.setAttribute("sort", "&baseKey=" + baseKey);
-        }
-        //没有就默认查找所有
-        else
-            request.setAttribute("sort", "&userid=" + userid);
-//        paging(model, upage);
-        model.addAttribute("url", "notewrite");
-        return "note/notewrite";
-    }
-
-
-    // 查找类型
-    @RequestMapping("notetype")
-    public String test43(Model model, HttpServletRequest request, @RequestParam("typeid") Long tid, @RequestParam("id") Long cid, HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page
-            , @RequestParam(value = "baseKey", required = false) String baseKey, @RequestParam(value = "type", required = false) String type,
-                         @RequestParam(value = "status", required = false) String status,
-                         @RequestParam(value = "time", required = false) String time,
-                         @RequestParam(value = "icon", required = false) String icon
-    ) {
-        Long userid = Long.valueOf(session.getAttribute("userId") + "");
-        System.out.println(tid);
-        if (cid == -2)
-            cid = null;
-        System.out.println("目录" + cid);
-        setSomething(baseKey, type, status, time, icon, model, cid, tid);
-        Page<Note> upage = NoteService.sortpage(page, baseKey, userid, null, cid, tid, type, status, time);
-        System.out.println(upage.getContent());
-        //获得数据之后就将cid重新设置
-        if (cid == null)
-            cid = -2l;
-        request.setAttribute("sort2", "&id=" + cid + "&typeid=" + tid);
-//        paging(model, upage);
-        model.addAttribute("url", "notetype");
-        typePOListAndStatusPOList(request);
-        return "note/notewrite";
-    }
-
-    //查找目录
+   /* //查找目录
     @RequestMapping("notecata")
     public String sadf(Model model, HttpServletRequest request, HttpSession session,
                        @RequestParam("id") String cid,
@@ -682,10 +597,85 @@ public class NoteController {
         }
         typePOListAndStatusPOList(request);
         return "note/notewrite";
+    }*/
+
+   /* // 目录删除
+    @RequestMapping("catadelete")
+    public String testrwd(Model model, HttpServletRequest request, HttpSession session) {
+        long realuserId = Long.valueOf(session.getAttribute("userId") + "");
+        String cid = request.getParameter("cid");
+        long catalogid = Long.valueOf(cid);
+		Page<Note> upage= NoteService.paging(page, null, null, null, catalogid, null);
+		paging(model, upage);
+        noteList = noteDao.findByCatalogId(catalogid, realuserId);
+        // 没有做级联删除 先删除目录下的笔记 再删除目录
+        for (Note note : noteList) {
+            NoteService.delete(note.getNoteId());
+        }
+        catalogService.delete(catalogid);
+
+        return "redirect:/noteview";
+    }*/
+
+    /*// 查找类型
+    @RequestMapping("notetype")
+    public String test43(Model model, HttpServletRequest request, @RequestParam("typeid") Long tid, @RequestParam("id") Long cid, HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page
+            , @RequestParam(value = "baseKey", required = false) String baseKey, @RequestParam(value = "type", required = false) String type,
+                         @RequestParam(value = "status", required = false) String status,
+                         @RequestParam(value = "time", required = false) String time,
+                         @RequestParam(value = "icon", required = false) String icon
+    ) {
+        Long userid = Long.valueOf(session.getAttribute("userId") + "");
+        System.out.println(tid);
+        if (cid == -2)
+            cid = null;
+        System.out.println("目录" + cid);
+        setSomething(baseKey, type, status, time, icon, model, cid, tid);
+        Page<Note> upage = NoteService.sortpage(page, baseKey, userid, null, cid, tid, type, status, time);
+        System.out.println(upage.getContent());
+        //获得数据之后就将cid重新设置
+        if (cid == null)
+            cid = -2l;
+        request.setAttribute("sort2", "&id=" + cid + "&typeid=" + tid);
+        paging(model, upage);
+        model.addAttribute("url", "notetype");
+        typePOListAndStatusPOList(request);
+        return "note/notewrite";
+    }*/
+
+  /*  // 显示表格所有
+    @RequestMapping(value = "notewrite", method = RequestMethod.GET)
+    public String test33(Model model, HttpServletRequest request, HttpSession session,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
+                         @RequestParam(value = "baseKey", required = false) String baseKey,
+                         @RequestParam(value = "type", required = false) String type,
+                         @RequestParam(value = "status", required = false) String status,
+                         @RequestParam(value = "time", required = false) String time,
+                         @RequestParam(value = "icon", required = false) String icon) {
+        Long userid = Long.parseLong(session.getAttribute("userId") + "");
+
+        setSomething(baseKey, type, status, time, icon, model, null, null);
+        Page<Note> upage = NoteService.sortpage(page, baseKey, userid, null, null, null, type, status, time);
+        typePOListAndStatusPOList(request);
+        if (baseKey != null) {
+            //如果有搜索关键字那么就记住它
+            request.setAttribute("sort", "&baseKey=" + baseKey);
+        }
+        //没有就默认查找所有
+        else
+            request.setAttribute("sort", "&userid=" + userid);
+       paging(model, upage);
+        model.addAttribute("url", "notewrite");
+        return "note/notewrite";
+    }*/
+
+    // 保存的get方法
+    @RequestMapping(value = "notesave", method = RequestMethod.GET)
+    public void testdfd(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
     }
 
 
-    @RequestMapping("namereceive")
+  /*  @RequestMapping("namereceive")
     public String serch(Model model, HttpServletRequest req, @SessionAttribute("userId") Long userId,
                         @RequestParam(value = "page", defaultValue = "0") int page,
                         @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -732,7 +722,7 @@ public class NoteController {
 
         return "common/noterecivers";
 
-    }
+    }*/
 
 
     //	===================================================
@@ -764,7 +754,7 @@ public class NoteController {
     // 笔记主界面
     @RequestMapping(value = "noteview", method = RequestMethod.GET)
     public String noteView(Model model, HttpServletRequest request, HttpSession session,
-                           @RequestParam(value = "page", defaultValue = "0") int page,
+                           @RequestParam(value = "page", defaultValue = "1") int page,
                            @RequestParam(value = "baseKey", required = false) String baseKey,
                            @RequestParam(value = "type", required = false) String type,
                            @RequestParam(value = "status", required = false) String status,
@@ -843,7 +833,7 @@ public class NoteController {
         for (NoteListPO noteListPO : noteListPOS) {
             noteListPO.setCreateTime(new Timestamp(noteListPO.getCreateTime().getTime()));
         }
-        PageBO pageBO = new PageBO(page + 1);//pageBO默认是1，控制器默认是0
+        PageBO pageBO = new PageBO(page);
         pageBO.setTotalCount(noteListPOS.size());//设置总页数
         int star = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
         int end = pageBO.getPageNo() * pageBO.getPageSize();
@@ -870,7 +860,7 @@ public class NoteController {
     // 编辑（新建，修改）
     @RequestMapping(value = "noteedit")
     public String noteEdit(HttpServletRequest Request, HttpSession session, Model model,
-                           @RequestParam(value = "page", defaultValue = "0") int page,
+                           @RequestParam(value = "page", defaultValue = "1") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
         //验证的重载
         if (!StringUtils.isEmpty(Request.getAttribute("errormess"))) {
@@ -932,7 +922,7 @@ public class NoteController {
      */
     public void getUser(int page, int size, Model model) {
         List<UserPO> userPOListAll = userServiceV2.getUserAll();//所有用户
-        PageBO pageBO = new PageBO(page + 1, size);
+        PageBO pageBO = new PageBO(page, size);
         pageBO.setTotalCount(userPOListAll.size());
         int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
         int end = pageBO.getPageNo() * pageBO.getPageSize();
@@ -1078,29 +1068,6 @@ public class NoteController {
         return "forward:/noteedit";
     }
 
-    // post请求 添加类型（添加目录）
-    @RequestMapping(value = "noteview", method = RequestMethod.POST)
-    public String test3332(HttpServletRequest request, @Param("title") String title, HttpSession session) {
-        int flag = 0;
-        Long userid = Long.parseLong(session.getAttribute("userId") + "");
-        User user = userDao.findOne(userid);
-        String catalogName = request.getParameter("name");
-        if (catalogName != null) {
-            List<String> catanamelist = catalogDao.findcataname(userid);
-            for (String caname : catanamelist) {
-                if (caname.contains("(") && caname.contains(")"))
-                    caname = caname.substring(0, caname.indexOf("("));
-                if (caname.equals(catalogName)) {
-                    flag++;
-                }
-            }
-            if (flag == 0)
-                catalogDao.save(new Catalog(catalogName, user));
-            if (flag > 0)
-                catalogDao.save(new Catalog(catalogName + "(" + flag + ")", user));
-        }
-        return "redirect:/noteview";
-    }
 
     /**
      * 删除笔记
@@ -1206,7 +1173,7 @@ public class NoteController {
     // 收藏
     @RequestMapping("collect")
     public String collect(Model model, HttpServletRequest request,
-                          HttpSession session, @RequestParam(value = "page", defaultValue = "0") int page,
+                          HttpSession session, @RequestParam(value = "page", defaultValue = "1") int page,
                           @RequestParam(value = "baseKey", required = false) String baseKey,
                           @RequestParam(value = "type", required = false) String type,
                           @RequestParam(value = "status", required = false) String status,
@@ -1215,14 +1182,225 @@ public class NoteController {
         Long userId = Long.valueOf(session.getAttribute("userId") + "");
         String noteId = request.getParameter("id");//笔记id
         String isCollected = request.getParameter("iscollected");
-        noteListPOServiceV2.updateCollected(Long.valueOf(isCollected),Long.valueOf(noteId));
+        noteListPOServiceV2.updateNoteListPOByCollected(Long.valueOf(isCollected), Long.valueOf(noteId));
         setSomething(baseKey, type, status, time, icon, model, null, null);
-        List<NoteListPO>noteListPOS = noteServiceV2.sortPage(null,userId,null,null,null,type,status,time);
+        List<NoteListPO> noteListPOS = noteServiceV2.sortPage(null, userId, null, null, null, type, status, time);
         model.addAttribute("url", "notewrite");
-        paging(model,noteListPOS,page);
+        paging(model, noteListPOS, page);
         model.addAttribute("sort", "&userid=" + userId);
         typePOListAndStatusPOList(request);
         return "note/notewrite";
+    }
+
+    // 收藏查询
+    @RequestMapping("collectfind")
+    public String collectFind(Model model, HttpServletRequest request,
+                              @RequestParam("iscollect") String iscollected,
+                              @RequestParam("cata") Long cid,
+                              HttpSession session,
+                              @RequestParam(value = "page", defaultValue = "1") int page,
+                              @RequestParam(value = "baseKey", required = false) String baseKey,
+                              @RequestParam(value = "type", required = false) String type,
+                              @RequestParam(value = "status", required = false) String status,
+                              @RequestParam(value = "time", required = false) String time,
+                              @RequestParam(value = "icon", required = false) String icon) {
+        if (cid == -2) {//目录ID
+            cid = null;
+        }
+        Long userId = Long.valueOf(session.getAttribute("userId") + "");
+        long collected = Long.valueOf(iscollected);//是否收藏
+
+        if (collected == 1) {//收藏
+            setSomething(baseKey, type, status, time, icon, model, cid, null);
+            List<NoteListPO> noteListPOS = noteServiceV2.sortPage(null, userId, collected, cid, null, type, status, time);
+            model.addAttribute("url", "collectfind");
+            paging(model, noteListPOS, page);
+            //获得数据之后就将cid重新设置
+            if (cid == null)
+                cid = -2l;
+            model.addAttribute("sort", "&iscollect=" + collected + "&cata=" + cid);
+            model.addAttribute("sort2", "&iscollect=" + collected + "&cata=" + cid);
+            model.addAttribute("collect", 0);
+        } else if (collected == 0) {//不收藏
+            setSomething(baseKey, type, status, time, icon, model, cid, null);
+            List<NoteListPO> noteListPOS = noteServiceV2.sortPage(null, userId, null, cid, null, type, status, time);
+            model.addAttribute("url", "notewrite");
+            paging(model, noteListPOS, page);
+            model.addAttribute("sort", "&userid=" + userId);
+            model.addAttribute("sort2", "&userid=" + userId);
+            model.addAttribute("collect", 1);
+        }
+        typePOListAndStatusPOList(request);
+        return "note/notewrite";
+    }
+
+    // post请求 添加类型（添加目录）
+    @RequestMapping(value = "noteview", method = RequestMethod.POST)
+    public String addCatalogName(HttpServletRequest request, @Param("title") String title, HttpSession session) {
+        int flag = 0;
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");
+        String catalogName = request.getParameter("name");//新增的目录名
+        if (catalogName != null) {
+            List<String> catanamelist = catalogDao.findcataname(userId);//用户的目录列表
+            for (String caname : catanamelist) {
+                if (caname.contains("(") && caname.contains(")")) {//如果名字包含（）
+                    caname = caname.substring(0, caname.indexOf("("));//去点括号的真实名
+                }
+                if (caname.equals(catalogName)) {
+                    flag++;
+                }
+            }
+            if (flag == 0) {
+                CatalogPO catalogPO = new CatalogPO();
+                catalogPO.setCatalogName(catalogName);
+                catalogPO.setCataUserId(userId);
+                catalogPOServiceV2.insertCatalogPO(catalogPO);
+            }
+            if (flag > 0) {
+                CatalogPO catalogPO = new CatalogPO();
+                catalogPO.setCatalogName(catalogName + "(" + flag + ")");
+                catalogPO.setCataUserId(userId);
+                catalogPOServiceV2.insertCatalogPO(catalogPO);
+            }
+        }
+        return "redirect:/noteview";
+    }
+
+    //查找目录
+    @RequestMapping("notecata")
+    public String noteCatalogFind(Model model, HttpServletRequest request, HttpSession session,
+                                  @RequestParam("id") String cid,
+                                  @RequestParam(value = "page", defaultValue = "1") int page,
+                                  @RequestParam(value = "baseKey", required = false) String baseKey,
+                                  @RequestParam(value = "type", required = false) String type,
+                                  @RequestParam(value = "status", required = false) String status,
+                                  @RequestParam(value = "time", required = false) String time,
+                                  @RequestParam(value = "icon", required = false) String icon) {
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");
+        model.addAttribute("catalog", "&id=" + cid);//目录ID
+        //不为-2就是按照目录查找（为-2就是按照最近查找）
+        if (!request.getParameter("id").equals("-2")) {
+            Long catalogId = Long.valueOf(cid);
+            setSomething(baseKey, type, status, time, icon, model, catalogId, null);
+            List<NoteListPO> noteListPOS = noteServiceV2.sortPage(baseKey, userId, null, catalogId, null, type, status, time);
+            request.setAttribute("sort2", "&id=" + cid);
+            paging(model, noteListPOS, page);
+            model.addAttribute("url", "notecata");
+        }
+        typePOListAndStatusPOList(request);
+        return "note/notewrite";
+    }
+
+    // 目录删除
+    @RequestMapping("catadelete")
+    public String catalogDelete(Model model, HttpServletRequest request, HttpSession session) {
+        long userId = Long.valueOf(session.getAttribute("userId") + "");
+        long catalogId = Long.valueOf(request.getParameter("cid"));
+        List<NoteListPO> noteListPOS = noteServiceV2.sortPage(null, userId, null, catalogId, null, null, null, null);
+        paging(model, noteListPOS, 0);
+        for (NoteListPO noteListPO : noteListPOS) {
+            Long receiverNotePOId = receiverNotePOServiceV2.getReceiverNotePOByUserIdAndNoteId(userId, noteListPO.getNoteId()).getId();
+            receiverNotePOServiceV2.deleteReceiverNotePOByReceiverNotePO(receiverNotePOId);
+            noteListPOServiceV2.deleteNoteListPOByNoteListPOId(noteListPO.getNoteId());
+        }
+        catalogPOServiceV2.deleteCatalogPOByCatalogId(catalogId);
+        return "redirect:/noteview";
+    }
+
+    // 查找类型
+    @RequestMapping("notetype")
+    public String test43(Model model, HttpServletRequest request,
+                         @RequestParam("typeid") Long tid,
+                         @RequestParam("id") Long cid, HttpSession session,
+                         @RequestParam(value = "page", defaultValue = "1") int page,
+                         @RequestParam(value = "baseKey", required = false) String baseKey,
+                         @RequestParam(value = "type", required = false) String type,
+                         @RequestParam(value = "status", required = false) String status,
+                         @RequestParam(value = "time", required = false) String time,
+                         @RequestParam(value = "icon", required = false) String icon) {
+        Long userId = Long.valueOf(session.getAttribute("userId") + "");
+        if (cid == -2) {
+            cid = null;
+        }
+        setSomething(baseKey, type, status, time, icon, model, cid, tid);
+        List<NoteListPO> noteListPOS = noteServiceV2.sortPage(baseKey, userId, null, cid, tid, type, status, time);
+        //获得数据之后就将cid重新设置
+        if (cid == null) {
+            cid = -2l;
+        }
+        request.setAttribute("sort2", "&id=" + cid + "&typeid=" + tid);
+        paging(model, noteListPOS, page);
+        model.addAttribute("url", "notetype");
+        typePOListAndStatusPOList(request);
+        return "note/notewrite";
+    }
+
+    // 显示表格所有
+    @RequestMapping(value = "notewrite", method = RequestMethod.GET)
+    public String test33(Model model, HttpServletRequest request, HttpSession session,
+                         @RequestParam(value = "page", defaultValue = "1") int page,
+                         @RequestParam(value = "baseKey", required = false) String baseKey,
+                         @RequestParam(value = "type", required = false) String type,
+                         @RequestParam(value = "status", required = false) String status,
+                         @RequestParam(value = "time", required = false) String time,
+                         @RequestParam(value = "icon", required = false) String icon) {
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");
+        setSomething(baseKey, type, status, time, icon, model, null, null);
+        List<NoteListPO> noteListPOS = noteServiceV2.sortPage(baseKey, userId, null, null, null, type, status, time);
+        typePOListAndStatusPOList(request);
+        if (baseKey != null) {
+            //如果有搜索关键字那么就记住它
+            request.setAttribute("sort", "&baseKey=" + baseKey);
+        } else {//没有就默认查找所有
+            request.setAttribute("sort", "&userid=" + userId);
+        }
+        paging(model, noteListPOS, page);
+        model.addAttribute("url", "notewrite");
+        return "note/notewrite";
+    }
+
+    @RequestMapping("namereceive")
+    public String nameReceive(Model model, HttpServletRequest req, @SessionAttribute("userId") Long userId,
+                        @RequestParam(value = "page", defaultValue = "") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        String name = null;
+        String qufen = null;
+        List<UserPO> userPOList = null;
+        if (!StringUtil.isEmpty(req.getParameter("title"))) {
+            name = req.getParameter("title").trim();
+        }
+        if (!StringUtil.isEmpty(req.getParameter("qufen"))) {
+            qufen = req.getParameter("qufen").trim();
+            if (StringUtil.isEmpty(name)) {
+                userPOList = userServiceV2.getUserPOListByFatherId(userId);// 查询部门下面的员工
+            } else {
+                userPOList = userServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, name);// 查询名字模糊查询员工
+            }
+        } else {
+            if (StringUtil.isEmpty(name)) {
+                userPOList = userServiceV2.getUserAll();//查看所有用户
+            } else {
+                userPOList = userServiceV2.getUserPOListByUsernameLikeAndRealNameLike(name);
+            }
+        }
+        PageBO pageBO = new PageBO(page, size);
+        pageBO.setTotalCount(userPOList.size());
+        int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
+        int end = pageBO.getPageNo() * pageBO.getPageSize();
+        if (userPOList.size() < end) {
+            end = userPOList.size();
+        }
+        List<UserPO> subUserPOList = userPOList.subList(start, end);//用户的页面信息
+        List<DeptPO> deptPOListAll = deptServiceV2.getDeptPOListAll();//部门信息
+        List<PositionPO> positionPOListAll = positionServiceV2.getPositionListAll();// 职位表
+        model.addAttribute("emplist", subUserPOList);
+        model.addAttribute("page", pageBO);
+        model.addAttribute("deptlist", deptPOListAll);
+        model.addAttribute("poslist", positionPOListAll);
+        model.addAttribute("url", "namereceive");
+
+        return "common/noterecivers";
+
     }
 
 }
