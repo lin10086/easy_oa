@@ -54,7 +54,7 @@ a:hover {
 						</div>
 						<div class="col-md-6 form-group">
 							<label class="control-label"><span>排序值</span></label> 
-							<input class="form-control" name="statusSortValue" value="${(status.statusSortValue)!''}"/>
+							<input class="form-control" name="statusSortValue" value="${(status.sortValue)!''}"/>
 						</div>
 						<div class="col-md-6 form-group">
 							<label class="control-label"><span>颜色</span></label> 

@@ -22,6 +22,28 @@ public class TypeServiceV2 {
     private TypePOMapper typePOMapper;
 
     /**
+     * 根据是否存在类型ID来区分是插入还是更新
+     *
+     * @param typePO 类型信息
+     */
+    public void insertOrUpdateTypepO(TypePO typePO) {
+        if (typePO.getTypeId() != null) {
+            typePOMapper.updateByPrimaryKeySelective(typePO);
+        } else {
+            typePOMapper.insertSelective(typePO);
+        }
+    }
+
+    /**
+     * 根据类型ID删除类型信息
+     *
+     * @param typeId 类型ID
+     */
+    public void deleteTypePOByTypeId(Long typeId) {
+        typePOMapper.deleteByPrimaryKey(typeId);
+    }
+
+    /**
      * 根据类型模型找类型列表
      *
      * @param typeModel 类型模型
@@ -49,6 +71,22 @@ public class TypeServiceV2 {
             longList.add(typePO.getTypeId());
         }
         return longList;
+    }
+
+    /**
+     * 根据类型名和类型模型查找
+     *
+     * @param name 模糊查找字
+     * @return
+     */
+    public List<TypePO> getTypePOListByTypeNameLikeOrTypeModelLike(String name) {
+        TypePOExample typePOExample = new TypePOExample();
+        typePOExample.createCriteria().andTypeNameLike("%" + name + "%");
+        TypePOExample.Criteria criteria1 = typePOExample.createCriteria();
+        criteria1.andTypeModelLike("%" + name + "%");
+        typePOExample.or(criteria1);
+        List<TypePO> typePOList = typePOMapper.selectByExample(typePOExample);
+        return typePOList;
     }
 
     /**

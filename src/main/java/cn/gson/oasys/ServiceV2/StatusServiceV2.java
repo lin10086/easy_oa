@@ -16,6 +16,28 @@ public class StatusServiceV2 {
     @Resource
     private StatusPOMapper statusPOMapper;
 
+    /**
+     * 插入或更新状态信息
+     *
+     * @param statusPO 状态信息
+     */
+    public void insertOrUpdateStatusPOByStatusId(StatusPO statusPO) {
+        if (statusPO.getStatusId() != null) {
+            statusPOMapper.updateByPrimaryKeySelective(statusPO);
+        } else {
+            statusPOMapper.insertSelective(statusPO);
+        }
+    }
+
+    /**
+     * 根据状态ID删除状态信息
+     *
+     * @param statusId 状态ID
+     */
+    public void deleteStatusPOByStatusId(Long statusId) {
+        statusPOMapper.deleteByPrimaryKey(statusId);
+    }
+
 
     /**
      * 根据状态模型找状态列表
@@ -65,6 +87,19 @@ public class StatusServiceV2 {
         }
         return statusPOList.get(0);
 
+    }
+
+    /**
+     * 根据类型名或类型模型模糊查询
+     *
+     * @param name 模糊字
+     * @return
+     */
+    public List<StatusPO> getStatusPOListByTypeModelLikeAndStatusNameLike(String name) {
+        StatusPOExample statusPOExample = new StatusPOExample();
+        statusPOExample.createCriteria().andStatusModelLike("%" + name + "%").andStatusNameLike("%" + name + "%");
+        List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
+        return statusPOList;
     }
 
     /**
