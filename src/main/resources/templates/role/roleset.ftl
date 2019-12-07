@@ -92,8 +92,6 @@
 										<th scope="col" class="widths">路径</th>
 										<th scope="col">类型</th>
 										<th scope="col">开启权限</th>
-										
-
 									</tr>
 									<#list oneMenuAll as par>
 									<tr style="background-color:rgba(255, 235, 59, 0.19);" >

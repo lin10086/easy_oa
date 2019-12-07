@@ -246,7 +246,16 @@
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="id" javaType="Long"/>
         </table>
-
+        <!--系统菜单实体类表-->
+        <table tableName="aoa_sys_menu" domainObjectName="SysMenuPO">
+            <generatedKey column="menu_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="menu_id" javaType="Long"/>
+        </table>
+        <!--角色权限中间表-->
+        <table tableName="aoa_role_power_list" domainObjectName="RolePowerListPO">
+            <generatedKey column="pk_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="pk_id" javaType="Long"/>
+        </table>
 
     </context>
 </generatorConfiguration>

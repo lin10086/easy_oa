@@ -452,4 +452,17 @@ public class UserServiceV2 {
         }
         return userIds;
     }
+
+    /**
+     * 根据角色ID找用户列表
+     *
+     * @param roleId
+     * @return
+     */
+    public List<UserPO> getUserPoListByRoleId(Long roleId) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andRoleIdEqualTo(roleId);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
 }

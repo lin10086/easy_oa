@@ -292,7 +292,7 @@ public class UserController {
         List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();
         List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
 
-        List<RolePO> rolePOList = roleServiceV2.getRoleList();
+        List<RolePO> rolePOList = roleServiceV2.getRoleListAll();
         List<RoleVO> roleVOList = RoleFactoryVO.createRoleVOList(rolePOList);
 
         model.addAttribute("depts", deptVOList);

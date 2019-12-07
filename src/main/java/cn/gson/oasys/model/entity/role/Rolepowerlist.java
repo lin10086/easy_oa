@@ -17,8 +17,6 @@ import cn.gson.oasys.model.entity.user.Position;
 //角色权限中间表
 public class Rolepowerlist {
 
-	
-
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="pk_id")

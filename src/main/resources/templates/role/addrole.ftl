@@ -57,9 +57,9 @@ a:hover {
 							</div>
 							<div class="col-md-6 form-group">
 								<label>
-									<span id="ctl00_cphMain_Label2">类型值</span>
+									<span id="ctl00_cphMain_Label2">权限值</span>
 								</label>
-								<input name="roleValue" readonly="readonly" type="text" value="${(role.roleValue)!''}"
+								<input name="roleValue" readonly="readonly" type="text" value="${(role.roleValue)!0}"
 								style="background-color:#fff;" class="form-control"/>
 							</div>
 						
