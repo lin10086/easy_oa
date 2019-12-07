@@ -3,15 +3,19 @@ package cn.gson.oasys.ServiceV2.systemV2;
 import cn.gson.oasys.ServiceV2.rolemanage.RolePowerListServiceV2;
 import cn.gson.oasys.mappers.SysMenuPOMapper;
 import cn.gson.oasys.model.entity.role.Rolemenu;
+import cn.gson.oasys.model.entity.system.SystemMenu;
 import cn.gson.oasys.model.po.RolePowerListPO;
 import cn.gson.oasys.model.po.RolePowerListPOExample;
 import cn.gson.oasys.model.po.SysMenuPO;
 import cn.gson.oasys.model.po.SysMenuPOExample;
+import cn.gson.oasys.vo.factoryvo.systemmenuFactory.SystemMenuListFactoryVO;
 import cn.gson.oasys.vo.roleVO2.RolePowerMenuVO;
+import cn.gson.oasys.vo.systemmenuVO2.SystemMenuVO;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,5 +109,40 @@ public class SystemMenuServiceV2 {
         return rolePowerMenuVOS;
 
     }
+
+
+    /**
+     * 父级菜单
+     */
+    public List<SysMenuPO> oneSysMenuPOListAll(Long parentId) {
+        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
+        sysMenuPOExample.createCriteria().andParentIdEqualTo(parentId);
+        sysMenuPOExample.setOrderByClause("sort_id ASC");
+        List<SysMenuPO> oneSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
+        return oneSysMenuPOListAll;
+    }
+
+    /**
+     * 子菜单
+     */
+    public List<SysMenuPO> twoSysMenuPOListAll(Long parentId) {
+        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
+        sysMenuPOExample.createCriteria().andParentIdNotEqualTo(parentId);
+        sysMenuPOExample.setOrderByClause("sort_id ASC");
+        List<SysMenuPO> twoSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
+        return twoSysMenuPOListAll;
+    }
+
+    /**
+     * 根据菜单ID找菜单信息
+     *
+     * @param menuId 菜单ID
+     * @return
+     */
+    public SysMenuPO getSysMenuPOByMenuId(Long menuId) {
+        SysMenuPO sysMenuPO = sysMenuPOMapper.selectByPrimaryKey(menuId);
+        return sysMenuPO;
+    }
+
 
 }

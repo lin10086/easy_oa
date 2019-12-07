@@ -22,7 +22,7 @@
 							</#if>
 							</span></td>
 							<td><span>${(one.sortId)!''}</span></td>
-							<#if one.show==true>
+							<#if one.isShow==true>
 								<td><span class="labels"><label><input type="checkbox" checked disabled><i>✓</i></label></span></td>
 							<#else>
 								<td><span class="labels"><label><input type="checkbox" disabled><i>✓</i></label></span></td>
@@ -49,7 +49,7 @@
 							<td><span>${(two.menuUrl)!''}</span></td>
 							<td><span>子级菜单栏</span></td>
 							<td><span>${(two.sortId)!''}</span></td>
-							<#if two.show==true>
+							<#if two.isShow==true>
 								<td><span class="labels"><label><input type="checkbox" checked disabled><i>✓</i></label></span></td>
 							<#else>
 								<td><span class="labels"><label><input type="checkbox" disabled><i>✓</i></label></span></td>
