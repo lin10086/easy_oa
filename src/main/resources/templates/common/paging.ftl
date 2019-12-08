@@ -55,28 +55,29 @@
         if (${page.isFirstPage()?string('true','false')}==false
     )
         {
-            $('.thistable').load('${url}?page=1${(sort)!''}');
+            $('.thistableson').load('${url}?page=1${(sort)!''}');
         }
     });
     $('.tableup').on('click', function () {
         if (${page.isFirstPage()?string('true','false')}==false
     )
         {
-            $('.thistable').load('${url}?page=${(page.pageNo)-1}${(sort)!''}');
+            $('.thistableson').load('${url}?page=${(page.pageNo)-1}${(sort)!''}');
         }
     });
     $('.tabledown').on('click', function () {
+        alert('${url}');
         if (${page.isLastPage()?string('true','false')}==false
     )
         {
-            $('.thistable').load('${url}?page=${(page.pageNo)+1}${(sort)!''}');
+            $('.thistableson').load('${url}?page=${(page.pageNo)+1}${(sort)!''}');
         }
     });
     $('.tablelast').on('click', function () {
         if (${page.isLastPage()?string('true','false')}==false
     )
         {
-            $('.thistable').load('${url}?page=${(page.totalPageCount)}${(sort)!''}');
+            $('.thistableson').load('${url}?page=${(page.totalPageCount)}${(sort)!''}');
         }
 
     });
@@ -84,36 +85,36 @@
     /*类型、状态、时间的排序  */
     $('.thistype').on('click', function () {
         if ($(this).children().hasClass('glyphicon-triangle-bottom')) {
-            $('.thistable').load('${url}?type=0&icon=glyphicon-triangle-top${(sort2)!''}');
+            $('.thistableson').load('${url}?type=0&icon=glyphicon-triangle-top${(sort2)!''}');
         } else {
-            $('.thistable').load('${url}?type=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
+            $('.thistableson').load('${url}?type=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
         }
     });
     $('.thisstatus').on('click', function () {
         if ($(this).children().hasClass('glyphicon-triangle-bottom')) {
-            $('.thistable').load('${url}?status=0&icon=glyphicon-triangle-top${(sort2)!''}');
+            $('.thistableson').load('${url}?status=0&icon=glyphicon-triangle-top${(sort2)!''}');
         } else {
-            $('.thistable').load('${url}?status=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
+            $('.thistableson').load('${url}?status=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
         }
     });
     $('.thistime').on('click', function () {
         if ($(this).children().hasClass('glyphicon-triangle-bottom')) {
-            $('.thistable').load('${url}?time=0&icon=glyphicon-triangle-top${(sort2)!''}');
+            $('.thistableson').load('${url}?time=0&icon=glyphicon-triangle-top${(sort2)!''}');
         } else {
-            $('.thistable').load('${url}?time=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
+            $('.thistableson').load('${url}?time=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
         }
     });
     $('.thisvisit').on('click', function () {
         if ($(this).children().hasClass('glyphicon-triangle-bottom')) {
-            $('.thistable').load('${url}?visitnum=0&icon=glyphicon-triangle-top${(sort2)!''}');
+            $('.thistableson').load('${url}?visitnum=0&icon=glyphicon-triangle-top${(sort2)!''}');
         } else {
-            $('.thistable').load('${url}?visitnum=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
+            $('.thistableson').load('${url}?visitnum=1&icon=glyphicon-triangle-bottom${(sort2)!''}');
         }
     });
     /* 总查找 */
     $('.baseKetsubmit').on('click', function () {
         var baseKey = $('.baseKey').val();
         console.log(baseKey);
-        $('.thistable').load('${url}?baseKey=' + baseKey + '${(catalog)!''}');
+        $('.thistableson').load('${url}?baseKey=' + baseKey + '${(catalog)!''}');
     });
 </script>

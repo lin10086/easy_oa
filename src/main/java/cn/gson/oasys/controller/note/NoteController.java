@@ -1361,8 +1361,8 @@ public class NoteController {
 
     @RequestMapping("namereceive")
     public String nameReceive(Model model, HttpServletRequest req, @SessionAttribute("userId") Long userId,
-                        @RequestParam(value = "page", defaultValue = "") int page,
-                        @RequestParam(value = "size", defaultValue = "10") int size) {
+                              @RequestParam(value = "page", defaultValue = "") int page,
+                              @RequestParam(value = "size", defaultValue = "10") int size) {
         String name = null;
         String qufen = null;
         List<UserPO> userPOList = null;
@@ -1398,9 +1398,7 @@ public class NoteController {
         model.addAttribute("deptlist", deptPOListAll);
         model.addAttribute("poslist", positionPOListAll);
         model.addAttribute("url", "namereceive");
-
         return "common/noterecivers";
-
     }
 
 }

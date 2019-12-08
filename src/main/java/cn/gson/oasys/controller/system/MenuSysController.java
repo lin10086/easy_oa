@@ -289,6 +289,4 @@ public class MenuSysController {
         return "systemcontrol/menuedit";
     }
 
-//练习一下==========================
-    //在添加一次
 }
