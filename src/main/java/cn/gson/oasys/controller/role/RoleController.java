@@ -20,9 +20,6 @@ import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.RoleVO;
 import cn.gson.oasys.vo.roleVO2.RolePowerMenuVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,11 +35,6 @@ import cn.gson.oasys.model.dao.roledao.RoleDao;
 import cn.gson.oasys.model.dao.roledao.RolepowerlistDao;
 
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.role.Role;
-import cn.gson.oasys.model.entity.role.Rolemenu;
-import cn.gson.oasys.model.entity.role.Rolepowerlist;
-import cn.gson.oasys.model.entity.system.SystemMenu;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.role.RoleService;
 import cn.gson.oasys.services.system.MenuSysService;
 
@@ -322,7 +314,7 @@ public class RoleController {
             rolePO.setRoleValue(roleVO.getRoleValue());
             RolePO newRolePO = roleServiceV2.updateOrInsertRolePO(rolePO, null);
             List<SysMenuPO> sysMenuPOList = systemMenuServiceV2.getSysMenuPOAll();
-            rolePowerListServiceV2.insertRolePowerListPO(sysMenuPOList, newRolePO.getRoleId());
+            rolePowerListServiceV2.insertRolePowerListPOBySystemMenuPOListAndRolePOId(sysMenuPOList, newRolePO.getRoleId());
         }
 
         return "redirect:/rolemanage";

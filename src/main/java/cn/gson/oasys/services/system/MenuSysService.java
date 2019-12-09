@@ -50,7 +50,6 @@ public class MenuSysService {
 		List<Rolemenu> twoMenuAll=rdao.findbyparentsxian(0L, user.getRole().getRoleId(), true,true);
 		req.setAttribute("oneMenuAll", oneMenuAll);
 		req.setAttribute("twoMenuAll", twoMenuAll);
-		
 	}
 	
 	public void findAllMenuSys(HttpServletRequest req){
@@ -61,6 +60,7 @@ public class MenuSysService {
 		
 		req.setAttribute("oneMenuAll", oneMenuAll);
 		req.setAttribute("twoMenuAll", twoMenuAll);
+
 	}
 	
 	/**

@@ -21,7 +21,7 @@ public class RolePowerListServiceV2 {
      * @param sysMenuPOList
      * @param rolePOId
      */
-    public void insertRolePowerListPO(List<SysMenuPO> sysMenuPOList, Long rolePOId) {
+    public void insertRolePowerListPOBySystemMenuPOListAndRolePOId(List<SysMenuPO> sysMenuPOList, Long rolePOId) {
         for (SysMenuPO sysMenuPO : sysMenuPOList) {
             RolePowerListPO rolePowerListPO = new RolePowerListPO();
             rolePowerListPO.setMenuId(sysMenuPO.getMenuId());
@@ -30,6 +30,33 @@ public class RolePowerListServiceV2 {
             rolePowerListPOMapper.insertSelective(rolePowerListPO);
         }
     }
+
+    /**
+     * 根据权限信息插入角色权限
+     *
+     * @param isShow 是否显示
+     * @param menuId 菜单
+     * @param roleId 角色ID
+     */
+    public void insertRolePowerListPOByIsShowAndMenuIdAndRoleId(Boolean isShow, Long menuId, Long roleId) {
+        RolePowerListPO rolePowerListPO = new RolePowerListPO();
+        rolePowerListPO.setMenuId(menuId);
+        rolePowerListPO.setRoleId(roleId);
+        rolePowerListPO.setIsShow(isShow == false ? 0 : 1);
+        rolePowerListPOMapper.insertSelective(rolePowerListPO);
+    }
+
+    /**
+     * 根据菜单ID删除角色权限信息
+     *
+     * @param menuId 菜单ID
+     */
+    public void deleteRolePowerListPOByMenuId(Long menuId) {
+        RolePowerListPOExample rolePowerListPOExample = new RolePowerListPOExample();
+        rolePowerListPOExample.createCriteria().andMenuIdEqualTo(menuId);
+        rolePowerListPOMapper.deleteByExample(rolePowerListPOExample);
+    }
+
 
     /**
      * 更新角色表的权限
@@ -52,6 +79,20 @@ public class RolePowerListServiceV2 {
     public List<RolePowerListPO> getRolePowerListPOSByRoleId(Long roleId) {
         RolePowerListPOExample rolePowerListPOExample = new RolePowerListPOExample();
         rolePowerListPOExample.createCriteria().andRoleIdEqualTo(roleId);
+        List<RolePowerListPO> rolePowerListPOS = rolePowerListPOMapper.selectByExample(rolePowerListPOExample);
+        return rolePowerListPOS;
+    }
+
+    /**
+     * 根据角色ID找角色的权限信息
+     *
+     * @param roleId 角色ID
+     * @param isShow 是否可见
+     * @return
+     */
+    public List<RolePowerListPO> getRolePowerListPOSByRoleIdAndIsShow(Long roleId, Boolean isShow) {
+        RolePowerListPOExample rolePowerListPOExample = new RolePowerListPOExample();
+        rolePowerListPOExample.createCriteria().andRoleIdEqualTo(roleId).andIsShowEqualTo(isShow == false ? 0 : 1);
         List<RolePowerListPO> rolePowerListPOS = rolePowerListPOMapper.selectByExample(rolePowerListPOExample);
         return rolePowerListPOS;
     }
