@@ -263,6 +263,48 @@ public class SystemMenuServiceV2 {
                 }
             }
         }
+        if (parentId.equals(0L)) {
+            request.setAttribute("oneMenuAll", rolePowerMenuVOS);
+        }
+        return rolePowerMenuVOS;
+
+    }
+
+    /**
+     * 模糊查找找可见角色的父级菜单
+     *
+     * @param parentId
+     * @param roleId
+     * @param isShow
+     * @param request
+     * @param name
+     * @return
+     */
+    public List<RolePowerMenuVO> getSysMenuPOListByParentByIsShowAndMenuNameLike(Long parentId, Long roleId, Boolean isShow, HttpServletRequest request, String name) {
+        List<RolePowerListPO> rolePowerListPOS = rolePowerListServiceV2.getRolePowerListPOSByRoleIdAndIsShow(roleId, isShow);//根据角色ID找出的角色信息
+        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
+        sysMenuPOExample.createCriteria().andParentIdEqualTo(parentId).andIsShowEqualTo(isShow == false ? 0 : 1).andMenuNameLike("%" + name + "%");
+        sysMenuPOExample.setOrderByClause("sort_id ASC");
+        List<SysMenuPO> sysMenuPOList = sysMenuPOMapper.selectByExample(sysMenuPOExample);//根据菜单的父级ID找出的信息
+
+        List<RolePowerMenuVO> rolePowerMenuVOS = new ArrayList<>();
+        for (RolePowerListPO rolePowerListPO : rolePowerListPOS) {
+            for (SysMenuPO sysMenuPO : sysMenuPOList) {
+                if (rolePowerListPO.getMenuId().equals(sysMenuPO.getMenuId())) {
+                    RolePowerMenuVO rolePowerMenuVO = new RolePowerMenuVO();
+                    rolePowerMenuVO.setMenuId(sysMenuPO.getMenuId());
+                    rolePowerMenuVO.setMenuName(sysMenuPO.getMenuName());
+                    rolePowerMenuVO.setMenuUrl(sysMenuPO.getMenuUrl());
+                    rolePowerMenuVO.setShow(sysMenuPO.getIsShow() == 0 ? false : true);
+                    rolePowerMenuVO.setParentId(sysMenuPO.getParentId());
+                    rolePowerMenuVO.setMenuIcon(sysMenuPO.getMenuIcon());
+                    rolePowerMenuVO.setSortId(sysMenuPO.getSortId());
+                    rolePowerMenuVO.setMenuGrade(sysMenuPO.getMenuGrade());
+                    rolePowerMenuVO.setCheck(rolePowerListPO.getIsShow() == 0 ? false : true);
+                    rolePowerMenuVOS.add(rolePowerMenuVO);
+                }
+            }
+        }
         request.setAttribute("oneMenuAll", rolePowerMenuVOS);
         return rolePowerMenuVOS;
 

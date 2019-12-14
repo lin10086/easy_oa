@@ -256,6 +256,16 @@
             <generatedKey column="pk_id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="pk_id" javaType="Long"/>
         </table>
+        <!--通讯录用户表-->
+        <table tableName="aoa_director_users" domainObjectName="DirectorUsersPO">
+            <generatedKey column="director_users_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="director_users_id" javaType="Long"/>
+        </table>
+        <!--外部通讯录表-->
+        <table tableName="aoa_director" domainObjectName="DirectorPO">
+            <generatedKey column="director_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="director_id" javaType="Long"/>
+        </table>
 
     </context>
 </generatorConfiguration>

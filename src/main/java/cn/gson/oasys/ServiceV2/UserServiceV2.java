@@ -24,6 +24,8 @@ import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,6 +42,12 @@ public class UserServiceV2 {
     private PositionPOMapper positionPOMapper;
     @Resource
     private RolePOMapper rolePOMapper;
+    @Resource
+    private DeptServiceV2 deptServiceV2;
+    @Resource
+    private RoleServiceV2 roleServiceV2;
+    @Resource
+    private PositionServiceV2 positionServiceV2;
 
     //找到该管理员下面的所有用户并且分页
     public List<UserPO> findUserAndPageByFatherId(int page, long fatherId) {
@@ -63,10 +71,162 @@ public class UserServiceV2 {
      */
     public List<UserPO> getUserAll() {
         UserPOExample userPOExample = new UserPOExample();
+        userPOExample.setOrderByClause("dept_id ASC");
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
         return userPOList;
     }
 
+    /**
+     * 根据拼音首字母模糊查找用户
+     *
+     * @param pinyin 拼音首字母
+     * @return
+     */
+    public List<UserPO> getUserByPinyinLike(String pinyin) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.setOrderByClause("dept_id ASC");
+        userPOExample.createCriteria().andPinyinLike(pinyin + "%");
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
+
+
+    /**
+     * 根据姓名首拼+查找关键字查找(部门、姓名、电话号码)
+     *
+     * @param baseKey
+     * @param alphabet
+     * @return
+     */
+    public List<UserPO> getUserPOListByUserNameLikeOrUserTelLikeOrDeptNameLikeOrPositionNameLikeOrPinyinLikeAndPinyinLike(String baseKey, String alphabet) {
+        Set<UserPO> userPOSet = new HashSet<>();
+        List<UserPO> userPOListByUserNameLike = getUserPOByUserNameLike(baseKey);
+
+        List<UserPO> userPOListByUserTelLike = getUserPOByUserTelLike(baseKey);
+        List<UserPO> userPOListByDeptNameLike = getUserPOByDeptNameLike(baseKey);
+        List<UserPO> userPOListByPositionNameLike = getUserPOByPositionNameLike(baseKey);
+        for (UserPO userPO : userPOListByUserNameLike) {
+            userPOSet.add(userPO);
+        }
+
+        for (UserPO userPO : userPOListByUserTelLike) {
+            userPOSet.add(userPO);
+        }
+        if (userPOListByDeptNameLike != null) {
+            for (UserPO userPO : userPOListByDeptNameLike) {
+                userPOSet.add(userPO);
+            }
+        }
+        if (userPOListByPositionNameLike != null) {
+
+            for (UserPO userPO : userPOListByPositionNameLike) {
+                userPOSet.add(userPO);
+            }
+        }
+        if ("ALL".equals(alphabet)) {
+            //全部字母搜索
+            List<UserPO> userPOListByPinyinLike = getUserPOByPinyinLike(baseKey);
+            for (UserPO userPO : userPOListByPinyinLike) {
+                userPOSet.add(userPO);
+            }
+            List<UserPO> userPOList = new ArrayList<>();
+            Iterator iterator = userPOSet.iterator();
+            while (iterator.hasNext()) {
+                userPOList.add((UserPO) iterator.next());
+            }
+            return userPOList;
+        } else {
+            //有了首字母是某个字母的前提
+            List<UserPO> userPOList = new ArrayList<>();
+            Iterator iterator = userPOSet.iterator();
+            while (iterator.hasNext()) {
+                userPOList.add((UserPO) iterator.next());
+            }
+            List<UserPO> userPOListByPinyinLike = getUserPOByPinyinLike(alphabet);
+            List<UserPO> finallyUserPOList = new ArrayList<>();
+            for (UserPO userPO : userPOList) {
+                for (UserPO userPO1 : userPOListByPinyinLike) {
+                    if (userPO.getUserId().equals(userPO1.getUserId())) {
+                        finallyUserPOList.add(userPO);
+                    }
+                }
+            }
+            return finallyUserPOList;
+        }
+    }
+
+    /**
+     * 根据用户名模糊查找用户列表
+     *
+     * @param userName 模糊字
+     * @return
+     */
+    public List<UserPO> getUserPOByUserNameLike(String userName) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserNameLike("%" + userName + "%");
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
+
+    /**
+     * 根据部门名模糊查找用户列表
+     *
+     * @param deptName 模糊字
+     * @return
+     */
+    public List<UserPO> getUserPOByDeptNameLike(String deptName) {
+        List<Long> deptIds = deptServiceV2.getDeptPOIdsByDeptNameLike(deptName);//根据部门名模糊查找部门信息（部门ID）
+        if (deptIds.size() > 0) {
+            UserPOExample userPOExample = new UserPOExample();
+            userPOExample.createCriteria().andDeptIdIn(deptIds);//根据部门名模糊查找
+            List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+            return userPOList;
+        }
+        return null;
+    }
+
+    /**
+     * 根据职位名模糊找用户信息
+     *
+     * @param positionName 模糊字
+     * @return
+     */
+    public List<UserPO> getUserPOByPositionNameLike(String positionName) {
+        List<Long> positionIds = positionServiceV2.getPositionIdsByPositionNameLike(positionName);//根据职位名模糊查找职位（获取找到的职位IDS）
+        if (positionIds.size() > 0) {
+            UserPOExample userPOExample = new UserPOExample();
+            userPOExample.createCriteria().andPositionIdIn(positionIds);//根据职位名模糊查找
+            List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+            return userPOList;
+        }
+        return null;
+    }
+
+    /**
+     * 根据用户名拼音模糊查找用户列表
+     *
+     * @param pinyin 模糊字
+     * @return
+     */
+    public List<UserPO> getUserPOByPinyinLike(String pinyin) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andPinyinLike(pinyin + "%");//根据拼音首字母查找
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
+
+    /**
+     * 根据用户电话模糊查找用户列表
+     *
+     * @param userTel 用户电话模糊字
+     * @return
+     */
+    public List<UserPO> getUserPOByUserTelLike(String userTel) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserTelLike("%" + userTel + "%");//根据用户电话查找用户列表
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
 
     /**
      * 把用户的ID和用户的部门对应起来放到map里面
@@ -439,7 +599,7 @@ public class UserServiceV2 {
     /**
      * 根据用户名模糊查找用户的id
      *
-     * @param username
+     * @param username 用户名
      * @return 返回用户们的id
      */
     public List<Long> getUserIdsByUsernameLike(String username) {
@@ -465,4 +625,19 @@ public class UserServiceV2 {
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
         return userPOList;
     }
+
+    /**
+     * 根据userPO获取userVO
+     *
+     * @param userPO 用户数据库的信息
+     * @return
+     */
+    public UserVO getUserVOByUserPO(UserPO userPO) {
+        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+        userVO.setDeptVO(DeptFactoryVO.createDeptVO(deptServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
+        userVO.setRoleVO(RoleFactoryVO.createRoleVO(roleServiceV2.getRoleByRoleId(userPO.getRoleId())));
+        userVO.setPositionVO(PositionFactoryVO.createPositionVO(positionServiceV2.getPositionByPositionId(userPO.getPositionId())));
+        return userVO;
+    }
+
 }

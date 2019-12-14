@@ -96,7 +96,7 @@
                                         <option value="${getAdd}" readonly="readonly">${getName}</option>
                                     <#else>
                                         <#if menuObj??>
-                                            <option value="${getId}"
+                                            <option value="${menuId}"
                                                     selected="selected">${menuObj.menuName}</option>
                                         </#if>
                                         <#list parentList as list>
@@ -108,7 +108,7 @@
                             <div class="col-md-6 form-group">
                                 <label class="control-label"><span>显示</span></label><br>
                                 <#if menuObj??>
-                                    <#if menuObj.isShow==true>
+                                    <#if isShow==true>
                                         <span class="labels"><label><input name="isShow" type="checkbox" checked><i>✓</i></label></span>
                                     <#else>
                                         <span class="labels"><label><input name="isShow" type="checkbox"><i>✓</i></label></span>

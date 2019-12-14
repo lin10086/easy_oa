@@ -110,16 +110,22 @@ public class DeptServiceV2 {
     }
 
     /**
-     * 根据部门名找部门id
+     * 根据部门名模糊找部门信息（获取其中的IDS）
      *
      * @param selectDeptName
      * @return
      */
-    public Long getDeptPOIdByDeptName(String selectDeptName) {
+    public List<Long> getDeptPOIdsByDeptNameLike(String selectDeptName) {
         DeptPOExample deptPOExample = new DeptPOExample();
-        deptPOExample.createCriteria().andDeptNameEqualTo(selectDeptName);
+        deptPOExample.createCriteria().andDeptNameLike("%" + selectDeptName + "%");
         List<DeptPO> deptPOList = deptPOMapper.selectByExample(deptPOExample);
-        return deptPOList.get(0).getDeptId();//因为部门名是下拉选选择的所以存在不用判断
+        List<Long> deptIds = new ArrayList<>();
+        if (deptPOList.size() > 0) {
+            for (DeptPO deptPO : deptPOList) {
+                deptIds.add(deptPO.getDeptId());
+            }
+        }
+        return deptIds;
     }
 }
 

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -59,6 +60,25 @@ public class PositionServiceV2 {
         positionPOExample.createCriteria().andNameNotLike("%经理").andDeptidEqualTo(deptId);
         List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
         return positionPOList;
+    }
+
+    /**
+     * 根据职位名模糊查找职位（获取找到的位置IDS）
+     *
+     * @param baseKey 模糊字
+     * @return
+     */
+    public List<Long> getPositionIdsByPositionNameLike(String baseKey) {
+        PositionPOExample positionPOExample = new PositionPOExample();
+        positionPOExample.createCriteria().andNameLike("%" + baseKey + "%");
+        List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
+        List<Long> positionIds = new ArrayList<>();
+        if (positionPOList.size() > 0) {
+            for (PositionPO positionPO : positionPOList) {
+                positionIds.add(positionPO.getPositionId());
+            }
+        }
+        return positionIds;
     }
 
     //插入或更新一个职位
