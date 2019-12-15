@@ -1079,6 +1079,12 @@ public class AddrController {
         } else {
             directorUsersPOList = directorUserPOServiceV2.getDirectorUsersPOSByShareUserId(userId);
         }
+//        if (!StringUtils.isEmpty(baseKey)) {
+//            duspage = auDao.findBaseKey("%" + baseKey + "%", user, pa);
+//            model.addAttribute("sort", "&baseKey=" + baseKey);
+//        } else {
+//            duspage = auDao.findByShareuser(user, pa);
+//        }
         getDirectorUserPOPage(model, page, size, directorUsersPOList);
         model.addAttribute("url", "mesharemess");
         return "address/mesharemess";
@@ -1167,6 +1173,12 @@ public class AddrController {
         } else {
             directorUsersPOList = directorUserPOServiceV2.getDirectorUsersPOSByUserIdAndShareUserIdIsNotNull(userId);
         }
+//        if (!StringUtils.isEmpty(baseKey)) {
+//            duspage = auDao.findBaseKey("%" + baseKey + "%", user, pa);
+//            model.addAttribute("sort", "&baseKey=" + baseKey);
+//        } else {
+//            duspage = auDao.findByUserAndShareuserNotNull(user, pa);
+//        }
         getDirectorUserPOPage(model, page, size, directorUsersPOList);
         Set<String> catalogsNameSet = directorUserPOServiceV2.getCatalogNameByUserId(userId);//根据用户ID和目录名非空非""找目录用户信息（从中取出目录名并去重）
         model.addAttribute("catalogs", catalogsNameSet);
