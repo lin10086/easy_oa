@@ -139,7 +139,7 @@ a:hover {
 								<div class="pull-right" style="display: inline-block;margin-right:50px;font-weight: 400;">
 								<select name="selecttype" id="selecttype" class="selectthis  form-control" style="display: inline-block;margin-right: 10px;width: 115px;font-size: 13px;">
 									<option value="">查看所有</option>
-									<option value="${discuss.user.userId}">只看楼主</option>
+									<option value="${user.userId}">只看楼主</option>
 									<option value="${userId}">只看我的</option>
 								</select>
 								<select name="selectsort" id="selectsort" class="selectthis  form-control" style="display: inline-block;width: 115px;font-size: 13px;">
@@ -181,14 +181,15 @@ $('.chat-box').off('click','.likethis').on('click','.likethis',function(){
 	$(this).parents('.replyrefresh').addClass('replychange');
 	var replyId=$(this).attr('replyId');
 	var module=$(this).attr('module');
-	var size=${page.size};
+	var pageSize=${page.pageSize};
 	console.log("rightNum:"+rightNum);
 	console.log(replyId);
 	console.log(module);
+	console.log(pageSize);
 	  /*$.ajax({
 		type:'get',
 		url:'/likeuserload',
-		data:{module:module,replyId:replyId,size:size},
+		data:{module:module,replyId:replyId,pageSize:pageSize},
 		success:function(date){
 			console.log(date);
 			$('.discusschange').html(date);
@@ -200,11 +201,11 @@ $('.chat-box').off('click','.likethis').on('click','.likethis',function(){
 	}) */
 	if(module=="discuss"){
 		console.log("说明是讨论区，进行load方法了；");
-		$('.discusschange').load('/likeuserload',{module:module,replyId:replyId,size:size});
+		$('.discusschange').load('/likeuserload',{module:module,replyId:replyId,pageSize:pageSize});
 	}else if(module=="reply"){
 		console.log("说明是回复区，准备进行load方法");
 		var rightNum=$(this).parent().siblings(".pull-right").children(".rightNum").text();
-		$('.replychange').load('/likeuserload',{module:module,replyId:replyId,size:size,rightNum:rightNum});
+		$('.replychange').load('/likeuserload',{module:module,replyId:replyId,pageSize:pageSize,rightNum:rightNum});
 	}else{
 		console.log("参数错误");
 	}
@@ -215,9 +216,9 @@ $('.chat-box').off('click','.likethis').on('click','.likethis',function(){
 		var num=${discuss.discussId};
 		var replyId = $(this).attr('replyId');
 		var module = $(this).attr('replyModule');
-		var size=${page.size};
+		var pageSize=${page.pageSize};
 		if(confirm("确定删除吗？ 不能恢复哟~")){
-			$('.repay').load('replydelete',{replyId:replyId,module:module,num:num,size:size});
+			$('.repay').load('replydelete',{replyId:replyId,module:module,num:num,pageSize:pageSize});
 		}
 	});
 /* 回复与评论的处理，模态框显示，假如是点击评论进入的，则在前面加@那个的名字 */	

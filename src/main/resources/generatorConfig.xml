@@ -257,5 +257,46 @@
             <columnOverride column="pk_id" javaType="Long"/>
         </table>
 
+        <!--讨论区列表-->
+        <table tableName="aoa_discuss_list" domainObjectName="DiscussListPO">
+            <generatedKey column="discuss_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="discuss_id" javaType="Long"/>
+        </table>
+        <!--讨论区中间表列表-->
+        <table tableName="aoa_love_discuss_user" domainObjectName="LoveDiscussUserPO">
+            <generatedKey column="discuss_user_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="discuss_user_id" javaType="Long"/>
+        </table>
+        <!--投票列表-->
+        <table tableName="aoa_vote_list" domainObjectName="VoteListPO">
+            <generatedKey column="vote_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="vote_id" javaType="Long"/>
+        </table>
+        <!--讨论区回复表-->
+        <table tableName="aoa_reply_list" domainObjectName="ReplyListPO">
+            <generatedKey column="reply_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="reply_id" javaType="Long"/>
+        </table>
+        <!--讨论区回复表中间表-->
+        <table tableName="aoa_love_user" domainObjectName="LoveReplyUserPO">
+            <generatedKey column="reply_user_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="reply_user_id" javaType="Long"/>
+        </table>
+        <!--评论表-->
+        <table tableName="aoa_comment_list" domainObjectName="CommentListPO">
+            <generatedKey column="comment_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="comment_id" javaType="Long"/>
+        </table>
+        <!--投票标题表-->
+        <table tableName="aoa_vote_titles" domainObjectName="VoteTitlesPO">
+            <generatedKey column="title_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="title_id" javaType="Long"/>
+        </table>
+        <!--投票标题用户表-->
+        <table tableName="aoa_vote_title_user" domainObjectName="VoteTitleUserPO">
+            <generatedKey column="vote_title_user_id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="vote_title_user_id" javaType="Long"/>
+        </table>
+
     </context>
 </generatorConfiguration>

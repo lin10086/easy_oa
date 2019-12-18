@@ -4,7 +4,7 @@
 	<td>
 		<div class="post">
 			<div class="user-block">
-				<span> <a href="#"> <img src="/image/${(reply.user.imgPath)!'/timg.jpg'}"
+				<span> <a href="#"> <img src="/image/${(user.imgPath)!'/timg.jpg'}"
 						class="big-img" />
 				</a>
 				</span> <span class="username"> <a href="#"
@@ -15,7 +15,7 @@
 					</a>
 					</#if>
 				</span> <span class="right-time">${reply.replayTime?string('yyyy-MM-dd HH:mm:ss')}</span>
-				<p style="padding-top: 10px;">${reply.content}</p>
+				<p style="padding-top: 10px;">${(reply.content)!''}</p>
 				<div class="replyrefresh">
 					<#include "replylike.ftl"/>
 				</div>
@@ -61,8 +61,8 @@
 </#list>
 <tr>
 	<th scope="col" style="background-color: #EEEEEE;text-align: center;padding:16px;" class="addmore">
-		<#if page.totalElements gt page.size>
-			还有${page.totalElements-page.size}条，点击加载更多~~~
+		<#if page.totalCount gt page.pageSize>
+			还有${page.totalCount-page.pageSize}条，点击加载更多~~~
 		<#else> 
 			<span class="nomore">已经没有更多了~~~</span>
 		</#if>
@@ -81,10 +81,10 @@ $('.addmore').on('click',function(){
 	var selecttype=$("#selecttype option:selected").val();	//获得查看类型select中的值
 	var selectsort=$("#selectsort option:selected").val();	//获得时间排序select中的值
 	var num=${discuss.discussId};
-	var page=${page.number};
-	var size=${page.size+5};
-	if(${page.size}<=${page.totalElements}){
-		$('.repay').load('/replypaging',{num:num,size:size,selecttype:selecttype,selectsort:selectsort}); 
+	var page=${page.pageNo};
+	var pageSize=${page.pageSize+5};
+	if(${page.pageSize}<=${page.totalCount}){
+		$('.repay').load('/replypaging',{num:num,pageSize:pageSize,selecttype:selecttype,selectsort:selectsort});
 	}
 });
 
@@ -93,12 +93,12 @@ $('#commentsave').on('click',function() {
 	console.log($("#hiddenreplyId").val());
 	console.log($("#hiddenreplyModule").val());
 	console.log($("#comment").val());
-	var size=${page.size};
-	console.log("size:"+size);
+	var pageSize=${page.pageSize};
+	console.log("pageSize:"+pageSize);
 	var replyId = $("#hiddenreplyId").val();
 	var module = $("#hiddenreplyModule").val();
 	var comment = $("#comment").val();
-	$('.repay').load('/replyhandle?size='+size, {
+	$('.repay').load('/replyhandle?pageSize='+pageSize, {
 		replyId : replyId,
 		module : module,
 		comment : comment,

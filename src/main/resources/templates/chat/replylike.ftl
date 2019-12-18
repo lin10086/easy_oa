@@ -27,7 +27,7 @@
 			<#if comments??>
 				${comments}
 			<#else>
-				${reply.count}
+				${(reply.count)!''}
 			</#if>
 			)</a>
 	</li>

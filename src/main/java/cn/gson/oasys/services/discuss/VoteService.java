@@ -60,8 +60,8 @@ public class VoteService {
 				result.put("titleId", voteTitles.get(i).getTitleId());
 				result.put("title", voteTitles.get(i).getTitle());
 				result.put("users", voteUserDao.findByVoteTitles(voteTitles.get(i)));
-				result.put("color", voteTitles.get(i).getColor());
 				result.put("count", voteUserDao.findByVoteTitles(voteTitles.get(i)).size());
+				result.put("color", voteTitles.get(i).getColor());
 				result.put("countNum", voteUserDao.findByVoteId(voteTitles.get(i).getVoteList().getVoteId()).size());
 				result.put("contain",!Objects.isNull(voteUserDao.findByVoteTitlesAndUser(voteTitles.get(i), user)));
 				voteTitlesList.add(result);

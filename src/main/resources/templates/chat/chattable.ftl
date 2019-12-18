@@ -63,7 +63,7 @@
 						<a href="/writechat?id=${this.id}" class="label xiugai"><span
 							class="glyphicon glyphicon-edit"></span> 修改</a> 
 						</#if>
-						<a href="/seediscuss?id=${this.id}&pageNumber=${page.number}" class="label xiugai"> <span
+						<a href="/seediscuss?id=${this.id}&pageNumber=${page.pageNo}" class="label xiugai"> <span
 							class="glyphicon glyphicon-search"></span>查看</a>
 						<#if manage??>
 						 <a href="javascript:void(0);" discussId="${this.id}"
@@ -81,13 +81,13 @@
 </div>
 <script>
 /* 显示表格的删除 */
-	$('.thistable').on('click','.deletethis',function(){
+	$('.thistableson').on('click','.deletethis',function(){
 		console.log($(this).attr('discussId'));
 		console.log('${name}');
 		var name='${name}';
 		var discussId=$(this).attr('discussId');
 		if(confirm("确定删除吗？ 不能恢复哟~")){
-		window.location.href="/deletediscuss?discussId="+discussId+"&name="+name+"&page="+${page.number};
+		window.location.href="/deletediscuss?discussId="+discussId+"&name="+name+"&page="+${page.pageNo};
 		}
 	});
 </script>
