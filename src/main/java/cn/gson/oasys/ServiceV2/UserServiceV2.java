@@ -312,7 +312,6 @@ public class UserServiceV2 {
         userPOExample.createCriteria().andPasswordEqualTo(password)
                 .andUserNameEqualTo(userName);
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
-//        List<User>userList = UserFactory.create(userPOList);
         if (userPOList != null && userPOList.size() >= 1) {
             return userPOList.get(0);
         }
@@ -464,5 +463,31 @@ public class UserServiceV2 {
         userPOExample.createCriteria().andRoleIdEqualTo(roleId);
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
         return userPOList;
+    }
+
+    /**
+     * 根据userPOSet获取userVOSet
+     *
+     * @param userPOSet
+     * @return
+     */
+    public Set<UserVO> getUserVOSetByUserPOSet(Set<UserPO> userPOSet) {
+        Set<UserVO> userVOSet = new HashSet<>();
+        Iterator iterator = userPOSet.iterator();
+        while (iterator.hasNext()) {
+            UserPO userPO = (UserPO) iterator.next();
+            DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+            DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+            PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
+            PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);
+            RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
+            RoleVO roleVO = RoleFactoryVO.createRoleVO(rolePO);
+            UserVO userVO = UserFactoryVO.createUserVO(userPO);
+            userVO.setDeptVO(deptVO);
+            userVO.setPositionVO(positionVO);
+            userVO.setRoleVO(roleVO);
+            userVOSet.add(userVO);
+        }
+        return userVOSet;
     }
 }

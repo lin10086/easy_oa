@@ -14,6 +14,15 @@ public class VoteTitleUserPOServiceV2 {
     private VoteTitleUserPOMapper voteTitleUserPOMapper;
 
     /**
+     * 插入一条投票信息（即在投票，标题，用户中间表插入一条信息）
+     *
+     * @param voteTitleUserPO
+     */
+    public void insertVoteTitleUserPOByVoteTitleUserPO(VoteTitleUserPO voteTitleUserPO) {
+        voteTitleUserPOMapper.insertSelective(voteTitleUserPO);
+    }
+
+    /**
      * 在用户投票的标题表中查找所有的同一标题的集合（即投票标题相同）
      *
      * @param voteTitleId 投票标题ID

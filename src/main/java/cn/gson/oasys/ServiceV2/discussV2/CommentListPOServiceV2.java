@@ -24,6 +24,15 @@ public class CommentListPOServiceV2 {
     }
 
     /**
+     * 根据评论ID删除评论信息
+     *
+     * @param commentListPOId
+     */
+    public void deleteCommentListPOByCommentListPOId(Long commentListPOId) {
+        commentListPOMapper.deleteByPrimaryKey(commentListPOId);
+    }
+
+    /**
      * 根据回复IDs找评论ID
      *
      * @param replyIds 评论IDS
@@ -39,12 +48,12 @@ public class CommentListPOServiceV2 {
     /**
      * 根据回复表ID找评论表
      *
-     * @param replyListPO
+     * @param replyListPOId
      * @return
      */
-    public List<CommentListPO> getCommentListPOSByReplyPOId(ReplyListPO replyListPO) {
+    public List<CommentListPO> getCommentListPOSByReplyPO(Long replyListPOId) {
         CommentListPOExample commentListPOExample = new CommentListPOExample();
-        commentListPOExample.createCriteria().andReplyIdEqualTo(replyListPO.getReplyId());
+        commentListPOExample.createCriteria().andReplyIdEqualTo(replyListPOId);
         List<CommentListPO> commentListPOS = commentListPOMapper.selectByExample(commentListPOExample);
         return commentListPOS;
     }

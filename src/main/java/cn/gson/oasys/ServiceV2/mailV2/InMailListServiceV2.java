@@ -56,7 +56,6 @@ public class InMailListServiceV2 {
         inMailListPOExample.createCriteria().andMailPushEqualTo(push == false ? 0 : 1).andMailInPushUserIdEqualTo(userId).andMailDelEqualTo(del == false ? 0 : 1);
         List<InMailListPO> inMailListPOList = inMailListPOMapper.selectByExample(inMailListPOExample);
         return inMailListPOList;
-
     }
 
     /**

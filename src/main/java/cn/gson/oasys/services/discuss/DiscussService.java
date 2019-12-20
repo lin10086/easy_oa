@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import cn.gson.oasys.model.po.UserPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -221,6 +222,7 @@ public class DiscussService {
                 result.put("likenum", replyList.get(i).getUsers().size());
             }
             result.put("count", commentDao.findByReply(replyList.get(i)).size());
+
             result.put("replyLikeUsers", replyList.get(i).getUsers());
 
             result.put("replyId", replyList.get(i).getReplyId());

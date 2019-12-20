@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -29,7 +30,18 @@ public class ReplyListPOTest {
 
     @Test
     public void getReplyListPOSByReplyListPOId() {
-        ReplyListPO replyListPO = replyListPOMapper.selectByPrimaryKey(47L);
-        log.info("replyListPO={}", replyListPO);
+        ReplyListPOExample replyListPOExample = new ReplyListPOExample();
+        replyListPOExample.createCriteria().andDiscussIdEqualTo(1L);
+        List<ReplyListPO> replyListPOS = replyListPOMapper.selectByExampleWithBLOBs(replyListPOExample);
+        log.info("replyListPOS={}", replyListPOS);
     }
+
+    @Test
+    public void getReplyListPOSByReplyTime() {
+        ReplyListPOExample replyListPOExample = new ReplyListPOExample();
+        replyListPOExample.createCriteria().andReplayTimeGreaterThanOrEqualTo(new Date());
+        List<ReplyListPO> replyListPOS = replyListPOMapper.selectByExampleWithBLOBs(replyListPOExample);
+        log.info("replyListPOS={}", replyListPOS);
+    }
+
 }

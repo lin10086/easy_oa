@@ -78,7 +78,6 @@ public class ReplyListPOSqlProvider {
         sql.SELECT("replay_time");
         sql.SELECT("discuss_id");
         sql.SELECT("reply_user_id");
-        sql.SELECT("content");
         sql.FROM("aoa_reply_list");
         applyWhere(sql, example, false);
         

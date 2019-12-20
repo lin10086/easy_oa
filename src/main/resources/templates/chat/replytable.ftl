@@ -82,9 +82,9 @@ $('.addmore').on('click',function(){
 	var selectsort=$("#selectsort option:selected").val();	//获得时间排序select中的值
 	var num=${discuss.discussId};
 	var page=${page.pageNo};
-	var pageSize=${page.pageSize+5};
+	var size=${page.pageSize+5};
 	if(${page.pageSize}<=${page.totalCount}){
-		$('.repay').load('/replypaging',{num:num,pageSize:pageSize,selecttype:selecttype,selectsort:selectsort});
+		$('.repay').load('/replypaging',{num:num,size:size,selecttype:selecttype,selectsort:selectsort});
 	}
 });
 
