@@ -7,7 +7,7 @@
 					aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="myModalLabel">编辑您的便签</h4>
 			</div>
-			<form action="writep" method="post" onsubmit="return check();">
+			<form action="savepaper" method="post" onsubmit="return check();">
 			<div class="modal-body">
 				<!--錯誤信息提示  -->
 					<div class="alert alert-danger alert-dismissable" style="display:none;" role="alert">
@@ -22,7 +22,7 @@
 					</div>
 					<div class=" form-group">
 						<label class="control-label">内容</label>
-						<textarea class="form-control pacontent control" style="min-height: 100px;" name="concent"></textarea>
+						<textarea class="form-control pacontent control" style="min-height: 100px;" name="content"></textarea>
 					</div>
 			
 			</div>

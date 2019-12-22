@@ -34,9 +34,6 @@ import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -69,9 +66,6 @@ import cn.gson.oasys.model.entity.note.Catalog;
 import cn.gson.oasys.model.entity.note.Note;
 import cn.gson.oasys.model.entity.system.SystemStatusList;
 import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.entity.user.Position;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.file.FileServices;
 import cn.gson.oasys.services.process.ProcessService;
 
@@ -735,15 +729,15 @@ public class NoteController {
     @Resource
     private ReceiverNotePOServiceV2 receiverNotePOServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
-    private PositionServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionServiceV2;
     @Resource
     private FileServiceV2 fileServiceV2;
     @Resource

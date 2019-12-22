@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import cn.gson.oasys.ServiceV2.AttendanceServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.factory.*;
 import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.bo.PageBO;
@@ -76,7 +76,7 @@ public class AttendceController {
     @Resource
     StatusPOMapper statusPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private DeptPOMapper deptPOMapper;
     @Resource

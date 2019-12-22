@@ -1,7 +1,7 @@
 package cn.gson.oasys.ServiceV2.discussV2;
 
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.UserVO;
@@ -20,9 +20,9 @@ public class DiscussServiceV2 {
     @Resource
     private DiscussListPOServiceV2 discussListServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private ReplyListPOServiceV2 replyListPOServiceV2;
     @Resource

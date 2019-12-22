@@ -18,7 +18,7 @@ import java.util.Map;
 @Service
 public class UserVOListServiceV2 {
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     /**
      * 补全所有用户的部门，职位，角色信息

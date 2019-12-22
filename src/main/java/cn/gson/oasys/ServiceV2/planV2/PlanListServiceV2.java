@@ -1,9 +1,9 @@
 package cn.gson.oasys.ServiceV2.planV2;
 
-import cn.gson.oasys.ServiceV2.DeptServiceV2;
+import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.PlanListPOMapper;
 import cn.gson.oasys.model.po.PlanListPO;
 import cn.gson.oasys.model.po.PlanListPOExample;
@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,13 +25,13 @@ public class PlanListServiceV2 {
     @Resource
     private PlanListPOMapper planListPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
     private PlanServiceV2 planServiceV2;
 
@@ -310,6 +311,24 @@ public class PlanListServiceV2 {
             }
         }
         return otherPlanListPOS;
+    }
+
+    /**
+     * 根据计划的创建人ID找计划，并根据计划的创建时间降序排列和计划的结束时间降序排列，只取前两条(系统主页面）
+     *
+     * @param userId
+     * @return
+     */
+    public List<PlanListPO> getPlanListPOSByPlanUserIdAndCreateTimeDESCAndEndTimeDESCAndFrontTwo(Long userId) {
+        PlanListPOExample planListPOExample = new PlanListPOExample();
+        planListPOExample.setOrderByClause("create_time DESC,end_time DESC");
+        planListPOExample.createCriteria().andPlanUserIdEqualTo(userId);
+        List<PlanListPO> planListPOS = planListPOMapper.selectByExample(planListPOExample);
+        List<PlanListPO> subPlanListPOS = planListPOS.subList(0, 2);
+        for (PlanListPO planListPO : subPlanListPOS) {
+            planListPO.setEndTime(new Timestamp(planListPO.getEndTime().getTime()));
+        }
+        return subPlanListPOS;
     }
 
 }

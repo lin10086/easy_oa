@@ -1,6 +1,6 @@
 package cn.gson.oasys;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.model.po.UserPO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 public class MapTest {
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     @Test
     public void ListTest() {

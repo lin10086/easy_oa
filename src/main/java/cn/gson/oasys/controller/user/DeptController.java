@@ -8,9 +8,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.DeptServiceV2;
-import cn.gson.oasys.ServiceV2.PositionServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
+import cn.gson.oasys.ServiceV2.PositionPOServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
@@ -52,11 +52,11 @@ public class DeptController {
     @Resource
     private PositionPOMapper positionPOMapper;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
-    private PositionServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
 	/*//已完成部分--------------------√
 	//第一次进入用户管理》部门管理(1)
@@ -332,7 +332,7 @@ public class DeptController {
         UserVO userVO = UserFactoryVO.createUserVO(userPO);
         DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(changeDeptId);
         DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
-        PositionPO positionPO = positionServiceV2.getPositionByPositionId(positionId);
+        PositionPO positionPO = positionServiceV2.getPositionPOByPositionId(positionId);
         PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);
         userVO.setDeptVO(deptVO);
         userVO.setPositionVO(positionVO);*/
@@ -362,7 +362,7 @@ public class DeptController {
 
 //            User oldmanage = udao.findOne(oldmanageid);
             //老领导的职位信息
-            PositionPO oldPositionPO = positionServiceV2.getPositionByPositionId(oldUserPO.getPositionId());
+            PositionPO oldPositionPO = positionServiceV2.getPositionPOByPositionId(oldUserPO.getPositionId());
             PositionVO oldPositionVO = PositionFactoryVO.createPositionVO(oldPositionPO);
 
 //            Position namage = oldmanage.getPosition();
@@ -372,7 +372,7 @@ public class DeptController {
             DeptVO changeDeptVO = DeptFactoryVO.createDeptVO(changeDeptPO);
 //            Dept changedept = deptdao.findOne(changedeptid);
 
-            PositionPO changePositionPO = positionServiceV2.getPositionByPositionId(changePositionId);
+            PositionPO changePositionPO = positionServiceV2.getPositionPOByPositionId(changePositionId);
             PositionVO changePositionVO = PositionFactoryVO.createPositionVO(changePositionPO);
 //            Position changeposition = pdao.findOne(positionid);
 

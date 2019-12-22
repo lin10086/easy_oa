@@ -3,10 +3,10 @@ package cn.gson.oasys.controller.user;
 import java.util.List;
 import java.util.Map;
 
-import cn.gson.oasys.ServiceV2.DeptServiceV2;
-import cn.gson.oasys.ServiceV2.PositionServiceV2;
+import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
+import cn.gson.oasys.ServiceV2.PositionPOServiceV2;
 import cn.gson.oasys.ServiceV2.RoleServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.RolePO;
@@ -51,11 +51,11 @@ public class UserController {
     RoleDao rdao;
 
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
-    private PositionServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionServiceV2;
     @Resource
     private RoleServiceV2 roleServiceV2;
 
@@ -311,7 +311,7 @@ public class UserController {
                                @RequestParam(value = "isbackpassword", required = false) boolean isbackpassword,
                                Model model) throws PinyinException {
         Dept dept = deptServiceV2.getDeptbyDeptId(deptId);
-        Position position = positionServiceV2.getPositionByPositionId(positionId);
+        Position position = positionServiceV2.getPositionPOByPositionId(positionId);
         Role role = roleServiceV2.getRoleByRoleId(roleId);
         if (user.getUserId() == null) {
             String pinyin = PinyinHelper.convertToPinyinString(user.getUserName(), "", PinyinFormat.WITHOUT_TONE);
@@ -333,7 +333,7 @@ public class UserController {
                                Model model) throws PinyinException {
         DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(deptId);
         DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
-        PositionPO positionPO = positionServiceV2.getPositionByPositionId(positionId);
+        PositionPO positionPO = positionServiceV2.getPositionPOByPositionId(positionId);
         PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);
         RolePO rolePO = roleServiceV2.getRoleByRoleId(roleId);
         RoleVO roleVO = RoleFactoryVO.createRoleVO(rolePO);

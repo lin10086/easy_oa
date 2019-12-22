@@ -1,10 +1,8 @@
 package cn.gson.oasys;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.UserPO;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.Max;
 import java.util.List;
 
 @Slf4j
@@ -20,7 +17,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 public class PageBOTest {
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     @Test
     public void getPageBOUser() {

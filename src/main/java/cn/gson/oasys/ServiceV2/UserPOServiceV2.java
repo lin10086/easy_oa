@@ -31,7 +31,7 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class UserServiceV2 {
+public class UserPOServiceV2 {
     @Resource
     private UserPOMapper userPOMapper;
     @Resource

@@ -1,7 +1,7 @@
 package cn.gson.oasys.ServiceV2.mailV2;
 
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
 import cn.gson.oasys.mappers.MailNumberPOMapper;
 import cn.gson.oasys.model.po.MailNumberPO;
 import cn.gson.oasys.model.po.MailNumberPOExample;
@@ -24,7 +24,7 @@ public class MailNumberServiceV2 {
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
 
     /**
      * 根据邮箱账号ID找邮箱

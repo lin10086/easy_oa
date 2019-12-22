@@ -16,6 +16,7 @@ import cn.gson.oasys.model.po.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -339,4 +340,24 @@ public class AttendanceServiceV2 {
         attendsPOMapper.insertSelective(attendsPO);
     }
 
+    //查找某用户某天最新记录用来显示用户最新的类型和考勤时间（考勤表的用户ID，考勤时间）
+//    @Query(nativeQuery = true, value = "SELECT * from aoa_attends_list a WHERE DATE_format(a.attends_time,'%Y-%m-%d') like %?1% and a.attends_user_id=?2 ORDER  BY a.attends_time DESC  LIMIT 1")
+//    Attends findlastest(String date, long userid);
+    public AttendsPO getAttendsPOByAttendsUserIdAndAttendsTimeDESCFrontFirst(Long userId) {
+        // 显示用户当天最新的记录
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String nowDate = sdf.format(date);
+        AttendsPOExample attendsPOExample = new AttendsPOExample();
+        attendsPOExample.createCriteria().andAttendsUserIdEqualTo(userId);
+        attendsPOExample.setOrderByClause("attends_time DESC");
+        List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
+        for (AttendsPO attendsPO : attendsPOList) {
+            String attendsPOTime = sdf.format(attendsPO.getAttendsTime());
+            if (nowDate.equals(attendsPOTime)) {
+                return attendsPO;
+            }
+        }
+        return null;
+    }
 }

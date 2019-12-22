@@ -1,14 +1,10 @@
 package cn.gson.oasys.ServiceV2.noteV2;
 
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
 import cn.gson.oasys.mappers.NoteListPOMapper;
-import cn.gson.oasys.model.entity.note.Note;
 import cn.gson.oasys.model.po.NoteListPO;
 import cn.gson.oasys.model.po.NoteListPOExample;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,7 +17,7 @@ public class NoteListPOServiceV2 {
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
 
 
     /**

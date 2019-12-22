@@ -1,9 +1,8 @@
 package cn.gson.oasys.factory;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.UserVO;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class UserFactory {
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     public static List<Long> getUserIds(List<User> userList) {
         List<Long> userIds = new ArrayList<>();

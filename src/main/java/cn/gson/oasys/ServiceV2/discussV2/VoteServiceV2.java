@@ -1,10 +1,6 @@
 package cn.gson.oasys.ServiceV2.discussV2;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
-import cn.gson.oasys.model.entity.discuss.Discuss;
-import cn.gson.oasys.model.entity.discuss.VoteList;
-import cn.gson.oasys.model.entity.discuss.VoteTitles;
-import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.UserVO;
 import org.springframework.stereotype.Service;
@@ -23,7 +19,7 @@ public class VoteServiceV2 {
     @Resource
     private VoteTitleUserPOServiceV2 voteTitleUserPOServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     public void voteServiceHandle(Model model, UserPO userPO, DiscussListPO discussListPO) {
         if (!Objects.isNull(discussListPO.getVoteId())) {

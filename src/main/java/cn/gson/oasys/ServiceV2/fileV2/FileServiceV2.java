@@ -1,7 +1,7 @@
 package cn.gson.oasys.ServiceV2.fileV2;
 
 import cn.gson.oasys.ServiceV2.AttachmentServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.AttachmentListPOMapper;
 import cn.gson.oasys.mappers.FileListPOMapper;
 import cn.gson.oasys.mappers.FilePathPOMapper;
@@ -41,7 +41,7 @@ public class FileServiceV2 {
     @Resource
     private AttachmentServiceV2 attachmentServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private AttachmentListPOMapper attachmentListPOMapper;
 

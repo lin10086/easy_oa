@@ -1,10 +1,7 @@
 package cn.gson.oasys.ServiceV2.scheduleV2;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
-import cn.gson.oasys.model.entity.schedule.ScheduleList;
-import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.model.po.SchedulePO;
-import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.factoryvo.ScheduleFactory.ScheduleListVOFactory;
 import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
 import org.springframework.stereotype.Service;
@@ -16,7 +13,7 @@ import java.util.List;
 @Service
 public class ScheduleServiceV2 {
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private ScheduleListServiceV2 scheduleListServiceV2;
     @Resource
@@ -49,4 +46,6 @@ public class ScheduleServiceV2 {
 
         return scheduleListVOS;
     }
+
+
 }

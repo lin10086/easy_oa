@@ -16,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class PositionServiceV2 {
+public class PositionPOServiceV2 {
     @Resource
     PositionPOMapper positionPOMapper;
 
@@ -40,7 +40,7 @@ public class PositionServiceV2 {
     }
 
     //根据职位ID获取职位信息
-    public PositionPO getPositionByPositionId(Long positionId) {
+    public PositionPO getPositionPOByPositionId(Long positionId) {
         PositionPO positionPO = positionPOMapper.selectByPrimaryKey(positionId);
         return positionPO;
     }

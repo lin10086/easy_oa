@@ -1,25 +1,21 @@
 package cn.gson.oasys.ServiceV2;
 
 import cn.gson.oasys.ServiceV2.planV2.PlanServiceV2;
-import cn.gson.oasys.factory.DeptFactory;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
-import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.po.*;
 
 import cn.gson.oasys.vo.DeptVO;
-import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
-public class DeptServiceV2 {
+public class DeptPOServiceV2 {
     @Resource
     private DeptPOMapper deptPOMapper;
     @Resource
@@ -27,7 +23,7 @@ public class DeptServiceV2 {
     @Resource
     private UserPOMapper userPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private PlanServiceV2 planServiceV2;
 

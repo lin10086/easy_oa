@@ -1,17 +1,15 @@
 package cn.gson.oasys.ServiceV2.discussV2;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.LoveReplyUserPOMapper;
 import cn.gson.oasys.model.po.LoveReplyUserPO;
 import cn.gson.oasys.model.po.LoveReplyUserPOExample;
 import cn.gson.oasys.model.po.ReplyListPO;
 import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.UserVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +18,7 @@ public class ReplyListUserPOServiceV2 {
     @Resource
     private LoveReplyUserPOMapper loveReplyUserPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     /**
      * 根据用户ID和回复ID在回复用户点赞表插入一条信息（即点赞）

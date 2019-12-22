@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class NoticeUserRelationServiceV2 {
+public class NoticeUserRelationPOServiceV2 {
     @Resource
     private NoticeUserRelationPOMapper noticeUserRelationPOMapper;
 

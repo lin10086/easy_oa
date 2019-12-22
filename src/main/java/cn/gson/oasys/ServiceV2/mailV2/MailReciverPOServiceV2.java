@@ -1,7 +1,7 @@
 package cn.gson.oasys.ServiceV2.mailV2;
 
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
 import cn.gson.oasys.mappers.MailReciverPOMapper;
 import cn.gson.oasys.model.po.MailReciverPO;
 import cn.gson.oasys.model.po.MailReciverPOExample;
@@ -12,20 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class MailReciverServiceV2 {
+public class MailReciverPOServiceV2 {
     @Resource
     private MailReciverPOMapper mailReciverPOMapper;
-    @Resource
-    private StatusServiceV2 statusServiceV2;
-    @Resource
-    private TypeServiceV2 typeServiceV2;
 
     /**
-     * 根据用户和是否已读是否删除找中间表（收件箱未读的条数）
+     * 根据用户id和是否已读是否删除找中间表（收件箱未读的条数）
      *
-     * @param read
-     * @param del
-     * @param userId
+     * @param read   是否已读
+     * @param del    是否删除
+     * @param userId 用户ID
      * @return
      */
     public List<MailReciverPO> getMailReciverPOByReadAndDelAndUserId(Boolean read, Boolean del, Long userId) {

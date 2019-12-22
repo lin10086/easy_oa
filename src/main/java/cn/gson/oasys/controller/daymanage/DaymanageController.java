@@ -254,13 +254,13 @@ public class DaymanageController {
     //==================================================
 
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private UserVOListServiceV2 userVOListServiceV2;
     @Resource

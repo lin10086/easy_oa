@@ -17,6 +17,21 @@ public class TaskListServiceV2 {
     private TaskListPOMapper taskListPOMapper;
 
     /**
+     * 根据任务ID修改状态ID
+     *
+     * @param taskId
+     * @param statusId
+     * @return
+     */
+    public Integer updateTaskListPOStatus(Long taskId, Long statusId) {
+        TaskListPO taskListPO = taskListPOMapper.selectByPrimaryKey(taskId);
+        taskListPO.setStatusId(statusId.intValue());
+        Integer rows = taskListPOMapper.updateByPrimaryKeySelective(taskListPO);
+        return rows;
+    }
+
+
+    /**
      * 根据是否取消，状态ID进行排序和任务ID是否在（根据用户找到的任务ID里面）
      *
      * @param taskIdList
@@ -95,7 +110,7 @@ public class TaskListServiceV2 {
      */
     public List<TaskListPO> getTaskListPOByTitleLikeAndTaskIdIn(List<Long> taskIdList, String title) {
         TaskListPOExample taskListPOExample = new TaskListPOExample();
-        taskListPOExample.createCriteria().andTaskIdIn(taskIdList).andTitleLike("%"+title+"%");
+        taskListPOExample.createCriteria().andTaskIdIn(taskIdList).andTitleLike("%" + title + "%");
         List<TaskListPO> taskListPOList = taskListPOMapper.selectByExample(taskListPOExample);
         return taskListPOList;
     }
@@ -124,18 +139,23 @@ public class TaskListServiceV2 {
         return taskListPO;
     }
 
+
     /**
-     * 根据任务ID修改状态ID
+     * 根据状态ID和用户ID找任务列表
      *
-     * @param taskId
-     * @param statusId
+     * @param statusId 状态ID 7为以完成
+     * @param userId   用户ID
      * @return
      */
-    public Integer updateTaskListPOStatus(Long taskId, Long statusId) {
-        TaskListPO taskListPO = taskListPOMapper.selectByPrimaryKey(taskId);
-        taskListPO.setStatusId(statusId.intValue());
-        Integer rows = taskListPOMapper.updateByPrimaryKeySelective(taskListPO);
-        return rows;
+    public List<TaskListPO> getTaskListPOByStatusIdAndUserId(Integer statusId, Long userId) {
+        //查找任务完成的用户
+//        @Query(nativeQuery=true, value="SELECT COUNT(*) from aoa_task_list where aoa_task_list.status_id=?1 and aoa_task_list.task_push_user_id=?2 ")
+//        Integer countfinish(Long status,Long userid);
+
+        TaskListPOExample taskListPOExample = new TaskListPOExample();
+        taskListPOExample.createCriteria().andStatusIdEqualTo(statusId).andTaskPushUserIdEqualTo(userId);
+        List<TaskListPO> taskListPOList = taskListPOMapper.selectByExample(taskListPOExample);
+        return taskListPOList;
     }
 
 }

@@ -12,7 +12,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.ServiceV2.fileV2.FileListServiceV2;
 import cn.gson.oasys.ServiceV2.fileV2.FilePathServiceV2;
 import cn.gson.oasys.ServiceV2.fileV2.FileServiceV2;
@@ -372,7 +372,7 @@ public class FileController {
 
     //===============================================
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private FilePathServiceV2 filePathServiceV2;
     @Resource

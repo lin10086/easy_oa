@@ -1,6 +1,6 @@
 package cn.gson.oasys.controller.system;
 
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
 import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.MapToList;
 import cn.gson.oasys.common.formValid.ResultEnum;
@@ -27,7 +27,7 @@ public class TypeSysController {
     Logger log = LoggerFactory.getLogger(getClass());
 
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
 
     /**
      * 进入类型管理表格界面

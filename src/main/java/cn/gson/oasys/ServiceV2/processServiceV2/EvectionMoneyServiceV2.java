@@ -1,6 +1,6 @@
 package cn.gson.oasys.ServiceV2.processServiceV2;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.EvectionMoneyPOMapper;
 import cn.gson.oasys.mappers.StayPOMapper;
 import cn.gson.oasys.mappers.TrafficPOMapper;
@@ -20,7 +20,7 @@ public class EvectionMoneyServiceV2 {
     @Resource
     private TrafficPOMapper trafficPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     /**
      * 根据主表ID找出差费用报销表

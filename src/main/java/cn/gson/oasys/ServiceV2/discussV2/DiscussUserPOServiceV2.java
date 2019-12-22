@@ -1,17 +1,15 @@
 package cn.gson.oasys.ServiceV2.discussV2;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.LoveDiscussUserPOMapper;
 import cn.gson.oasys.model.po.DiscussListPO;
 import cn.gson.oasys.model.po.LoveDiscussUserPO;
 import cn.gson.oasys.model.po.LoveDiscussUserPOExample;
 import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.UserVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +18,7 @@ public class DiscussUserPOServiceV2 {
     @Resource
     private LoveDiscussUserPOMapper loveDiscussUserPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
 
     /**

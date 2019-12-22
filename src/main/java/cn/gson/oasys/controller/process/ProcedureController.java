@@ -1028,11 +1028,11 @@ public class ProcedureController {
     //		================================================================
 
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private ProcessServiceV2 processServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private RoleServiceV2 roleServiceV2;
     @Resource
@@ -1044,7 +1044,7 @@ public class ProcedureController {
     @Resource
     private EvectionMoneyServiceV2 evectionMoneyServiceV2;
     @Resource
-    private PositionServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionServiceV2;
     @Resource
     private AttendanceServiceV2 attendanceServiceV2;
     @Resource

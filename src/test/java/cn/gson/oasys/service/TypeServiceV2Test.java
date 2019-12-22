@@ -1,6 +1,6 @@
 package cn.gson.oasys.service;
 
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
 import cn.gson.oasys.model.po.TypePO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import java.util.Map;
 @SpringBootTest
 public class TypeServiceV2Test {
     @Resource
-    TypeServiceV2 typeServiceV2;
+    TypePOServiceV2 typeServiceV2;
 
     @Test
     public void getTypeIdAndTypeNameByTypePoList() {

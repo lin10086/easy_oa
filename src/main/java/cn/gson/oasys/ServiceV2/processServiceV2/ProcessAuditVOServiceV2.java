@@ -1,7 +1,7 @@
 package cn.gson.oasys.ServiceV2.processServiceV2;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
 import cn.gson.oasys.mappers.ProcessListPOMapper;
 import cn.gson.oasys.mappers.ReviewedPOMapper;
 import org.springframework.stereotype.Service;
@@ -18,9 +18,9 @@ public class ProcessAuditVOServiceV2 {
     @Resource
     private ReviewedPOMapper reviewedPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private ReviewedServiceV2 reviewedServiceV2;
 

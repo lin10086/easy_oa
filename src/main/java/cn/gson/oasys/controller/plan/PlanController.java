@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.DeptServiceV2;
+import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.planV2.PlanListServiceV2;
 import cn.gson.oasys.ServiceV2.planV2.PlanServiceV2;
@@ -367,17 +367,17 @@ public class PlanController {
 
     //==============================================
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private PlanServiceV2 planServiceV2;
     @Resource
     private PlanListServiceV2 planListServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
     private MailServiceV2 mailServiceV2;
     @Resource

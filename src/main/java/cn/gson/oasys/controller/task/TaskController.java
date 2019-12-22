@@ -8,7 +8,6 @@ import java.util.Date;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.StringTokenizer;
 
 
@@ -26,13 +25,11 @@ import cn.gson.oasys.ServiceV2.taskV2.TaskUserServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.UserVO;
 import cn.gson.oasys.vo.factoryvo.taskFactory.TaskLoggerFactoryVO;
-import cn.gson.oasys.vo.mailVO2.MailNumberVO;
 import cn.gson.oasys.vo.taskVO2.TaskListVO;
 import cn.gson.oasys.vo.taskVO2.TaskLoggerVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -54,14 +51,8 @@ import cn.gson.oasys.model.dao.taskdao.TaskuserDao;
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.PositionDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.task.Tasklist;
-import cn.gson.oasys.model.entity.task.Tasklogger;
-import cn.gson.oasys.model.entity.task.Taskuser;
 import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.Position;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.task.TaskService;
 
 @Controller
@@ -507,7 +498,7 @@ public class TaskController {
 
     //================================================
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private TaskServiceV2 taskServiceV2;
     @Resource
@@ -515,13 +506,13 @@ public class TaskController {
     @Resource
     private TaskListServiceV2 taskListServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
-    private PositionServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionServiceV2;
     @Resource
     private UserVOListServiceV2 userVOListServiceV2;
     @Resource

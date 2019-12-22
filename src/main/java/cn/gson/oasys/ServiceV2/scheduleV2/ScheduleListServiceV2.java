@@ -1,18 +1,13 @@
 package cn.gson.oasys.ServiceV2.scheduleV2;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.SchedulePOMapper;
-import cn.gson.oasys.model.entity.schedule.ScheduleList;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.SchedulePO;
 import cn.gson.oasys.model.po.SchedulePOExample;
-import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,7 +17,7 @@ public class ScheduleListServiceV2 {
     @Resource
     private ScheduleUserServiceV2 scheduleUserServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     /**
      * 根据日程所属人找日程列表

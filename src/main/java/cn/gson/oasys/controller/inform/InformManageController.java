@@ -11,10 +11,10 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.ServiceV2.notice2.NoticeServiceV2;
-import cn.gson.oasys.ServiceV2.notice2.NoticeUserRelationServiceV2;
+import cn.gson.oasys.ServiceV2.notice2.NoticeUserRelationPOServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.noticeVO2.NoticeListVO;
 import org.slf4j.Logger;
@@ -309,13 +309,13 @@ public class InformManageController {
     @Resource
     private NoticeServiceV2 infromManageServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private NoticeUserRelationServiceV2 noticeUserRelationServiceV2;
+    private NoticeUserRelationPOServiceV2 noticeUserRelationServiceV2;
 
     /**
      * 通知管理面板
@@ -431,7 +431,7 @@ public class InformManageController {
             }
         }
         NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);//根据通知主表ID找通知主表信息
-        UserPO userPO = userServiceV2.getUserPOByUserId(noticeListPO.getUserId());//根据通知主表里的发布人ID找发布人信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(noticeListPO.getUserId());//根据通知主表里的发布人ID找发布人信息
         //（页面需要：标题，发布人名，发布时间，发布内容，链接）
 //        model.addAttribute("notice", noticeListPO);//设置通知主表信息
         model.addAttribute("title", noticeListPO.getTitle());//设置发布标题
@@ -472,7 +472,7 @@ public class InformManageController {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");//登录人ID
         PageHelper.startPage(page, 10);
         //通知列表信息
-        List<Map<String, Object>> mapList = infromManageServiceV2.getNoticeUserRelation(userId);
+        List<Map<String, Object>> mapList = infromManageServiceV2.getNoticeUserRelationAndNoticeListPO(userId);
         PageInfo pageInfo = new PageInfo(mapList);
         model.addAttribute("url", "informlistpaging");
         model.addAttribute("list", mapList);

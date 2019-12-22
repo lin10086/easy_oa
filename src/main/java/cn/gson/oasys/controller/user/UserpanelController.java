@@ -1,24 +1,35 @@
 package cn.gson.oasys.controller.user;
 
+import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
+import cn.gson.oasys.ServiceV2.PositionPOServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
+import cn.gson.oasys.ServiceV2.mailV2.MailReciverPOServiceV2;
+import cn.gson.oasys.ServiceV2.noteV2.NoteListPOServiceV2;
+import cn.gson.oasys.ServiceV2.notice2.NoticeUserRelationPOServiceV2;
+import cn.gson.oasys.ServiceV2.processServiceV2.NotePaperPOServiceV2;
 import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.MapToList;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
+import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.dao.informdao.InformRelationDao;
 import cn.gson.oasys.model.dao.maildao.MailreciverDao;
 import cn.gson.oasys.model.dao.processdao.NotepaperDao;
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.PositionDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.mail.Mailreciver;
-import cn.gson.oasys.model.entity.notice.NoticeUserRelation;
 import cn.gson.oasys.model.entity.process.Notepaper;
 import cn.gson.oasys.model.entity.user.User;
+import cn.gson.oasys.model.po.MailReciverPO;
+import cn.gson.oasys.model.po.NotePaperPO;
+import cn.gson.oasys.model.po.NoticeUserRelationPO;
+import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.services.user.NotepaperService;
+import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.vo.noteVO.NotePaperVO;
 import com.github.pagehelper.util.StringUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,10 +44,10 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sound.midi.Soundbank;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,39 +56,46 @@ import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 处理便签的控制器
+ */
 @Controller
 @RequestMapping("/")
 public class UserpanelController {
-	@Autowired
-	private UserDao udao;
-	
-	@Autowired
-	private DeptDao ddao;
-	@Autowired
-	private PositionDao pdao;
-	@Autowired
-	private InformRelationDao irdao;
-	@Autowired
-	private MailreciverDao mdao;
-	@Autowired
-	private NotepaperDao ndao;
-	@Autowired
-	private NotepaperService nservice;
-	
-//	@Value("${img.rootpath}")
-	private String rootpath;
+    @Autowired
+    private UserDao udao;
 
-	@PostConstruct
-	public void UserpanelController(){
-		try {
-			rootpath= ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/","/src/main/resources/static");
-			System.out.println(rootpath);
+    @Autowired
+    private DeptDao ddao;
+    @Autowired
+    private PositionDao pdao;
+    @Autowired
+    private InformRelationDao irdao;
+    @Autowired
+    private MailreciverDao mdao;
+    @Autowired
+    private NotepaperDao ndao;
+    @Autowired
+    private NotepaperService nservice;
 
-		}catch (IOException e){
-			System.out.println("获取项目路径异常");
-		}
-	}
+    //	@Value("${img.rootpath}")
+    private String rootpath;
 
+    /**
+     * 处理图像路径的控制器
+     */
+    @PostConstruct
+    public void UserpanelController() {
+        try {
+            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
+            System.out.println(rootpath);
+
+        } catch (IOException e) {
+            System.out.println("获取项目路径异常");
+        }
+    }
+/*
+	//用户面板
 	@RequestMapping("userpanel")
 	public String index(@SessionAttribute("userId") Long userId,Model model,HttpServletRequest req,
 			@RequestParam(value = "page", defaultValue = "0") int page,
@@ -126,131 +144,348 @@ public class UserpanelController {
 		
 	
 		return "user/userpanel";
-	}
-	/**
-	 * 上下页
-	 */
-	@RequestMapping("panel")
-	public String index(@SessionAttribute("userId") Long userId,Model model,
-			@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "size", defaultValue = "10") int size){
-		Pageable pa=new PageRequest(page, size);
-		User user=udao.findOne(userId);
-		//找便签
-		Page<Notepaper> list=ndao.findByUserIdOrderByCreateTimeDesc(user,pa);
-		List<Notepaper> notepaperlist=list.getContent();
-		model.addAttribute("notepaperlist", notepaperlist);
-		model.addAttribute("page", list);
-		model.addAttribute("url", "panel");
-		return "user/panel";
-	}
-	/**
-	 * 存便签
-	 */
-	@RequestMapping("writep")
-	public String savepaper(Notepaper npaper,@SessionAttribute("userId") Long userId,@RequestParam(value="concent",required=false)String concent){
-		User user=udao.findOne(userId);
-		npaper.setCreateTime(new Date());
-		npaper.setUserId(user);
-		System.out.println("内容"+npaper.getConcent());
-		if(npaper.getTitle()==null|| npaper.getTitle().equals(""))
-			npaper.setTitle("无标题");
-		if(npaper.getConcent()==null|| npaper.getConcent().equals(""))
-			npaper.setConcent(concent);
-		ndao.save(npaper);
-		
-		return "redirect:/userpanel";
-	}
-	/**
-	 * 删除便签
-	 */
-	@RequestMapping("notepaper")
-	public String deletepaper(HttpServletRequest request,@SessionAttribute("userId") Long userId){
-		User user=udao.findOne(userId);
-		String paperid=request.getParameter("id");
-		Long lpid = Long.parseLong(paperid);
-		Notepaper note=ndao.findOne(lpid);
-		if(user.getUserId().equals(note.getUserId().getUserId())){
-			nservice.delete(lpid);
-		}else{
-			System.out.println("权限不匹配，不能删除");
-			return "redirect:/notlimit";
-		}
-		return "redirect:/userpanel";
-		
-	}
-	/**
-	 * 修改用户
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 */
-	@RequestMapping("saveuser")
-	public String saveemp(@RequestParam("filePath")MultipartFile filePath,HttpServletRequest request,@Valid User user,
-			BindingResult br,@SessionAttribute("userId") Long userId) throws IllegalStateException, IOException{
-		String imgpath=nservice.upload(filePath);
-		User users=udao.findOne(userId);
-		
-		//重新set用户
-		users.setRealName(user.getRealName());
-		users.setUserTel(user.getUserTel());
-		users.setEamil(user.getEamil());
-		users.setAddress(user.getAddress());
-		users.setUserEdu(user.getUserEdu());
-		users.setSchool(user.getSchool());
-		users.setIdCard(user.getIdCard());
-		users.setBank(user.getBank());
-		users.setSex(user.getSex());
-		users.setThemeSkin(user.getThemeSkin());
-		users.setBirth(user.getBirth());
-		if(!StringUtil.isEmpty(user.getUserSign())){
-			users.setUserSign(user.getUserSign());
-		}
-		if(!StringUtil.isEmpty(user.getPassword())){
-			users.setPassword(user.getPassword());
-		}
-		if(!StringUtil.isEmpty(imgpath)){
-			users.setImgPath(imgpath);
-			
-		}
-		
-		request.setAttribute("users", users);
-		
-		ResultVO res = BindingResultVOUtil.hasErrors(br);
-		if (!ResultEnum.SUCCESS.getCode().equals(res.getCode())) {
-			List<Object> list = new MapToList<>().mapToList(res.getData());
-			request.setAttribute("errormess", list.get(0).toString());
-			
-			System.out.println("list错误的实体类信息：" + user);
-			System.out.println("list错误详情:" + list);
-			System.out.println("list错误第一条:" + list.get(0));
-			System.out.println("啊啊啊错误的信息——：" + list.get(0).toString());
-			
-		}else{
-			udao.save(users);
-			request.setAttribute("success", "执行成功！");
-		}
-		return "forward:/userpanel";
-		
-	}
-	@RequestMapping("image/**")
-	public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
-			throws Exception {
-		String projectPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-		System.out.println(projectPath);
-		String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
-		
-		String path = startpath.replace("/image", "/images");
-		
-		File f = new File(rootpath, path);
-		
-		ServletOutputStream sos = response.getOutputStream();
-		FileInputStream input = new FileInputStream(f.getPath());
-		byte[] data = new byte[(int) f.length()];
-		IOUtils.readFully(input, data);
-		// 将文件流输出到浏览器
-		IOUtils.write(data, sos);
-		input.close();
-		sos.close();
-	}
+	}*/
+
+    /*  *//**
+     * 上下页
+     *//*
+    @RequestMapping("panel")
+    public String index(@SessionAttribute("userId") Long userId, Model model,
+                        @RequestParam(value = "page", defaultValue = "0") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        Pageable pa = new PageRequest(page, size);
+        User user = udao.findOne(userId);
+        //找便签
+        Page<Notepaper> list = ndao.findByUserIdOrderByCreateTimeDesc(user, pa);
+        List<Notepaper> notepaperlist = list.getContent();
+        model.addAttribute("notepaperlist", notepaperlist);
+        model.addAttribute("page", list);
+        model.addAttribute("url", "panel");
+        return "user/panel";
+    }
+
+    *//**
+     * 存便签
+     *//*
+    @RequestMapping("writep")
+    public String savepaper(Notepaper npaper, @SessionAttribute("userId") Long userId, @RequestParam(value = "concent", required = false) String concent) {
+        User user = udao.findOne(userId);
+        npaper.setCreateTime(new Date());
+        npaper.setUserId(user);
+        System.out.println("内容" + npaper.getConcent());
+        if (npaper.getTitle() == null || npaper.getTitle().equals(""))
+            npaper.setTitle("无标题");
+        if (npaper.getConcent() == null || npaper.getConcent().equals(""))
+            npaper.setConcent(concent);
+        ndao.save(npaper);
+
+        return "redirect:/userpanel";
+    }
+
+    *//**
+     * 删除便签
+     *//*
+    @RequestMapping("notepaper")
+    public String deletepaper(HttpServletRequest request, @SessionAttribute("userId") Long userId) {
+        User user = udao.findOne(userId);
+        String paperid = request.getParameter("id");
+        Long lpid = Long.parseLong(paperid);
+        Notepaper note = ndao.findOne(lpid);
+        if (user.getUserId().equals(note.getUserId().getUserId())) {
+            nservice.delete(lpid);
+        } else {
+            System.out.println("权限不匹配，不能删除");
+            return "redirect:/notlimit";
+        }
+        return "redirect:/userpanel";
+    }
+*/
+
+   /* *//**
+     * 修改用户
+     *
+     * @throws IOException
+     * @throws IllegalStateException
+     *//*
+    @RequestMapping("saveuser")
+    public String saveemp(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest request, @Valid User user,
+                          BindingResult br, @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
+        String imgpath = nservice.upload(filePath);
+        User users = udao.findOne(userId);
+
+        //重新set用户
+        users.setRealName(user.getRealName());
+        users.setUserTel(user.getUserTel());
+        users.setEamil(user.getEamil());
+        users.setAddress(user.getAddress());
+        users.setUserEdu(user.getUserEdu());
+        users.setSchool(user.getSchool());
+        users.setIdCard(user.getIdCard());
+        users.setBank(user.getBank());
+        users.setSex(user.getSex());
+        users.setThemeSkin(user.getThemeSkin());
+        users.setBirth(user.getBirth());
+        if (!StringUtil.isEmpty(user.getUserSign())) {
+            users.setUserSign(user.getUserSign());
+        }
+        if (!StringUtil.isEmpty(user.getPassword())) {
+            users.setPassword(user.getPassword());
+        }
+        if (!StringUtil.isEmpty(imgpath)) {
+            users.setImgPath(imgpath);
+
+        }
+
+        request.setAttribute("users", users);
+
+        ResultVO res = BindingResultVOUtil.hasErrors(br);
+        if (!ResultEnum.SUCCESS.getCode().equals(res.getCode())) {
+            List<Object> list = new MapToList<>().mapToList(res.getData());
+            request.setAttribute("errormess", list.get(0).toString());
+
+            System.out.println("list错误的实体类信息：" + user);
+            System.out.println("list错误详情:" + list);
+            System.out.println("list错误第一条:" + list.get(0));
+            System.out.println("啊啊啊错误的信息——：" + list.get(0).toString());
+
+        } else {
+            udao.save(users);
+            request.setAttribute("success", "执行成功！");
+        }
+        return "forward:/userpanel";
+
+    }
+
+    @RequestMapping("image/**")
+    public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
+            throws Exception {
+        String projectPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+        System.out.println(projectPath);
+        String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
+
+        String path = startpath.replace("/image", "/images");
+
+        File f = new File(rootpath, path);
+
+        ServletOutputStream sos = response.getOutputStream();
+        FileInputStream input = new FileInputStream(f.getPath());
+        byte[] data = new byte[(int) f.length()];
+        IOUtils.readFully(input, data);
+        // 将文件流输出到浏览器
+        IOUtils.write(data, sos);
+        input.close();
+        sos.close();
+    }
+*/
+    //=============================
+    @Resource
+    private UserPOServiceV2 userPOServiceV2;
+    @Resource
+    private DeptPOServiceV2 deptPOServiceV2;
+    @Resource
+    private PositionPOServiceV2 positionPOServiceV2;
+    @Resource
+    private NoticeUserRelationPOServiceV2 noticeUserRelationPOServiceV2;
+    @Resource
+    private MailReciverPOServiceV2 mailReciverPOServiceV2;
+    @Resource
+    private NotePaperPOServiceV2 notePaperPOServiceV2;
+
+    //用户面板
+    @RequestMapping("userpanel")
+    public String userPanel(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
+                            @RequestParam(value = "page", defaultValue = "1") int page,
+                            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        UserPO userPO = null;
+        if (!StringUtil.isEmpty((String) req.getAttribute("errormess"))) {
+            userPO = (UserPO) req.getAttribute("users");
+            req.setAttribute("errormess", req.getAttribute("errormess"));
+        } else if (!StringUtil.isEmpty((String) req.getAttribute("success"))) {
+            userPO = (UserPO) req.getAttribute("users");
+            req.setAttribute("success", "fds");
+        } else {
+            //找到这个用户
+            userPO = userPOServiceV2.getUserPOByUserId(userId);
+        }
+        //找到部门名称
+        String deptName = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()).getDeptName();
+        //找到职位名称
+        String positionName = positionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()).getName();//职位名
+        //找未读通知消息
+        List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationPOServiceV2.getNoticeUserRelationPOByIsReadAndUserId(userId, false);
+        //找未读邮件
+        List<MailReciverPO> mailReciverPOList = mailReciverPOServiceV2.getMailReciverPOByReadAndDelAndUserId(false, false, userId);
+
+        //找便签
+        List<NotePaperPO> notePaperPOList = notePaperPOServiceV2.getNotePaperPOSByNotePaperUserIdAndCreateTimeDESC(userId);//用户的所有便签，创建时间降序
+
+
+        model.addAttribute("user", userPO);
+        model.addAttribute("deptname", deptName);
+        model.addAttribute("positionname", positionName);
+        model.addAttribute("noticelist", noticeUserRelationPOList.size());
+        model.addAttribute("maillist", mailReciverPOList.size());
+
+        model.addAttribute("url", "panel");
+        return "user/userpanel";
+    }
+
+    /**
+     * 上下页
+     */
+    @RequestMapping("panel")
+    public String index(@SessionAttribute("userId") Long userId, Model model,
+                        @RequestParam(value = "page", defaultValue = "1") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<NotePaperPO> notePaperPOList = notePaperPOServiceV2.getNotePaperPOSByNotePaperUserIdAndCreateTimeDESC(userId);//根据用户找便签并根据创建时间降序
+        getNotePaperPOListPage(model, notePaperPOList, page, size);
+        model.addAttribute("url", "panel");
+        return "user/panel";
+    }
+
+    /**
+     * 存便签
+     */
+    @RequestMapping("savepaper")
+    public String savePaper(NotePaperVO notePaperVO,
+                            @SessionAttribute("userId") Long userId,
+                            @RequestParam(value = "content", required = false) String content) {
+        NotePaperPO notePaperPO = new NotePaperPO();
+        notePaperPO.setCreateTime(new Date());
+        notePaperPO.setNotepaperUserId(userId);
+
+        if (notePaperVO.getTitle() == null || notePaperVO.getTitle().equals("")) {
+            notePaperPO.setTitle("无标题");
+        } else {
+            notePaperPO.setTitle(notePaperVO.getTitle());
+        }
+        if (notePaperVO.getContent() == null || notePaperVO.getContent().equals("")) {
+            notePaperPO.setConcent(content);
+        } else {
+            notePaperPO.setConcent(notePaperVO.getContent());
+        }
+        notePaperPOServiceV2.insertNotePaperPOByNotePaperPO(notePaperPO);
+        return "redirect:/userpanel";
+    }
+
+    /**
+     * 删除便签
+     *
+     * @param request
+     * @param userId  登录人的用户ID
+     * @return
+     */
+    @RequestMapping("notepaper")
+    public String deleteNotePaper(HttpServletRequest request, @SessionAttribute("userId") Long userId) {
+        Long notePaperId = Long.parseLong(request.getParameter("id"));//笔记标签ID
+        NotePaperPO notePaperPO = notePaperPOServiceV2.getNotePaperPOByNotePaperId(notePaperId);//笔记标签信息
+        if (userId.equals(notePaperPO.getNotepaperUserId())) {
+            notePaperPOServiceV2.deleteNotePaperPOByNotePaperId(notePaperId);
+        } else {
+            System.out.println("权限不匹配，不能删除");
+            return "redirect:/notlimit";
+        }
+        return "redirect:/userpanel";//重定向到用户标签面板
+    }
+
+    /**
+     * 标签分页的方法
+     *
+     * @param model
+     * @param notePaperPOList
+     * @param page
+     * @param size
+     */
+    public void getNotePaperPOListPage(Model model, List<NotePaperPO> notePaperPOList, int page, int size) {
+        PageBO pageBO = new PageBO(page, size);
+        pageBO.setTotalCount(pageBO.getTotalPageCount());
+        int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
+        int end = pageBO.getPageNo() * pageBO.getPageSize();
+        if (end > notePaperPOList.size()) {
+            end = notePaperPOList.size();
+        }
+        List<NotePaperPO> subNotePaperPOList = notePaperPOList.subList(start, end);
+        model.addAttribute("notepaperlist", subNotePaperPOList);
+        model.addAttribute("page", pageBO);
+    }
+@Resource
+private NoteListPOServiceV2
+    /**
+     * 修改用户
+     *
+     * @throws IOException
+     * @throws IllegalStateException
+     */
+    @RequestMapping("saveuser")
+    public String saveUser(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest request, @Valid UserVO userVO,
+                          BindingResult br, @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
+        String imgpath = noti
+        String imgpath = nservice.upload(filePath);
+        User users = udao.findOne(userId);
+
+        //重新set用户
+        users.setRealName(user.getRealName());
+        users.setUserTel(user.getUserTel());
+        users.setEamil(user.getEamil());
+        users.setAddress(user.getAddress());
+        users.setUserEdu(user.getUserEdu());
+        users.setSchool(user.getSchool());
+        users.setIdCard(user.getIdCard());
+        users.setBank(user.getBank());
+        users.setSex(user.getSex());
+        users.setThemeSkin(user.getThemeSkin());
+        users.setBirth(user.getBirth());
+        if (!StringUtil.isEmpty(user.getUserSign())) {
+            users.setUserSign(user.getUserSign());
+        }
+        if (!StringUtil.isEmpty(user.getPassword())) {
+            users.setPassword(user.getPassword());
+        }
+        if (!StringUtil.isEmpty(imgpath)) {
+            users.setImgPath(imgpath);
+
+        }
+
+        request.setAttribute("users", users);
+
+        ResultVO res = BindingResultVOUtil.hasErrors(br);
+        if (!ResultEnum.SUCCESS.getCode().equals(res.getCode())) {
+            List<Object> list = new MapToList<>().mapToList(res.getData());
+            request.setAttribute("errormess", list.get(0).toString());
+
+            System.out.println("list错误的实体类信息：" + user);
+            System.out.println("list错误详情:" + list);
+            System.out.println("list错误第一条:" + list.get(0));
+            System.out.println("啊啊啊错误的信息——：" + list.get(0).toString());
+
+        } else {
+            udao.save(users);
+            request.setAttribute("success", "执行成功！");
+        }
+        return "forward:/userpanel";
+
+    }
+
+    @RequestMapping("image/**")
+    public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
+            throws Exception {
+        String projectPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+        System.out.println(projectPath);
+        String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
+
+        String path = startpath.replace("/image", "/images");
+
+        File f = new File(rootpath, path);
+
+        ServletOutputStream sos = response.getOutputStream();
+        FileInputStream input = new FileInputStream(f.getPath());
+        byte[] data = new byte[(int) f.length()];
+        IOUtils.readFully(input, data);
+        // 将文件流输出到浏览器
+        IOUtils.write(data, sos);
+        input.close();
+        sos.close();
+    }
 
 }

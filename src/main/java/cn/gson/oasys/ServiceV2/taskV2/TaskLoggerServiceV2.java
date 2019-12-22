@@ -1,6 +1,6 @@
 package cn.gson.oasys.ServiceV2.taskV2;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.TaskLoggerPOMapper;
 import cn.gson.oasys.model.po.TaskListPO;
 import cn.gson.oasys.model.po.TaskLoggerPO;
@@ -18,7 +18,7 @@ public class TaskLoggerServiceV2 {
     @Resource
     private TaskLoggerPOMapper taskLoggerPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
 
     /**

@@ -1,7 +1,7 @@
 package cn.gson.oasys.controller.system;
 
 import cn.gson.oasys.ServiceV2.RoleServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.ServiceV2.rolemanage.RolePowerListServiceV2;
 import cn.gson.oasys.ServiceV2.systemV2.SystemMenuServiceV2;
 import cn.gson.oasys.common.formValid.BindingResultVOUtil;
@@ -11,7 +11,6 @@ import cn.gson.oasys.common.formValid.ResultVO;
 import cn.gson.oasys.model.po.RolePO;
 import cn.gson.oasys.model.po.RolePowerListPO;
 import cn.gson.oasys.model.po.SysMenuPO;
-import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.systemmenuVO2.SystemMenuVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public class MenuSysController {
     @Resource
     private RolePowerListServiceV2 rolePowerListServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     /**
      * 显示菜单管理界面(所有的父菜单和子菜单）

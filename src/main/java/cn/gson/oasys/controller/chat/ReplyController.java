@@ -1,6 +1,6 @@
 package cn.gson.oasys.controller.chat;
 
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.ServiceV2.discussV2.*;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.UserVO;
@@ -45,7 +45,7 @@ public class ReplyController {
 
     //=======================================
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private DiscussListPOServiceV2 discussListPOServiceV2;
     @Resource
@@ -269,10 +269,7 @@ public class ReplyController {
         DiscussListPO discussListPO = discussListPOServiceV2.getDiscussListPOSByDiscussPOId(discussId);//根据讨论ID获取讨论信息
         UserPO userPO = userServiceV2.getUserPOByUserId(userId);
         VoteListPO voteListPO = voteListPOServiceV2.getVoteListPOByVoteListPOId(discussListPO.getVoteId());//根据讨论表中的投票ID获取投票信息
-        VoteTitleUserPO voteTitleUserPO = new VoteTitleUserPO();
-        voteTitleUserPO.setTitleId(titleId);
-        voteTitleUserPO.setUserId(userId);
-        voteTitleUserPO.setVoteId(voteListPO.getVoteId());
+
         Date date = new Date();
         if (date.getTime() < voteListPO.getStartTime().getTime()) {
             return "状态为未开始";
@@ -281,8 +278,12 @@ public class ReplyController {
         } else {
             model.addAttribute("dateType", 3);
         }
-        VoteTitleUserPO voteTitleUserPO1 = voteTitleUserPOServiceV2.getVoteTitleUserPOByVoteTitleIdAndUserId(titleId,userId);
-        if (Objects.isNull(voteTitleUserPO1)) {
+        VoteTitleUserPO getVoteTitleUserPO = voteTitleUserPOServiceV2.getVoteTitleUserPOByVoteTitleIdAndUserId(titleId,userId);
+        if (Objects.isNull(getVoteTitleUserPO)) {
+            VoteTitleUserPO voteTitleUserPO = new VoteTitleUserPO();
+            voteTitleUserPO.setTitleId(titleId);
+            voteTitleUserPO.setUserId(userId);
+            voteTitleUserPO.setVoteId(voteListPO.getVoteId());
             voteTitleUserPOServiceV2.insertVoteTitleUserPOByVoteTitleUserPO(voteTitleUserPO);
         } else {
             return "你已经投过票了";

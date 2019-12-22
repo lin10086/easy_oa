@@ -1,8 +1,8 @@
 package cn.gson.oasys.controller.chat;
 
 
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.ServiceV2.discussV2.*;
 import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.ResultEnum;
@@ -37,13 +37,13 @@ public class ChatManageController {
     @Resource
     private DiscussServiceV2 discussServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private DiscussListPOServiceV2 discussListPOServiceV2;
     @Resource
     private VoteServiceV2 voteServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private VoteListPOServiceV2 voteListPOServiceV2;
     @Resource

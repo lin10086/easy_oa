@@ -32,13 +32,13 @@ public class ProcessServiceV2 {
     @Resource
     private SubjectPOMapper subjectPOMapper;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
-    private PositionServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionServiceV2;
     @Resource
     private BursementPOMapper bursementPOMapper;
     @Resource
@@ -109,7 +109,6 @@ public class ProcessServiceV2 {
     private static final String CN_ZERO_FULL = "零元" + CN_FULL;
 
 
-
     /**
      * 写文件 方法
      *
@@ -142,6 +141,62 @@ public class ProcessServiceV2 {
         }
 
 
+    }
+
+    /**
+     * 更新主表信息
+     *
+     * @param processId       主表ID
+     * @param auditUserPO     登录人信息
+     * @param reviewedVO      审核表
+     * @param processListPO   流程主表
+     * @param nextAuditUserPO 下一个审核人
+     */
+    public void save(Long processId, UserPO auditUserPO, ReviewedVO reviewedVO, ProcessListPO processListPO, UserPO nextAuditUserPO) {
+        // 根据流程主表ID和审核人id找审核表
+        ReviewedPO reviewedPO = byProcessPOIdServiceV2.getReviewedPOByProcessPOIdAndUserId(processId, auditUserPO.getUserId());
+        reviewedPO.setStatusId(reviewedVO.getStatusId());
+        reviewedPO.setAdvice(reviewedVO.getAdvice());
+        reviewedPO.setReviewedTime(new Date());
+        reviewedPOMapper.updateByPrimaryKeySelective(reviewedPO);
+        //把下一个审核人信息插入审核表
+        ReviewedPO reviewedPO2 = new ReviewedPO();
+        reviewedPO2.setProId(processListPO.getProcessId());
+        reviewedPO2.setUserId(nextAuditUserPO.getUserId());
+        reviewedPO2.setStatusId(23L);//未处理
+        reviewedPO2.setReviewedTime(new Date());
+        reviewedPO2.setDel(0);
+        reviewedPO2.setAdvice(reviewedVO.getAdvice());
+        reviewedPOMapper.insertSelective(reviewedPO2);
+
+        processListPO.setShenuser(processListPO.getShenuser() + ";" + nextAuditUserPO.getUserName());//修改流程主表的审核人
+        processListPO.setStatusId(24L);//改变主表的状态（处理中）
+        processListPOMapper.updateByPrimaryKeySelective(processListPO);
+
+    }
+
+    /**
+     * 更新审核表信息
+     *
+     * @param reviewedPO 数据库查到的
+     * @param reviewedVO 前端传过来的
+     */
+    public void updateReviewedPO(ReviewedPO reviewedPO, ReviewedVO reviewedVO) {
+        reviewedPO.setAdvice(reviewedVO.getAdvice());
+        reviewedPO.setStatusId(reviewedVO.getStatusId());
+        reviewedPO.setReviewedTime(new Date());
+        reviewedPOMapper.updateByPrimaryKeySelective(reviewedPO);
+    }
+
+    /**
+     * 更新主表状态ID
+     *
+     * @param processListPO
+     * @param reviewedVO
+     */
+    public void updateProcessPOStatus(ProcessListPO processListPO, ReviewedVO reviewedVO) {
+        processListPO.setStatusId(reviewedVO.getStatusId());
+        processListPOMapper.updateByPrimaryKeySelective(processListPO);
     }
 
 
@@ -398,7 +453,7 @@ public class ProcessServiceV2 {
         if (!StringUtil.isEmpty(filePath.getOriginalFilename())) {
             //上传附件
             AttachmentListPO attachmentListPO = mailServiceV2.uploadAttachmentListPO(filePath, applyUserPO);
-            attachmentServiceV2.insertAttachmentListPOSetModel(attachmentListPO,"aoa_bursement");
+            attachmentServiceV2.insertAttachmentListPOSetModel(attachmentListPO, "aoa_bursement");
             return attachmentListPO;
         }
         return null;
@@ -724,7 +779,7 @@ public class ProcessServiceV2 {
             //根据审核人ID获取审核人信息
             UserPO auditUserPO = userServiceV2.getUserPOByUserId(reviewedPOList.get(i).getUserId());
             //根据审核人的职位ID获取审核人的职位信息
-            PositionPO positionPO = positionServiceV2.getPositionByPositionId(auditUserPO.getPositionId());
+            PositionPO positionPO = positionServiceV2.getPositionPOByPositionId(auditUserPO.getPositionId());
             //根据审核人的状态ID获取审核人的状态信息
             StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(reviewedPOList.get(i).getStatusId());
             result.put("auditUserPositionName", positionPO.getName());//获取审核人的职位名
@@ -741,59 +796,24 @@ public class ProcessServiceV2 {
     }
 
     /**
-     * 更新主表信息
+     * 根据流程申请人找流程并根据流程申请时间降序排列，只取前三条（本系统主页面）
      *
-     * @param processId       主表ID
-     * @param auditUserPO     登录人信息
-     * @param reviewedVO      审核表
-     * @param processListPO   流程主表
-     * @param nextAuditUserPO 下一个审核人
+     * @param userId 流程申请人ID
+     * @return
      */
-    public void save(Long processId, UserPO auditUserPO, ReviewedVO reviewedVO, ProcessListPO processListPO, UserPO nextAuditUserPO) {
-        // 根据流程主表ID和审核人id找审核表
-        ReviewedPO reviewedPO = byProcessPOIdServiceV2.getReviewedPOByProcessPOIdAndUserId(processId, auditUserPO.getUserId());
-        reviewedPO.setStatusId(reviewedVO.getStatusId());
-        reviewedPO.setAdvice(reviewedVO.getAdvice());
-        reviewedPO.setReviewedTime(new Date());
-        reviewedPOMapper.updateByPrimaryKeySelective(reviewedPO);
-        //把下一个审核人信息插入审核表
-        ReviewedPO reviewedPO2 = new ReviewedPO();
-        reviewedPO2.setProId(processListPO.getProcessId());
-        reviewedPO2.setUserId(nextAuditUserPO.getUserId());
-        reviewedPO2.setStatusId(23L);//未处理
-        reviewedPO2.setReviewedTime(new Date());
-        reviewedPO2.setDel(0);
-        reviewedPO2.setAdvice(reviewedVO.getAdvice());
-        reviewedPOMapper.insertSelective(reviewedPO2);
-
-        processListPO.setShenuser(processListPO.getShenuser() + ";" + nextAuditUserPO.getUserName());//修改流程主表的审核人
-        processListPO.setStatusId(24L);//改变主表的状态（处理中）
-        processListPOMapper.updateByPrimaryKeySelective(processListPO);
-
-    }
-
-    /**
-     * 更新审核表信息
-     *
-     * @param reviewedPO 数据库查到的
-     * @param reviewedVO 前端传过来的
-     */
-    public void updateReviewedPO(ReviewedPO reviewedPO, ReviewedVO reviewedVO) {
-        reviewedPO.setAdvice(reviewedVO.getAdvice());
-        reviewedPO.setStatusId(reviewedVO.getStatusId());
-        reviewedPO.setReviewedTime(new Date());
-        reviewedPOMapper.updateByPrimaryKeySelective(reviewedPO);
-    }
-
-    /**
-     * 更新主表状态ID
-     *
-     * @param processListPO
-     * @param reviewedVO
-     */
-    public void updateProcessPOStatus(ProcessListPO processListPO, ReviewedVO reviewedVO) {
-        processListPO.setStatusId(reviewedVO.getStatusId());
-        processListPOMapper.updateByPrimaryKeySelective(processListPO);
+    public List<ProcessListPO> getProcessListPOSByProcessUserIdAndApplyTimeDESCAndFrontThree(Long userId) {
+        ProcessListPOExample processListPOExample = new ProcessListPOExample();
+        processListPOExample.setOrderByClause("apply_time DESC");
+        processListPOExample.createCriteria().andProcessUserIdEqualTo(userId);
+        List<ProcessListPO> processListPOS = processListPOMapper.selectByExample(processListPOExample);
+        int end;
+        if(processListPOS.size()>3){
+            end =3;
+        }else {
+            end = processListPOS.size();
+        }
+        List<ProcessListPO> subProcessListPOS = processListPOS.subList(0, end);
+        return subProcessListPOS;
     }
 
 

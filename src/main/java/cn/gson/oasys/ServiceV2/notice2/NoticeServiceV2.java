@@ -18,17 +18,17 @@ public class NoticeServiceV2 {
     @Resource
     private NoticeListPOMapper noticeListPOMapper;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
     @Resource
     private NoticeUserRelationPOMapper noticeUserRelationPOMapper;
     @Resource
-    private NoticeUserRelationServiceV2 noticeUserRelationServiceV2;
+    private NoticeUserRelationPOServiceV2 noticeUserRelationServiceV2;
 
     /**
      * 根据用户ID找通知公告
@@ -181,7 +181,7 @@ public class NoticeServiceV2 {
         noticeUserRelationPOMapper.updateByPrimaryKeySelective(noticeUserRelationPO);
     }
 
-    public List<Map<String, Object>> getNoticeUserRelation(Long userId) {
+    public List<Map<String, Object>> getNoticeUserRelationAndNoticeListPO(Long userId) {
         List<Map<String, Object>> list = new ArrayList<>();
         NoticeUserRelationPOExample noticeUserRelationPOExample = new NoticeUserRelationPOExample();
         noticeUserRelationPOExample.createCriteria().andRelatinUserIdEqualTo(userId);
@@ -191,19 +191,19 @@ public class NoticeServiceV2 {
             Map<String, Object> map = new HashMap<>();
             //根据关联表中的通知主表ID找通知主表信息
             NoticeListPO noticeListPO = noticeListPOMapper.selectByPrimaryKey(noticeUserRelationPO.getRelatinNoticeId());
-            map.put("status", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());
-            map.put("type", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());
-            map.put("statusColor", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());
-            map.put("userName", userServiceV2.getUserPOByUserId(noticeListPO.getUserId()).getUserName());
-            map.put("deptName", deptServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());
-            map.put("contain", this.isForward(noticeListPO.getNoticeId(), noticeUserRelationPO.getRelatinUserId()));
-            map.put("is_read", noticeUserRelationPO.getIsRead());
-            map.put("notice_time", new Timestamp(noticeListPO.getNoticeTime().getTime()));
-            map.put("is_top", noticeListPO.getIsTop());
-            map.put("title", noticeListPO.getTitle());
-            map.put("url", noticeListPO.getUrl());
-            map.put("notice_id", noticeListPO.getNoticeId());
-            map.put("relatin_id", noticeUserRelationPO.getRelatinId());
+            map.put("status", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());//状态名
+            map.put("type", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());//类型名
+            map.put("statusColor", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());//状态颜色
+            map.put("userName", userServiceV2.getUserPOByUserId(noticeListPO.getUserId()).getUserName());//用户名
+            map.put("deptName", deptServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());//部门名
+            map.put("contain", this.isForward(noticeListPO.getNoticeId(), noticeUserRelationPO.getRelatinUserId()));//
+            map.put("is_read", noticeUserRelationPO.getIsRead());//是否已读
+            map.put("notice_time", new Timestamp(noticeListPO.getNoticeTime().getTime()));//发布是时间
+            map.put("is_top", noticeListPO.getIsTop());//是否置顶
+            map.put("title", noticeListPO.getTitle());//通知标题
+            map.put("url", noticeListPO.getUrl());//通知路径
+            map.put("notice_id", noticeListPO.getNoticeId());//通知ID
+            map.put("relatin_id", noticeUserRelationPO.getRelatinId());// 通知用户关系表ID
             list.add(map);
         }
         return list;

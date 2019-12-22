@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.InMailListServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailNumberServiceV2;
-import cn.gson.oasys.ServiceV2.mailV2.MailReciverServiceV2;
+import cn.gson.oasys.ServiceV2.mailV2.MailReciverPOServiceV2;
 import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.ServiceV2.AttachmentServiceV2;
 import cn.gson.oasys.ServiceV2.processServiceV2.ProcessServiceV2;
@@ -889,15 +889,15 @@ public class MailController {
     //===========================================
 
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
     @Resource
     private MailServiceV2 mailServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private MailReciverServiceV2 mailReciverServiceV2;
+    private MailReciverPOServiceV2 mailReciverServiceV2;
     @Resource
     private InMailListServiceV2 inMailListServiceV2;
     @Resource

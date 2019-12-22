@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import cn.gson.oasys.ServiceV2.RoleServiceV2;
-import cn.gson.oasys.ServiceV2.UserServiceV2;
+import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.ServiceV2.rolemanage.RolePowerListServiceV2;
 import cn.gson.oasys.ServiceV2.systemV2.SystemMenuServiceV2;
 import cn.gson.oasys.model.bo.PageBO;
@@ -19,7 +19,6 @@ import cn.gson.oasys.model.po.SysMenuPO;
 import cn.gson.oasys.model.po.UserPO;
 import cn.gson.oasys.vo.RoleVO;
 import cn.gson.oasys.vo.roleVO2.RolePowerMenuVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,14 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.github.pagehelper.util.StringUtil;
-
-import cn.gson.oasys.model.dao.IndexDao;
-import cn.gson.oasys.model.dao.roledao.RoleDao;
-import cn.gson.oasys.model.dao.roledao.RolepowerlistDao;
-
-import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.services.role.RoleService;
-import cn.gson.oasys.services.system.MenuSysService;
 
 @Controller
 @RequestMapping("/")
@@ -49,7 +40,7 @@ public class RoleController {
     @Resource
     private RolePowerListServiceV2 rolePowerListServiceV2;
     @Resource
-    private UserServiceV2 userServiceV2;
+    private UserPOServiceV2 userServiceV2;
 
     /**
      * 角色管理主页面

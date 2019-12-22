@@ -148,7 +148,7 @@ h1, h3 {
 			<div class="box-body">
 				<strong><i class="glyphicon glyphicon-book"></i> 学历</strong>
 				<p class="text-muted">
-					<span id="ctl00_cphMain_lblEducation">${user.school} ${user.userEdu}</span>
+					<span id="ctl00_cphMain_lblEducation">${user.userSchool} ${user.userEdu}</span>
 				</p>
 
 				<hr />
@@ -186,7 +186,7 @@ h1, h3 {
 			<form action="saveuser" method="post" enctype="multipart/form-data" onsubmit="return empcheck();" >
 			<div class="tab-content">
 
-				<div class="active tab-pane thistable" id="memo">
+				<div class="active tab-pane thistableson" id="memo">
 				<#include "/user/panel.ftl">
 
 				</div>
@@ -239,14 +239,14 @@ h1, h3 {
 
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span id="ctl00_cphMain_Label7">毕业院校</span></label> <input
-									name="school" type="text" value="${user.school}"
+									name="school" type="text" value="${user.userSchool}"
 									id="ctl00_cphMain_txtSchool" class="form-control" />
 							</div>
 
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span id="icard">身份证号</span></label> <input
 									name="idCard" type="text"
-									value="${user.idCard}" id="ic"
+									value="${user.userIdcard}" id="ic"
 									class="form-control" />
 							</div>
 

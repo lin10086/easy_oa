@@ -1,7 +1,7 @@
 package cn.gson.oasys.ServiceV2.mailV2;
 
 import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypeServiceV2;
+import cn.gson.oasys.ServiceV2.TypePOServiceV2;
 import cn.gson.oasys.mappers.MailNumberPOMapper;
 import cn.gson.oasys.model.dao.maildao.InMailDao;
 import cn.gson.oasys.model.dao.maildao.MailnumberDao;
@@ -62,9 +62,9 @@ public class MailServiceV2 {
     @Resource
     private StatusServiceV2 statusServiceV2;
     @Resource
-    private TypeServiceV2 typeServiceV2;
+    private TypePOServiceV2 typeServiceV2;
     @Resource
-    private MailReciverServiceV2 mailReciverServiceV2;
+    private MailReciverPOServiceV2 mailReciverServiceV2;
     @Resource
     private InMailListServiceV2 inMailListServiceV2;
     @Resource

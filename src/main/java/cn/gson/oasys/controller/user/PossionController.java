@@ -2,8 +2,8 @@ package cn.gson.oasys.controller.user;
 
 import java.util.List;
 
-import cn.gson.oasys.ServiceV2.DeptServiceV2;
-import cn.gson.oasys.ServiceV2.PositionServiceV2;
+import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
+import cn.gson.oasys.ServiceV2.PositionPOServiceV2;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.vo.DeptVO;
@@ -31,10 +31,10 @@ public class PossionController {
     @Autowired
     DeptDao ddao;
     @Resource
-    private PositionServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionServiceV2;
 
     @Resource
-    private DeptServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptServiceV2;
 /*
     //第一次进入，用户管理》职位管理（职位列表）
     @RequestMapping("positionmanage")
@@ -107,7 +107,7 @@ public class PossionController {
     @RequestMapping(value = "positionedit", method = RequestMethod.GET)
     public String positionEditGet(@RequestParam(value = "positionId", required = false) Long positionId, Model model) {
         if (positionId != null) {
-            PositionPO positionPO = positionServiceV2.getPositionByPositionId(positionId);
+            PositionPO positionPO = positionServiceV2.getPositionPOByPositionId(positionId);
             PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);
 
             DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(positionPO.getDeptid());
