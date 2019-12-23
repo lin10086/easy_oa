@@ -26,6 +26,7 @@ import cn.gson.oasys.ServiceV2.taskV2.TaskUserServiceV2;
 import cn.gson.oasys.ServiceV2.userV2.UserLogServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.vo.roleVO2.RolePowerMenuVO;
 import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,16 +245,14 @@ public class IndexController {
 //        req.setAttribute("userLogList", userLogs);
 //        return "index/index";
     }
-/*
 
-    */
-/**
+    /**
      * 菜单查找
      *
      * @param
      * @param req
      * @return
-     *//*
+     */
 
     @RequestMapping("menucha")
     public String menucha(HttpSession session, Model model, HttpServletRequest req) {
@@ -278,8 +277,42 @@ public class IndexController {
         return "common/leftlists";
 
     }
-*/
 
+
+    /**
+     * @param session
+     * @param model
+     * @param req
+     * @return
+     */
+/*    @RequestMapping("menucha")
+    public String findMenu(HttpSession session, Model model, HttpServletRequest req) {
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+//        User user = uDao.findOne(userId);
+        String val = null;
+        if (!StringUtils.isEmpty(req.getParameter("val"))) {
+            val = req.getParameter("val");
+        }
+        if (!StringUtils.isEmpty(val)) {
+            List<RolePowerMenuVO> rolePowerMenuVOList = systemMenuServiceV2.getSysMenuPOListByParentByIsShowAndMenuNameLike(0L, userPO.getRoleId(), true, req, val);
+//            List<Rolemenu> oneMenuAll = rdao.findname(0L, user.getRole().getRoleId(), true, true, val);//找父菜单
+            List<RolePowerMenuVO> twoMenuAll = null;
+            for (int i = 0; i < rolePowerMenuVOList.size(); i++) {
+//                twoMenuAll = rdao.findbyparentxianall(oneMenuAll.get(i).getMenuId(), user.getRole().getRoleId(), true, true);//找子菜单
+                twoMenuAll = systemMenuServiceV2.getSysMenuPOListByParentByIsShow(rolePowerMenuVOList.get(i).getMenuId(), userPO.getRoleId(), true, req);
+            }
+//            req.setAttribute("oneMenuAll", oneMenuAll);//一次菜单
+            req.setAttribute("twoMenuAll", twoMenuAll);//二级菜单
+        } else {
+            systemMenuServiceV2.getSysMenuPOListByParentByIsShow(0L, userPO.getRoleId(), true, req);
+            systemMenuServiceV2.getSysMenuPOListBySonIsShow(0L, userPO.getRoleId(), true, req);
+//            menuService.findMenuSys(req, user);
+        }
+
+        return "common/leftlists";
+
+    }*/
    /* @RequestMapping("userlogs")
     public String usreLog(@SessionAttribute("userId") Long userId, HttpServletRequest req) {
         List<UserLog> userLogs = userLogDao.findByUser(userId);
@@ -306,8 +339,8 @@ public class IndexController {
     /**
      * 控制面板主页
      *
-     * @param session
-     * @param model
+//     * @param session
+//     * @param model
      * @return
      */
    /* @RequestMapping("test2")
@@ -480,19 +513,21 @@ public class IndexController {
     @RequestMapping("userlogs")
     public String userLog(@SessionAttribute("userId") Long userId, HttpServletRequest req) {
         List<UserLogPO> userLogPOList = userLogServiceV2.getUserLogByUserIdAndLogTimeDESCFrontTen(userId);
-        List<UserLog> userLogs = userLogDao.findByUser(userId);
-        req.setAttribute("userLogList", userLogs);
+        req.setAttribute("userLogList", userLogPOList);
         return "user/userlog";
     }
 
+/*
 
-    /**
+    */
+/**
      * 菜单查找
      *
      * @param
      * @param req
      * @return
-     */
+     *//*
+
     @RequestMapping("menucha")
     public String menuCha(HttpSession session, Model model, HttpServletRequest req) {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
@@ -516,6 +551,7 @@ public class IndexController {
         return "common/leftlists";
 
     }
+*/
 
 
 }

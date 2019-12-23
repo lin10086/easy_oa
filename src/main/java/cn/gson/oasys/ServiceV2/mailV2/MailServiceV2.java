@@ -71,11 +71,13 @@ public class MailServiceV2 {
     private MailNumberServiceV2 mailNumberServiceV2;
 
     private String rootPath;
+    private String userRootPath;
 
     @PostConstruct
     public void UserpanelController() {
         try {
-            rootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
+            rootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
+            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static/images/user");
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
         }
@@ -114,7 +116,47 @@ public class MailServiceV2 {
 
             AttachmentListPO attachmentPO = new AttachmentListPO();
             attachmentPO.setAttachmentName(file.getOriginalFilename());
-            attachmentPO.setAttachmentPath(str);//没起作用
+            attachmentPO.setAttachmentPath(str);
+            attachmentPO.setAttachmentShuffix(suffix);
+            attachmentPO.setAttachmentSize(file.getSize() + "");
+            attachmentPO.setAttachmentType(file.getContentType());
+            attachmentPO.setUploadTime(new Date());
+            attachmentPO.setUserId(applyUserPO.getUserId() + "");
+            return attachmentPO;
+        }
+        return null;
+    }
+ /**
+     * 上传附件(用户图像）
+     *
+     * @param file
+     * @param applyUserPO 登录人
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    public AttachmentListPO uploadAttachmentListPOByUser(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
+        File savePath = new File(userRootPath);
+
+        if (!savePath.exists()) {
+            savePath.mkdirs();
+        }
+        //获取原始文件名
+        String fileName = file.getOriginalFilename();
+        if (!StringUtil.isEmpty(fileName)) {
+            //获取文件后缀名
+            String suffix = FilenameUtils.getExtension(fileName);
+            //新文件名
+            String newFileName = UUID.randomUUID().toString().toLowerCase() + "." + suffix;
+            //文件夹 文件名
+            File targetFile = new File(savePath, newFileName);
+            file.transferTo(targetFile);
+
+            String str = targetFile.getPath().replace(userRootPath, "");
+
+            AttachmentListPO attachmentPO = new AttachmentListPO();
+            attachmentPO.setAttachmentName(file.getOriginalFilename());
+            attachmentPO.setAttachmentPath(str);
             attachmentPO.setAttachmentShuffix(suffix);
             attachmentPO.setAttachmentSize(file.getSize() + "");
             attachmentPO.setAttachmentType(file.getContentType());

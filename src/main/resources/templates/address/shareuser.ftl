@@ -28,14 +28,14 @@
 				<td class=" col-xs-1"><span class="imgs center-block"> <img
 						style="width: 24px; height: 24px;"
 						class="profile-user-img img-responsive img-circle"
-						src="/image/${(user.imgPath)!''}">
+						src="/images/${(user.imgPath)!''}">
 				</span></td>
-				<td class="col-xs-2">${user.dept.deptName}</td>
-				<td class=" col-xs-2">${user.position.name}</td>
+				<td class="col-xs-2">${user.deptVO.deptName}</td>
+				<td class=" col-xs-2">${user.positionVO.positionName}</td>
 				<td class="col-xs-2 na">${user.userName}</td>
 				<td class="col-xs-2 na">${user.userTel}</td>
 				<td class=" col-xs-2">男</td>
-				<td class=" col-xs-2">${(user.eamil)!''}</td>
+				<td class=" col-xs-2">${(user.userEmail)!''}</td>
 			</tr>
 			</#list>
 		</tbody>

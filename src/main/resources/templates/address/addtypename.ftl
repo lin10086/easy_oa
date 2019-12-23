@@ -1,3 +1,4 @@
+<#--外部通讯录名-->
 <#list catalogs as ca>
 	<li><a href="javascript:void(0);" style="padding-left: 60px;"><span class="glyphicon glyphicon-list-alt"> </span> ${ca}
 			<span class="pull-right" style="display: none;">

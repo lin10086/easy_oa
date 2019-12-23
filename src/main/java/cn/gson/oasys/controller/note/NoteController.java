@@ -1385,11 +1385,11 @@ public class NoteController {
             end = userPOList.size();
         }
         List<UserPO> subUserPOList = userPOList.subList(start, end);//用户的页面信息
-        List<DeptPO> deptPOListAll = deptServiceV2.getDeptPOListAll();//部门信息
-        List<PositionPO> positionPOListAll = positionServiceV2.getPositionListAll();// 职位表
         model.addAttribute("emplist", subUserPOList);
         model.addAttribute("page", pageBO);
+        List<DeptPO> deptPOListAll = deptServiceV2.getDeptPOListAll();//部门信息
         model.addAttribute("deptlist", deptPOListAll);
+        List<PositionPO> positionPOListAll = positionServiceV2.getPositionListAll();// 职位表
         model.addAttribute("poslist", positionPOListAll);
         model.addAttribute("url", "namereceive");
         return "common/noterecivers";

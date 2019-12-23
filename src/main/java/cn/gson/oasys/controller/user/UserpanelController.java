@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -78,17 +79,19 @@ public class UserpanelController {
     @Autowired
     private NotepaperService nservice;
 
+
+
+
     //	@Value("${img.rootpath}")
     private String rootpath;
+    private String userRootPath;
 
-    /**
-     * 处理图像路径的控制器
-     */
     @PostConstruct
     public void UserpanelController() {
         try {
+//            rootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
             rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
-            System.out.println(rootpath);
+            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
 
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
@@ -149,6 +152,60 @@ public class UserpanelController {
     /*  *//**
      * 上下页
      *//*
+=======
+
+    @RequestMapping("userpanel")
+    public String index(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
+                        @RequestParam(value = "page", defaultValue = "0") int page,
+                        @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        Pageable pa = new PageRequest(page, size);
+        User user = null;
+        if (!StringUtil.isEmpty((String) req.getAttribute("errormess"))) {
+            user = (User) req.getAttribute("users");
+            req.setAttribute("errormess", req.getAttribute("errormess"));
+        } else if (!StringUtil.isEmpty((String) req.getAttribute("success"))) {
+            user = (User) req.getAttribute("users");
+            req.setAttribute("success", "fds");
+        } else {
+            //找到这个用户
+            user = udao.findOne(userId);
+        }
+
+        //找到部门名称
+        String deptname = ddao.findname(user.getDept().getDeptId());
+
+        //找到职位名称
+        String positionname = pdao.findById(user.getPosition().getId());
+
+        //找未读通知消息
+        List<NoticeUserRelation> noticelist = irdao.findByReadAndUserId(false, user);
+
+        //找未读邮件
+        List<Mailreciver> maillist = mdao.findByReadAndDelAndReciverId(false, false, user);
+
+        //找便签
+        Page<Notepaper> list = ndao.findByUserIdOrderByCreateTimeDesc(user, pa);
+
+        List<Notepaper> notepaperlist = list.getContent();
+
+        model.addAttribute("user", user);
+        model.addAttribute("deptname", deptname);
+        model.addAttribute("positionname", positionname);
+        model.addAttribute("noticelist", noticelist.size());
+        model.addAttribute("maillist", maillist.size());
+        model.addAttribute("notepaperlist", notepaperlist);
+        model.addAttribute("page", list);
+        model.addAttribute("url", "panel");
+
+
+        return "user/userpanel";
+    }
+
+    /**
+     * 上下页
+     */
+                    /*
     @RequestMapping("panel")
     public String index(@SessionAttribute("userId") Long userId, Model model,
                         @RequestParam(value = "page", defaultValue = "0") int page,
@@ -166,7 +223,11 @@ public class UserpanelController {
 
     *//**
      * 存便签
-     *//*
+     */
+    /**
+     * 存便签
+     */
+/*
     @RequestMapping("writep")
     public String savepaper(Notepaper npaper, @SessionAttribute("userId") Long userId, @RequestParam(value = "concent", required = false) String concent) {
         User user = udao.findOne(userId);
@@ -182,9 +243,14 @@ public class UserpanelController {
         return "redirect:/userpanel";
     }
 
-    *//**
+    */
+            /**
      * 删除便签
      *//*
+    /**
+     * 删除便签
+     */
+    /*
     @RequestMapping("notepaper")
     public String deletepaper(HttpServletRequest request, @SessionAttribute("userId") Long userId) {
         User user = udao.findOne(userId);
@@ -202,11 +268,16 @@ public class UserpanelController {
 */
 
    /* *//**
+
+    }
+
+    /**
      * 修改用户
      *
      * @throws IOException
      * @throws IllegalStateException
-     *//*
+     */
+
     @RequestMapping("saveuser")
     public String saveemp(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest request, @Valid User user,
                           BindingResult br, @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
@@ -256,6 +327,7 @@ public class UserpanelController {
 
     }
 
+
     @RequestMapping("image/**")
     public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
             throws Exception {
@@ -276,7 +348,7 @@ public class UserpanelController {
         input.close();
         sos.close();
     }
-*/
+
     //=============================
     @Resource
     private UserPOServiceV2 userPOServiceV2;
@@ -409,5 +481,6 @@ public class UserpanelController {
         model.addAttribute("notepaperlist", subNotePaperPOList);
         model.addAttribute("page", pageBO);
     }
+
 
 }

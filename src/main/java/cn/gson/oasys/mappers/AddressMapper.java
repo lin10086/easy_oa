@@ -12,7 +12,7 @@ public interface AddressMapper {
 	/*根据用户来找外部通讯录联系人*/
 	/**
 	 * 
-	 * @param userId用户ID
+	 * @param userId 用户ID
 	 * @param pinyin
 	 * @param outtype
 	 * @param baseKey

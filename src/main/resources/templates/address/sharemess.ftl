@@ -19,31 +19,31 @@
 	<#if dus?size gt 0>
 	<#list dus as du>
 	<div class="sharemess">
-		<p>${du.sharetime}</p>
+		<p>${du.shareTime}</p>
 		<div class="sharecontent">
 			<div>
 				<div class="sharecontent-left">
 					<div class="share-top">
 						<a href="javascript:void(0);" 
 						class="usershow"
-						title="${du.user.userName}" 
-						thisdept="${du.user.dept.deptName}" 
-						thisrole="${du.user.role.roleName}" 
-						thistel="${(du.user.userTel)!'空的'}"
-						thisemail="${(du.user.eamil)!'空的'}" 
-						> <img src="/image/${(du.user.imgPath)!'timg.jpg'}" class="img-circle" />
-							<span> ${du.user.userName}</span></a>共享了以下联系人给你:
+						title="${du.userVO.userName}"
+						thisdept="${du.userVO.deptVO.deptName}"
+						thisrole="${du.userVO.roleVO.roleName}"
+						thistel="${(du.userVO.userTel)!'空的'}"
+						thisemail="${(du.userVO.userEmail)!'空的'}"
+						> <img src="/image/${(du.userVO.imgPath)!'timg.jpg'}" class="img-circle" />
+							<span> ${du.userVO.userName}</span></a>共享了以下联系人给你:
 					</div>
 					<div class="share-bottom">
 						<a href="javascript:void(0);" 
 						class="othershow"
-						title="${du.director.userName}" 
-						thistel="${du.director.phoneNumber}" 
-						thissex="${du.director.sex}" 
-						thisemail="${(du.director.email)!'空的'}"
-						thiscompany="${(du.director.companyname)!'空的'}" style="margin-left: 100px;"> <img
-							src="/image/${(du.director.imagePath)!'timg.jpg'}" class="img-circle" /> ${du.director.userName}
-						</a>,${du.director.phoneNumber}
+						title="${du.directorVO.userName}"
+						thistel="${du.directorVO.phoneNumber}"
+						thissex="${du.directorVO.sex}"
+						thisemail="${(du.directorVO.email)!'空的'}"
+						thiscompany="${(du.directorVO.companyName)!'空的'}" style="margin-left: 100px;"> <img
+							src="/images/${(du.directorVO.imagePath)!'timg.jpg'}" class="img-circle" /> ${du.directorVO.userName}
+						</a>,${du.directorVO.phoneNumber}
 					</div>
 				</div>
 				<div class="share-right">

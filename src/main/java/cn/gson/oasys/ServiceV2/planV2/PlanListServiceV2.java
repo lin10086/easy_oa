@@ -276,7 +276,7 @@ public class PlanListServiceV2 {
      * @return
      */
     public List<PlanListPO> getPlanListPOBySelectDeptName(int page, String selectDeptName) {
-        Long deptId = deptServiceV2.getDeptPOIdByDeptName(selectDeptName);//根据部门名找部门id
+        Long deptId = deptServiceV2.getDeptPOIdsByDeptNameLike(selectDeptName).get(0);//根据部门名找部门id
         List<Long> userIds = userServiceV2.getUserPOIdsByDeptPOId(deptId);//根据部门id找这个部门用户ids
         List<PlanListPO> planListPOSAll = planServiceV2.getPlanListPOSAll();//所有计划
         PageHelper.startPage(page, 10);

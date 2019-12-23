@@ -84,8 +84,11 @@ public class MenuSysController {
                 req.setAttribute("getAdd", menuId);//菜单ID
                 req.setAttribute("getName", getName);//菜单名
             } else {//菜单中的修改
+                Boolean isShow = sysMenuPO.getIsShow() == 0 ? false : true;
+
                 session.setAttribute("menuId", menuId);//菜单ID
                 req.setAttribute("menuObj", sysMenuPO);//菜单信息
+                req.setAttribute("isShow", isShow);//菜单信息
             }
         }
         return "systemcontrol/menuedit";
@@ -194,10 +197,8 @@ public class MenuSysController {
         Long menuId = Long.parseLong(req.getParameter("menuid"));//菜单ID
         Integer sortId = Integer.parseInt(req.getParameter("sortid"));//排序值
         Integer arithNum = Integer.parseInt(req.getParameter("num"));//上移1，下移-1
-        if (sortId != 1) {
-            systemMenuServiceV2.updateSystemMenuIdBySortIdAndParentId(parentId, arithNum, sortId);
-            systemMenuServiceV2.updateSystemMenuIdBySortId(menuId, arithNum, sortId);
-        }
+        systemMenuServiceV2.updateSystemMenuIdBySortIdAndParentId(parentId, arithNum, sortId);
+        systemMenuServiceV2.updateSystemMenuIdBySortId(menuId, arithNum, sortId);
 //        systemMenuServiceV2.getSysMenuPOListBySonIsShow(0L, userPO.getRoleId(), true, req);
 //        systemMenuServiceV2.getSysMenuPOListByParentByIsShow(0L, userPO.getRoleId(), true, req);
         return "redirect:/testsysmenu";
