@@ -1,5 +1,6 @@
 package cn.gson.oasys.controller;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -338,9 +339,10 @@ public class IndexController {
 
     /**
      * 控制面板主页
+     * <p>
+     * //     * @param session
+     * //     * @param model
      *
-//     * @param session
-//     * @param model
      * @return
      */
    /* @RequestMapping("test2")
@@ -490,6 +492,9 @@ public class IndexController {
 
         //列举便签(根据便签的创建人ID找标签集合并根据创建时间排序，只取前五条)
         List<NotePaperPO> notePaperPOList = notePaperPOServiceV2.getNotePaperPOSByNotePaperUserIdAndCreateTimeDESCAndFrontFive(userId);
+        for (NotePaperPO notePaperPO : notePaperPOList) {
+            notePaperPO.setCreateTime(new Timestamp(notePaperPO.getCreateTime().getTime()));
+        }
         model.addAttribute("notepaperList", notePaperPOList);
 
         //列举几个流程记录( 根据流程申请人找流程并根据流程申请时间降序排列，只取前三条)
@@ -517,16 +522,16 @@ public class IndexController {
         return "user/userlog";
     }
 
-/*
+    /*
 
-    */
+     */
 /**
-     * 菜单查找
-     *
-     * @param
-     * @param req
-     * @return
-     *//*
+ * 菜单查找
+ *
+ * @param
+ * @param req
+ * @return
+ *//*
 
     @RequestMapping("menucha")
     public String menuCha(HttpSession session, Model model, HttpServletRequest req) {
