@@ -135,7 +135,7 @@ public class MailServiceV2 {
      * @throws IllegalStateException
      * @throws IOException
      */
-    public AttachmentListPO uploadAttachmentListPOByUser(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
+    public AttachmentListPO uploadAttachmentListPOByUserImg(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
         File savePath = new File(userRootPath);
 
         if (!savePath.exists()) {

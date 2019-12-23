@@ -34,6 +34,16 @@ public class NotePaperPOServiceV2 {
     }
 
     /**
+     * 更新便签信息
+     *
+     * @param notePaperPO 便签信息
+     */
+    public void updateNotePaperPOByNotePaperPO(NotePaperPO notePaperPO) {
+        notePaperPOMapper.updateByPrimaryKeySelective(notePaperPO);
+    }
+
+
+    /**
      * 根据便签的创建人ID找标签集合并根据创建时间排序，只取前五条(系统首页）
      *
      * @param userId 用户ID

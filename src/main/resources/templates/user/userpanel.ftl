@@ -220,14 +220,14 @@ h1, h3 {
 
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span id="ctl00_cphMain_Label5">Email</span></label> <input
-									name="eamil" type="text"
+									name="userEmail" type="text"
 									value="${(user.eamil)!''}" id="ctl00_cphMain_txtEmail1"
 									class="form-control" />
 							</div>
 
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span id="ctl00_cphMain_Label10">地址</span></label> <input
-									name="address" type="text" value="${(user.address)!''}"
+									name="userAddress" type="text" value="${(user.address)!''}"
 									id="ctl00_cphMain_txtAddress1" class="form-control" />
 							</div>
 
@@ -239,13 +239,13 @@ h1, h3 {
 
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span id="ctl00_cphMain_Label7">毕业院校</span></label> <input
-									name="school" type="text" value="${user.userSchool}"
+									name="userSchool" type="text" value="${user.userSchool}"
 									id="ctl00_cphMain_txtSchool" class="form-control" />
 							</div>
 
 							<div class="col-md-6 form-group">
 								<label class="control-label"><span id="icard">身份证号</span></label> <input
-									name="idCard" type="text"
+									name="userIdCard" type="text"
 									value="${user.userIdcard}" id="ic"
 									class="form-control" />
 							</div>

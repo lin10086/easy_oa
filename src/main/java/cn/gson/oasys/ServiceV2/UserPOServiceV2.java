@@ -49,6 +49,15 @@ public class UserPOServiceV2 {
     @Resource
     private PositionPOServiceV2 PositionPOServiceV2;
 
+    /**
+     * 更新用户信息
+     *
+     * @param userPO 用户信息
+     */
+    public void updateUserPOByUserPO(UserPO userPO) {
+        userPOMapper.updateByPrimaryKeySelective(userPO);
+    }
+
     //找到该管理员下面的所有用户并且分页
     public List<UserPO> findUserAndPageByFatherId(int page, long fatherId) {
 
@@ -650,6 +659,7 @@ public class UserPOServiceV2 {
         }
         return userVOSet;
     }
+
     /**
      * 根据userPO获取userVO
      *

@@ -853,7 +853,7 @@ public class AddrController {
             }
             //试一下
             if (file.getSize() > 0) {
-                AttachmentListPO attachmentListPO = mailServiceV2.uploadAttachmentListPOByUser(file, userPO);
+                AttachmentListPO attachmentListPO = mailServiceV2.uploadAttachmentListPOByUserImg(file, userPO);
                 attachmentListPO.setModel("aoa_bursement");
                 attachmentServiceV2.insertAttachmentListPO(attachmentListPO);//插入附件
                 directorPO.setImagePath(attachmentListPO.getAttachmentId().intValue());
