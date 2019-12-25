@@ -8,6 +8,9 @@ target/
 .project
 .settings
 .springBeans
+*.war
+*.MF
+
 
 ### IntelliJ IDEA ###
 .idea

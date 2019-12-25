@@ -484,7 +484,6 @@ public class UserpanelController {
         model.addAttribute("notepaperlist", subNotePaperPOList);
         model.addAttribute("page", pageBO);
     }
-<<<<<<< HEAD
 
 
     /**
@@ -556,8 +555,6 @@ public class UserpanelController {
         input.close();
         sos.close();
     }
-=======
->>>>>>> fc1cdcf588bbfa47b00048fff23ff9949ddc7634
 
 
 }

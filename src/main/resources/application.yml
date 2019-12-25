@@ -3,8 +3,8 @@ server:
   port: 8080
 
 #日志配置文件位置
-#logging:
-#  config: classpath:log/log4j2.xml
+logging:
+  config: classpath:log/log4j2.xml
 
 
 spring:

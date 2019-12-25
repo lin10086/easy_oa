@@ -22,6 +22,8 @@ import cn.gson.oasys.ServiceV2.taskV2.TaskListServiceV2;
 import cn.gson.oasys.ServiceV2.userV2.UserLogServiceV2;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.vo.userVO2.UserLoginRecordVO;
+import cn.gson.oasys.vo.userVO2.UserLoginRecordVOFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -390,7 +392,7 @@ public class UserLogController {
 
     //用来查找用户记录(用户管理》在线用户
     @RequestMapping("morelogrecord")
-    public String test3df342(@RequestParam(value = "page", defaultValue = "1") int page,
+    public String moreLogRecord(@RequestParam(value = "page", defaultValue = "1") int page,
                              HttpSession session, Model model,
                              @RequestParam(value = "baseKey", required = false) String basekey,
                              @RequestParam(value = "time", required = false) String time,
@@ -429,14 +431,22 @@ public class UserLogController {
             end = userLoginRecordPOList.size();
         }
         List<UserLoginRecordPO> subUserLoginRecordPOS = userLoginRecordPOList.subList(start, end);
+        List<UserLoginRecordVO> userLoginRecordVOList = UserLoginRecordVOFactory.createUserLoginRecordVOList(subUserLoginRecordPOS);
+        for (UserLoginRecordPO userLoginRecordPO : subUserLoginRecordPOS) {
+            for (UserLoginRecordVO userLoginRecordVO : userLoginRecordVOList) {
+                if (userLoginRecordPO.getRecordId().equals(userLoginRecordVO.getId())) {
+                    userLoginRecordVO.setUserVO(userServiceV2.setUserVOByUserId(userLoginRecordPO.getUserId()));
+                }
+            }
+        }
         model.addAttribute("page", pageBO);
-        model.addAttribute("userloglist", subUserLoginRecordPOS);
+        model.addAttribute("userloglist", userLoginRecordVOList);
 
     }
 
     //用来查找用户记录
     @RequestMapping("morelogrecordtable")
-    public String test3dfrt342(@RequestParam(value = "page", defaultValue = "1") int page,
+    public String moreLogRecordTable(@RequestParam(value = "page", defaultValue = "1") int page,
                                HttpSession session, Model model,
                                @RequestParam(value = "baseKey", required = false) String basekey,
                                @RequestParam(value = "time", required = false) String time,

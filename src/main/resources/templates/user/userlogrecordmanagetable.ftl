@@ -38,7 +38,7 @@
 						
 						<#list userloglist as ulog>
 							<tr>
-								<td><span>${(ulog.user.userName)!''}</span></td>
+								<td><span>${(ulog.userVO.userName)!''}</span></td>
 								<td><span>${(ulog.loginTime)!''}</span></td>
 								<td><span>${(ulog.ipAddr)!''}</span></td>
 								<td><span>${(ulog.browser)!''}</span></td>
