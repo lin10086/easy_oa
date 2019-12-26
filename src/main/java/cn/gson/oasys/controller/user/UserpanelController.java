@@ -436,7 +436,7 @@ public class UserpanelController {
         } else {
             notePaperPO.setConcent(notePaperVO.getContent());
         }
-        notePaperPOServiceV2.updateNotePaperPOByNotePaperPO(notePaperPO);
+        notePaperPOServiceV2.insertNotePaperPOByNotePaperPO(notePaperPO);
         return "redirect:/userpanel";
     }
 
@@ -469,6 +469,7 @@ public class UserpanelController {
      * @param size
      */
     public void getNotePaperPOListPage(Model model, List<NotePaperPO> notePaperPOList, int page, int size) {
+        // 时间有问题
         for (NotePaperPO notePaperPO : notePaperPOList) {
             notePaperPO.setCreateTime(new Timestamp(notePaperPO.getCreateTime().getTime()));
         }
@@ -544,7 +545,8 @@ public class UserpanelController {
 
         String path = startpath.replace("/image", "/images/user");
 
-        File f = new File(rootpath, path);
+//        File f = new File(rootpath, path);
+        File f = new File(userRootPath, path);
 
         ServletOutputStream sos = response.getOutputStream();
         FileInputStream input = new FileInputStream(f.getPath());
