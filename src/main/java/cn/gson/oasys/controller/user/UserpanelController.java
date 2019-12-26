@@ -422,8 +422,7 @@ public class UserpanelController {
                             @SessionAttribute("userId") Long userId,
                             @RequestParam(value = "content", required = false) String content) {
         NotePaperPO notePaperPO = new NotePaperPO();
-        notePaperPO.setNotepaperId(notePaperVO.getNotepaperId());
-//        notePaperPO.setCreateTime(new Date());
+
         notePaperPO.setNotepaperUserId(userId);
 
         if (notePaperVO.getTitle() == null || notePaperVO.getTitle().equals("")) {
@@ -436,7 +435,15 @@ public class UserpanelController {
         } else {
             notePaperPO.setConcent(notePaperVO.getContent());
         }
-        notePaperPOServiceV2.insertNotePaperPOByNotePaperPO(notePaperPO);
+        if (notePaperVO.getNotepaperId() != null) {
+            notePaperPO.setNotepaperId(notePaperVO.getNotepaperId());
+            NotePaperPO oldNotePaperPO = notePaperPOServiceV2.getNotePaperPOByNotePaperId(notePaperPO.getNotepaperId());
+            notePaperPO.setCreateTime(oldNotePaperPO.getCreateTime());
+            notePaperPOServiceV2.updateNotePaperPOByNotePaperPO(notePaperPO);
+        } else {
+            notePaperPO.setCreateTime(new Date());
+            notePaperPOServiceV2.insertNotePaperPOByNotePaperPO(notePaperPO);
+        }
         return "redirect:/userpanel";
     }
 
@@ -469,9 +476,10 @@ public class UserpanelController {
      * @param size
      */
     public void getNotePaperPOListPage(Model model, List<NotePaperPO> notePaperPOList, int page, int size) {
-        // 时间有问题
         for (NotePaperPO notePaperPO : notePaperPOList) {
-            notePaperPO.setCreateTime(new Timestamp(notePaperPO.getCreateTime().getTime()));
+            if (notePaperPO.getCreateTime() != null && "".equals(notePaperPO.getCreateTime())) {
+                notePaperPO.setCreateTime(new Timestamp(notePaperPO.getCreateTime().getTime()));
+            }
         }
         PageBO pageBO = new PageBO(page, size);
         pageBO.setTotalCount(notePaperPOList.size());
@@ -481,7 +489,9 @@ public class UserpanelController {
             end = notePaperPOList.size();
         }
         List<NotePaperPO> subNotePaperPOList = notePaperPOList.subList(start, end);
-
+        for (NotePaperPO notePaperPO : subNotePaperPOList) {
+            notePaperPO.setCreateTime(new Timestamp(notePaperPO.getCreateTime().getTime()));
+        }
         model.addAttribute("notepaperlist", subNotePaperPOList);
         model.addAttribute("page", pageBO);
     }
