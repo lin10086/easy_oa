@@ -19,9 +19,8 @@ echo =================================
 echo  interactive自动化部署脚本启动
 echo =================================
 
-echo 进入/data/interactive
-cd /usr/git
-cd /data/interactive
+echo 进入项目文件夹
+/usr/git/testRepository.git/easy_oa
 
 echo 开始pull版本
 git pull
@@ -36,18 +35,15 @@ echo 文件重命名
 mv interactive-web.war ROOT.war
 
 echo 关闭tomcat服务器
-sh /data/software/tomcat/bin/shutdown.sh
+/usr/tomcat/server/bin/shutdown.sh
 
 echo 删除以往文件
-rm -rf /data/software/tomcat/webapps/ROOT
+rm -rf /usr/tomcat/webapps/ROOT
 
 echo 移动文件
 mv ROOT.war /data/software/tomcat/webapps/
 
 echo 重启服务器
-sh /data/software/tomcat/bin/startup.sh
-
-作者：song先生
-链接：http://www.imooc.com/article/20056
-来源：慕课网
-本文原创发布于慕课网 ，转载请注明出处，谢谢合作
+/usr/tomcat/server/bin/startup.sh
+echo 查看项目日志
+tail -f /usr/tomcat/apache-tomcat-8.5.50/logs/catalina.out
