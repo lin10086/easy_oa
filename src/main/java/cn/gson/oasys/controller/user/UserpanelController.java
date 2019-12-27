@@ -93,7 +93,7 @@ public class UserpanelController {
         try {
 //            rootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
             rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
-            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
+            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources");
 
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
@@ -555,7 +555,7 @@ public class UserpanelController {
         System.out.println(projectPath);
         String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
 
-        String path = startpath.replace("/image", "/images/user");
+        String path = startpath.replace("/image", "static/images/user");
 
 //        File f = new File(rootpath, path);
         File f = new File(userRootPath, path);
