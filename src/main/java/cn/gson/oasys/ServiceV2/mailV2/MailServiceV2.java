@@ -77,7 +77,7 @@ public class MailServiceV2 {
     public void UserpanelController() {
         try {
             rootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
-            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static/images/user");
+            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources");
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
         }
@@ -136,11 +136,13 @@ public class MailServiceV2 {
      * @throws IOException
      */
     public AttachmentListPO uploadAttachmentListPOByUserImg(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
-        File savePath = new File(userRootPath);
+        File filePath = new File(userRootPath+"/static/images/user");
 
-        if (!savePath.exists()) {
-            savePath.mkdirs();
+        if (!filePath.exists()) {
+            filePath.mkdirs();
         }
+        File savePath = new File(userRootPath+"/static/images/user");
+        String fileSavePath = savePath.getAbsolutePath();
         //获取原始文件名
         String fileName = file.getOriginalFilename();
         if (!StringUtil.isEmpty(fileName)) {
@@ -152,7 +154,7 @@ public class MailServiceV2 {
             File targetFile = new File(savePath, newFileName);
             file.transferTo(targetFile);
 
-            String str = targetFile.getPath().replace(userRootPath, "");
+            String str = targetFile.getPath().replace(fileSavePath, "");
 
             AttachmentListPO attachmentPO = new AttachmentListPO();
             attachmentPO.setAttachmentName(file.getOriginalFilename());
