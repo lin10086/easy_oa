@@ -557,7 +557,6 @@ public class UserpanelController {
 
         String path = startpath.replace("/image", "static/images/user");
 
-//        File f = new File(rootpath, path);
         File f = new File(userRootPath, path);
 
         ServletOutputStream sos = response.getOutputStream();

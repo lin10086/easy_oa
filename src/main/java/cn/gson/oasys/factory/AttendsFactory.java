@@ -15,9 +15,9 @@ public class AttendsFactory {
 
 
     /**
-     * @param userPO自己定义的用户实体类
-     * @param attendsPO自己定义的考勤列表实体类
-     * @return 本身的考勤列表实体类
+     * @param userPO    userPO自己定义的用户实体类
+     * @param attendsPO attendsPO自己定义的考勤列表实体类
+     * @return
      */
     public static Attends create(UserPO userPO, AttendsPO attendsPO) {
 
@@ -58,13 +58,13 @@ public class AttendsFactory {
 
     //一个用户对应多个考勤
     //在考勤列表里面取出属于用户自己的考勤
-    public static  List<User> createAttends(List<UserPO> userPOList, List<AttendsPO>attendsPOList) {
-        List<User>userList = UserFactory.create(userPOList);
-        List<Attends>attendsList = AttendsFactory.create(userPOList,attendsPOList);
+    public static List<User> createAttends(List<UserPO> userPOList, List<AttendsPO> attendsPOList) {
+        List<User> userList = UserFactory.create(userPOList);
+        List<Attends> attendsList = AttendsFactory.create(userPOList, attendsPOList);
 
         for (User user : userList) {
             //用户考勤
-            Set<Attends>attendsSet = new HashSet<>();
+            Set<Attends> attendsSet = new HashSet<>();
             for (Attends attends : attendsList) {
                 if (user.getUserId().equals(attends.getUser().getUserId())) {
                     attendsSet.add(attends);

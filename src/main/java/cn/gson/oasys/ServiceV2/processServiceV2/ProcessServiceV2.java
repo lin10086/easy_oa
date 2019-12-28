@@ -806,6 +806,9 @@ public class ProcessServiceV2 {
         processListPOExample.setOrderByClause("apply_time DESC");
         processListPOExample.createCriteria().andProcessUserIdEqualTo(userId);
         List<ProcessListPO> processListPOS = processListPOMapper.selectByExample(processListPOExample);
+        for (ProcessListPO processListPO : processListPOS){
+            processListPO.setApplyTime(new Timestamp(processListPO.getApplyTime().getTime()));
+        }
         int end;
         if(processListPOS.size()>3){
             end =3;

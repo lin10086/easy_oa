@@ -60,7 +60,7 @@ public class LoginsController {
 
     //在session里面取出userId
     @RequestMapping("loginout")
-    public String loginout(HttpSession session) {
+    public String loginOut(HttpSession session) {
         session.removeAttribute("userId");
         return "redirect:/logins";
 //        return "redirect:/index";//点击退出重定向到主页面
@@ -123,7 +123,7 @@ public class LoginsController {
 	}
 
 */
-    @RequestMapping("handlehas")
+   /* @RequestMapping("handlehas")
     public String handleHas(HttpSession session) {
         if (!StringUtils.isEmpty(session.getAttribute("thisuser"))) {
             User user = (User) session.getAttribute("thisuser");
@@ -137,7 +137,7 @@ public class LoginsController {
         return "redirect:/index";
 
     }
-
+*/
     @RequestMapping("captcha")
     public void captcha(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
         response.setHeader("Pragma", "No-cache");
@@ -162,9 +162,9 @@ public class LoginsController {
         String password = request.getParameter("password");
         String ca = request.getParameter("code").toLowerCase();
         //获取后台的验证码
-        String sesionCode = (String) request.getSession().getAttribute(CAPTCHA_KEY);//后台验证码
+        String sessionCode = (String) request.getSession().getAttribute(CAPTCHA_KEY);//后台验证码
         model.addAttribute("userName", userName);
-        if (!ca.equals(sesionCode.toLowerCase())) {
+        if (!ca.equals(sessionCode.toLowerCase())) {
             System.out.println("验证码输入错误!");
             model.addAttribute("errormess", "验证码输入错误!");
             request.setAttribute("errormess", "验证码输入错误!");
@@ -201,6 +201,20 @@ public class LoginsController {
             userLoginRecordServiceV2.insertUserLoginRecord(ip, info, new Date(), userPO.getUserId());
         }
         return "redirect:/index";
+    }
+
+    @RequestMapping("handlehas")
+    public String handleHas(HttpSession session) {
+        if (!StringUtils.isEmpty(session.getAttribute("thisuser"))) {
+            UserPO userPO = (UserPO) session.getAttribute("thisuser");
+            session.removeAttribute("userId");
+            session.setAttribute("userId", userPO.getUserId());
+        } else {
+            System.out.println("有问题！");
+            return "login/login";
+        }
+        return "redirect:/index";
+
     }
 
 }

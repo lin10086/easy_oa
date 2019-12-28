@@ -249,7 +249,7 @@
 						
 							<#list processlist as pro>
 							<tr>
-								<td>${(pro.typeNmae)!''}
+								<td>${(pro.typeName)!''}
 								</td>
 								<td>${(pro.applyTime)!''}</td>
 								<td><#list prostatuslist as pros>

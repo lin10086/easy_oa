@@ -353,7 +353,12 @@ public class AttendanceServiceV2 {
         attendsPOExample.setOrderByClause("attends_time DESC");
         List<AttendsPO> attendsPOList = attendsPOMapper.selectByExample(attendsPOExample);
         for (AttendsPO attendsPO : attendsPOList) {
-            String attendsPOTime = sdf.format(attendsPO.getAttendsTime());
+            String attendsPOTime;
+            if (attendsPO.getAttendsTime() != null) {
+                attendsPOTime = sdf.format(attendsPO.getAttendsTime());
+            } else {
+                attendsPOTime = sdf.format(new Date());
+            }
             if (nowDate.equals(attendsPOTime)) {
                 return attendsPO;
             }

@@ -36,7 +36,7 @@ public class ProcessListFactoryVO {
     public static ProcessListPO createProcessListPO(ProcessListVO processListVO) {
         ProcessListPO processListPO = new ProcessListPO();
         processListPO.setProcessId(processListVO.getProcessId());
-        processListPO.setApplyTime(processListVO.getApplyTime());
+        processListPO.setApplyTime(new Timestamp(processListVO.getApplyTime().getTime()));
         processListPO.setDeeplyId(processListVO.getDeeplyId());
         processListPO.setProcessName(processListVO.getProcessName());
         processListPO.setEndTime(processListVO.getEndTime());

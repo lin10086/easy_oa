@@ -17,7 +17,7 @@
 
         <!--load from properties-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/oasys"
+                        connectionURL="jdbc:mysql://49.233.142.2:3306/oasys"
                         userId="root"
                         password="12345678">
         </jdbcConnection>

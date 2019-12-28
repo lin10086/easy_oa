@@ -145,7 +145,7 @@ public class IndexController {
 //        session.setAttribute("userId", 5L);
 //        session.setAttribute("userId",14L);//5的下属
 //        session.setAttribute("userId", 15L);
-        session.setAttribute("userId", 3L);//5的上司
+//        session.setAttribute("userId", 3L);//5的上司
 //        session.setAttribute("userId",4L);
         // 判断用户ID是否为空
         if (StringUtils.isEmpty(session.getAttribute("userId"))) {
@@ -459,9 +459,7 @@ public class IndexController {
      */
     @RequestMapping("test2")
     public String test2(HttpSession session, Model model, HttpServletRequest request) {
-//        Long userId = Long.parseLong(session.getAttribute("userId") + "");
-//        Long userId = 5L;
-        Long userId = 3L;
+        Long userId = Long.parseLong(session.getAttribute("userId") + "");
         UserVO userVO = userServiceV2.setUserVOByUserId(userId);//用户的所有信息
         User user = uDao.findOne(userId);
         request.setAttribute("user", userVO);
@@ -480,7 +478,6 @@ public class IndexController {
         List<Map<String, Object>> subMapList = mapList.subList(0, end);
         model.addAttribute("noticeList", subMapList);
         showAList(model, userId);
-
 
         //列举计划(根据计划的创建人ID找计划，并根据计划的创建时间降序排列和计划的结束时间降序排列，只取前两条)
         List<PlanListPO> planListPOS = planListServiceV2.getPlanListPOSByPlanUserIdAndCreateTimeDESCAndEndTimeDESCAndFrontTwo(userId);
@@ -511,6 +508,7 @@ public class IndexController {
         if (attendsPO != null) {
             String typeName = typePOServiceV2.getTypeNameByTypeId(attendsPO.getTypeId());
             model.addAttribute("type", typeName);//根据考勤类型ID获取类型名
+//            attendsPO.setAttendHmtime((new Date()).getTime() + "");
         }
         model.addAttribute("alist", attendsPO);//考勤
     }
