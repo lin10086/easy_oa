@@ -390,13 +390,24 @@ public class UserLogController {
         return null;
     }
 
-    //用来查找用户记录(用户管理》在线用户
+
+    /**
+     * 用来查找用户记录(用户管理》在线用户
+     *
+     * @param page    第几页
+     * @param session
+     * @param model
+     * @param basekey 模糊字
+     * @param time
+     * @param icon
+     * @return
+     */
     @RequestMapping("morelogrecord")
     public String moreLogRecord(@RequestParam(value = "page", defaultValue = "1") int page,
-                             HttpSession session, Model model,
-                             @RequestParam(value = "baseKey", required = false) String basekey,
-                             @RequestParam(value = "time", required = false) String time,
-                             @RequestParam(value = "icon", required = false) String icon) {
+                                HttpSession session, Model model,
+                                @RequestParam(value = "baseKey", required = false) String basekey,
+                                @RequestParam(value = "time", required = false) String time,
+                                @RequestParam(value = "icon", required = false) String icon) {
         getUserLoginRecord(page, session, model, basekey, time, icon);//自己的
         return "user/userlogrecordmanage";
     }
@@ -447,10 +458,10 @@ public class UserLogController {
     //用来查找用户记录
     @RequestMapping("morelogrecordtable")
     public String moreLogRecordTable(@RequestParam(value = "page", defaultValue = "1") int page,
-                               HttpSession session, Model model,
-                               @RequestParam(value = "baseKey", required = false) String basekey,
-                               @RequestParam(value = "time", required = false) String time,
-                               @RequestParam(value = "icon", required = false) String icon) {
+                                     HttpSession session, Model model,
+                                     @RequestParam(value = "baseKey", required = false) String basekey,
+                                     @RequestParam(value = "time", required = false) String time,
+                                     @RequestParam(value = "icon", required = false) String icon) {
         getUserLoginRecord(page, session, model, basekey, time, icon);
         return "user/userlogrecordmanagetable";
 

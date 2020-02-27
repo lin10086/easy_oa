@@ -48,6 +48,12 @@ public class DeptPOServiceV2 {
 
 
     //  更新或插入部门信息
+
+    /**
+     *
+     * @param oldDeptVO
+     * @return
+     */
     public Integer updateOrInsertDept(DeptVO oldDeptVO) {
         DeptPO deptPO = new DeptPO();
         deptPO.setDeptId(oldDeptVO.getDeptId());
@@ -65,7 +71,21 @@ public class DeptPOServiceV2 {
         return rows;
     }
 
-    //根据部门ID删除部门信息
+
+    /**
+     * 根据部门ID删除部门信息
+     *
+     * @param deleteDeptId 部门ID
+     */
+    public void deleteDeptPOByDeptId(Long deleteDeptId) {
+        deptPOMapper.deleteByPrimaryKey(deleteDeptId);
+    }
+
+
+    /**
+     * @param positionPOList
+     * @param deleteDeptId
+     */
     public void deleteDeptVOByDeptId(List<PositionPO> positionPOList, Long deleteDeptId) {
         for (PositionPO positionPO : positionPOList) {
             positionPOMapper.deleteByPrimaryKey(positionPO.getPositionId());

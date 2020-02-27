@@ -326,17 +326,28 @@ public class UserPOServiceV2 {
         return userPOList.get(0);
     }
 
-    //更新userPO里面的，部门ID和职位ID
-    public void updateUserPO(Long userId, Long deptVOId, long positionVOId) {
+
+    /**
+     * 根据用户ID更新userPO里面的，部门ID和职位ID
+     *
+     * @param userId     用户ID
+     * @param deptId     部门ID
+     * @param positionId 职位ID
+     */
+    public void updateUserPOInDeptIdAndPositionIdByUserId(Long userId, Long deptId, long positionId) {
         UserPO userPO = new UserPO();
-        userPO.setDeptId(deptVOId);
-        userPO.setPositionId(positionVOId);
-        UserPOExample userPOExample = new UserPOExample();
-        userPOExample.createCriteria().andUserIdEqualTo(userId);
-        userPOMapper.updateByExampleSelective(userPO, userPOExample);
+        userPO.setUserId(userId);
+        userPO.setDeptId(deptId);//设置用户的部门ID
+        userPO.setPositionId(positionId);//设置用户的职位ID
+        userPOMapper.updateByPrimaryKeySelective(userPO);
     }
 
-    //更新用户的职位信息
+    /**
+     * 更新用户的职位信息
+     *
+     * @param userPOId   用户ID
+     * @param positionId 职位ID
+     */
     public void updateUserPOPositionId(Long userPOId, Long positionId) {
         UserPO userPO = new UserPO();
         userPO.setUserId(userPOId);
@@ -352,7 +363,9 @@ public class UserPOServiceV2 {
         userPOMapper.updateByPrimaryKeySelective(userPO);
     }
 
-    //根据部门表里的deptmanager（实际上是用户ID）查找用户信息
+    /**
+     * 根据部门表里的deptmanager（实际上是用户ID）查找用户信息
+     */
     public UserPO getUserBydeptManager(Long deptManager) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(deptManager);
         return userPO;

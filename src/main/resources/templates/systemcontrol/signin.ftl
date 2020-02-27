@@ -4,7 +4,7 @@
 			<a class="attendce" style="text-decoration: none; color:white;">
 				<h2 class="">
 					<#if alist??>
-							${alist.attendHmtime}
+							<#--${alist.attendHmtime}-->
 						<#else>
 							未签到
 					</#if>

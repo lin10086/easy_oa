@@ -52,7 +52,7 @@ a:hover {
 									<#if (deptUser??&&deptUser?size gt 0) || deptVOManage??>
 										<a class="label sheding" href="javascript:void(0);">删除</a>
 									<#else>
-										<a class="label shanchu" href="deletdept?deletedeptid=${dept.deptId}">删除</a>
+										<a class="label shanchu" href="deleteDept?deleteDeptId=${dept.deptId}">删除</a>
 									</#if>
 								</div>
 								<div class="col-md-12 form-group">
@@ -78,7 +78,8 @@ a:hover {
 									</tr>
 									<#list deptUser as user>
 										<tr>
-											<td><img src="images/handsome.jpg" class="img-circle"
+											<td><img src="images/user/"+${user.img_path} class="img-circle"
+											<#--<td><img src="images/user/handsome.jpg" class="img-circle"-->
 												style="width: 25px; height: 25px;" /></td>
 											<td><span>${user.realName}</span></td>
 											<td><span>${user.userName}</span></td>

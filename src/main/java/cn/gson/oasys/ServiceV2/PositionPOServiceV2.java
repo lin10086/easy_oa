@@ -32,7 +32,11 @@ public class PositionPOServiceV2 {
         return positionPOList;
     }
 
-    //根据部门ID获取职位信息
+    /**
+     * 根据部门ID获取职位信息
+     * @param deptId
+     * @return
+     */
     public List<PositionPO> getPositionPOByDeptId(Long deptId) {
         PositionPOExample positionPOExample = new PositionPOExample();
         positionPOExample.createCriteria().andDeptidEqualTo(deptId);
@@ -40,16 +44,23 @@ public class PositionPOServiceV2 {
         return positionPOList;
     }
 
-    //根据职位ID获取职位信息
+    /**
+     * 根据职位ID获取职位信息
+     * @param positionId
+     * @return
+     */
     public PositionPO getPositionPOByPositionId(Long positionId) {
         PositionPO positionPO = positionPOMapper.selectByPrimaryKey(positionId);
         return positionPO;
     }
 
-    //职位名name不是以经理结尾的（返回职位列表）
-    public List<PositionPO> getPositionPOListByDeptIdAndNameNotLike() {
+    /**
+     * 根据部门ID（1L)和职位名name不是以经理结尾的（返回职位列表）
+     * @return
+     */
+    public List<PositionPO> getPositionPOListByDeptIdAndNameNotLike(String name) {
         PositionPOExample positionPOExample = new PositionPOExample();
-        positionPOExample.createCriteria().andNameNotLike("%经理");
+        positionPOExample.createCriteria().andNameNotLike(name);
         List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
         return positionPOList;
     }
