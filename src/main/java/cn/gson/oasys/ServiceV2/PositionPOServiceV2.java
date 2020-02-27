@@ -34,6 +34,7 @@ public class PositionPOServiceV2 {
 
     /**
      * 根据部门ID获取职位信息
+     *
      * @param deptId
      * @return
      */
@@ -46,6 +47,7 @@ public class PositionPOServiceV2 {
 
     /**
      * 根据职位ID获取职位信息
+     *
      * @param positionId
      * @return
      */
@@ -56,6 +58,7 @@ public class PositionPOServiceV2 {
 
     /**
      * 根据部门ID（1L)和职位名name不是以经理结尾的（返回职位列表）
+     *
      * @return
      */
     public List<PositionPO> getPositionPOListByDeptIdAndNameNotLike(String name) {
@@ -103,5 +106,13 @@ public class PositionPOServiceV2 {
         return rows;
     }
 
+    /**
+     * 根据职位ID删除职位
+     *
+     * @param positionId 职位ID
+     */
+    public void deletePosition(Long positionId) {
+        positionPOMapper.deleteByPrimaryKey(positionId);
+    }
 
 }

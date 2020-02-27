@@ -22,88 +22,39 @@ import cn.gson.oasys.model.dao.user.PositionDao;
 
 import javax.annotation.Resource;
 
+/**
+ * 用户管理》职位管理控制器
+ */
 @Controller
 @RequestMapping("/")
-public class PossionController {
+public class PositionController {
 
-    @Autowired
-    PositionDao pdao;
-    @Autowired
-    DeptDao ddao;
     @Resource
     private PositionPOServiceV2 positionServiceV2;
-
     @Resource
     private DeptPOServiceV2 deptServiceV2;
-/*
-    //第一次进入，用户管理》职位管理（职位列表）
+
+    /**
+     * 用户管理》职位管理（显示职位列表）
+     *
+     * @param model
+     * @return
+     */
     @RequestMapping("positionmanage")
-    public String positionmanage(Model model) {
-
-        List<Position> positions = (List<Position>) pdao.findAll();
-
-        model.addAttribute("positions",positions);
-
-        return "user/positionmanage";
-    }
-
-
-
-        //点击增加修改进入增加修改页面
-    @RequestMapping(value = "positionedit", method = RequestMethod.GET)
-    public String positioneditget(@RequestParam(value = "positionid", required = false) Long positionid, Model model) {
-        if (positionid != null) {
-            //根据职位ID获取职位信息（就是修改）
-            Position position = pdao.findOne(positionid);
-            System.out.println(position);
-            //根据职位里面的部门ID获取部门信息
-            Dept dept = ddao.findOne(position.getDeptid());
-
-            model.addAttribute("positiondept", dept);
-            model.addAttribute("position", position);
-        }
-        //获取所有的部门信息
-        List<Dept> depts = (List<Dept>) ddao.findAll();
-        model.addAttribute("depts", depts);
-        return "user/positionedit";
-    }
-
-//用户管理》职位管理》增加，修改（
-    @RequestMapping(value = "positionedit", method = RequestMethod.POST)
-    public String positioneditpost(Position position, Model model) {
-        System.out.println(position);
-        Position psition2 = pdao.save(position);
-        if (psition2 != null) {
-            model.addAttribute("success", 1);
-            return "/positionmanage";
-        }
-        model.addAttribute("errormess", "数据插入失败");
-        return "user/positionedit";
-    }
-*/
-
-/*
-       //未用到
-    @RequestMapping("removeposition")
-    public String removeposition(@RequestParam("positionid") Long positionid, Model model) {
-        pdao.delete(positionid);
-        model.addAttribute("success", 1);
-        return "/positionmanage";
-    }
-*/
-
-    //=====================================
-
-
-    @RequestMapping("positionmanage")
-    public String positionmanage(Model model) {
-        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();
+    public String positionManage(Model model) {
+        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();//获取所有职位
         List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
         model.addAttribute("positions", positionVOList);
         return "user/positionmanage";
     }
 
-
+    /**
+     * 用于获取新增或修改的页面信息
+     *
+     * @param positionId 职位ID
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "positionedit", method = RequestMethod.GET)
     public String positionEditGet(@RequestParam(value = "positionId", required = false) Long positionId, Model model) {
         if (positionId != null) {
@@ -121,7 +72,11 @@ public class PossionController {
         return "user/positionedit";
     }
 
-
+    /**
+     * @param positionVO 页面提交过来的职位信息
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "positionedit", method = RequestMethod.POST)
     public String positionEditPost(PositionVO positionVO, Model model) {
         PositionPO positionPO = PositionFactoryVO.createPositionPO(positionVO);
@@ -132,6 +87,20 @@ public class PossionController {
         }
         model.addAttribute("errormess", "数据插入失败");
         return "user/positionedit";
+    }
+
+    /**
+     * 删除职位
+     *
+     * @param positionId 职位ID
+     * @param model
+     * @return
+     */
+    @RequestMapping("removeposition")
+    public String removeposition(@RequestParam("positionid") Long positionId, Model model) {
+        positionServiceV2.deletePosition(positionId);
+        model.addAttribute("success", 1);
+        return "/positionmanage";
     }
 
 }

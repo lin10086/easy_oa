@@ -25,7 +25,7 @@ public class PositionFactoryVO {
         }
         return positionVOList;
     }
-    //把V转换为PO
+    //把VO转换为PO
     public static PositionPO createPositionPO(PositionVO positionVO){
         PositionPO positionPO = new PositionPO();
         positionPO.setPositionId(positionVO.getPositionId());
