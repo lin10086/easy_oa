@@ -44,6 +44,7 @@ a:hover {
 						</div>
 						<div class="row">
 							<#if where??>
+								<#--修改，用户名只读-->
 								<div class="col-md-6 form-group">
 									<label class="control-label"><span>用户名</span></label> <input
 										name="userName" readonly="readonly" class="form-control" value="${(user.userName)!''}"/>
@@ -142,10 +143,10 @@ a:hover {
 										value="${(user.hireTime)!''}"/>
 								</div>
 							</#if>
-							<!-- <div class="col-md-6 form-group">
+							<div class="col-md-6 form-group">
 								<label class="control-label">生日</label>
-								<#--<input name="birth" class="form-control" id="start" onclick="WdatePicker()" value="${(user.birth)!''}"/>-->
-							</div> -->
+								<input name="birth" class="form-control" id="start" onclick="WdatePicker()" value="${(user.birth)!''}"/>
+							</div>
 							<div class="col-md-6 form-group">
 								<label class="control-label"> <span>皮肤</span>
 								</label> <select class="form-control" name="themeSkin" value="${(user.themeSkin)!''}">

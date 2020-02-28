@@ -99,7 +99,6 @@ public class UserPOServiceV2 {
         return userPOList;
     }
 
-
     /**
      * 根据姓名首拼+查找关键字查找(部门、姓名、电话号码)
      *
@@ -237,62 +236,13 @@ public class UserPOServiceV2 {
         return userPOList;
     }
 
+
     /**
      * 把用户的ID和用户的部门对应起来放到map里面
      *
-     * @param userPOList
+     * @param userPOList 用户列表
      * @return
      */
-    public Map<Long, DeptPO> userPOListIdAndDeptPO(List<UserPO> userPOList) {
-        //建立Map集合用于把用户ID和用户的部门对应起来
-        Map<Long, DeptPO> map = new HashMap<>();
-        //遍历自己定义的用户，从中获取用户所在的部门ID
-        for (UserPO userPO : userPOList) {
-            //根据用户里面的部门ID查询用户的部门信息
-            DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
-            //把用户ID和部门对应起来
-            map.put(userPO.getUserId(), deptPO);
-        }
-        return map;
-    }
-
-    /**
-     * 把用户的ID和用户的职位对应起来放到map里面
-     *
-     * @param userPOList
-     * @return
-     */
-    public Map<Long, PositionPO> userPOListIdAndPositionPO(List<UserPO> userPOList) {
-        //建立Map集合用于把用户ID和用户的职位对应起来
-        Map<Long, PositionPO> map = new HashMap<>();
-        //遍历自己定义的用户，从中获取用户所在的职位ID
-        for (UserPO userPO : userPOList) {
-            PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
-            map.put(userPO.getUserId(), positionPO);
-        }
-        return map;
-    }
-
-    /**
-     * 把用户的ID和用户的角色对应起来放到map里面
-     *
-     * @param userPOList
-     * @return
-     */
-    public Map<Long, RolePO> userPOListIdAndRolePO(List<UserPO> userPOList) {
-        //建立Map集合用于把用户ID和用户的角色对应起来
-        Map<Long, RolePO> map = new HashMap<>();
-        //遍历自己定义的用户，从中获取用户所在的角色ID
-        for (UserPO userPO : userPOList) {
-            //根据用户里面的角色ID查询用户的角色信息
-            RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
-            //把用户ID和角色对应起来
-            map.put(userPO.getUserId(), rolePO);
-        }
-        return map;
-    }
-
-    //把用户的ID和用户的部门对应起来放到map里面
     public Map<Long, Dept> userIdAndDept(List<UserPO> userPOList) {
         Map<Long, Dept> map = new HashMap<>();
         for (UserPO userPO : userPOList) {
@@ -355,7 +305,11 @@ public class UserPOServiceV2 {
         userPOMapper.updateByPrimaryKeySelective(userPO);
     }
 
-    //更新用户isLock字段
+    /**
+     * 删除用户实际是更新用户isLock字段（0正常，1禁用）
+     *
+     * @param userId 用户ID
+     */
     public void updateUserIsLock(Long userId) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
         userPO.setUserId(userId);
@@ -389,6 +343,20 @@ public class UserPOServiceV2 {
         PageHelper.startPage(page, size);
         UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andIsLockEqualTo(0);
+        userPOExample.setOrderByClause("dept_id");
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        return userPOList;
+    }
+
+    /**
+     * 获取所有非禁止用户并按部门升序排列
+     *
+     * @param isLock 是否被禁用
+     * @return
+     */
+    public List<UserPO> getUserPOListAllByASCDeptAndIsLock(int isLock) {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andIsLockEqualTo(isLock);
         userPOExample.setOrderByClause("dept_id");
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
         return userPOList;
@@ -435,6 +403,83 @@ public class UserPOServiceV2 {
         return userVO;
     }
 
+    /**
+     * 把用户的ID和用户的部门对应起来放到map里面
+     *
+     * @param userPOList
+     * @return
+     */
+    public Map<Long, DeptPO> userPOListIdAndDeptPO(List<UserPO> userPOList) {
+        //建立Map集合用于把用户ID和用户的部门对应起来
+        Map<Long, DeptPO> map = new HashMap<>();
+        //遍历自己定义的用户，从中获取用户所在的部门ID
+        for (UserPO userPO : userPOList) {
+            //根据用户里面的部门ID查询用户的部门信息
+            DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
+            //把用户ID和部门对应起来
+            map.put(userPO.getUserId(), deptPO);
+        }
+        return map;
+    }
+
+    /**
+     * 把用户的ID和用户的职位对应起来放到map里面
+     *
+     * @param userPOList 用户列表
+     * @return
+     */
+    public Map<Long, PositionPO> userPOListIdAndPositionPO(List<UserPO> userPOList) {
+        //建立Map集合用于把用户ID和用户的职位对应起来
+        Map<Long, PositionPO> map = new HashMap<>();
+        //遍历自己定义的用户，从中获取用户所在的职位ID
+        for (UserPO userPO : userPOList) {
+            PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
+            map.put(userPO.getUserId(), positionPO);
+        }
+        return map;
+    }
+
+    /**
+     * 把用户的ID和用户的角色对应起来放到map里面
+     *
+     * @param userPOList 用户列表
+     * @return
+     */
+    public Map<Long, RolePO> userPOListIdAndRolePO(List<UserPO> userPOList) {
+        //建立Map集合用于把用户ID和用户的角色对应起来
+        Map<Long, RolePO> map = new HashMap<>();
+        //遍历自己定义的用户，从中获取用户所在的角色ID
+        for (UserPO userPO : userPOList) {
+            //根据用户里面的角色ID查询用户的角色信息
+            RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
+            //把用户ID和角色对应起来
+            map.put(userPO.getUserId(), rolePO);
+        }
+        return map;
+    }
+
+    /**
+     * 补全用户列表的信息(角色，部门，职位）
+     *
+     * @param userPOList 用户列表
+     * @return
+     */
+    public List<UserVO> getUserVOList(List<UserPO> userPOList) {
+        Map<Long, RolePO> longRolePOMap = userPOListIdAndRolePO(userPOList);
+        Map<Long, DeptPO> longDeptPOMap = userPOListIdAndDeptPO(userPOList);
+        Map<Long, PositionPO> longPositionPOMap = userPOListIdAndPositionPO(userPOList);
+        List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
+        for (UserVO userVO : userVOList) {
+            RoleVO roleVO = RoleFactoryVO.createRoleVO(longRolePOMap.get(userVO.getUserId()));
+            DeptVO deptVO = DeptFactoryVO.createDeptVO(longDeptPOMap.get(userVO.getUserId()));
+            PositionVO positionVO = PositionFactoryVO.createPositionVO(longPositionPOMap.get(userVO.getUserId()));
+            userVO.setRoleVO(roleVO);
+            userVO.setDeptVO(deptVO);
+            userVO.setPositionVO(positionVO);
+        }
+        return userVOList;
+    }
+
     //插入 部门，职位，角色
     public void insertUserAll(UserPO userPO, DeptVO deptVO, PositionVO positionVO, RoleVO roleVO, Long fatherId, String pinyin, String password) {
         userPO.setDeptId(deptVO.getDeptId());
@@ -443,14 +488,48 @@ public class UserPOServiceV2 {
         userPO.setFatherId(fatherId);
         userPO.setPinyin(pinyin);
         userPO.setPassword(password);
-
         userPOMapper.insertSelective(userPO);
+    }
 
+    /**
+     * 插入新用户
+     *
+     * @param userPO     用户信息
+     * @param deptPO     部门信息
+     * @param roleId     角色ID
+     * @param positionId 职位ID
+     * @param pinyin     用户名拼音
+     */
+    public void insertNewUserPO(UserPO userPO, DeptPO deptPO, Long roleId, Long positionId, String pinyin) {
+        userPO.setPinyin(pinyin);
+        userPO.setPassword("123456");//设置初始密码
+        userPO.setDeptId(deptPO.getDeptId());
+        userPO.setRoleId(roleId);
+        userPO.setPositionId(positionId);
+        userPO.setFatherId(deptPO.getDeptmanager());//设置用户领导
+        userPOMapper.insertSelective(userPO);
+    }
 
+    /**
+     * 更细用户信息（包括部门，职位，角色）
+     *
+     * @param userPO         用户信息
+     * @param isBackPassword 是否重置密码
+     * @param deptId         部门ID
+     * @param roleId         角色ID
+     * @param positionId     职位ID
+     */
+    public void updateUserPO(UserPO userPO, boolean isBackPassword, Long deptId, Long roleId, Long positionId) {
+        userPO.setPositionId(positionId);
+        userPO.setRoleId(roleId);
+        userPO.setDeptId(deptId);
+        if (isBackPassword) {
+            userPO.setPassword("123456");
+        }
     }
 
     //更新用户信息
-    public void updateUserVOAll(UserVO userVO, boolean isbackpassword, DeptVO deptVO, RoleVO roleVO, PositionVO positionVO) {
+    public void updateUserVOAll(UserVO userVO, boolean isBackPassword, DeptVO deptVO, RoleVO roleVO, PositionVO positionVO) {
         UserPO userPO = userPOMapper.selectByPrimaryKey(userVO.getUserId());
 
         userPO.setUserId(userVO.getUserId());
@@ -466,7 +545,7 @@ public class UserPOServiceV2 {
         userPO.setThemeSkin(userVO.getThemeSkin());
         userPO.setSalary(Float.valueOf(userVO.getSalary()));
         userPO.setFatherId(deptVO.getDeptManager());
-        if (isbackpassword) {
+        if (isBackPassword) {
             userPO.setPassword("123456");
         }
         userPO.setDeptId(deptVO.getDeptId());
@@ -550,7 +629,7 @@ public class UserPOServiceV2 {
     /**
      * 根据用户名或用户真实名模糊查找找用户列表
      *
-     * @param baseKey
+     * @param baseKey 模糊字
      * @return
      */
     public List<UserPO> getUserPOListByUsernameLikeAndRealNameLike(String baseKey) {

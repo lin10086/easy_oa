@@ -11,12 +11,7 @@ import javax.validation.Valid;
 import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
 import cn.gson.oasys.ServiceV2.PositionPOServiceV2;
 import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.PositionPOMapper;
-import cn.gson.oasys.mappers.UserPOMapper;
-import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.entity.user.Position;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.UserPO;
@@ -27,16 +22,14 @@ import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
 import cn.gson.oasys.vo.factoryvo.PositionFactoryVO;
 import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import cn.gson.oasys.model.dao.user.DeptDao;
-import cn.gson.oasys.model.dao.user.PositionDao;
-import cn.gson.oasys.model.dao.user.UserDao;
-
+/**
+ * 用户管理》部门管理控制器
+ */
 @Slf4j
 @Controller
 @RequestMapping("/")
@@ -152,7 +145,7 @@ public class DeptController {
         List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
         List<DeptVO> deptVOList = DeptFactoryVO.createDeptVOList(deptPOList);
         //根据职位名name不是以经理结尾的（返回职位列表，所有部门）
-        List<PositionPO> positionPOList = positionServiceV2.getPositionPOListByDeptIdAndNameNotLike("%经理");
+        List<PositionPO> positionPOList = positionServiceV2.getPositionPOListByNameNotLike("%经理");
         List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
         //同一个部门的用户(即用户的部门ID相同）
         List<UserPO> userPOList = userServiceV2.getUserByDeptId(deptId);
@@ -238,7 +231,7 @@ public class DeptController {
             }
         } else {
 //            根据职位名name不是以经理结尾的（返回职位列表）
-            PositionPO manage = positionServiceV2.getPositionPOListByDeptIdAndNameLike(deptId).get(0);
+            PositionPO manage = positionServiceV2.getPositionPOListByDeptIdAndNameNotLike(deptId).get(0);
             //根据部门ID更新部门领导（部门ID，新领导ID）
             deptServiceV2.updateDeptManage(deptId, newManageId);
             //更新用户的职位信息（新领导ID，职位ID）

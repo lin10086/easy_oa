@@ -1,13 +1,8 @@
 package cn.gson.oasys.ServiceV2;
 
-import cn.gson.oasys.factory.PositionFactory;
 import cn.gson.oasys.mappers.PositionPOMapper;
-import cn.gson.oasys.model.entity.user.Position;
-import cn.gson.oasys.model.entity.user.User;
-import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.PositionPO;
 import cn.gson.oasys.model.po.PositionPOExample;
-import cn.gson.oasys.vo.PositionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -57,19 +52,25 @@ public class PositionPOServiceV2 {
     }
 
     /**
-     * 根据部门ID（1L)和职位名name不是以经理结尾的（返回职位列表）
+     * 职位名不是name结尾的（返回职位列表）
      *
      * @return
      */
-    public List<PositionPO> getPositionPOListByDeptIdAndNameNotLike(String name) {
+    public List<PositionPO> getPositionPOListByNameNotLike(String name) {
         PositionPOExample positionPOExample = new PositionPOExample();
         positionPOExample.createCriteria().andNameNotLike(name);
         List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
         return positionPOList;
     }
 
-    // 根据部门ID（1L)和职位名name不是以经理结尾的（返回职位列表）
-    public List<PositionPO> getPositionPOListByDeptIdAndNameLike(Long deptId) {
+
+    /**
+     * 根据职位名name不是以经理结尾和部门ID找职位列表
+     *
+     * @param deptId 部门ID
+     * @return
+     */
+    public List<PositionPO> getPositionPOListByDeptIdAndNameNotLike(Long deptId) {
         PositionPOExample positionPOExample = new PositionPOExample();
         positionPOExample.createCriteria().andNameNotLike("%经理").andDeptidEqualTo(deptId);
         List<PositionPO> positionPOList = positionPOMapper.selectByExample(positionPOExample);
@@ -95,7 +96,13 @@ public class PositionPOServiceV2 {
         return positionIds;
     }
 
-    //插入或更新一个职位
+
+    /**
+     * 插入或更新一个职位
+     *
+     * @param positionPO 职位信息
+     * @return
+     */
     public Integer insertOrUpdatePositionPO(PositionPO positionPO) {
         Integer rows = null;
         if (positionPO.getPositionId() == null) {
