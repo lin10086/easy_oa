@@ -26,7 +26,7 @@ public class TypePOServiceV2 {
      *
      * @param typePO 类型信息
      */
-    public void insertOrUpdateTypepO(TypePO typePO) {
+    public void insertOrUpdateTypePO(TypePO typePO) {
         if (typePO.getTypeId() != null) {
             typePOMapper.updateByPrimaryKeySelective(typePO);
         } else {
@@ -119,20 +119,6 @@ public class TypePOServiceV2 {
     }
 
     /**
-     * 在类型列表里面找类型ID和类型名通过类型列表
-     *
-     * @param typePOList 类型列表
-     * @return
-     */
-    public Map<Long, String> getTypeIdAndTypeNameByTypePOList(List<TypePO> typePOList) {
-        Map<Long, String> map = new HashMap<>();
-        for (TypePO typePO : typePOList) {
-            map.put(typePO.getTypeId(), typePO.getTypeName());
-        }
-        return map;
-    }
-
-    /**
      * 根据ID找类型
      *
      * @param typeId
@@ -144,7 +130,7 @@ public class TypePOServiceV2 {
     }
 
     /**
-     * 获取所有类型
+     * 获取所有类型信息
      *
      * @return
      */

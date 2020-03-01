@@ -7,8 +7,6 @@ import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
 import cn.gson.oasys.model.po.TypePO;
 import cn.gson.oasys.vo.TypeVO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -24,8 +22,6 @@ import java.util.List;
 @RequestMapping("/")
 public class TypeSysController {
 
-    Logger log = LoggerFactory.getLogger(getClass());
-
     @Resource
     private TypePOServiceV2 typeServiceV2;
 
@@ -36,14 +32,14 @@ public class TypeSysController {
      * @return
      */
     @RequestMapping("testsystype")
-    public String testsystype(HttpServletRequest req) {
-        List<TypePO> typePOList = typeServiceV2.getTypePOListAll();//获取所有类型列表
+    public String typeManage(HttpServletRequest req) {
+        List<TypePO> typePOList = typeServiceV2.getTypePOListAll();//获取所有类型信息
         req.setAttribute("typeList", typePOList);
         return "systemcontrol/typemanage";
     }
 
     /**
-     * 类型编辑界面；
+     * 类型编辑界面，新增，修改
      *
      * @param req
      * @return
@@ -94,7 +90,7 @@ public class TypeSysController {
             typePO.setTypeModel(typeVO.getTypeModel());
             typePO.setTypeColor(typeVO.getTypeColor());
             typePO.setSortValue(typeVO.getTypeSortValue());
-            typeServiceV2.insertOrUpdateTypepO(typePO);
+            typeServiceV2.insertOrUpdateTypePO(typePO);
             req.setAttribute("success", "后台验证成功");
         }
         return "systemcontrol/typeedit";
@@ -104,14 +100,14 @@ public class TypeSysController {
      * 执行删除方法
      */
     @RequestMapping("deletetype")
-    public String deleteThis(HttpServletRequest req) {
+    public String deleteType(HttpServletRequest req) {
         Long typeId = Long.parseLong(req.getParameter("id"));
         typeServiceV2.deleteTypePOByTypeId(typeId);
         return "forward:/testsystype";
     }
 
     /**
-     * 查找类型表格
+     * 模糊搜索
      *
      * @param req
      * @return
@@ -120,10 +116,11 @@ public class TypeSysController {
     public String typeTable(HttpServletRequest req) {
         if (!StringUtils.isEmpty(req.getParameter("name"))) {//模糊搜索的输入值
             String name = req.getParameter("name");
+//            根据类型名和类型模型查找
             List<TypePO> typePOList = typeServiceV2.getTypePOListByTypeNameLikeOrTypeModelLike(name);
             req.setAttribute("typeList", typePOList);
         } else {
-            List<TypePO> typePOList = typeServiceV2.getTypePOListAll();
+            List<TypePO> typePOList = typeServiceV2.getTypePOListAll();//无搜索字显示全部类表信息
             req.setAttribute("typeList", typePOList);
         }
         return "systemcontrol/typetable";
