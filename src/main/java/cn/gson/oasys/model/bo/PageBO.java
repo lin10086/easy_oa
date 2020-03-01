@@ -24,7 +24,6 @@ public class PageBO implements Cloneable {
 
     private int totalPageCount = 1;//总页数
 
-
     /**
      * 是否是第一页
      *

@@ -35,7 +35,14 @@ public class UserLoginRecordServiceV2 {
 //    @Query("from LoginRecord u where u.user.userId=?1 and ( DATE_format(u.loginTime,'%Y-%m-%d ') like %?2% or u.ipAddr like %?2%) order by u.loginTime DESC")
 //    Page<LoginRecord> findbasekey(long userid, String baseKey, Pageable pa);
 
-    //用户管理》在线用户列表（根据时间降序）还需改善
+    /**
+     * 用户管理》在线用户列表（根据时间降序）
+     *
+     * @param baseKey 模糊字
+     * @param userId  用户ID
+     * @param time
+     * @return
+     */
     public List<UserLoginRecordPO> getUserLoginRecordPOSByUserIdAndLoginTimeSortAndBaseKey(String baseKey, Long userId, String time) {
         if (!StringUtils.isEmpty(baseKey)) { //模糊
             UserLoginRecordPOExample userLoginRecordPOExample = new UserLoginRecordPOExample();
@@ -71,7 +78,14 @@ public class UserLoginRecordServiceV2 {
     }
 
 
-
+    /**
+     * 插入一条用户登录记录
+     *
+     * @param ip       IP地址
+     * @param info     用户使用的浏览器
+     * @param date     登录日期
+     * @param userPOId 用户ID
+     */
     public void insertUserLoginRecord(String ip, String info, Date date, Long userPOId) {
         UserLoginRecordPO userLoginRecordPO = new UserLoginRecordPO();
         userLoginRecordPO.setBrowser(info);

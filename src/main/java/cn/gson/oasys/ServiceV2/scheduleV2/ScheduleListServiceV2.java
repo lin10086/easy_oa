@@ -22,7 +22,7 @@ public class ScheduleListServiceV2 {
     /**
      * 根据日程所属人找日程列表
      *
-     * @param userId
+     * @param userId 用户ID
      * @return
      */
     public List<SchedulePO> getSchedulePOListByUserId(Long userId) {

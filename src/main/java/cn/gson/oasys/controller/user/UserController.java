@@ -242,10 +242,10 @@ public class UserController {
         userVO.setFatherId(deptPO.getDeptmanager());//设置用户领导
         UserPO userPO = UserFactoryVO.createUserPO(userVO);
         if (userVO.getUserId() == null) {//新增
-            String pinyin = PinyinHelper.convertToPinyinString(userVO.getUserName(), "", PinyinFormat.WITHOUT_TONE);
-            userServiceV2.insertNewUserPO(userPO, deptPO, roleId, positionId, pinyin);
+            String pinyin = PinyinHelper.convertToPinyinString(userVO.getUserName(), "", PinyinFormat.WITHOUT_TONE);//汉字转拼音
+            userServiceV2.insertNewUserPO(userPO, deptPO, roleId, positionId, pinyin);//插入新用户
         } else {
-            userServiceV2.updateUserPO(userPO, isBackPassword, deptId, roleId, positionId);
+            userServiceV2.updateUserPO(userPO, isBackPassword, deptId, roleId, positionId);//更新用户信息（可重置密码）
         }
         model.addAttribute("success", 1);
         return "/usermanage";
