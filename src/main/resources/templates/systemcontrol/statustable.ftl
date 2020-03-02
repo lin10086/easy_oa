@@ -1,3 +1,4 @@
+<#--系统挂里》状态管理，状态表内容-->
 <div class="table-responsive">
     <table class="table table-hover">
         <tr>
@@ -11,7 +12,7 @@
             <tr>
                 <td><span>${(status.statusModel)!''}</span></td>
                 <td><span>${(status.statusName)!''}</span></td>
-                <td><span>${(status.statusSortValue)!''}</span></td>
+                <td><span>${(status.sortValue)!''}</span></td>
                 <td><span>${(status.statusColor)!''}</span></td>
                 <td><a href="statusedit?statusid=${status.statusId}"
                        class="label xiugai"><span class="glyphicon glyphicon-edit"></span>

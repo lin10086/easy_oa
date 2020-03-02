@@ -95,9 +95,11 @@ public class StatusServiceV2 {
      * @param name 模糊字
      * @return
      */
-    public List<StatusPO> getStatusPOListByTypeModelLikeAndStatusNameLike(String name) {
+    public List<StatusPO> getStatusPOListByTypeModelLikeOrStatusNameLike(String name) {
         StatusPOExample statusPOExample = new StatusPOExample();
-        statusPOExample.createCriteria().andStatusModelLike("%" + name + "%").andStatusNameLike("%" + name + "%");
+        statusPOExample.createCriteria().andStatusModelLike("%" + name + "%");
+        StatusPOExample.Criteria criteria = statusPOExample.createCriteria().andStatusNameLike("%" + name + "%");
+        statusPOExample.or(criteria);
         List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
         return statusPOList;
     }

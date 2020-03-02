@@ -18,6 +18,9 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * 类型控制器
+ */
 @Controller
 @RequestMapping("/")
 public class TypeSysController {
@@ -55,7 +58,6 @@ public class TypeSysController {
         }
         return "systemcontrol/typeedit";
     }
-
 
     /**
      * 系统管理表单验证
