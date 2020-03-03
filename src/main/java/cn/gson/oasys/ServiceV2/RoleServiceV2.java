@@ -67,7 +67,7 @@ public class RoleServiceV2 {
     /**
      * 根据角色名模糊查找角色列表
      *
-     * @param val
+     * @param val 模糊字
      * @return
      */
     public List<RolePO> getRoleListByRoleNameLike(String val) {

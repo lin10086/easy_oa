@@ -18,8 +18,8 @@ public class RolePowerListServiceV2 {
     /**
      * 根据角色ID和菜单ID插入角色权限信息
      *
-     * @param sysMenuPOList
-     * @param rolePOId
+     * @param sysMenuPOList 角色列表
+     * @param rolePOId      角色ID
      */
     public void insertRolePowerListPOBySystemMenuPOListAndRolePOId(List<SysMenuPO> sysMenuPOList, Long rolePOId) {
         for (SysMenuPO sysMenuPO : sysMenuPOList) {

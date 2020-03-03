@@ -178,12 +178,11 @@ public class SystemMenuServiceV2 {
      * @return
      */
     public List<RolePowerMenuVO> getSysMenuPOListBySonAll(Long parentId, Long roleId) {
-        List<RolePowerListPO> rolePowerListPOS = rolePowerListServiceV2.getRolePowerListPOSByRoleId(roleId);//根据角色ID找出的角色信息
+        List<RolePowerListPO> rolePowerListPOS = rolePowerListServiceV2.getRolePowerListPOSByRoleId(roleId);//根据角色ID找出的角色权限信息
         SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
         sysMenuPOExample.createCriteria().andParentIdNotEqualTo(parentId);//唯一不同的
         sysMenuPOExample.setOrderByClause("sort_id ASC");
         List<SysMenuPO> sysMenuPOList = sysMenuPOMapper.selectByExample(sysMenuPOExample);//根据菜单的父级ID找出的信息
-
         List<RolePowerMenuVO> rolePowerMenuVOS = new ArrayList<>();
         for (RolePowerListPO rolePowerListPO : rolePowerListPOS) {
             for (SysMenuPO sysMenuPO : sysMenuPOList) {

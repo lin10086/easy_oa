@@ -29,6 +29,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.github.pagehelper.util.StringUtil;
 
+/**
+ * 角色列表》角色管理
+ */
 @Controller
 @RequestMapping("/")
 public class RoleController {
@@ -50,25 +53,24 @@ public class RoleController {
      * @return
      */
     @RequestMapping("rolemanage")
-    public ModelAndView roleManage(@RequestParam(value = "page", defaultValue = "1") int page,
-                                   @RequestParam(value = "size", defaultValue = "10") int size) {
-        ModelAndView mav = new ModelAndView("role/rolemanage");
+    public String roleManage(@RequestParam(value = "page", defaultValue = "1") int page,
+                             @RequestParam(value = "size", defaultValue = "10") int size,
+                             Model model) {
         List<RolePO> rolePOList = roleServiceV2.getRoleListAll();//所有角色信息
-        PageBO pageBO = new PageBO(page, size);
-        pageBO.setTotalCount(rolePOList.size());
-        int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
-        int end = pageBO.getPageNo() * pageBO.getPageSize();
-        if (end > rolePOList.size()) {
-            end = rolePOList.size();
-        }
-        List<RolePO> subRolePOList = rolePOList.subList(start, end);
-        mav.addObject("page", pageBO);
-        mav.addObject("rolelist", subRolePOList);
-        mav.addObject("url", "roleser");
-        return mav;
+        getRolePOListPage(page, size, rolePOList, model);
+        return "role/rolemanage";
     }
 
-    private void getRolePOListPage(int page, int size, List<RolePO> rolePOList, Model model) {
+    /**
+     * 角色列表的分页信息
+     *
+     * @param page       第几页
+     * @param size       每页大小
+     * @param rolePOList 角色列表
+     * @param model
+     * @return
+     */
+    private List<RolePO> getRolePOListPage(int page, int size, List<RolePO> rolePOList, Model model) {
         PageBO pageBO = new PageBO(page, size);
         pageBO.setTotalCount(rolePOList.size());
         int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
@@ -80,7 +82,30 @@ public class RoleController {
         model.addAttribute("page", pageBO);
         model.addAttribute("rolelist", subRolePOList);
         model.addAttribute("url", "roleser");
+        return subRolePOList;
+    }
 
+    /**
+     * 模糊搜索
+     */
+    @RequestMapping("roleser")
+    public String roleLike(HttpServletRequest req, Model model,
+                           @RequestParam(value = "page", defaultValue = "1") int page,
+                           @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<RolePO> rolePOList;
+        String val = null;//搜索输入的内容
+        if (!StringUtil.isEmpty(req.getParameter("val"))) {
+            val = req.getParameter("val").trim();
+        }
+
+        if (!StringUtil.isEmpty(val)) {
+            rolePOList = roleServiceV2.getRoleListByRoleNameLike(val);
+            model.addAttribute("sort", "&val=" + val);//记录了模糊字，&val用于连接页码和模糊字
+        } else {
+            rolePOList = roleServiceV2.getRoleListAll();
+        }
+        getRolePOListPage(page, size, rolePOList, model);
+        return "role/roletable";
     }
 
     /**
@@ -108,27 +133,26 @@ public class RoleController {
     public String modifyOrAddRole(HttpServletRequest req, @Valid RoleVO roleVO, BindingResult br) {
         Long rolePOId = null;
         if (!StringUtil.isEmpty(req.getParameter("id"))) {
-            rolePOId = Long.parseLong(req.getParameter("id"));
+            rolePOId = Long.parseLong(req.getParameter("id"));//角色ID
         }
         if (rolePOId != null) {
             RolePO rolePO = roleServiceV2.getRoleByRoleId(rolePOId);
             rolePO.setRoleName(roleVO.getRoleName());
             rolePO.setRoleValue(roleVO.getRoleValue());
-            roleServiceV2.updateOrInsertRolePO(rolePO, rolePOId);
+            roleServiceV2.updateOrInsertRolePO(rolePO, rolePOId);//更新角色信息
         } else {
             RolePO rolePO = new RolePO();
             rolePO.setRoleName(roleVO.getRoleName());
             rolePO.setRoleValue(roleVO.getRoleValue());
-            RolePO newRolePO = roleServiceV2.updateOrInsertRolePO(rolePO, null);
-            List<SysMenuPO> sysMenuPOList = systemMenuServiceV2.getSysMenuPOAll();
-            rolePowerListServiceV2.insertRolePowerListPOBySystemMenuPOListAndRolePOId(sysMenuPOList, newRolePO.getRoleId());
+            RolePO newRolePO = roleServiceV2.updateOrInsertRolePO(rolePO, null);//插入角色信息
+            List<SysMenuPO> sysMenuPOList = systemMenuServiceV2.getSysMenuPOAll();//所有菜单
+            rolePowerListServiceV2.insertRolePowerListPOBySystemMenuPOListAndRolePOId(sysMenuPOList, newRolePO.getRoleId());//插入角色权限信息
         }
-
         return "redirect:/rolemanage";
     }
 
     /**
-     * 设定角色权限
+     * 设定角色权限的显示信息
      *
      * @return
      */
@@ -138,10 +162,9 @@ public class RoleController {
         RolePO rolePO = roleServiceV2.getRoleByRoleId(roleId);
         List<RolePowerMenuVO> oneRolePowerMenuVO = systemMenuServiceV2.getSysMenuPOListByParentAll(0L, roleId);
         List<RolePowerMenuVO> twoRolePowerMenuVO = systemMenuServiceV2.getSysMenuPOListBySonAll(0L, roleId);
-
         model.addAttribute("oneMenuAll", oneRolePowerMenuVO);//一级菜单
         model.addAttribute("twoMenuAll", twoRolePowerMenuVO);//二级菜单
-        model.addAttribute("roleid", roleId);//角色名
+        model.addAttribute("roleid", roleId);//角色ID
         model.addAttribute("rolename", rolePO.getRoleName());//角色名
         return "role/roleset";
 
@@ -154,8 +177,9 @@ public class RoleController {
     @ResponseBody
     public Boolean power(HttpServletRequest req) {
         Long roleId = Long.parseLong(req.getParameter("roleid"));//角色ID
-        String content = req.getParameter("content").trim();
+        String content = req.getParameter("content").trim();//是否选中
         Long menuId = Long.parseLong(req.getParameter("menuid"));//菜单ID
+//        根据角色ID和菜单ID找角色权限
         RolePowerListPO rolePowerListPO = rolePowerListServiceV2.getRolePowerListPOSByRoleIdAndMenuId(roleId, menuId);
         int check;
         if (content.equals("选中")) {
@@ -163,7 +187,7 @@ public class RoleController {
         } else {
             check = 0;
         }
-        rolePowerListServiceV2.updateRolePowerListPO(rolePowerListPO, check);
+        rolePowerListServiceV2.updateRolePowerListPO(rolePowerListPO, check);//更新角色表的权限
         return true;
     }
 
@@ -172,10 +196,10 @@ public class RoleController {
      */
     @RequestMapping("deshan")
     public String deleteRole(HttpServletRequest req, Model model, HttpSession session) {
-        Long userId = Long.parseLong(((String) session.getAttribute("userId")).trim());
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        Long userId = Long.parseLong(((String) session.getAttribute("userId")).trim());//用户ID
+        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//用户信息
         Long roleId = null;
-        if (!StringUtil.isEmpty(req.getParameter("id"))) {
+        if (!StringUtil.isEmpty(req.getParameter("id"))) {//角色ID是否存在
             roleId = Long.parseLong(req.getParameter("id"));
         }
         Boolean isSuperman = userPO.getSuperman() == 0 ? false : true;//是否是超级管理员
@@ -195,27 +219,5 @@ public class RoleController {
         return null;
     }
 
-    /**
-     * 条件查询
-     */
-    @RequestMapping("roleser")
-    public String roleLike(HttpServletRequest req, Model model,
-                           @RequestParam(value = "page", defaultValue = "1") int page,
-                           @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<RolePO> rolePOList = null;
-        String val = null;//搜索输入的内容
-        if (!StringUtil.isEmpty(req.getParameter("val"))) {
-            val = req.getParameter("val").trim();
-        }
-
-        if (!StringUtil.isEmpty(val)) {
-            rolePOList = roleServiceV2.getRoleListByRoleNameLike(val);
-            model.addAttribute("sort", "&val=" + val);//记录了模糊字，&val用于连接页码和模糊字
-        } else {
-            rolePOList = roleServiceV2.getRoleListAll();
-        }
-        getRolePOListPage(page, size, rolePOList, model);
-        return "role/roletable";
-    }
 
 }
