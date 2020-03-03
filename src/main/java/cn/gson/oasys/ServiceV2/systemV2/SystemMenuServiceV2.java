@@ -28,7 +28,7 @@ public class SystemMenuServiceV2 {
     /**
      * 更新或插入菜单信息
      *
-     * @param sysMenuPO
+     * @param sysMenuPO 菜单信息
      * @return
      */
     public SysMenuPO insertOrUpdateSysMenuPOId(SysMenuPO sysMenuPO) {
@@ -82,6 +82,44 @@ public class SystemMenuServiceV2 {
         sysMenuPO.setSortId(sortId);
         Integer rows = sysMenuPOMapper.updateByExampleSelective(sysMenuPO, sysMenuPOExample);
         return rows;
+    }
+
+    /**
+     * 所有的父级菜单
+     */
+    public List<SystemMenuVO> oneSysMenuVOListAll(Long parentId) {
+        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
+        sysMenuPOExample.createCriteria().andParentIdEqualTo(parentId);//parentId是0就是父级菜单
+        sysMenuPOExample.setOrderByClause("sort_id ASC");
+        List<SysMenuPO> oneSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
+        List<SystemMenuVO> oneSysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(oneSysMenuPOListAll);
+        return oneSysMenuVOListAll;
+    }
+
+    /**
+     * 所有的子菜单
+     */
+    public List<SystemMenuVO> twoSysMenuVOListAll(Long parentId) {
+        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
+        sysMenuPOExample.createCriteria().andParentIdNotEqualTo(parentId);//parentId不是0就是父级菜单
+        sysMenuPOExample.setOrderByClause("sort_id ASC");
+        List<SysMenuPO> twoSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
+        List<SystemMenuVO> twoSysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(twoSysMenuPOListAll);
+        return twoSysMenuVOListAll;
+    }
+
+    /**
+     * 根据菜单名模糊查找菜单(范围：所有菜单）
+     *
+     * @param name 模糊字
+     * @return
+     */
+    public List<SystemMenuVO> getSystemMenuVOListByMenuNameLikeAll(String name) {
+        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
+        sysMenuPOExample.createCriteria().andMenuNameLike("%" + name + "%");
+        List<SysMenuPO> sysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
+        List<SystemMenuVO> sysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(sysMenuPOListAll);
+        return sysMenuVOListAll;
     }
 
     /**
@@ -168,41 +206,6 @@ public class SystemMenuServiceV2 {
 
     }
 
-
-    /**
-     * 父级菜单
-     */
-    public List<SystemMenuVO> oneSysMenuVOListAll(Long parentId) {
-        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
-        sysMenuPOExample.createCriteria().andParentIdEqualTo(parentId);
-        sysMenuPOExample.setOrderByClause("sort_id ASC");
-        List<SysMenuPO> oneSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
-        List<SystemMenuVO> oneSysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(oneSysMenuPOListAll);
-        return oneSysMenuVOListAll;
-    }
-
-    /**
-     * 子菜单
-     */
-    public List<SystemMenuVO> twoSysMenuVOListAll(Long parentId) {
-        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
-        sysMenuPOExample.createCriteria().andParentIdNotEqualTo(parentId);
-        sysMenuPOExample.setOrderByClause("sort_id ASC");
-        List<SysMenuPO> twoSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
-        List<SystemMenuVO> twoSysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(twoSysMenuPOListAll);
-        return twoSysMenuVOListAll;
-    }
-
-    /**
-     * 把菜单设置进req中
-     *
-     * @param req
-     */
-    public void getOneSystemMenuAllAndTwoSystemMenuAll(List<SystemMenuVO> oneSysMenuVOListAll, List<SystemMenuVO> twoSysMenuVOListAll, HttpServletRequest req) {
-        req.setAttribute("oneMenuAll", oneSysMenuVOListAll);
-        req.setAttribute("twoMenuAll", twoSysMenuVOListAll);
-    }
-
     /**
      * 根据菜单ID找菜单信息
      *
@@ -216,35 +219,20 @@ public class SystemMenuServiceV2 {
 
 
     /**
-     * 根据菜单名模糊查找菜单
-     *
-     * @param name 模糊字
-     * @return
-     */
-    public List<SystemMenuVO> getSystemMenuVOListByMenuNameLike(String name) {
-        SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
-        sysMenuPOExample.createCriteria().andMenuNameLike("%" + name + "%");
-        List<SysMenuPO> oneSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
-        List<SystemMenuVO> oneSysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(oneSysMenuPOListAll);
-        return oneSysMenuVOListAll;
-    }
-
-
-    /**
      * 找可见角色的父级菜单
      *
-     * @param parentId
-     * @param roleId
-     * @param isShow
+     * @param parentId 父级ID
+     * @param roleId   角色ID
+     * @param isShow   是否可见
      * @return
      */
     public List<RolePowerMenuVO> getSysMenuPOListByParentByIsShow(Long parentId, Long roleId, Boolean isShow, HttpServletRequest request) {
-        List<RolePowerListPO> rolePowerListPOS = rolePowerListServiceV2.getRolePowerListPOSByRoleIdAndIsShow(roleId, isShow);//根据角色ID找出的角色信息
+        //根据角色ID和是否可见找角色权限列表
+        List<RolePowerListPO> rolePowerListPOS = rolePowerListServiceV2.getRolePowerListPOSByRoleIdAndIsShow(roleId, isShow);
         SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
         sysMenuPOExample.createCriteria().andParentIdEqualTo(parentId).andIsShowEqualTo(isShow == false ? 0 : 1);
         sysMenuPOExample.setOrderByClause("sort_id ASC");
-        List<SysMenuPO> sysMenuPOList = sysMenuPOMapper.selectByExample(sysMenuPOExample);//根据菜单的父级ID找出的信息
-
+        List<SysMenuPO> sysMenuPOList = sysMenuPOMapper.selectByExample(sysMenuPOExample);//根据菜单的父级ID和是否可见找出可见的菜单的信息
         List<RolePowerMenuVO> rolePowerMenuVOS = new ArrayList<>();
         for (RolePowerListPO rolePowerListPO : rolePowerListPOS) {
             for (SysMenuPO sysMenuPO : sysMenuPOList) {
