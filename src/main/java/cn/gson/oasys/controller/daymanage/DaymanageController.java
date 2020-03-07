@@ -10,15 +10,19 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.gson.oasys.ServiceV2.*;
-import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleListServiceV2;
-import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleServiceV2;
-import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleUserServiceV2;
+import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
+import cn.gson.oasys.serviceV2.scheduleV2.ScheduleListServiceV2;
+import cn.gson.oasys.serviceV2.scheduleV2.ScheduleServiceV2;
+import cn.gson.oasys.serviceV2.scheduleV2.ScheduleUserServiceV2;
 import cn.gson.oasys.model.po.SchedulePO;
 import cn.gson.oasys.model.po.StatusPO;
 import cn.gson.oasys.model.po.TypePO;
 import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
+import cn.gson.oasys.vo.userVO2.UserVO;
 import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -256,11 +260,11 @@ public class DaymanageController {
     @Resource
     private TypePOServiceV2 typeServiceV2;
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
     @Resource
     private DeptPOServiceV2 deptServiceV2;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private UserVOListServiceV2 userVOListServiceV2;
     @Resource
@@ -283,7 +287,7 @@ public class DaymanageController {
     private String dayManage(@SessionAttribute("userId") Long userId,
                              Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                              @RequestParam(value = "size", defaultValue = "10") int size) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
 
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_schedule_list");
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_schedule_list");
@@ -358,13 +362,13 @@ public class DaymanageController {
     @RequestMapping("addandchangeday")
     public String addandchangeday(ScheduleListVO scheduleListVO, @RequestParam("shareuser") String shareuser, BindingResult br,
                                   @SessionAttribute("userId") Long userId) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//登录人
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//登录人
         SchedulePO schedulePO = scheduleListServiceV2.insertOrUpdateSchedulePO(scheduleListVO, userId);//插入或更新日程表
         scheduleUserServiceV2.deleteScheduleUserPO(schedulePO.getRcId());//根据日程id删除日程用户关联表信息
         List<Long> UserIds = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(shareuser, ";");//分割接收人
         while (st.hasMoreElements()) {
-            UserIds.add(userServiceV2.getUserPOByUsername(st.nextToken()).getUserId());
+            UserIds.add(userPOServiceV2.getUserPOByUsername(st.nextToken()).getUserId());
         }
         if (UserIds.size() > 0) {
             for (Long userIds : UserIds) {

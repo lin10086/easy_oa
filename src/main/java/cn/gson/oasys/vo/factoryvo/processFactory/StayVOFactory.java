@@ -1,6 +1,6 @@
 package cn.gson.oasys.vo.factoryvo.processFactory;
 
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.model.po.StayPO;
 import cn.gson.oasys.vo.processVO2.StayVO;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class StayVOFactory {
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
 
     public static StayVO createStayVO(StayPO stayPO) {
         StayVO stayVO = new StayVO();

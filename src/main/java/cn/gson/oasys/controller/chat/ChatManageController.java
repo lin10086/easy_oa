@@ -1,15 +1,15 @@
 package cn.gson.oasys.controller.chat;
 
 
-import cn.gson.oasys.ServiceV2.TypePOServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.discussV2.*;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.discussV2.*;
 import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.vo.userVO2.UserVO;
 import cn.gson.oasys.vo.dicussVO.DiscussListVO;
 import cn.gson.oasys.vo.dicussVO.VoteListVO;
 import org.springframework.stereotype.Controller;
@@ -37,7 +37,7 @@ public class ChatManageController {
     @Resource
     private DiscussServiceV2 discussServiceV2;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private DiscussListPOServiceV2 discussListPOServiceV2;
     @Resource
@@ -157,7 +157,7 @@ public class ChatManageController {
                               @RequestParam(value = "page", defaultValue = "1") int page,
                               @RequestParam(value = "size", defaultValue = "5") int size,
                               @SessionAttribute("userId") Long userId) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         Long discussPOId = Long.parseLong(session.getAttribute("id") + "");
         DiscussListPO discussListPO = discussListPOServiceV2.getDiscussListPOSByDiscussPOId(discussPOId);
         //用来处理vote相关的数据
@@ -300,7 +300,7 @@ public class ChatManageController {
         if (!StringUtils.isEmpty(req.getAttribute("success"))) {
             model.addAttribute("success", "成功了");
         }
-        UserVO userVO = userServiceV2.setUserVOByUserId(userId);
+        UserVO userVO = userPOServiceV2.setUserVOByUserId(userId);
         List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("chat");
         model.addAttribute("typeList", typePOList);
         model.addAttribute("user", userVO);
@@ -379,7 +379,7 @@ public class ChatManageController {
         Long discussId = Long.parseLong(req.getParameter("discussId"));//讨论ID
         Integer page = Integer.parseInt(req.getParameter("page"));//第几页
         DiscussListPO discussListPO = discussListPOServiceV2.getDiscussListPOSByDiscussPOId(discussId);//讨论表信息
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//用户信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//用户信息
         Boolean superMan = userPO.getSuperman() == 0 ? false : true;
         if (superMan) {
             //超级管理员

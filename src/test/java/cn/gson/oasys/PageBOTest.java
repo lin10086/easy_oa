@@ -1,6 +1,6 @@
 package cn.gson.oasys;
 
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.UserPO;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +17,13 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 public class PageBOTest {
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
 
     @Test
     public void getPageBOUser() {
 //        PageBO pageBO = new PageBO(0,10);
 //        PageHelper.startPage(pageBO.getPageNo(), pageBO.getPageSize());
-        List<UserPO> userPOList = userServiceV2.getUserAll();
+        List<UserPO> userPOList = userPOServiceV2.getUserAll();
         log.info("userPOList={}", userPOList);
         PageBO pageBO = new PageBO(3);
         int star = (pageBO.getPageNo() - 1) * pageBO.getPageSize();

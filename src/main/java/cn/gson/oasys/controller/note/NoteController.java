@@ -18,16 +18,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.*;
-import cn.gson.oasys.ServiceV2.fileV2.FileServiceV2;
-import cn.gson.oasys.ServiceV2.noteV2.CatalogPOServiceV2;
-import cn.gson.oasys.ServiceV2.noteV2.NoteListPOServiceV2;
-import cn.gson.oasys.ServiceV2.noteV2.NoteServiceV2;
-import cn.gson.oasys.ServiceV2.noteV2.ReceiverNotePOServiceV2;
+import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
+import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
+import cn.gson.oasys.serviceV2.fileV2.FileServiceV2;
+import cn.gson.oasys.serviceV2.noteV2.CatalogPOServiceV2;
+import cn.gson.oasys.serviceV2.noteV2.NoteListPOServiceV2;
+import cn.gson.oasys.serviceV2.noteV2.NoteServiceV2;
+import cn.gson.oasys.serviceV2.noteV2.ReceiverNotePOServiceV2;
 import cn.gson.oasys.mappers.NoteListPOMapper;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
+import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.vo.userVO2.UserFactoryVO;
 import cn.gson.oasys.vo.noteVO.NoteListVO;
 import org.apache.commons.io.IOUtils;
 import org.apache.ibatis.annotations.Param;
@@ -731,9 +736,9 @@ public class NoteController {
     @Resource
     private TypePOServiceV2 typeServiceV2;
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private DeptPOServiceV2 deptServiceV2;
     @Resource
@@ -874,7 +879,7 @@ public class NoteController {
             catalogPOList.add(0, catalogPOServiceV2.getCatalogPOByCatalogId(33L));
         }
         // 用户 就是联系人
-        List<UserPO> userPOListAll = userServiceV2.getUserAll();//获取所有用户列表
+        List<UserPO> userPOListAll = userPOServiceV2.getUserAll();//获取所有用户列表
         String nId = Request.getParameter("id");
         if (nId.contains("cata")) {
             //从目录编辑那里进来的
@@ -915,7 +920,7 @@ public class NoteController {
      * @param model
      */
     public void getUser(int page, int size, Model model) {
-        List<UserPO> userPOListAll = userServiceV2.getUserAll();//所有用户
+        List<UserPO> userPOListAll = userPOServiceV2.getUserAll();//所有用户
         PageBO pageBO = new PageBO(page, size);
         pageBO.setTotalCount(userPOListAll.size());
         int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
@@ -955,7 +960,7 @@ public class NoteController {
         Set<UserPO> userPOS = null;
         AttachmentListPO attachmentListPO = null;
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//用户信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//用户信息
         Long nid = Long.valueOf(request.getParameter("id"));//获取笔记ID用户判断是新增还是修改
         String catalogname = request.getParameter("catalogname");//获取目录名
         String catalogName = catalogname.substring(1);//去掉符号后的目录名
@@ -998,7 +1003,7 @@ public class NoteController {
                     userPOS.add(userPO);
                     // 再绑定其他人
                     for (String receiverName : receiver) {
-                        UserPO userPO2 = userServiceV2.getUserPOByUsername(receiverName);
+                        UserPO userPO2 = userPOServiceV2.getUserPOByUsername(receiverName);
                         if (userPO2 != null) {
                             userPOS.add(userPO2);
                         }
@@ -1033,7 +1038,7 @@ public class NoteController {
                     userPOS.add(userPO);
                     // 再绑定其他人
                     for (String receiverName : receiver) {
-                        UserPO userPO2 = userServiceV2.getUserPOByUsername(receiverName);
+                        UserPO userPO2 = userPOServiceV2.getUserPOByUsername(receiverName);
                         if (userPO2 != null) {
                             userPOS.add(userPO2);
                         }
@@ -1118,7 +1123,7 @@ public class NoteController {
     public String noteInfo(@Param("id") String id, HttpServletRequest Request) {
         Long noteId = Long.valueOf(id);//笔记ID
         NoteListPO noteListPO = noteListPOServiceV2.getNoteListPOByNoteId(noteId);//笔记信息
-        UserPO userPO = userServiceV2.getUserPOByUserId(noteListPO.getCreatemanId()); // 笔记创建人信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(noteListPO.getCreatemanId()); // 笔记创建人信息
         if (noteListPO.getAttachId() != null) {
             AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(noteListPO.getAttachId());//附件信息
             Request.setAttribute("att", attachmentListPO);
@@ -1366,15 +1371,15 @@ public class NoteController {
         if (!StringUtil.isEmpty(req.getParameter("qufen"))) {
             qufen = req.getParameter("qufen").trim();
             if (StringUtil.isEmpty(name)) {
-                userPOList = userServiceV2.getUserPOListByFatherId(userId);// 查询部门下面的员工
+                userPOList = userPOServiceV2.getUserPOListByFatherId(userId);// 查询部门下面的员工
             } else {
-                userPOList = userServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, name);// 查询名字模糊查询员工
+                userPOList = userPOServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, name);// 查询名字模糊查询员工
             }
         } else {
             if (StringUtil.isEmpty(name)) {
-                userPOList = userServiceV2.getUserAll();//查看所有用户
+                userPOList = userPOServiceV2.getUserAll();//查看所有用户
             } else {
-                userPOList = userServiceV2.getUserPOListByUsernameLikeAndRealNameLike(name);
+                userPOList = userPOServiceV2.getUserPOListByUsernameLikeAndRealNameLike(name);
             }
         }
         PageBO pageBO = new PageBO(page, size);

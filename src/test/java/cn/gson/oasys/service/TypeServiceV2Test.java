@@ -1,6 +1,6 @@
 package cn.gson.oasys.service;
 
-import cn.gson.oasys.ServiceV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.model.po.TypePO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

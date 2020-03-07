@@ -1,6 +1,6 @@
 package cn.gson.oasys.mapper;
 
-import cn.gson.oasys.ServiceV2.planV2.PlanListServiceV2;
+import cn.gson.oasys.serviceV2.planV2.PlanListServiceV2;
 import cn.gson.oasys.model.po.PlanListPO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;

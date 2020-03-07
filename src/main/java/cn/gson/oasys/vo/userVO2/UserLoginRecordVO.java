@@ -1,6 +1,5 @@
 package cn.gson.oasys.vo.userVO2;
 
-import cn.gson.oasys.vo.UserVO;
 import lombok.Data;
 import lombok.ToString;
 

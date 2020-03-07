@@ -1,12 +1,12 @@
 package cn.gson.oasys.controller.system;
 
-import cn.gson.oasys.ServiceV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.MapToList;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
 import cn.gson.oasys.model.po.TypePO;
-import cn.gson.oasys.vo.TypeVO;
+import cn.gson.oasys.vo.typeVO2.TypeVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -63,7 +63,7 @@ public class TypeSysController {
      * 系统管理表单验证
      *
      * @param req
-     * @param typeVO
+     * @param typeVO 页面提交的信息
      * @param br     后台校验表单数据，不通过则回填数据，显示错误信息；通过则直接执行业务，例如新增、编辑等；
      * @return
      */

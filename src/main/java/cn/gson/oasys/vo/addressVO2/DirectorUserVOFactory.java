@@ -1,13 +1,9 @@
 package cn.gson.oasys.vo.addressVO2;
 
-import cn.gson.oasys.mappers.DirectorUsersPOMapper;
 import cn.gson.oasys.model.po.DirectorUsersPO;
-import cn.gson.oasys.vo.UserVO;
 
-import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DirectorUserVOFactory {

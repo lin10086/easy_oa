@@ -15,16 +15,15 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import cn.gson.oasys.ServiceV2.UserLoginRecordServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleListServiceV2;
-import cn.gson.oasys.ServiceV2.taskV2.TaskListServiceV2;
-import cn.gson.oasys.ServiceV2.userV2.UserLogServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserLoginRecordServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.scheduleV2.ScheduleListServiceV2;
+import cn.gson.oasys.serviceV2.taskV2.TaskListServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserLogServiceV2;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.userVO2.UserLoginRecordVO;
 import cn.gson.oasys.vo.userVO2.UserLoginRecordVOFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -32,14 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSONObject;
-
-import cn.gson.oasys.model.dao.scheduledao.ScheduleDao;
-import cn.gson.oasys.model.dao.taskdao.TaskDao;
-import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.dao.user.UserLogDao;
-import cn.gson.oasys.model.dao.user.UserLogRecordDao;
-import cn.gson.oasys.model.dao.user.UserLogRecordService;
-import cn.gson.oasys.model.dao.user.UserLogService;
 
 @Controller
 @RequestMapping("/")
@@ -54,7 +45,7 @@ public class UserLogController {
     @Resource
     private UserLoginRecordServiceV2 userLoginRecordServiceV2;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
 
     /**
      * 日历的数据显示
@@ -204,7 +195,7 @@ public class UserLogController {
      */
     @RequestMapping("counttasknum")
     public String countTaskNum(HttpServletResponse response) throws IOException {
-        List<UserPO> userPOList = userServiceV2.getUserAll();
+        List<UserPO> userPOList = userPOServiceV2.getUserAll();
         HashMap<String, Integer> hashMap = new HashMap<>();
         int i = 0;
         for (UserPO userPO : userPOList) {
@@ -308,7 +299,7 @@ public class UserLogController {
 //        //根据用户记录的ID找用户信息添加到集合里
 //        for (UserLoginRecordPO userLoginRecordPO : userLoginRecordPOList) {
 //            userLoginRecordPO.setLoginTime(new Timestamp(userLoginRecordPO.getLoginTime().getTime()));//登录时间
-//            UserPO userPO = userServiceV2.getUserPOByUserId(userLoginRecordPO.getUserId());//根据登录疾苦的用户ID获取用户信息
+//            UserPO userPO = userPOServiceV2.getUserPOByUserId(userLoginRecordPO.getUserId());//根据登录疾苦的用户ID获取用户信息
 //            userPOList.add(userPO);
 //        }
 
@@ -325,7 +316,7 @@ public class UserLogController {
         for (UserLoginRecordPO userLoginRecordPO : subUserLoginRecordPOS) {
             for (UserLoginRecordVO userLoginRecordVO : userLoginRecordVOList) {
                 if (userLoginRecordPO.getRecordId().equals(userLoginRecordVO.getId())) {
-                    userLoginRecordVO.setUserVO(userServiceV2.setUserVOByUserId(userLoginRecordPO.getUserId()));
+                    userLoginRecordVO.setUserVO(userPOServiceV2.setUserVOByUserId(userLoginRecordPO.getUserId()));
                 }
             }
         }

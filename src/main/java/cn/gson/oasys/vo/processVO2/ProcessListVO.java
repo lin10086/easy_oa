@@ -1,7 +1,7 @@
 package cn.gson.oasys.vo.processVO2;
 
-import cn.gson.oasys.vo.AttachmentVO;
-import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.vo.attachmentVO2.AttachmentVO;
+import cn.gson.oasys.vo.userVO2.UserVO;
 import lombok.Data;
 import lombok.ToString;
 

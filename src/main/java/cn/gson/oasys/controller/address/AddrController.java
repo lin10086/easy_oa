@@ -8,25 +8,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.*;
-import cn.gson.oasys.ServiceV2.directormanageV2.DirectorManageServiceAllV2;
-import cn.gson.oasys.ServiceV2.directormanageV2.DirectorPOServiceV2;
-import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
-import cn.gson.oasys.ServiceV2.directormanageV2.DirectorUserPOServiceV2;
+import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
+import cn.gson.oasys.serviceV2.directormanageV2.DirectorManageServiceAllV2;
+import cn.gson.oasys.serviceV2.directormanageV2.DirectorPOServiceV2;
+import cn.gson.oasys.serviceV2.mailV2.MailServiceV2;
+import cn.gson.oasys.serviceV2.directormanageV2.DirectorUserPOServiceV2;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.DeptVO;
-import cn.gson.oasys.vo.PositionVO;
-import cn.gson.oasys.vo.RoleVO;
-import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.vo.deptVO2.DeptVO;
+import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
+import cn.gson.oasys.vo.positionVO2.PositionVO;
+import cn.gson.oasys.vo.roleVO2.RoleVO;
+import cn.gson.oasys.vo.userVO2.UserVO;
 import cn.gson.oasys.vo.addressVO2.DirectorUserVO;
 import cn.gson.oasys.vo.addressVO2.DirectorUserVOFactory;
 import cn.gson.oasys.vo.addressVO2.DirectorVO;
 import cn.gson.oasys.vo.addressVO2.DirectoryVOFactory;
-import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
-import cn.gson.oasys.vo.factoryvo.PositionFactoryVO;
-import cn.gson.oasys.vo.factoryvo.RoleFactoryVO;
-import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
+import cn.gson.oasys.vo.planVO2.PositionVOFactory;
+import cn.gson.oasys.vo.roleVO2.RoleVOFactory;
+import cn.gson.oasys.vo.userVO2.UserFactoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -576,13 +577,13 @@ public class AddrController {
 
     //============================================
     @Resource
-    private UserPOServiceV2 UserPOServiceV2;
+    private cn.gson.oasys.serviceV2.userV2.UserPOServiceV2 UserPOServiceV2;
     @Resource
     private DirectorUserPOServiceV2 directorUserPOServiceV2;
     @Resource
-    private DeptPOServiceV2 DeptPOServiceV2;
+    private cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2 DeptPOServiceV2;
     @Resource
-    private PositionPOServiceV2 PositionPOServiceV2;
+    private cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2 PositionPOServiceV2;
     @Resource
     private RoleServiceV2 roleServiceV2;
     @Resource
@@ -629,9 +630,9 @@ public class AddrController {
         for (UserPO userPO : userPOListALl) {
             for (UserVO userVO : userVOListALL) {
                 if (userPO.getUserId().equals(userVO.getUserId())) {
-                    DeptVO deptVO = DeptFactoryVO.createDeptVO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()));
+                    DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()));
                     userVO.setDeptVO(deptVO);
-                    PositionVO positionVO = PositionFactoryVO.createPositionVO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()));
+                    PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()));
                     userVO.setPositionVO(positionVO);
                 }
             }
@@ -656,9 +657,9 @@ public class AddrController {
     public String inMessShow(Model model, @RequestParam(value = "userId") Long userId) {
         UserPO userPO = UserPOServiceV2.getUserPOByUserId(userId);//登录用户信息
         UserVO userVO = UserFactoryVO.createUserVO(userPO);
-        PositionVO positionVO = PositionFactoryVO.createPositionVO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()));
-        DeptVO deptVO = DeptFactoryVO.createDeptVO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()));
-        RoleVO roleVO = RoleFactoryVO.createRoleVO(roleServiceV2.getRoleByRoleId(userPO.getRoleId()));
+        PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()));
+        DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()));
+        RoleVO roleVO = RoleVOFactory.createRoleVO(roleServiceV2.getRoleByRoleId(userPO.getRoleId()));
         userVO.setPositionVO(positionVO);
         userVO.setDeptVO(deptVO);
         userVO.setRoleVO(roleVO);
@@ -881,9 +882,9 @@ public class AddrController {
         for (UserPO userPO : userPOList) {
             for (UserVO userVO : userVOList) {
                 if (userPO.getUserId().equals(userVO.getUserId())) {
-                    DeptVO deptVO = DeptFactoryVO.createDeptVO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()));
+                    DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()));
                     userVO.setDeptVO(deptVO);
-                    PositionVO positionVO = PositionFactoryVO.createPositionVO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()));
+                    PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()));
                     userVO.setPositionVO(positionVO);
                 }
             }
@@ -975,8 +976,8 @@ public class AddrController {
         for (UserPO userPO : subUserPOList) {
             for (UserVO userVO : subUserVOList) {
                 if (userPO.getUserId().equals(userVO.getUserId())) {
-                    userVO.setDeptVO(DeptFactoryVO.createDeptVO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
-                    userVO.setPositionVO(PositionFactoryVO.createPositionVO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId())));
+                    userVO.setDeptVO(DeptVOFactory.createDeptVOByDeptPO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
+                    userVO.setPositionVO(PositionVOFactory.createPositionVOByPositionPO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId())));
                 }
             }
         }

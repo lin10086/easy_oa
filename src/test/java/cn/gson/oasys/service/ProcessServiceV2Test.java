@@ -1,7 +1,7 @@
 package cn.gson.oasys.service;
 
-import cn.gson.oasys.ServiceV2.TypePOServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.ProcessListPOMapper;
 import cn.gson.oasys.mappers.ReviewedPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
@@ -32,7 +32,7 @@ public class ProcessServiceV2Test {
     @Resource
     private ReviewedPOMapper reviewedPOMapper;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private TypePOServiceV2 typeServiceV2;
     @Resource
@@ -55,7 +55,7 @@ public class ProcessServiceV2Test {
                     ProcessAuditVO processAuditVO = new ProcessAuditVO();
                     processAuditVO.setTypeName(processListPO.getTypeName());
                     processAuditVO.setProcessName(processListPO.getProcessName());
-                    processAuditVO.setUserName(userServiceV2.getUsernameByUserId(processListPO.getProcessUserId()));
+                    processAuditVO.setUserName(userPOServiceV2.getUsernameByUserId(processListPO.getProcessUserId()));
                     processAuditVO.setApplyTime(processListPO.getApplyTime());
                     processAuditVO.setExigenceName(processListPO.getDeeplyId());
                     processAuditVO.setStatusId(reviewedPO.getStatusId());

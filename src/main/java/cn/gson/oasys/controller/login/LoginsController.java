@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import cn.gson.oasys.ServiceV2.UserLoginRecordServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserLoginRecordServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.model.po.UserPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.user.UserLongRecordService;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -39,7 +38,7 @@ public class LoginsController {
     @Autowired
     UserLongRecordService ulService;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private UserLoginRecordServiceV2 userLoginRecordServiceV2;
 
@@ -171,7 +170,7 @@ public class LoginsController {
             return "login/login";
         }
 //		 将用户名分开查找；用户名或者电话号码；
-        UserPO userPO = userServiceV2.checkUserByUsernameAndPassword(userName, password);
+        UserPO userPO = userPOServiceV2.checkUserByUsernameAndPassword(userName, password);
         if (Objects.isNull(userPO)) {
             System.out.println(userPO);
             System.out.println("账号或密码错误!");

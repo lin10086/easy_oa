@@ -11,23 +11,22 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import cn.gson.oasys.ServiceV2.AttendanceServiceV2;
-import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypePOServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.mailV2.MailReciverPOServiceV2;
-import cn.gson.oasys.ServiceV2.notice2.NoticeServiceV2;
-import cn.gson.oasys.ServiceV2.notice2.NoticeUserRelationPOServiceV2;
-import cn.gson.oasys.ServiceV2.planV2.PlanListServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.NotePaperPOServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.ProcessServiceV2;
-import cn.gson.oasys.ServiceV2.scheduleV2.ScheduleServiceV2;
-import cn.gson.oasys.ServiceV2.systemV2.SystemMenuServiceV2;
-import cn.gson.oasys.ServiceV2.taskV2.TaskUserServiceV2;
-import cn.gson.oasys.ServiceV2.userV2.UserLogServiceV2;
+import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.mailV2.MailReciverPOServiceV2;
+import cn.gson.oasys.serviceV2.notice2.NoticeServiceV2;
+import cn.gson.oasys.serviceV2.notice2.NoticeUserRelationPOServiceV2;
+import cn.gson.oasys.serviceV2.planV2.PlanListServiceV2;
+import cn.gson.oasys.serviceV2.processServiceV2.NotePaperPOServiceV2;
+import cn.gson.oasys.serviceV2.processServiceV2.ProcessServiceV2;
+import cn.gson.oasys.serviceV2.scheduleV2.ScheduleServiceV2;
+import cn.gson.oasys.serviceV2.systemV2.SystemMenuServiceV2;
+import cn.gson.oasys.serviceV2.taskV2.TaskUserServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserLogServiceV2;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.UserVO;
-import cn.gson.oasys.vo.roleVO2.RolePowerMenuVO;
+import cn.gson.oasys.vo.userVO2.UserVO;
 import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,6 @@ import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.dao.user.UserLogDao;
 import cn.gson.oasys.model.entity.role.Rolemenu;
 import cn.gson.oasys.model.entity.user.User;
-import cn.gson.oasys.model.entity.user.UserLog;
 import cn.gson.oasys.services.daymanage.DaymanageServices;
 import cn.gson.oasys.services.inform.InformRelationService;
 import cn.gson.oasys.services.inform.InformService;
@@ -130,7 +128,7 @@ public class IndexController {
     @Resource
     private UserLogServiceV2 userLogServiceV2;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private SystemMenuServiceV2 systemMenuServiceV2;
 
@@ -156,8 +154,8 @@ public class IndexController {
         //valueOf把String转换成包装类型
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
         //根据用户ID查询用户信息
-//        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
-//        UserVO userVO = userServiceV2.setUserVOByUserId(userId);
+//        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
+//        UserVO userVO = userPOServiceV2.setUserVOByUserId(userId);
         User user = uDao.findOne(userId);
 //        List<RolePowerMenuVO>rolePowerMenuVOListOne = systemMenuServiceV2.getSysMenuPOListByParentByIsShow(0L,userPO.getRoleId(),true,req);
 //        List<RolePowerMenuVO>rolePowerMenuVOListTwo = systemMenuServiceV2.getSysMenuPOListBySonIsShow(0L,userPO.getRoleId(),true,req);
@@ -289,7 +287,7 @@ public class IndexController {
 /*    @RequestMapping("menucha")
     public String findMenu(HttpSession session, Model model, HttpServletRequest req) {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
 //        User user = uDao.findOne(userId);
         String val = null;
         if (!StringUtils.isEmpty(req.getParameter("val"))) {
@@ -440,7 +438,7 @@ public class IndexController {
     @Resource
     private ProcessServiceV2 processServiceV2;
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
     @Resource
     private TypePOServiceV2 typePOServiceV2;
     @Resource
@@ -460,7 +458,7 @@ public class IndexController {
     @RequestMapping("test2")
     public String test2(HttpSession session, Model model, HttpServletRequest request) {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
-        UserVO userVO = userServiceV2.setUserVOByUserId(userId);//用户的所有信息
+        UserVO userVO = userPOServiceV2.setUserVOByUserId(userId);//用户的所有信息
         User user = uDao.findOne(userId);
         request.setAttribute("user", userVO);
         model.addAttribute("user", user);

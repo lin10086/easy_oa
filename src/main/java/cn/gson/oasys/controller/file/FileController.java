@@ -12,10 +12,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.fileV2.FileListServiceV2;
-import cn.gson.oasys.ServiceV2.fileV2.FilePathServiceV2;
-import cn.gson.oasys.ServiceV2.fileV2.FileServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.fileV2.FileListServiceV2;
+import cn.gson.oasys.serviceV2.fileV2.FilePathServiceV2;
+import cn.gson.oasys.serviceV2.fileV2.FileServiceV2;
 import cn.gson.oasys.model.po.FileListPO;
 import cn.gson.oasys.model.po.FilePathPO;
 import cn.gson.oasys.model.po.UserPO;
@@ -372,7 +372,7 @@ public class FileController {
 
     //===============================================
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private FilePathServiceV2 filePathServiceV2;
     @Resource
@@ -388,7 +388,7 @@ public class FileController {
      */
     @RequestMapping("filemanage")
     public String usermanage(@SessionAttribute("userId") Long userId, Model model) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//根据用户id找出用户信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//根据用户id找出用户信息
         FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathName(userPO.getUserName());//根据用户名找用户的文件夹信息
         if (filePathPO == null) {
             //如果文件夹不纯在就根据用户信息新建一个
@@ -461,7 +461,7 @@ public class FileController {
      */
     @RequestMapping("filetest")
     public String text(@SessionAttribute("userId") Long userId, @RequestParam("pathid") Long pathId, Model model) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//根据用户id找用户信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//根据用户id找用户信息
         FilePathPO userRootFilePathPO = filePathServiceV2.getFilePathPOByPathName(userPO.getUserName());//用户文件夹
         FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//当前所在文件夹
         List<FilePathPO> allFilePathPOList = new ArrayList<>();//当前路径的所有父级文件夹
@@ -500,7 +500,7 @@ public class FileController {
     public String uploadfile(@RequestParam("file") MultipartFile file, @RequestParam("pathid") Long pathId,
                              HttpSession session, Model model) throws IllegalStateException, IOException {
         Long userId = Long.parseLong(session.getAttribute("userId") + "");
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//用户信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//用户信息
         FilePathPO filePathPO = filePathServiceV2.getFilePathPOByPathId(pathId);//所在文件夹信息
         fileServiceV2.saveFile(file, userPO, filePathPO, true);// true 表示从文件使用上传
         model.addAttribute("pathid", pathId);//上传文件的所属文件夹id

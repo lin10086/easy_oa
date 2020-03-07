@@ -9,19 +9,19 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypePOServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.mailV2.InMailListServiceV2;
-import cn.gson.oasys.ServiceV2.mailV2.MailNumberServiceV2;
-import cn.gson.oasys.ServiceV2.mailV2.MailReciverPOServiceV2;
-import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
-import cn.gson.oasys.ServiceV2.AttachmentServiceV2;
-import cn.gson.oasys.ServiceV2.processServiceV2.ProcessServiceV2;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.mailV2.InMailListServiceV2;
+import cn.gson.oasys.serviceV2.mailV2.MailNumberServiceV2;
+import cn.gson.oasys.serviceV2.mailV2.MailReciverPOServiceV2;
+import cn.gson.oasys.serviceV2.mailV2.MailServiceV2;
+import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
+import cn.gson.oasys.serviceV2.processServiceV2.ProcessServiceV2;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.factoryvo.AttachmentFactoryVO;
-import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
-import cn.gson.oasys.vo.factoryvo.mailFactory.MailNumberVOFactory;
+import cn.gson.oasys.vo.attachmentVO2.AttachmentVOFactory;
+import cn.gson.oasys.vo.userVO2.UserFactoryVO;
+import cn.gson.oasys.vo.mailVO2.MailNumberVOFactory;
 import cn.gson.oasys.vo.mailVO2.InMailListVO;
 import cn.gson.oasys.vo.mailVO2.MailNumberVO;
 import com.github.pagehelper.PageHelper;
@@ -889,13 +889,13 @@ public class MailController {
     //===========================================
 
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private MailServiceV2 mailServiceV2;
     @Resource
     private TypePOServiceV2 typeServiceV2;
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
     @Resource
     private MailReciverPOServiceV2 mailReciverServiceV2;
     @Resource
@@ -914,7 +914,7 @@ public class MailController {
     public String account(@SessionAttribute("userId") Long userId, Model model,
                           @RequestParam(value = "page", defaultValue = "0") int page,
                           @RequestParam(value = "size", defaultValue = "10") int size) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         PageHelper.startPage(page, size);
         List<MailNumberPO> mailNumberPOList = mailNumberServiceV2.getMailNumberPOListByUserId(userPO);
         PageInfo pageInfo = new PageInfo(mailNumberPOList);
@@ -930,7 +930,7 @@ public class MailController {
      */
     @RequestMapping("addaccount")
     public String add(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         model.addAttribute("username", userPO.getUserName());
 
         MailNumberPO mailNumberPO = null;
@@ -1193,7 +1193,7 @@ public class MailController {
      */
     @RequestMapping("pushmail")
     public String push(@RequestParam("file") MultipartFile file, HttpServletRequest request, @Valid InMailListVO inMailListVO, BindingResult br, @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         String name = null;
         AttachmentListPO attachmentListPO = null;
         MailNumberPO mailNumberPO = null;
@@ -1220,7 +1220,7 @@ public class MailController {
                 inMailListVO.setInReceiver(null);//接收人设置为null
             }
             if (attachmentListPO != null) {
-                inMailListVO.setMailFile(AttachmentFactoryVO.createAttachmentVO(attachmentListPO));
+                inMailListVO.setMailFile(AttachmentVOFactory.createAttachmentVOByAttachmentPO(attachmentListPO));
 
             }
 
@@ -1238,7 +1238,7 @@ public class MailController {
                 // 分割任务接收人
                 StringTokenizer st2 = new StringTokenizer(inMailListVO.getInReceiver(), ";");
                 while (st2.hasMoreElements()) {
-                    UserPO reciverUserPO = userServiceV2.getUserPOByUsername(st2.nextToken());
+                    UserPO reciverUserPO = userPOServiceV2.getUserPOByUsername(st2.nextToken());
 
                     MailReciverPO mailReciverPO = new MailReciverPO();
                     mailReciverPO.setMailId(inMailListPO.getMailId());//在中间表设置邮件ID
@@ -1405,7 +1405,7 @@ public class MailController {
             model.addAttribute("attachmentListPO", attachmentListPO);//附件信息
         }
         //发件人信息
-        UserPO pushUserPO = userServiceV2.getUserPOByUserId(inMailListPO.getMailInPushUserId());
+        UserPO pushUserPO = userPOServiceV2.getUserPOByUserId(inMailListPO.getMailInPushUserId());
         model.addAttribute("pushname", pushUserPO.getUserName());//发件人名
         model.addAttribute("mail", inMailListPO);//邮件信息
         model.addAttribute("mailCreateTime", new Timestamp(inMailListPO.getMailCreateTime().getTime()));//邮件的创建时间
@@ -1539,7 +1539,7 @@ public class MailController {
     public String paixu(HttpServletRequest request, @SessionAttribute("userId") Long userId, Model model,
                         @RequestParam(value = "page", defaultValue = "0") int page,
                         @RequestParam(value = "size", defaultValue = "10") int size) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         //得到传过来的值
         String val = null;
         if (!StringUtil.isEmpty(request.getParameter("val"))) {

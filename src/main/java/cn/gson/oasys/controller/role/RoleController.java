@@ -8,16 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.RoleServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.rolemanage.RolePowerListServiceV2;
-import cn.gson.oasys.ServiceV2.systemV2.SystemMenuServiceV2;
+import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.rolemanage.RolePowerListServiceV2;
+import cn.gson.oasys.serviceV2.systemV2.SystemMenuServiceV2;
 import cn.gson.oasys.model.bo.PageBO;
 import cn.gson.oasys.model.po.RolePO;
 import cn.gson.oasys.model.po.RolePowerListPO;
 import cn.gson.oasys.model.po.SysMenuPO;
 import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.RoleVO;
+import cn.gson.oasys.vo.roleVO2.RoleVO;
 import cn.gson.oasys.vo.roleVO2.RolePowerMenuVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +25,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.github.pagehelper.util.StringUtil;
 
@@ -43,7 +42,7 @@ public class RoleController {
     @Resource
     private RolePowerListServiceV2 rolePowerListServiceV2;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
 
     /**
      * 角色管理主页面
@@ -197,14 +196,14 @@ public class RoleController {
     @RequestMapping("deshan")
     public String deleteRole(HttpServletRequest req, Model model, HttpSession session) {
         Long userId = Long.parseLong(((String) session.getAttribute("userId")).trim());//用户ID
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//用户信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//用户信息
         Long roleId = null;
         if (!StringUtil.isEmpty(req.getParameter("id"))) {//角色ID是否存在
             roleId = Long.parseLong(req.getParameter("id"));
         }
         Boolean isSuperman = userPO.getSuperman() == 0 ? false : true;//是否是超级管理员
         if (isSuperman.equals(true)) {//只有超级管理员才能删除角色信息
-            List<UserPO> userPOList = userServiceV2.getUserPoListByRoleId(roleId);//根据角色ID找用户列表
+            List<UserPO> userPOList = userPOServiceV2.getUserPoListByRoleId(roleId);//根据角色ID找用户列表
             if (userPOList.size() > 0) {
                 model.addAttribute("error", "此角色下还有职员，不允许删除。");
                 return "common/proce";

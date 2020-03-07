@@ -1,13 +1,9 @@
 package cn.gson.oasys.vo.scheduleVO2;
 
-import cn.gson.oasys.model.entity.user.User;
-import cn.gson.oasys.vo.UserVO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import cn.gson.oasys.vo.userVO2.UserVO;
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 

@@ -17,14 +17,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.*;
-import cn.gson.oasys.ServiceV2.taskV2.TaskListServiceV2;
-import cn.gson.oasys.ServiceV2.taskV2.TaskLoggerServiceV2;
-import cn.gson.oasys.ServiceV2.taskV2.TaskServiceV2;
-import cn.gson.oasys.ServiceV2.taskV2.TaskUserServiceV2;
+import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
+import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
+import cn.gson.oasys.serviceV2.taskV2.TaskListServiceV2;
+import cn.gson.oasys.serviceV2.taskV2.TaskLoggerServiceV2;
+import cn.gson.oasys.serviceV2.taskV2.TaskServiceV2;
+import cn.gson.oasys.serviceV2.taskV2.TaskUserServiceV2;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.UserVO;
-import cn.gson.oasys.vo.factoryvo.taskFactory.TaskLoggerFactoryVO;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
+import cn.gson.oasys.vo.userVO2.UserVO;
+import cn.gson.oasys.vo.taskVO2.TaskLoggerVOFactory;
 import cn.gson.oasys.vo.taskVO2.TaskListVO;
 import cn.gson.oasys.vo.taskVO2.TaskLoggerVO;
 import com.github.pagehelper.PageHelper;
@@ -498,7 +503,7 @@ public class TaskController {
 
     //================================================
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private TaskServiceV2 taskServiceV2;
     @Resource
@@ -508,7 +513,7 @@ public class TaskController {
     @Resource
     private TypePOServiceV2 typeServiceV2;
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
     @Resource
     private DeptPOServiceV2 deptServiceV2;
     @Resource
@@ -576,7 +581,7 @@ public class TaskController {
         ModelAndView mav = new ModelAndView("task/addtask");
         List<TypePO> typePOList = typeServiceV2.getTypePOListAll();// 所有类型信息
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//所有状态信息
-        List<UserPO> userPOList = userServiceV2.getUserPOListByFatherId(userId);// 获取下属用户
+        List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherId(userId);// 获取下属用户
         List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();//所有部门信息
         List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();//获取所有职位信息
 
@@ -609,7 +614,7 @@ public class TaskController {
 //        // 分割任务接收人
 //        StringTokenizer st = new StringTokenizer(taskListVO.getReciverlist(), ";");
 //        while (st.hasMoreElements()) {
-//            UserPO receiverUserPO = userServiceV2.getUserPOByUsername(st.nextToken());
+//            UserPO receiverUserPO = userPOServiceV2.getUserPOByUsername(st.nextToken());
 //            taskUserServiceV2.insertTaskUserPO(taskListPO, receiverUserPO);
 //        }
 //        return "redirect:/taskmanage";
@@ -634,7 +639,7 @@ public class TaskController {
         // 分割任务接收人
         StringTokenizer st = new StringTokenizer(taskListVO.getReciverlist(), ";");
         while (st.hasMoreElements()) {
-            UserPO receiverUserPO = userServiceV2.getUserPOByUsername(st.nextToken());
+            UserPO receiverUserPO = userPOServiceV2.getUserPOByUsername(st.nextToken());
             taskUserServiceV2.insertTaskUserPO(taskListPO, receiverUserPO);
         }
         return "redirect:/taskmanage";
@@ -665,7 +670,7 @@ public class TaskController {
         TypePO typePO = typeServiceV2.getTypePOByTypeId(typeId);
 //        SystemTypeList type = tydao.findOne(typeid);
         // 查询部门下面的员工
-//        List<UserPO> userPOList = userServiceV2.getUserPOListByFatherId(userId);
+//        List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherId(userId);
 //        Page<User> pagelist = udao.findByFatherId(userId, pa);
 //        List<User> emplist = pagelist.getContent();
         PageHelper.startPage(page, size);
@@ -705,7 +710,7 @@ public class TaskController {
 
         StringTokenizer st = new StringTokenizer(taskListVO.getReciverlist(), ";");
         while (st.hasMoreElements()) {
-            UserPO receiverUserPO = userServiceV2.getUserPOByUsername(st.nextToken());
+            UserPO receiverUserPO = userPOServiceV2.getUserPOByUsername(st.nextToken());
             taskUserServiceV2.insertTaskUserPO(taskListPO, receiverUserPO);
         }
 
@@ -725,11 +730,11 @@ public class TaskController {
         Long statusId = taskListPO.getStatusId().longValue();//任务表里面的状态ID
         StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);//根据任务表里的状态ID获取状态信息
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//获取所有的状态信息
-        UserPO pushUserPO = userServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
+        UserPO pushUserPO = userPOServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
         List<TaskLoggerPO> taskLoggerPOList = taskLoggerServiceV2.getTaskLoggerPOByTaskListPOId(taskId);//根据任务ID获取日志列表
         List<TaskLoggerVO> taskLoggerVOList = null;
         if (taskLoggerPOList != null) {
-            taskLoggerVOList = TaskLoggerFactoryVO.createTaskLoggerVOList(taskLoggerPOList);
+            taskLoggerVOList = TaskLoggerVOFactory.createTaskLoggerVOListByTaskLoggerPOList(taskLoggerPOList);
 //            for (TaskLoggerVO taskLoggerVO : taskLoggerVOList) {
 ////                taskLoggerVO.setUsername();
 //                taskLoggerVO.setCreateTime(new Timestamp(taskListPO.getPublishTime().getTime()));
@@ -756,7 +761,7 @@ public class TaskController {
     public String tasklogger(TaskLoggerVO taskLoggerVO, @SessionAttribute("userId") Long userId, HttpServletRequest req) {
         Long taskId = Long.parseLong(req.getParameter("taskId"));// 得到任务的 id
         TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
 
         taskLoggerServiceV2.insertTaskLoggerPO(taskLoggerVO, userPO, taskId);//更新任务日志
         // 修改任务状态
@@ -784,7 +789,7 @@ public class TaskController {
             taskLoggerServiceV2.deleteTaskLoggerPOByTaskId(taskId);
             StringTokenizer st = new StringTokenizer(taskListPO.getReciverlist(), ";");
             while (st.hasMoreElements()) {
-                UserPO receverUserPO = userServiceV2.getUserPOByUsername(st.nextToken());
+                UserPO receverUserPO = userPOServiceV2.getUserPOByUsername(st.nextToken());
                 taskUserServiceV2.deleteTaskUserPOByTaskListPOIdAndUserId(taskId, receverUserPO.getUserId());
             }
             taskServiceV2.deleteTaskListPOByTaskId(taskId);
@@ -851,11 +856,11 @@ public class TaskController {
         Long statusId = taskListPO.getStatusId().longValue();// 任务表里的状态ID
         StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);//根据任务表里的状态ID获取状态信息
         List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//获取所有的状态信息
-        UserPO userPO = userServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
         List<TaskLoggerPO> taskLoggerPOList = taskLoggerServiceV2.getTaskLoggerPOByTaskListPOId(taskId);//根据任务ID找任务日志
-        List<TaskLoggerVO> taskLoggerVOList = TaskLoggerFactoryVO.createTaskLoggerVOList(taskLoggerPOList);//
+        List<TaskLoggerVO> taskLoggerVOList = TaskLoggerVOFactory.createTaskLoggerVOListByTaskLoggerPOList(taskLoggerPOList);//
         for (TaskLoggerVO taskLoggerVO : taskLoggerVOList) {
-            taskLoggerVO.setUsername(userServiceV2.getUserPOByUserId(userId).getUserName());
+            taskLoggerVO.setUsername(userPOServiceV2.getUserPOByUserId(userId).getUserName());
             taskLoggerVO.setCreateTime(new Timestamp(new Date().getTime()));
         }
         mav.addObject("task", taskListPO);
@@ -875,7 +880,7 @@ public class TaskController {
     @RequestMapping("uplogger")
     public String updatelo(TaskLoggerVO taskLoggerVO, @SessionAttribute("userId") Long userId, HttpServletRequest req) {
         Long taskId = Long.parseLong(req.getParameter("taskId"));
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);// 查找用户
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);// 查找用户
         TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);// 查任务
         taskLoggerServiceV2.insertTaskLoggerPO(taskLoggerVO, userPO, taskId);//插入日志
         // 修改任务中间表状态

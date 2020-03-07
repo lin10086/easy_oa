@@ -1,30 +1,20 @@
 package cn.gson.oasys.factory;
 
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
 import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.model.po.UserPO;
 
-import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserFactory {
-    @Resource
-    private UserPOServiceV2 userServiceV2;
 
-    public static List<Long> getUserIds(List<User> userList) {
-        List<Long> userIds = new ArrayList<>();
-        for (User user : userList) {
-            userIds.add(user.getUserId());
-        }
-        if (userIds.size() == 0) {
-            userIds.add(0L);
-        }
-        return userIds;
-    }
-
-    //把userPO转换为user
+    /**
+     * 把userPO转换为user
+     *
+     * @param userPO
+     * @return
+     */
     public static User create(UserPO userPO) {
         User user = new User();
 
@@ -51,7 +41,7 @@ public class UserFactory {
         user.setHireTime(userPO.getHireTime());
         user.setHoliday(userPO.getHoliday());
 
-        user.setSalary((userPO.getSalary().intValue())+"");
+        user.setSalary((userPO.getSalary().intValue()) + "");
         return user;
     }
 
@@ -62,7 +52,6 @@ public class UserFactory {
         }
         return userList;
     }
-
 
 
 }

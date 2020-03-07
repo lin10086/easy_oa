@@ -2,10 +2,10 @@ package cn.gson.oasys.controller.file;
 
 import java.util.List;
 
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.fileV2.FileListServiceV2;
-import cn.gson.oasys.ServiceV2.fileV2.FilePathServiceV2;
-import cn.gson.oasys.ServiceV2.fileV2.FileServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.fileV2.FileListServiceV2;
+import cn.gson.oasys.serviceV2.fileV2.FilePathServiceV2;
+import cn.gson.oasys.serviceV2.fileV2.FileServiceV2;
 import cn.gson.oasys.model.po.FileListPO;
 import cn.gson.oasys.model.po.FilePathPO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -345,7 +345,7 @@ public class FileAjaxController {
     @Resource
     private FileServiceV2 fileServiceV2;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private FileListServiceV2 fileListServiceV2;
 

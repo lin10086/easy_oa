@@ -2,23 +2,19 @@ package cn.gson.oasys.controller.user;
 
 import java.util.List;
 
-import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
-import cn.gson.oasys.ServiceV2.PositionPOServiceV2;
+import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
+import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.model.po.DeptPO;
 import cn.gson.oasys.model.po.PositionPO;
-import cn.gson.oasys.vo.DeptVO;
-import cn.gson.oasys.vo.PositionVO;
-import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
-import cn.gson.oasys.vo.factoryvo.PositionFactoryVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.gson.oasys.vo.deptVO2.DeptVO;
+import cn.gson.oasys.vo.positionVO2.PositionVO;
+import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
+import cn.gson.oasys.vo.planVO2.PositionVOFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import cn.gson.oasys.model.dao.user.DeptDao;
-import cn.gson.oasys.model.dao.user.PositionDao;
 
 import javax.annotation.Resource;
 
@@ -43,7 +39,7 @@ public class PositionController {
     @RequestMapping("positionmanage")
     public String positionManage(Model model) {
         List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();//获取所有职位
-        List<PositionVO> positionVOList = PositionFactoryVO.createPositionVOList(positionPOList);
+        List<PositionVO> positionVOList = PositionVOFactory.createPositionVOListByPositionPOList(positionPOList);
         model.addAttribute("positions", positionVOList);
         return "user/positionmanage";
     }
@@ -59,10 +55,10 @@ public class PositionController {
     public String positionEditGet(@RequestParam(value = "positionId", required = false) Long positionId, Model model) {
         if (positionId != null) {
             PositionPO positionPO = positionServiceV2.getPositionPOByPositionId(positionId);
-            PositionVO positionVO = PositionFactoryVO.createPositionVO(positionPO);
+            PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(positionPO);
 
             DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(positionPO.getDeptid());
-            DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+            DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
 
             model.addAttribute("positionDept", deptVO);
             model.addAttribute("position", positionVO);
@@ -79,7 +75,7 @@ public class PositionController {
      */
     @RequestMapping(value = "positionedit", method = RequestMethod.POST)
     public String positionEditPost(PositionVO positionVO, Model model) {
-        PositionPO positionPO = PositionFactoryVO.createPositionPO(positionVO);
+        PositionPO positionPO = PositionVOFactory.createPositionPOByPositionVO(positionVO);
         Integer rows = positionServiceV2.insertOrUpdatePositionPO(positionPO);
         if (rows == 1) {
             model.addAttribute("success", 1);

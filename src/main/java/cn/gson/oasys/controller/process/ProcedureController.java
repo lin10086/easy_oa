@@ -1,7 +1,9 @@
 package cn.gson.oasys.controller.process;
 
-import cn.gson.oasys.ServiceV2.*;
-import cn.gson.oasys.ServiceV2.processServiceV2.*;
+import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
+import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
+import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
+import cn.gson.oasys.serviceV2.processServiceV2.*;
 import cn.gson.oasys.mappers.*;
 import cn.gson.oasys.model.dao.attendcedao.AttendceDao;
 import cn.gson.oasys.model.dao.notedao.AttachmentDao;
@@ -10,11 +12,17 @@ import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
 import cn.gson.oasys.services.process.ProcessService;
-import cn.gson.oasys.vo.*;
 import cn.gson.oasys.vo.factoryvo.*;
 import cn.gson.oasys.vo.factoryvo.processFactory.*;
 import cn.gson.oasys.vo.processVO2.*;
+import cn.gson.oasys.vo.userVO2.UserFactoryVO;
+import cn.gson.oasys.vo.userVO2.UserVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
@@ -1032,11 +1040,11 @@ public class ProcedureController {
     @Resource
     private ProcessServiceV2 processServiceV2;
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private RoleServiceV2 roleServiceV2;
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
     @Resource
     private ByProcessPOIdServiceV2 byProcessPOIdServiceV2;
     @Resource
@@ -1108,9 +1116,9 @@ public class ProcedureController {
     @RequestMapping("apply")
     public String applyReception(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid ReimbursementVO reimbursementVO, BindingResult br,
                                  @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
-        UserPO auditUserPO = userServiceV2.getUserPOByUsername(reimbursementVO.getAuditName());//根据审核人名获取审核人信息
-        UserPO testifyUserPO = userServiceV2.getUserPOByUsername(reimbursementVO.getTestifyName());//根据证明人名获取证明人信息
+        UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userPOServiceV2.getUserPOByUsername(reimbursementVO.getAuditName());//根据审核人名获取审核人信息
+        UserPO testifyUserPO = userPOServiceV2.getUserPOByUsername(reimbursementVO.getTestifyName());//根据证明人名获取证明人信息
         UserVO testifyUserVO = UserFactoryVO.createUserVO(testifyUserPO);
         Integer allinvoice = 0;//票据总数
         Double allmoney = 0.0;//总计金额
@@ -1176,10 +1184,10 @@ public class ProcedureController {
     @RequestMapping("moneyeve")
     public String moneyeve(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid EvectionMoneyVO eve, BindingResult br,
                            @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
-        UserPO loginUserPO = userServiceV2.getUserPOByUserId(userId);//登录人信息
+        UserPO loginUserPO = userPOServiceV2.getUserPOByUserId(userId);//登录人信息
         Long loginUserPORoleId = loginUserPO.getRoleId();//登录人的角色ID
         Long loginUserPOFatnerId = loginUserPO.getFatherId();//登录人的上司ID
-        UserPO auditUserPO = userServiceV2.getUserPOByUsername(eve.getAuditUser());//根据审核人名字获取审核人信息
+        UserPO auditUserPO = userPOServiceV2.getUserPOByUsername(eve.getAuditUser());//根据审核人名字获取审核人信息
         Long auditUserPOId = auditUserPO.getUserId();//审核人的用户ID
         String val = req.getParameter("val");
         Double allmoney = 0.0;
@@ -1187,14 +1195,14 @@ public class ProcedureController {
             List<TrafficVO> trafficVOList = eve.getTrafficVOList();//交通费用明细表
             for (TrafficVO trafficVO : trafficVOList) {
                 allmoney += trafficVO.getTrafficMoney();
-                UserPO u = userServiceV2.getUserPOByUsername(trafficVO.getUsername());// 出差人员
+                UserPO u = userPOServiceV2.getUserPOByUsername(trafficVO.getUsername());// 出差人员
                 trafficVO.setUserVO(UserFactoryVO.createUserVO(u));
                 trafficVO.setEvectionMoneyVO(eve);
             }
             List<StayVO> stayVOList = eve.getStayVOList();//住宿申请表
             for (StayVO stayVO : stayVOList) {
                 allmoney += stayVO.getStayMoney() * stayVO.getDay();
-                UserPO u = userServiceV2.getUserPOByUsername(stayVO.getUsername());//住宿人员名
+                UserPO u = userPOServiceV2.getUserPOByUsername(stayVO.getUsername());//住宿人员名
                 stayVO.setUserVO(UserFactoryVO.createUserVO(u));
             }
             eve.setMoney(allmoney);
@@ -1257,8 +1265,8 @@ public class ProcedureController {
     @RequestMapping("evec")
     public String evectionReception(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid EvectionVO evectionVO,
                                     @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
-        UserPO auditUserPO = userServiceV2.getUserPOByUsername(evectionVO.getAuditUser());//根据审核人名获取审核人信息
+        UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userPOServiceV2.getUserPOByUsername(evectionVO.getAuditUser());//根据审核人名获取审核人信息
         Long auditUserPOId = auditUserPO.getUserId();
         Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
@@ -1306,8 +1314,8 @@ public class ProcedureController {
     public String overTimeReception(HttpServletRequest req, @Valid OverTimeVO overTimeVO, BindingResult br,
                                     @SessionAttribute("userId") Long userId) throws IllegalStateException, IOException {
 
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
-        UserPO auditUserPO = userServiceV2.getUserPOByUsername(overTimeVO.getAuditUser());//根据审核人名获取审核人信息
+        UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userPOServiceV2.getUserPOByUsername(overTimeVO.getAuditUser());//根据审核人名获取审核人信息
         Long auditUserPOId = auditUserPO.getUserId();
         Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
@@ -1352,8 +1360,8 @@ public class ProcedureController {
     public String regularReception(HttpServletRequest req, @Valid RegularVO regularVO, BindingResult br,
                                    @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
 
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
-        UserPO auditUserPO = userServiceV2.getUserPOByUsername(regularVO.getAuditUser());//根据审核人名获取审核人信息
+        UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userPOServiceV2.getUserPOByUsername(regularVO.getAuditUser());//根据审核人名获取审核人信息
         Long auditUserPOId = auditUserPO.getUserId();
         Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
@@ -1408,8 +1416,8 @@ public class ProcedureController {
     public String holidayReception(@RequestParam("filePath") MultipartFile filePath, HttpServletRequest req, @Valid HolidayVO holidayVO, BindingResult br,
                                    @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
 
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
-        UserPO auditUserPO = userServiceV2.getUserPOByUsername(holidayVO.getAuditUser());//根据审核人名获取审核人信息
+        UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userPOServiceV2.getUserPOByUsername(holidayVO.getAuditUser());//根据审核人名获取审核人信息
         Long auditUserPOId = auditUserPO.getUserId();
         Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
@@ -1493,13 +1501,13 @@ public class ProcedureController {
     @RequestMapping("res")
     public String resignReception(HttpServletRequest req, @Valid ResignVO resignVO, BindingResult br,
                                   @SessionAttribute("userId") Long userId, Model model) throws IllegalStateException, IOException {
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
-        UserPO auditUserPO = userServiceV2.getUserPOByUsername(resignVO.getAuditUser());//根据审核人名获取审核人信息
+        UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
+        UserPO auditUserPO = userPOServiceV2.getUserPOByUsername(resignVO.getAuditUser());//根据审核人名获取审核人信息
         Long auditUserPOId = auditUserPO.getUserId();
         Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
         String val = req.getParameter("val");
-        UserPO correlationUserPO = userServiceV2.getUserPOByUsername(resignVO.getHandUser());
+        UserPO correlationUserPO = userPOServiceV2.getUserPOByUsername(resignVO.getHandUser());
 
         if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
             ProcessListVO processListVO = resignVO.getProcessListVO();
@@ -1555,7 +1563,7 @@ public class ProcedureController {
      */
     @RequestMapping("particular")
     public String particular(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//根据登录人ID获取登录人信息（审核人或者申请人）
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//根据登录人ID获取登录人信息（审核人或者申请人）
         UserPO bursementUserPO = null;//报销人员
         Long processId = Long.parseLong(req.getParameter("processId"));//获取流程主表的ID
         String typeName = req.getParameter("typeName");//获取流程主表里面的类型名称
@@ -1575,11 +1583,11 @@ public class ProcedureController {
         if (("费用报销").equals(typeName)) {
             BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);//根据流程主表获取费用报销表信息
             ReimbursementVO reimbursementVO = BursementFactoryVO.createBursementVO(bursementPO);
-            UserPO testifyUserPO = userServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
+            UserPO testifyUserPO = userPOServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
             UserVO proveUserVO = UserFactoryVO.createUserVO(testifyUserPO);
             //费用报销表里面的报销人员是否为null
             if (!Objects.isNull(bursementPO.getOperationName())) {
-                bursementUserPO = userServiceV2.getUserPOByUserId(bursementPO.getOperationName());//费用报销人
+                bursementUserPO = userPOServiceV2.getUserPOByUserId(bursementPO.getOperationName());//费用报销人
             }
             //根据报销表ID找报销明细表
             List<DetailsbursePO> detailsbursePOList = detailsburseServiceV2.getDetailsBursePOListByBusementId(bursementPO.getBursementId());
@@ -1649,7 +1657,7 @@ public class ProcedureController {
             return "process/reguserch";
         } else if (("离职申请").equals(typeName)) {
             ResignPO resignPO = byProcessPOIdServiceV2.getResignPOByProcessPOId(processId);
-            String handUser = userServiceV2.getUsernameByUserId(resignPO.getHandUser());
+            String handUser = userPOServiceV2.getUsernameByUserId(resignPO.getHandUser());
             ResignVO resignVO = ResignVOFactory.createResignVO(resignPO);
             resignVO.setHandUser(handUser);
             model.addAttribute("eve", resignVO);
@@ -1675,7 +1683,7 @@ public class ProcedureController {
     public String processAudit(@SessionAttribute("userId") Long userId, Model model,
                                @RequestParam(value = "pageNum", defaultValue = "0") int page,
                                @RequestParam(value = "pageSize", defaultValue = "10") int size) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//登录人信息(审核人）
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//登录人信息(审核人）
         List<ProcessAuditVO> processAuditVOList = processServiceV2.getProcessAuditVOByUserId(userId, page, size);
         PageInfo pageInfo = new PageInfo(processAuditVOList);
 
@@ -1696,7 +1704,7 @@ public class ProcedureController {
     public String auditing(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req,
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        UserPO loginUserPO = userServiceV2.getUserPOByUserId(userId);//登录人信息(只有审核人才能看到流程审核的请求所以此时登录人是审核人）
+        UserPO loginUserPO = userPOServiceV2.getUserPOByUserId(userId);//登录人信息(只有审核人才能看到流程审核的请求所以此时登录人是审核人）
         Long processId = Long.parseLong(req.getParameter("processId"));//流程主表ID
 
         ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);//获取流程主表信息
@@ -1712,7 +1720,7 @@ public class ProcedureController {
         }
 
 
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(processListPO.getProcessUserId());//根据流程主表里申请人的获取申请人信息
+        UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(processListPO.getProcessUserId());//根据流程主表里申请人的获取申请人信息
         model.addAttribute("applyUserPO", applyUserPO);//申请人的信息
 
         String typeName = processListPO.getTypeName().trim();//主表里的类型名
@@ -1728,7 +1736,7 @@ public class ProcedureController {
             EvectionMoneyPO evectionMoneyPO = byProcessPOIdServiceV2.getEvectionMoneyPOByProcessPOId(processId);//根据主表ID找出差费用表
             model.addAttribute("bu", evectionMoneyPO);//出差费用表
         } else if (("转正申请").equals(typeName) || ("离职申请").equals(typeName)) {
-            UserPO applyUser = userServiceV2.getUserPOByUserId(processListPO.getProcessUserId());//根据主表里的申请人ID获取申请人信息
+            UserPO applyUser = userPOServiceV2.getUserPOByUserId(processListPO.getProcessUserId());//根据主表里的申请人ID获取申请人信息
             model.addAttribute("position", applyUser);
         }
         PageHelper.startPage(page,size);
@@ -1756,20 +1764,20 @@ public class ProcedureController {
     @RequestMapping("susave")
     public String auditSave(@SessionAttribute("userId") Long userId, Model model, HttpServletRequest req, ReviewedVO reviewedVO) {
         reviewedVO.setUsername("soli");
-        UserPO auditUserPO = userServiceV2.getUserPOByUserId(userId);//登录人信息
+        UserPO auditUserPO = userPOServiceV2.getUserPOByUserId(userId);//登录人信息
         String name = null;
         String processTypeName = req.getParameter("processTypeName");//流程主表类型名
         Long processId = Long.parseLong(req.getParameter("processId"));//流程主表ID
         ProcessListPO processListPO = processServiceV2.getProcessListPOByProcessListPOId(processId);// 流程主表信息
 //        ProcessList pro = prodao.findOne(proid);//找到该条流程
-        UserPO applyUserPO = userServiceV2.getUserPOByUserId(processListPO.getProcessUserId());//流程主表里申请人的信息
+        UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(processListPO.getProcessUserId());//流程主表里申请人的信息
 //        User shen = udao.findOne(pro.getUserId().getUserId());//申请人
         if (!StringUtil.isEmpty(req.getParameter("liuzhuan"))) {
             name = req.getParameter("liuzhuan");//name=liuzhuan
         }
         if (!StringUtil.isEmpty(name)) { //name存在
             //审核并流转
-            UserPO nextAuditUserPO = userServiceV2.getUserPOByUsername(reviewedVO.getUsername());//根据前端的下一个审核人名字找下一个审核人信息
+            UserPO nextAuditUserPO = userPOServiceV2.getUserPOByUsername(reviewedVO.getUsername());//根据前端的下一个审核人名字找下一个审核人信息
 //            User u2 = udao.findByUserName(reviewed.getUsername());//找到下一个审核人
             if (("离职申请").equals(processTypeName)) {
                 if (auditUserPO.getUserId().equals(applyUserPO.getFatherId())) {// 审核人的ID和申请人的上司ID

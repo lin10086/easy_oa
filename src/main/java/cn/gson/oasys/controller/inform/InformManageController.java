@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypePOServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.notice2.NoticeServiceV2;
-import cn.gson.oasys.ServiceV2.notice2.NoticeUserRelationPOServiceV2;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.notice2.NoticeServiceV2;
+import cn.gson.oasys.serviceV2.notice2.NoticeUserRelationPOServiceV2;
 import cn.gson.oasys.model.po.*;
 import cn.gson.oasys.vo.noticeVO2.NoticeListVO;
 import org.slf4j.Logger;
@@ -311,7 +311,7 @@ public class InformManageController {
     @Resource
     private TypePOServiceV2 typeServiceV2;
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource

@@ -1,9 +1,9 @@
 package cn.gson.oasys.controller.chat;
 
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.discussV2.*;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.discussV2.*;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.UserVO;
+import cn.gson.oasys.vo.userVO2.UserVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -45,7 +45,7 @@ public class ReplyController {
 
     //=======================================
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private DiscussListPOServiceV2 discussListPOServiceV2;
     @Resource
@@ -80,7 +80,7 @@ public class ReplyController {
                         @RequestParam(value = "page", defaultValue = "1") int page,
                         @RequestParam(value = "size", defaultValue = "5") int size,
                         @SessionAttribute("userId") Long userId, Model model) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);//登录用户信息
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);//登录用户信息
         Long num = null;
         Long discussPOId = Long.parseLong(req.getParameter("replyId"));
         String module = req.getParameter("module");    //用来判断是保存在哪个表
@@ -137,7 +137,7 @@ public class ReplyController {
         Long replyId = Long.parseLong(req.getParameter("replyId"));
         String module = req.getParameter("module");
         Integer size = Integer.parseInt(req.getParameter("size"));
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         if ("discuss".equals(module)) {
             //处理讨论表的点赞，刷新
             likeThisFun(req, userId);
@@ -147,7 +147,7 @@ public class ReplyController {
             int discussLikeNum = userPOSet.size();
             model.addAttribute("discuss", discussListPO);
             model.addAttribute("discussLikeNum", discussLikeNum);
-            Set<UserVO> userVOSet = userServiceV2.getUserVOSetByUserPOSet(userPOSet);
+            Set<UserVO> userVOSet = userPOServiceV2.getUserVOSetByUserPOSet(userPOSet);
             model.addAttribute("setUsers", userVOSet);
             return "chat/discusslike";
         } else if ("reply".equals(module)) {
@@ -163,7 +163,7 @@ public class ReplyController {
             model.addAttribute("reply", replyListPO);                        //设置返回到前台的回复对象
             model.addAttribute("contain", userPOSet.contains(userPO));    //是否包含
             model.addAttribute("likeNum", likeNum);                    //点赞的人数
-            Set<UserVO> userVOSet = userServiceV2.getUserVOSetByUserPOSet(userPOSet);
+            Set<UserVO> userVOSet = userPOServiceV2.getUserVOSetByUserPOSet(userPOSet);
             model.addAttribute("users", userVOSet);                        //点赞的所有用户
             return "chat/replylike";
         } else {
@@ -175,7 +175,7 @@ public class ReplyController {
     private void likeThisFun(HttpServletRequest req, Long userId) {
         Long replyId = Long.parseLong(req.getParameter("replyId"));//讨论或回复的ID
         String module = req.getParameter("module");//属于哪个模块
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         if ("discuss".equals(module)) {
             DiscussListPO discussListPO = discussListPOServiceV2.getDiscussListPOSByDiscussPOId(replyId);//讨论表信息
             Set<UserPO> userPOSet = discussUserPOServiceV2.getUserVOSetByDiscussListPO(discussListPO);//此讨论的用户
@@ -226,7 +226,7 @@ public class ReplyController {
                               @RequestParam(value = "page", defaultValue = "1") int page,
                               @RequestParam(value = "size", defaultValue = "5") int size,
                               @SessionAttribute("userId") Long userId, Model model) {
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         Long discussPOId = Long.parseLong(req.getParameter("num"));
         DiscussListPO discussListPO = discussListPOServiceV2.getDiscussListPOSByDiscussPOId(discussPOId);//讨论信息
         String module = req.getParameter("module");    //用来判断是保存在哪个表
@@ -267,7 +267,7 @@ public class ReplyController {
         Long titleId = Long.parseLong(req.getParameter("titleId"));//投票标题ID
         Integer selectOne = Integer.parseInt(req.getParameter("selectType"));//单选多选
         DiscussListPO discussListPO = discussListPOServiceV2.getDiscussListPOSByDiscussPOId(discussId);//根据讨论ID获取讨论信息
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         VoteListPO voteListPO = voteListPOServiceV2.getVoteListPOByVoteListPOId(discussListPO.getVoteId());//根据讨论表中的投票ID获取投票信息
 
         Date date = new Date();

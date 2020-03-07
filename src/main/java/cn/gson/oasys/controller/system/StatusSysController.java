@@ -1,13 +1,13 @@
 package cn.gson.oasys.controller.system;
 
 
-import cn.gson.oasys.ServiceV2.StatusServiceV2;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.MapToList;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
 import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.vo.StatusVO;
+import cn.gson.oasys.vo.statusVO2.StatusVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -27,7 +27,7 @@ import java.util.List;
 public class StatusSysController {
 
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
 
     /**
      * 状态管理界面

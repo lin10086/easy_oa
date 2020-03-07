@@ -9,21 +9,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import cn.gson.oasys.ServiceV2.DeptPOServiceV2;
-import cn.gson.oasys.ServiceV2.StatusServiceV2;
-import cn.gson.oasys.ServiceV2.TypePOServiceV2;
-import cn.gson.oasys.ServiceV2.UserPOServiceV2;
-import cn.gson.oasys.ServiceV2.mailV2.MailServiceV2;
-import cn.gson.oasys.ServiceV2.planV2.PlanListServiceV2;
-import cn.gson.oasys.ServiceV2.planV2.PlanServiceV2;
-import cn.gson.oasys.ServiceV2.AttachmentServiceV2;
+import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
+import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
+import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
+import cn.gson.oasys.serviceV2.mailV2.MailServiceV2;
+import cn.gson.oasys.serviceV2.planV2.PlanListServiceV2;
+import cn.gson.oasys.serviceV2.planV2.PlanServiceV2;
+import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
 import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.DeptVO;
+import cn.gson.oasys.vo.deptVO2.DeptVO;
 import cn.gson.oasys.vo.SelectVO;
-import cn.gson.oasys.vo.UserVO;
-import cn.gson.oasys.vo.factoryvo.DeptFactoryVO;
-import cn.gson.oasys.vo.factoryvo.UserFactoryVO;
-import cn.gson.oasys.vo.factoryvo.planFactory.PlanListVOFactory;
+import cn.gson.oasys.vo.userVO2.UserVO;
+import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
+import cn.gson.oasys.vo.userVO2.UserFactoryVO;
+import cn.gson.oasys.vo.planVO2.PlanListVOFactory;
 import cn.gson.oasys.vo.planVO2.PlanListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -45,7 +45,7 @@ import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.MapToList;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
-import cn.gson.oasys.controller.attendce.AttendceController;
+import cn.gson.oasys.controller.attendce.AttendancesController;
 import cn.gson.oasys.model.dao.notedao.AttachmentDao;
 import cn.gson.oasys.model.dao.plandao.PlanDao;
 import cn.gson.oasys.model.dao.plandao.Planservice;
@@ -367,7 +367,7 @@ public class PlanController {
 
     //==============================================
     @Resource
-    private UserPOServiceV2 userServiceV2;
+    private UserPOServiceV2 userPOServiceV2;
     @Resource
     private PlanServiceV2 planServiceV2;
     @Resource
@@ -375,7 +375,7 @@ public class PlanController {
     @Resource
     private TypePOServiceV2 typeServiceV2;
     @Resource
-    private StatusServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusServiceV2;
     @Resource
     private DeptPOServiceV2 deptServiceV2;
     @Resource
@@ -432,14 +432,14 @@ public class PlanController {
         PageHelper.startPage(page, 10);
 //        List<PlanListPO> planListPOS = planServiceV2.sortAndGetPlan(page, baseKey, userId, type, status, time);
         List<PlanListPO> planListPOS = planServiceV2.getPlanListPOSAll();
-        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
+        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOByPlanListPOS(planListPOS);
         for (PlanListPO planListPO : planListPOS) {
             for (PlanListVO planListVO : planListVOS) {
                 if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
-                    UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+                    UserPO userPO = userPOServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
                     UserVO userVO = UserFactoryVO.createUserVO(userPO);
                     DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
-                    DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+                    DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
                     userVO.setDeptVO(deptVO);
                     planListVO.setUserVO(userVO);
                 }
@@ -477,7 +477,7 @@ public class PlanController {
             model.addAttribute("pid", planId);
         } else if (planId > 0) {
             PlanListPO planListPO = planServiceV2.getPlanListPOByPlanId(planId);
-            PlanListVO planListVO = PlanListVOFactory.createPlanListVO(planListPO);
+            PlanListVO planListVO = PlanListVOFactory.createPlanListVOByPlanListPO(planListPO);
             model.addAttribute("plan", planListVO);
             model.addAttribute("pid", planId);
         }
@@ -486,6 +486,7 @@ public class PlanController {
         return "plan/planedit";
     }
 */
+
     /**
      * 计划管理>增加或修改保存
      *
@@ -512,7 +513,7 @@ public class PlanController {
         PlanListPO planListPO = null;
         HttpSession session = req.getSession();
         long userId = Long.valueOf(session.getAttribute("userId") + "");
-        UserPO userPO = userServiceV2.getUserPOByUserId(userId);
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
 
         String typeName = req.getParameter("type");//类型名
         String statusName = req.getParameter("status");//状态名
@@ -649,11 +650,11 @@ public class PlanController {
         // 将下属用户名和计划绑定在一起
         Long userId = Long.valueOf(session.getAttribute("userId") + "");
         PageHelper.startPage(page, 10);
-        List<UserPO> userPOList = userServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, baseKey);//获取下属信息
+        List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, baseKey);//获取下属信息
         List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
         for (UserVO userVO : userVOList) {
             for (UserPO userPO : userPOList) {
-                userVO.setDeptVO(DeptFactoryVO.createDeptVO(deptServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
+                userVO.setDeptVO(DeptVOFactory.createDeptVOByDeptPO(deptServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
             }
         }
         PageInfo pageInfo = new PageInfo(userPOList);
@@ -769,14 +770,14 @@ public class PlanController {
         PageHelper.startPage(page, 10);
 //        List<PlanListPO> planListPOS = planServiceV2.sortAndGetPlan(page, baseKey, userId, type, status, time);
         List<PlanListPO> planListPOS = planServiceV2.getPlanListPOSAll();
-        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
+        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOByPlanListPOS(planListPOS);
         for (PlanListPO planListPO : planListPOS) {
             for (PlanListVO planListVO : planListVOS) {
                 if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
-                    UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+                    UserPO userPO = userPOServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
                     UserVO userVO = UserFactoryVO.createUserVO(userPO);
                     DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
-                    DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+                    DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
                     userVO.setDeptVO(deptVO);
                     planListVO.setUserVO(userVO);
                 }
@@ -800,14 +801,14 @@ public class PlanController {
         PageHelper.startPage(page, 10);
 
         List<PlanListPO> planListPOS = planServiceV2.dimSelect(page, selectTypeName);
-        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
+        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOByPlanListPOS(planListPOS);
         for (PlanListPO planListPO : planListPOS) {
             for (PlanListVO planListVO : planListVOS) {
                 if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
-                    UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+                    UserPO userPO = userPOServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
                     UserVO userVO = UserFactoryVO.createUserVO(userPO);
                     DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
-                    DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+                    DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
                     userVO.setDeptVO(deptVO);
                     planListVO.setUserVO(userVO);
                 }
@@ -848,7 +849,7 @@ public class PlanController {
 //     */
     private void sortpaging(Model model, HttpSession session, int page, String baseKey, String type, String status,
                             String time, String icon, SelectVO selectVO) throws ParseException {
-        new AttendceController().setModelSomething(baseKey, type, status, time, icon, model);
+        new AttendancesController().setModelSomething(baseKey, type, status, time, icon, model);
         PageHelper.startPage(page, 10);
         List<PlanListPO> planListPOS = null;
         if (selectVO.getSelectTypeName() != null && !("").equals(selectVO.getSelectTypeName())) {
@@ -882,14 +883,14 @@ public class PlanController {
             //所有计划
             planListPOS = planServiceV2.getPlanListPOSAll();
         }
-        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOS(planListPOS);
+        List<PlanListVO> planListVOS = PlanListVOFactory.createPlanListVOSByPlanListPOS(planListPOS);
         for (PlanListPO planListPO : planListPOS) {
             for (PlanListVO planListVO : planListVOS) {
                 if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
-                    UserPO userPO = userServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
+                    UserPO userPO = userPOServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
                     UserVO userVO = UserFactoryVO.createUserVO(userPO);
                     DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
-                    DeptVO deptVO = DeptFactoryVO.createDeptVO(deptPO);
+                    DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
                     userVO.setDeptVO(deptVO);
                     planListVO.setUserVO(userVO);
                 }
@@ -921,13 +922,13 @@ public class PlanController {
         if (planId == -1) {
             model.addAttribute("plan", null);
             model.addAttribute("pid", planId);
-        return "plan/planadd";
+            return "plan/planadd";
         } else if (planId > 0) {
             PlanListPO planListPO = planServiceV2.getPlanListPOByPlanId(planId);
-            PlanListVO planListVO = PlanListVOFactory.createPlanListVO(planListPO);
+            PlanListVO planListVO = PlanListVOFactory.createPlanListVOByPlanListPO(planListPO);
             model.addAttribute("plan", planListVO);
             model.addAttribute("pid", planId);
-        return "plan/planedit";
+            return "plan/planedit";
         }
         return null;
 
