@@ -1,24 +1,12 @@
 package cn.gson.oasys.serviceV2.attendansV2;
 
-import cn.gson.oasys.factory.AttendsFactory;
-import cn.gson.oasys.factory.TypeFactory;
 import cn.gson.oasys.mappers.AttendsPOMapper;
-import cn.gson.oasys.mappers.StatusPOMapper;
 import cn.gson.oasys.mappers.TypePOMapper;
-import cn.gson.oasys.mappers.UserPOMapper;
-import cn.gson.oasys.model.bo.PageBO;
-import cn.gson.oasys.model.bo.QueryAttendsBO;
-import cn.gson.oasys.model.entity.attendce.Attends;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
-import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.vo.attendansVO2.AttendanceVO;
-import cn.gson.oasys.vo.attendansVO2.AttendancesVOFactory;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import cn.gson.oasys.voandfactory.attendansVO2.AttendancesVO;
+import cn.gson.oasys.voandfactory.attendansVO2.AttendancesVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -88,7 +76,6 @@ public class AttendanceServiceV2 {
             return attendancesPOService.getAttendancesPOListByUserIdsOrderAttendancesTimeDESC(userIds);
         }
     }
-
 
 
     /**
@@ -203,16 +190,6 @@ public class AttendanceServiceV2 {
         return null;
     }
 
-
-    //根据类型ID找类型名
-    public String typeName(Long typeId) {
-        TypePO typePO = typePOMapper.selectByPrimaryKey(typeId);
-        SystemTypeList systemTypeList = TypeFactory.create(typePO);
-        String typeName = systemTypeList.getTypeName();
-        return typeName;
-    }
-
-
     /**
      * 显示当天的最新记录(考勤表的用户ID和时间降序取第一个）
      *
@@ -287,12 +264,12 @@ public class AttendanceServiceV2 {
      * @param attendsPOList 考勤列表信息
      * @return
      */
-    public List<AttendanceVO> getAttendancesVOListByAttendancesPOList(List<AttendsPO> attendsPOList) {
-        List<AttendanceVO> attendanceVOList = AttendancesVOFactory.createAttendancesVOListByAttendancesPOList(attendsPOList);
+    public List<AttendancesVO> getAttendancesVOListByAttendancesPOList(List<AttendsPO> attendsPOList) {
+        List<AttendancesVO> attendanceVOList = AttendancesVOFactory.createAttendancesVOListByAttendancesPOList(attendsPOList);
         for (AttendsPO attendsPO : attendsPOList) {
-            for (AttendanceVO attendanceVO : attendanceVOList) {
+            for (AttendancesVO attendanceVO : attendanceVOList) {
                 if (attendsPO.getAttendsId().equals(attendanceVO.getAttendsId())) {
-                    attendanceVO.setUserVO(UserFactoryVO.createUserVO(userPOServiceV2.getUserPOByUserId(attendsPO.getAttendsUserId())));
+                    attendanceVO.setUserVO(UserVOFactory.createUserVOByUserPO(userPOServiceV2.getUserPOByUserId(attendsPO.getAttendsUserId())));
                 }
             }
         }

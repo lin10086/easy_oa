@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.OvertimePO;
-import cn.gson.oasys.model.po.OvertimePOExample.Criteria;
-import cn.gson.oasys.model.po.OvertimePOExample.Criterion;
-import cn.gson.oasys.model.po.OvertimePOExample;
+import cn.gson.oasys.modelV2.po.OvertimePO;
+import cn.gson.oasys.modelV2.po.OvertimePOExample.Criteria;
+import cn.gson.oasys.modelV2.po.OvertimePOExample.Criterion;
+import cn.gson.oasys.modelV2.po.OvertimePOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

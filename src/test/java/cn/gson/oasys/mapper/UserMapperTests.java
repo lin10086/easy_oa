@@ -1,15 +1,15 @@
 package cn.gson.oasys.mapper;
 
-import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.UserMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.UserEntity;
 import cn.gson.oasys.model.entity.user.Dept;
 import cn.gson.oasys.model.entity.user.User;
-import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.model.po.UserPOExample;
+import cn.gson.oasys.modelV2.po.UserPO;
+import cn.gson.oasys.modelV2.po.UserPOExample;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -204,7 +203,7 @@ public class UserMapperTests {
 
         UserPOExample userPOExample = new UserPOExample();
         UserPO userPO = userPOMapper.selectByPrimaryKey(1l);
-        User user = UserFactory.create(userPO);
+        UserVO user = UserVOFactory.createUserVOByUserPO(userPO);
         log.info("user={}", user);
     }
 
@@ -225,7 +224,7 @@ public class UserMapperTests {
         userPOExample.createCriteria().andUserNameEqualTo("soli").andPasswordEqualTo("123456");
         UserPOExample.Criteria criteria = userPOExample.createCriteria().andUserTelEqualTo("666666").andPasswordEqualTo("123456");
         userPOExample.or(criteria);
-        List<UserPO> userPOList =userPOMapper.selectByExample(userPOExample);
-        log.info("userPoList={}",userPOList);
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        log.info("userPoList={}", userPOList);
     }
 }

@@ -7,11 +7,11 @@ import cn.gson.oasys.serviceV2.discussV2.*;
 import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
-import cn.gson.oasys.model.bo.PageBO;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.dicussVO.DiscussListVO;
-import cn.gson.oasys.vo.dicussVO.VoteListVO;
+import cn.gson.oasys.modelV2.bo.PageBO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.dicussVO2.DiscussListVO;
+import cn.gson.oasys.voandfactory.dicussVO2.VoteListVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -43,7 +43,7 @@ public class ChatManageController {
     @Resource
     private VoteServiceV2 voteServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
     private VoteListPOServiceV2 voteListPOServiceV2;
     @Resource
@@ -294,14 +294,14 @@ public class ChatManageController {
             //回填投票标题的信息
             session.setAttribute("id", disId);
             model.addAttribute("discuss", discussListPO);
-            String typeName = typeServiceV2.getTypePOByTypeId(discussListPO.getTypeId()).getTypeName();
+            String typeName = typePOServiceV2.getTypePOByTypeId(discussListPO.getTypeId()).getTypeName();
             model.addAttribute("typeName", typeName);
         }
         if (!StringUtils.isEmpty(req.getAttribute("success"))) {
             model.addAttribute("success", "成功了");
         }
         UserVO userVO = userPOServiceV2.setUserVOByUserId(userId);
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("chat");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("chat");
         model.addAttribute("typeList", typePOList);
         model.addAttribute("user", userVO);
         return "chat/writechat";

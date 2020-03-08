@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.AttachmentListPO;
-import cn.gson.oasys.model.po.AttachmentListPOExample.Criteria;
-import cn.gson.oasys.model.po.AttachmentListPOExample.Criterion;
-import cn.gson.oasys.model.po.AttachmentListPOExample;
+import cn.gson.oasys.modelV2.po.AttachmentListPO;
+import cn.gson.oasys.modelV2.po.AttachmentListPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.AttachmentListPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.AttachmentListPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

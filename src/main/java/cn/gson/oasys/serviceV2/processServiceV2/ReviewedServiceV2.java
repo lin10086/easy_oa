@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.processServiceV2;
 
 import cn.gson.oasys.mappers.ReviewedPOMapper;
-import cn.gson.oasys.model.po.ReviewedPO;
-import cn.gson.oasys.model.po.ReviewedPOExample;
+import cn.gson.oasys.modelV2.po.ReviewedPO;
+import cn.gson.oasys.modelV2.po.ReviewedPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

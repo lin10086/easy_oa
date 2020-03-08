@@ -24,7 +24,7 @@
         </jdbcConnection>
 
         <!--load targetProject from properties-->
-        <javaModelGenerator targetPackage="cn.gson.oasys.model.po" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="cn.gson.oasys.modelV2.po" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>

@@ -1,9 +1,9 @@
 package cn.gson.oasys.serviceV2.taskV2;
 
 import cn.gson.oasys.mappers.TaskListPOMapper;
-import cn.gson.oasys.model.po.TaskListPO;
-import cn.gson.oasys.model.po.TaskListPOExample;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.modelV2.po.TaskListPO;
+import cn.gson.oasys.modelV2.po.TaskListPOExample;
+import cn.gson.oasys.modelV2.po.UserPO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

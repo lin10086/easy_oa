@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.DetailsbursePO;
-import cn.gson.oasys.model.po.DetailsbursePOExample.Criteria;
-import cn.gson.oasys.model.po.DetailsbursePOExample.Criterion;
-import cn.gson.oasys.model.po.DetailsbursePOExample;
+import cn.gson.oasys.modelV2.po.DetailsbursePO;
+import cn.gson.oasys.modelV2.po.DetailsbursePOExample.Criteria;
+import cn.gson.oasys.modelV2.po.DetailsbursePOExample.Criterion;
+import cn.gson.oasys.modelV2.po.DetailsbursePOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

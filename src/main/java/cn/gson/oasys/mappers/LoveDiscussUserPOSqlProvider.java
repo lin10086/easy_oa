@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.LoveDiscussUserPO;
-import cn.gson.oasys.model.po.LoveDiscussUserPOExample.Criteria;
-import cn.gson.oasys.model.po.LoveDiscussUserPOExample.Criterion;
-import cn.gson.oasys.model.po.LoveDiscussUserPOExample;
+import cn.gson.oasys.modelV2.po.LoveDiscussUserPO;
+import cn.gson.oasys.modelV2.po.LoveDiscussUserPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.LoveDiscussUserPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.LoveDiscussUserPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.MailNumberPO;
-import cn.gson.oasys.model.po.MailNumberPOExample.Criteria;
-import cn.gson.oasys.model.po.MailNumberPOExample.Criterion;
-import cn.gson.oasys.model.po.MailNumberPOExample;
+import cn.gson.oasys.modelV2.po.MailNumberPO;
+import cn.gson.oasys.modelV2.po.MailNumberPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.MailNumberPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.MailNumberPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

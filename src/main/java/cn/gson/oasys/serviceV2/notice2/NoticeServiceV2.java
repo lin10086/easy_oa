@@ -2,12 +2,12 @@ package cn.gson.oasys.serviceV2.notice2;
 
 import cn.gson.oasys.mappers.NoticeListPOMapper;
 import cn.gson.oasys.mappers.NoticeUserRelationPOMapper;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.vo.noticeVO2.NoticeListVO;
+import cn.gson.oasys.voandfactory.noticeVO2.NoticeListVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +21,13 @@ public class NoticeServiceV2 {
     @Resource
     private NoticeListPOMapper noticeListPOMapper;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
     private NoticeUserRelationPOMapper noticeUserRelationPOMapper;
     @Resource
@@ -57,15 +57,15 @@ public class NoticeServiceV2 {
 
             Map<String, Object> result = new HashMap<>();
             result.put("noticeId", noticeListPOList.get(i).getNoticeId());//公告ID
-            result.put("typename", typeServiceV2.getTypeNameByTypeId(noticeListPOList.get(i).getTypeId()));//根据公告类型ID获取公告类型名
-            result.put("statusname", statusServiceV2.getStatusPOByStatusId(noticeListPOList.get(i).getStatusId()).getStatusName());// 根据公告状态ID获取公告状态名
-            result.put("statuscolor", statusServiceV2.getStatusPOByStatusId(noticeListPOList.get(i).getStatusId()).getStatusColor());//根据公告状态ID获取公告状态颜色
+            result.put("typename", typePOServiceV2.getTypeNameByTypeId(noticeListPOList.get(i).getTypeId()));//根据公告类型ID获取公告类型名
+            result.put("statusname", statusPOServiceV2.getStatusPOByStatusId(noticeListPOList.get(i).getStatusId()).getStatusName());// 根据公告状态ID获取公告状态名
+            result.put("statuscolor", statusPOServiceV2.getStatusPOByStatusId(noticeListPOList.get(i).getStatusId()).getStatusColor());//根据公告状态ID获取公告状态颜色
             result.put("title", noticeListPOList.get(i).getTitle());//获取公告管理的标题
             result.put("noticeTime", new Timestamp(noticeListPOList.get(i).getNoticeTime().getTime()));//获取发布公告的时间
             result.put("top", noticeListPOList.get(i).getIsTop() == 0 ? false : true);//通知是否置顶(默认为0不置顶）
             result.put("url", noticeListPOList.get(i).getUrl());//获取通知内的链接
             result.put("username", userPOServiceV2.getUserPOByUserId(noticeListPOList.get(i).getUserId()).getUserName());//根据通知的用户ID找用户名
-            result.put("deptname", deptServiceV2.getDeptPOByUserId(noticeListPOList.get(i).getUserId()).getDeptName());//根据通知的用户ID找部门名
+            result.put("deptname", deptPOServiceV2.getDeptPOByUserId(noticeListPOList.get(i).getUserId()).getDeptName());//根据通知的用户ID找部门名
             list.add(result);
         }
         return list;
@@ -194,11 +194,11 @@ public class NoticeServiceV2 {
             Map<String, Object> map = new HashMap<>();
             //根据关联表中的通知主表ID找通知主表信息
             NoticeListPO noticeListPO = noticeListPOMapper.selectByPrimaryKey(noticeUserRelationPO.getRelatinNoticeId());
-            map.put("status", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());//状态名
-            map.put("type", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());//类型名
-            map.put("statusColor", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());//状态颜色
+            map.put("status", statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());//状态名
+            map.put("type", typePOServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());//类型名
+            map.put("statusColor", statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());//状态颜色
             map.put("userName", userPOServiceV2.getUserPOByUserId(noticeListPO.getUserId()).getUserName());//用户名
-            map.put("deptName", deptServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());//部门名
+            map.put("deptName", deptPOServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());//部门名
             map.put("contain", this.isForward(noticeListPO.getNoticeId(), noticeUserRelationPO.getRelatinUserId()));//
             map.put("is_read", noticeUserRelationPO.getIsRead());//是否已读
             map.put("notice_time", new Timestamp(noticeListPO.getNoticeTime().getTime()));//发布是时间
@@ -217,11 +217,11 @@ public class NoticeServiceV2 {
 //        List<Map<String,Object>> mapList = new ArrayList<>();
 //        Map<String,Object>map = new HashMap<>();
 //        for (NoticeListPO noticeListPO : noticeListPOList) {
-//            map.put("status",statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());
-//            map.put("type", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());
-//            map.put("statusColor", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());
+//            map.put("status",statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());
+//            map.put("type", typePOServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());
+//            map.put("statusColor", statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());
 //            map.put("userName", userPOServiceV2.getUserPOByUserId(noticeListPO.getUserId()).getUserName());
-//            map.put("deptName", deptServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());
+//            map.put("deptName", deptPOServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());
 //            map.put("contain",this.isForward(noticeListPO.getNoticeId(), noticeListPO.getUserId()));
 //        }
 //        return mapList;

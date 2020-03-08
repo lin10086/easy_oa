@@ -24,14 +24,14 @@ import cn.gson.oasys.serviceV2.taskV2.TaskListServiceV2;
 import cn.gson.oasys.serviceV2.taskV2.TaskLoggerServiceV2;
 import cn.gson.oasys.serviceV2.taskV2.TaskServiceV2;
 import cn.gson.oasys.serviceV2.taskV2.TaskUserServiceV2;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.taskVO2.TaskLoggerVOFactory;
-import cn.gson.oasys.vo.taskVO2.TaskListVO;
-import cn.gson.oasys.vo.taskVO2.TaskLoggerVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.taskVO2.TaskLoggerVOFactory;
+import cn.gson.oasys.voandfactory.taskVO2.TaskListVO;
+import cn.gson.oasys.voandfactory.taskVO2.TaskLoggerVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -511,13 +511,13 @@ public class TaskController {
     @Resource
     private TaskListServiceV2 taskListServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
-    private PositionPOServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionPOServiceV2;
     @Resource
     private UserVOListServiceV2 userVOListServiceV2;
     @Resource
@@ -579,11 +579,11 @@ public class TaskController {
                                @RequestParam(value = "page", defaultValue = "0") int page,
                                @RequestParam(value = "size", defaultValue = "10") int size) {
         ModelAndView mav = new ModelAndView("task/addtask");
-        List<TypePO> typePOList = typeServiceV2.getTypePOListAll();// 所有类型信息
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//所有状态信息
+        List<TypePO> typePOList = typePOServiceV2.getTypePOListAll();// 所有类型信息
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOListAll();//所有状态信息
         List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherId(userId);// 获取下属用户
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();//所有部门信息
-        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();//获取所有职位信息
+        List<DeptPO> deptPOList = deptPOServiceV2.getDeptPOListAll();//所有部门信息
+        List<PositionPO> positionPOList = positionPOServiceV2.getPositionListAll();//获取所有职位信息
 
         PageHelper.startPage(page, size);
         List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
@@ -664,10 +664,10 @@ public class TaskController {
         // 得到类型id
         Long typeId = taskListPO.getTypeId();
         // 查看状态表
-        StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);
+        StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(statusId);
 //        SystemStatusList status = sdao.findOne(statusid);
         // 查询类型表
-        TypePO typePO = typeServiceV2.getTypePOByTypeId(typeId);
+        TypePO typePO = typePOServiceV2.getTypePOByTypeId(typeId);
 //        SystemTypeList type = tydao.findOne(typeid);
         // 查询部门下面的员工
 //        List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherId(userId);
@@ -728,8 +728,8 @@ public class TaskController {
 
         TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);// 通过任务id得到相应的任务
         Long statusId = taskListPO.getStatusId().longValue();//任务表里面的状态ID
-        StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);//根据任务表里的状态ID获取状态信息
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//获取所有的状态信息
+        StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(statusId);//根据任务表里的状态ID获取状态信息
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOListAll();//获取所有的状态信息
         UserPO pushUserPO = userPOServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
         List<TaskLoggerPO> taskLoggerPOList = taskLoggerServiceV2.getTaskLoggerPOByTaskListPOId(taskId);//根据任务ID获取日志列表
         List<TaskLoggerVO> taskLoggerVOList = null;
@@ -854,8 +854,8 @@ public class TaskController {
         Long taskId = Long.parseLong(req.getParameter("taskId"));// 得到任务的 id
         TaskListPO taskListPO = taskListServiceV2.getTaskListPOByTaskListPOId(taskId);// 通过任务id得到相应的任务
         Long statusId = taskListPO.getStatusId().longValue();// 任务表里的状态ID
-        StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);//根据任务表里的状态ID获取状态信息
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//获取所有的状态信息
+        StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(statusId);//根据任务表里的状态ID获取状态信息
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOListAll();//获取所有的状态信息
         UserPO userPO = userPOServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());//发布人
         List<TaskLoggerPO> taskLoggerPOList = taskLoggerServiceV2.getTaskLoggerPOByTaskListPOId(taskId);//根据任务ID找任务日志
         List<TaskLoggerVO> taskLoggerVOList = TaskLoggerVOFactory.createTaskLoggerVOListByTaskLoggerPOList(taskLoggerPOList);//

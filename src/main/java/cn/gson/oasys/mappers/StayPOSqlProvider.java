@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.StayPO;
-import cn.gson.oasys.model.po.StayPOExample.Criteria;
-import cn.gson.oasys.model.po.StayPOExample.Criterion;
-import cn.gson.oasys.model.po.StayPOExample;
+import cn.gson.oasys.modelV2.po.StayPO;
+import cn.gson.oasys.modelV2.po.StayPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.StayPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.StayPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

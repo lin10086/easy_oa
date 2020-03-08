@@ -26,14 +26,14 @@ import cn.gson.oasys.serviceV2.noteV2.NoteListPOServiceV2;
 import cn.gson.oasys.serviceV2.noteV2.NoteServiceV2;
 import cn.gson.oasys.serviceV2.noteV2.ReceiverNotePOServiceV2;
 import cn.gson.oasys.mappers.NoteListPOMapper;
-import cn.gson.oasys.model.bo.PageBO;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.bo.PageBO;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
-import cn.gson.oasys.vo.noteVO.NoteListVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
+import cn.gson.oasys.voandfactory.noteVO2.NoteListVO;
 import org.apache.commons.io.IOUtils;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -734,15 +734,15 @@ public class NoteController {
     @Resource
     private ReceiverNotePOServiceV2 receiverNotePOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
-    private PositionPOServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionPOServiceV2;
     @Resource
     private FileServiceV2 fileServiceV2;
     @Resource
@@ -850,8 +850,8 @@ public class NoteController {
      * @param request 为了设置模型
      */
     private void typePOListAndStatusPOList(HttpServletRequest request) {
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_note_list");
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_note_list");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_note_list");
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_note_list");
         request.setAttribute("typelist", typePOList);
         request.setAttribute("statuslist", statusPOList);
     }
@@ -929,8 +929,8 @@ public class NoteController {
             end = userPOListAll.size();
         }
         List<UserPO> subUserPOList = userPOListAll.subList(start, end);//用户的页面信息
-        List<DeptPO> deptListAll = deptServiceV2.getDeptPOListAll();//所有的部门信息
-        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();//所有的职位信息
+        List<DeptPO> deptListAll = deptPOServiceV2.getDeptPOListAll();//所有的部门信息
+        List<PositionPO> positionPOList = positionPOServiceV2.getPositionListAll();//所有的职位信息
 
         model.addAttribute("page", pageBO);
         model.addAttribute("emplist", subUserPOList);
@@ -1026,7 +1026,7 @@ public class NoteController {
                     }
                 }
                 if (noteListPO.getAttachId() != null) {
-                    fileServiceV2.updateattchment(file, UserFactoryVO.createUserVO(userPO), null, noteListPO.getAttachId());
+                    fileServiceV2.updateattchment(file, UserVOFactory.createUserVOByUserPO(userPO), null, noteListPO.getAttachId());
                 }
                 // 判断是否共享
                 if (request.getParameter("receiver") != null && (request.getParameter("receiver").trim().length() > 0)) {
@@ -1392,9 +1392,9 @@ public class NoteController {
         List<UserPO> subUserPOList = userPOList.subList(start, end);//用户的页面信息
         model.addAttribute("emplist", subUserPOList);
         model.addAttribute("page", pageBO);
-        List<DeptPO> deptPOListAll = deptServiceV2.getDeptPOListAll();//部门信息
+        List<DeptPO> deptPOListAll = deptPOServiceV2.getDeptPOListAll();//部门信息
         model.addAttribute("deptlist", deptPOListAll);
-        List<PositionPO> positionPOListAll = positionServiceV2.getPositionListAll();// 职位表
+        List<PositionPO> positionPOListAll = positionPOServiceV2.getPositionListAll();// 职位表
         model.addAttribute("poslist", positionPOListAll);
         model.addAttribute("url", "namereceive");
         return "common/noterecivers";

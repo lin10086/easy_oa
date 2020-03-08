@@ -1,12 +1,7 @@
 package cn.gson.oasys.service;
 
 import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
-import cn.gson.oasys.model.bo.PageBO;
-import cn.gson.oasys.model.bo.QueryAttendsBO;
-import cn.gson.oasys.model.po.AttendsPO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
-import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +12,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @RunWith(SpringRunner.class)

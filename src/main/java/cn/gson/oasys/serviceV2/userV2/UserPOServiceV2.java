@@ -1,24 +1,22 @@
 package cn.gson.oasys.serviceV2.userV2;
 
-import cn.gson.oasys.factory.DeptFactory;
-import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.RolePOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
-import cn.gson.oasys.model.entity.user.User;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
+import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
-import cn.gson.oasys.vo.deptVO2.DeptVO;
-import cn.gson.oasys.vo.positionVO2.PositionVO;
-import cn.gson.oasys.vo.roleVO2.RoleVO;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
-import cn.gson.oasys.vo.planVO2.PositionVOFactory;
-import cn.gson.oasys.vo.roleVO2.RoleVOFactory;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVO;
+import cn.gson.oasys.voandfactory.roleVO2.RoleVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVOFactory;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVOFactory;
+import cn.gson.oasys.voandfactory.roleVO2.RoleVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +36,7 @@ public class UserPOServiceV2 {
     @Resource
     private RolePOMapper rolePOMapper;
     @Resource
-    private cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2 DeptPOServiceV2;
+    private DeptPOServiceV2 DeptPOServiceV2;
     @Resource
     private RoleServiceV2 roleServiceV2;
     @Resource
@@ -362,23 +360,6 @@ public class UserPOServiceV2 {
         return userPOList;
     }
 
-    /* //根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
-     public User findUserByUserId(Long userId) {
-         UserPO userPO = userPOMapper.selectByPrimaryKey(userId);
-
-         DeptPO deptPO = deptPOMapper.selectByPrimaryKey(userPO.getDeptId());
-         Dept dept = DeptFactory.create(deptPO);
-         PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
-         Position position = PositionFactory.create(positionPO);
-         RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
-         Role role = RoleFactory.create(rolePO);
-
-         User user = UserFactory.create(userPO);
-         user.setDept(dept);
-         user.setPosition(position);
-         user.setRole(role);
-         return user;
-     }*/
     //二次修改：根据用户ID查询到用户,根据用户里面的部门ID，职位ID，角色ID，查询用户的部门，职位，角色，返回用户（里面信息都有）
 
     /**
@@ -394,9 +375,9 @@ public class UserPOServiceV2 {
         PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
         PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(positionPO);
         RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
-        RoleVO roleVO = RoleVOFactory.createRoleVO(rolePO);
+        RoleVO roleVO = RoleVOFactory.createRoleVOByRolePO(rolePO);
 
-        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+        UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
         userVO.setDeptVO(deptVO);
         userVO.setPositionVO(positionVO);
         userVO.setRoleVO(roleVO);
@@ -468,9 +449,9 @@ public class UserPOServiceV2 {
         Map<Long, RolePO> longRolePOMap = userPOListIdAndRolePO(userPOList);
         Map<Long, DeptPO> longDeptPOMap = userPOListIdAndDeptPO(userPOList);
         Map<Long, PositionPO> longPositionPOMap = userPOListIdAndPositionPO(userPOList);
-        List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
+        List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(userPOList);
         for (UserVO userVO : userVOList) {
-            RoleVO roleVO = RoleVOFactory.createRoleVO(longRolePOMap.get(userVO.getUserId()));
+            RoleVO roleVO = RoleVOFactory.createRoleVOByRolePO(longRolePOMap.get(userVO.getUserId()));
             DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(longDeptPOMap.get(userVO.getUserId()));
             PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(longPositionPOMap.get(userVO.getUserId()));
             userVO.setRoleVO(roleVO);
@@ -554,16 +535,16 @@ public class UserPOServiceV2 {
         userPOMapper.updateByPrimaryKeySelective(userPO);
     }
 
-    public User checkUser(String userName, String password, String userTel) {
+    public UserVO checkUser(String userName, String password, String userTel) {
         UserPOExample userPOExample = new UserPOExample();
         userPOExample.createCriteria().andUserNameEqualTo(userName).andPasswordEqualTo(password);
         UserPOExample.Criteria criteria = userPOExample.createCriteria().andUserTelEqualTo(userTel).andPasswordEqualTo(password);
         userPOExample.or(criteria);
         List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
-        List<User> userList = UserFactory.create(userPOList);
+        List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(userPOList);
 
-        if (userList != null && userList.size() >= 1) {
-            return userList.get(0);
+        if (userVOList != null && userVOList.size() >= 1) {
+            return userVOList.get(0);
         }
         return null;
     }
@@ -743,8 +724,8 @@ public class UserPOServiceV2 {
             PositionPO positionPO = positionPOMapper.selectByPrimaryKey(userPO.getPositionId());
             PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(positionPO);
             RolePO rolePO = rolePOMapper.selectByPrimaryKey(userPO.getRoleId());
-            RoleVO roleVO = RoleVOFactory.createRoleVO(rolePO);
-            UserVO userVO = UserFactoryVO.createUserVO(userPO);
+            RoleVO roleVO = RoleVOFactory.createRoleVOByRolePO(rolePO);
+            UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
             userVO.setDeptVO(deptVO);
             userVO.setPositionVO(positionVO);
             userVO.setRoleVO(roleVO);
@@ -760,9 +741,9 @@ public class UserPOServiceV2 {
      * @return
      */
     public UserVO getUserVOByUserPO(UserPO userPO) {
-        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+        UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
         userVO.setDeptVO(DeptVOFactory.createDeptVOByDeptPO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
-        userVO.setRoleVO(RoleVOFactory.createRoleVO(roleServiceV2.getRoleByRoleId(userPO.getRoleId())));
+        userVO.setRoleVO(RoleVOFactory.createRoleVOByRolePO(roleServiceV2.getRoleByRoleId(userPO.getRoleId())));
         userVO.setPositionVO(PositionVOFactory.createPositionVOByPositionPO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId())));
         return userVO;
     }

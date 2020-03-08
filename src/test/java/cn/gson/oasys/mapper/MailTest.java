@@ -1,8 +1,8 @@
 package cn.gson.oasys.mapper;
 
 import cn.gson.oasys.mappers.MailNumberPOMapper;
-import cn.gson.oasys.model.po.MailNumberPO;
-import cn.gson.oasys.model.po.MailNumberPOExample;
+import cn.gson.oasys.modelV2.po.MailNumberPO;
+import cn.gson.oasys.modelV2.po.MailNumberPOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

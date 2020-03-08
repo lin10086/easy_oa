@@ -14,16 +14,16 @@ import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.scheduleV2.ScheduleListServiceV2;
 import cn.gson.oasys.serviceV2.scheduleV2.ScheduleServiceV2;
 import cn.gson.oasys.serviceV2.scheduleV2.ScheduleUserServiceV2;
-import cn.gson.oasys.model.po.SchedulePO;
-import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.model.po.TypePO;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.modelV2.po.SchedulePO;
+import cn.gson.oasys.modelV2.po.StatusPO;
+import cn.gson.oasys.modelV2.po.TypePO;
+import cn.gson.oasys.modelV2.po.UserPO;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.scheduleVO2.ScheduleListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -258,11 +258,11 @@ public class DaymanageController {
     //==================================================
 
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
@@ -289,12 +289,12 @@ public class DaymanageController {
                              @RequestParam(value = "size", defaultValue = "10") int size) {
         UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
 
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_schedule_list");
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_schedule_list");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_schedule_list");
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_schedule_list");
 
         PageHelper.startPage(page, size);
         List<SchedulePO> schedulePOList = scheduleListServiceV2.getSchedulePOListByUserId(userId);
-        String deptName = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId()).getDeptName();
+        String deptName = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()).getDeptName();
         PageInfo pageInfo = new PageInfo(schedulePOList);
 
         model.addAttribute("types", typePOList);//日程类型
@@ -322,8 +322,8 @@ public class DaymanageController {
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size,
                            Model model) {
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_schedule_list");
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_schedule_list");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_schedule_list");
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_schedule_list");
 
         if (rcId != null) {
             SchedulePO schedulePO = scheduleListServiceV2.getSchedulePOBySchedulePOId(rcId);

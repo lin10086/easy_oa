@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.SchedulePO;
-import cn.gson.oasys.model.po.SchedulePOExample;
+import cn.gson.oasys.modelV2.po.SchedulePO;
+import cn.gson.oasys.modelV2.po.SchedulePOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

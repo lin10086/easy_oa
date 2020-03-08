@@ -1,6 +1,6 @@
 package cn.gson.oasys.serviceV2.userV2;
 
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.modelV2.po.UserPO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

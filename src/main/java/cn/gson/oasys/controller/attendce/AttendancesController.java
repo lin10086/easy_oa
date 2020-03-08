@@ -1,33 +1,26 @@
 package cn.gson.oasys.controller.attendce;
 
 import cn.gson.oasys.common.StringtoDate;
-import cn.gson.oasys.mappers.*;
-import cn.gson.oasys.model.bo.PageInformation;
-import cn.gson.oasys.model.dao.attendcedao.AttendceDao;
-import cn.gson.oasys.model.dao.attendcedao.AttendceService;
-import cn.gson.oasys.model.dao.system.StatusDao;
-import cn.gson.oasys.model.dao.system.TypeDao;
-import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.dao.user.UserService;
-import cn.gson.oasys.model.po.AttendsPO;
-import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.model.po.TypePO;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.modelV2.bo.PageInformation;
+import cn.gson.oasys.modelV2.po.AttendsPO;
+import cn.gson.oasys.modelV2.po.StatusPO;
+import cn.gson.oasys.modelV2.po.TypePO;
+import cn.gson.oasys.modelV2.po.UserPO;
 import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
 import cn.gson.oasys.serviceV2.attendansV2.AttendancesPOService;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserServiceV2;
-import cn.gson.oasys.vo.attendansVO2.AttendanceVO;
-import cn.gson.oasys.vo.attendansVO2.AttendancesVOFactory;
-import cn.gson.oasys.vo.deptVO2.DeptVO;
-import cn.gson.oasys.vo.statusVO2.StatusVO;
-import cn.gson.oasys.vo.statusVO2.StatusVOFactory;
-import cn.gson.oasys.vo.typeVO2.TypeVO;
-import cn.gson.oasys.vo.typeVO2.TypeVOFactory;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
-import cn.gson.oasys.vo.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.attendansVO2.AttendancesVO;
+import cn.gson.oasys.voandfactory.attendansVO2.AttendancesVOFactory;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
+import cn.gson.oasys.voandfactory.statusVO2.StatusVO;
+import cn.gson.oasys.voandfactory.statusVO2.StatusVOFactory;
+import cn.gson.oasys.voandfactory.typeVO2.TypeVO;
+import cn.gson.oasys.voandfactory.typeVO2.TypeVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.stereotype.Controller;
@@ -141,7 +134,7 @@ public class AttendancesController {
         }
         //查找某用户某天最新记录用来显示用户最新的类型和考勤时间（考勤表的用户ID，考勤时间）
         AttendsPO attendsPO = attendanceServiceV2.getNewAttendancePOByUserId(nowDate, userId);
-        AttendanceVO attendanceVO = AttendancesVOFactory.createAttendancesVOByAttendancesPO(attendsPO);
+        AttendancesVO attendanceVO = AttendancesVOFactory.createAttendancesVOByAttendancesPO(attendsPO);
         if (attendanceVO != null) {
             String typeName = typePOServiceV2.getTypeNameByTypeId(attendanceVO.getTypeId());//根据类型ID查找类型名
             model.addAttribute("type", typeName);
@@ -360,7 +353,7 @@ public class AttendancesController {
         } else if (aid != null) {
             long id = Long.valueOf(aid);
             AttendsPO attendsPO = attendancesPOService.getAttendancesPOByAttendancesId(id);
-            AttendanceVO attendanceVO = AttendancesVOFactory.createAttendancesVOByAttendancesPO(attendsPO);
+            AttendancesVO attendanceVO = AttendancesVOFactory.createAttendancesVOByAttendancesPO(attendsPO);
             model.addAttribute("write", 1);
             model.addAttribute("attends", attendanceVO);
         }
@@ -378,7 +371,7 @@ public class AttendancesController {
     public String attendancesEdit2(HttpServletRequest request) {
         long aid = Long.valueOf(request.getParameter("id"));//考勤ID
         AttendsPO attendsPO = attendancesPOService.getAttendancesPOByAttendancesId(aid);
-        AttendanceVO attendanceVO = AttendancesVOFactory.createAttendancesVOByAttendancesPO(attendsPO);
+        AttendancesVO attendanceVO = AttendancesVOFactory.createAttendancesVOByAttendancesPO(attendsPO);
         typeAndStatusV2(request);
         request.setAttribute("attends", attendanceVO);
         return "attendce/attendceedit2";
@@ -468,7 +461,7 @@ public class AttendancesController {
         setModelSomething(baseKey, type, status, time, icon, model);//设置model里面的属性
         //获取用户的考勤列表
         List<AttendsPO> attendsPOList = attendancesPOService.getAttendancesPOListByUserId(userId);
-        List<AttendanceVO> subAttendanceVOList = pageInformation.getAttendancesVOListPage(page, 10, attendsPOList, request);
+        List<AttendancesVO> subAttendanceVOList = pageInformation.getAttendancesVOListPage(page, 10, attendsPOList, request);
         typeAndStatusV2(request);
         request.setAttribute("alist", subAttendanceVOList);
         request.setAttribute("url", "attendcelisttable");
@@ -513,7 +506,7 @@ public class AttendancesController {
         typeAndStatusV2(request);
         //根据下属用户ID，类型，状态，时间来分页查询，把结果放到考勤页面里面
         List<AttendsPO> attendsPOList = attendanceServiceV2.attendancesPage(baseKey, userIds, type, status, time);
-        List<AttendanceVO> subAttendanceVOList = pageInformation.getAttendancesVOListPage(page, 10, attendsPOList, request);
+        List<AttendancesVO> subAttendanceVOList = pageInformation.getAttendancesVOListPage(page, 10, attendsPOList, request);
         //获取考勤页面的内容放到请求对象的alist里面
         request.setAttribute("alist", subAttendanceVOList);
         //设置请求对象的url为attendcetable
@@ -539,17 +532,17 @@ public class AttendancesController {
         //获取用户的下属用户
         List<UserPO> userPOList = userPOServiceV2.getUserPOByFatherId(userId);
         List<UserPO> sunUserPOList = pageInformation.getUserPOListPage(page, 10, userPOList, request);
-        List<UserVO> userVOList = UserFactoryVO.createUserVOList(sunUserPOList);
+        List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(sunUserPOList);
         //获取下属用户ids
         List<Long> userIds = userServiceV2.getUserIdsByUserPOList(userPOList);
         //把用户ID和部门对应起来
         Map<Long, DeptVO> map = userPOServiceV2.userIdAndDeptVO(userPOList);
         //下属一段时间内的考勤
         List<AttendsPO> attendsPOList = attendanceServiceV2.findOneWeek(startDate, endDate, userIds);
-        List<AttendanceVO> attendanceVOList = attendanceServiceV2.getAttendancesVOListByAttendancesPOList(attendsPOList);
+        List<AttendancesVO> attendanceVOList = attendanceServiceV2.getAttendancesVOListByAttendancesPOList(attendsPOList);
         for (UserVO userVO : userVOList) {
-            Set<AttendanceVO> attendanceVOSet = new HashSet<>();
-            for (AttendanceVO attendanceVO : attendanceVOList) {
+            Set<AttendancesVO> attendanceVOSet = new HashSet<>();
+            for (AttendancesVO attendanceVO : attendanceVOList) {
                 if (Objects.equals(attendanceVO.getUserVO().getUserId(), userVO.getUserId())) {
                     //把一个用户的考勤拿出来放到set集合里面
                     attendanceVOSet.add(attendanceVO);
@@ -583,7 +576,7 @@ public class AttendancesController {
         //获取用户的下属用户并分页
         List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, baseKey);
         List<UserPO> sunUserPOList = pageInformation.getUserPOListPage(page, 10, userPOList, request);
-        List<UserVO> userVOList = UserFactoryVO.createUserVOList(sunUserPOList);
+        List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(sunUserPOList);
 //        获取月份
         String month = request.getParameter("month");
         Map<String, List<Integer>> uMap = new HashMap<>();//用户名和各种天数

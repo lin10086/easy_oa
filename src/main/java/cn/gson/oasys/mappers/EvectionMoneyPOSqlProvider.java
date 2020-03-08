@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.EvectionMoneyPO;
-import cn.gson.oasys.model.po.EvectionMoneyPOExample.Criteria;
-import cn.gson.oasys.model.po.EvectionMoneyPOExample.Criterion;
-import cn.gson.oasys.model.po.EvectionMoneyPOExample;
+import cn.gson.oasys.modelV2.po.EvectionMoneyPO;
+import cn.gson.oasys.modelV2.po.EvectionMoneyPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.EvectionMoneyPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.EvectionMoneyPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

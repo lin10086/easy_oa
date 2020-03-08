@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.positionV2;
 
 import cn.gson.oasys.mappers.PositionPOMapper;
-import cn.gson.oasys.model.po.PositionPO;
-import cn.gson.oasys.model.po.PositionPOExample;
+import cn.gson.oasys.modelV2.po.PositionPO;
+import cn.gson.oasys.modelV2.po.PositionPOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

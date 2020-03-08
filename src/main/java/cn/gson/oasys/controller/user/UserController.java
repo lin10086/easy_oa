@@ -6,19 +6,19 @@ import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.model.bo.PageBO;
-import cn.gson.oasys.model.po.DeptPO;
-import cn.gson.oasys.model.po.PositionPO;
-import cn.gson.oasys.model.po.RolePO;
-import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.deptVO2.DeptVO;
-import cn.gson.oasys.vo.positionVO2.PositionVO;
-import cn.gson.oasys.vo.roleVO2.RoleVO;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
-import cn.gson.oasys.vo.planVO2.PositionVOFactory;
-import cn.gson.oasys.vo.roleVO2.RoleVOFactory;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
+import cn.gson.oasys.modelV2.bo.PageBO;
+import cn.gson.oasys.modelV2.po.DeptPO;
+import cn.gson.oasys.modelV2.po.PositionPO;
+import cn.gson.oasys.modelV2.po.RolePO;
+import cn.gson.oasys.modelV2.po.UserPO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVO;
+import cn.gson.oasys.voandfactory.roleVO2.RoleVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVOFactory;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVOFactory;
+import cn.gson.oasys.voandfactory.roleVO2.RoleVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
 import com.github.pagehelper.util.StringUtil;
 import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
@@ -40,9 +40,9 @@ public class UserController {
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
-    private PositionPOServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionPOServiceV2;
     @Resource
     private RoleServiceV2 roleServiceV2;
 
@@ -84,7 +84,7 @@ public class UserController {
     @RequestMapping("selectdept")
     @ResponseBody
     public List<PositionPO> selectDept(@RequestParam("selectdeptid") Long deptId) {
-        List<PositionPO> positionPOList = positionServiceV2.getPositionPOListByDeptIdAndNameNotLike(deptId);
+        List<PositionPO> positionPOList = positionPOServiceV2.getPositionPOListByDeptIdAndNameNotLike(deptId);
         return positionPOList;
     }
 
@@ -156,7 +156,7 @@ public class UserController {
             userPOList = userPOServiceV2.getUserPOListByUsernameLikeAndRealNameLike(userSearch);
         }
         List<UserPO> subUserPOList = setUserPage(page, size, userPOList, model);
-        List<UserVO> userVOList = UserFactoryVO.createUserVOList(subUserPOList);
+        List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(subUserPOList);
         model.addAttribute("users", userVOList);
         model.addAttribute("url", "usermanagepaging");
 
@@ -194,14 +194,14 @@ public class UserController {
             model.addAttribute("user", userVO);
         }
         //所有部门
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
-        List<DeptVO> deptVOList = DeptVOFactory.createDeptVOList(deptPOList);
+        List<DeptPO> deptPOList = deptPOServiceV2.getDeptPOListAll();
+        List<DeptVO> deptVOList = DeptVOFactory.createDeptVOListByDeptPOList(deptPOList);
         //所有职位
-        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();
+        List<PositionPO> positionPOList = positionPOServiceV2.getPositionListAll();
         List<PositionVO> positionVOList = PositionVOFactory.createPositionVOListByPositionPOList(positionPOList);
         // 所有角色
         List<RolePO> rolePOList = roleServiceV2.getRoleListAll();
-        List<RoleVO> roleVOList = RoleVOFactory.createRoleVOList(rolePOList);
+        List<RoleVO> roleVOList = RoleVOFactory.createRoleVOListRolePOList(rolePOList);
         model.addAttribute("depts", deptVOList);
         model.addAttribute("positions", positionVOList);
         model.addAttribute("roles", roleVOList);
@@ -227,9 +227,9 @@ public class UserController {
                                @RequestParam("roleId") Long roleId,
                                @RequestParam(value = "isBackPassword", required = false) boolean isBackPassword,
                                Model model) throws PinyinException {
-        DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(deptId);//部门信息
+        DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(deptId);//部门信息
         userVO.setFatherId(deptPO.getDeptmanager());//设置用户领导
-        UserPO userPO = UserFactoryVO.createUserPO(userVO);
+        UserPO userPO = UserVOFactory.createUserPOByUserVO(userVO);
         if (userVO.getUserId() == null) {//新增
             String pinyin = PinyinHelper.convertToPinyinString(userVO.getUserName(), "", PinyinFormat.WITHOUT_TONE);//汉字转拼音
             userPOServiceV2.insertNewUserPO(userPO, deptPO, roleId, positionId, pinyin);//插入新用户

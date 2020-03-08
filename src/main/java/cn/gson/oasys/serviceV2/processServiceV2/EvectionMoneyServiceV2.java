@@ -4,7 +4,7 @@ import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.EvectionMoneyPOMapper;
 import cn.gson.oasys.mappers.StayPOMapper;
 import cn.gson.oasys.mappers.TrafficPOMapper;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.noteV2;
 
 import cn.gson.oasys.mappers.ReceiverNotePOMapper;
-import cn.gson.oasys.model.po.ReceiverNotePO;
-import cn.gson.oasys.model.po.ReceiverNotePOExample;
+import cn.gson.oasys.modelV2.po.ReceiverNotePO;
+import cn.gson.oasys.modelV2.po.ReceiverNotePOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

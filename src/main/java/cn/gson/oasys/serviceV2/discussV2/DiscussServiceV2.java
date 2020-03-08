@@ -2,9 +2,9 @@ package cn.gson.oasys.serviceV2.discussV2;
 
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.model.bo.PageBO;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.userVO2.UserVO;
+import cn.gson.oasys.modelV2.bo.PageBO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -22,7 +22,7 @@ public class DiscussServiceV2 {
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
     private ReplyListPOServiceV2 replyListPOServiceV2;
     @Resource
@@ -86,7 +86,7 @@ public class DiscussServiceV2 {
         for (DiscussListPO discussListPO : discussListPOS) {
             Map<String, Object> result = new HashMap<>();
             result.put("id", discussListPO.getDiscussId());//讨论表ID
-            String typeName = typeServiceV2.getTypePOByTypeId(discussListPO.getTypeId()).getTypeName();//讨论表类型名
+            String typeName = typePOServiceV2.getTypePOByTypeId(discussListPO.getTypeId()).getTypeName();//讨论表类型名
             result.put("typeName", typeName);
             String userName = userPOServiceV2.getUserPOByUserId(discussListPO.getDiscussUserId()).getUserName();//讨论的归属用户名
             result.put("userName", userName);
@@ -101,7 +101,7 @@ public class DiscussServiceV2 {
             result.put("title", discussListPO.getTitle());//讨论标题
             result.put("createTime", discussListPO.getCreateTime());// 讨论时间
             result.put("visitNum", discussListPO.getVisitNum());//此讨论的访问量
-            String typeColor = typeServiceV2.getTypePOByTypeId(discussListPO.getTypeId()).getTypeColor();
+            String typeColor = typePOServiceV2.getTypePOByTypeId(discussListPO.getTypeId()).getTypeColor();
             result.put("typecolor", typeColor);
             mapList.add(result);
         }

@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.RegularPO;
-import cn.gson.oasys.model.po.RegularPOExample.Criteria;
-import cn.gson.oasys.model.po.RegularPOExample.Criterion;
-import cn.gson.oasys.model.po.RegularPOExample;
+import cn.gson.oasys.modelV2.po.RegularPO;
+import cn.gson.oasys.modelV2.po.RegularPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.RegularPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.RegularPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

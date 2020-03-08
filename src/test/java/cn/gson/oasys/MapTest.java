@@ -1,7 +1,7 @@
 package cn.gson.oasys;
 
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.modelV2.po.UserPO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

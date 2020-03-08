@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.ResignPO;
-import cn.gson.oasys.model.po.ResignPOExample.Criteria;
-import cn.gson.oasys.model.po.ResignPOExample.Criterion;
-import cn.gson.oasys.model.po.ResignPOExample;
+import cn.gson.oasys.modelV2.po.ResignPO;
+import cn.gson.oasys.modelV2.po.ResignPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.ResignPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.ResignPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

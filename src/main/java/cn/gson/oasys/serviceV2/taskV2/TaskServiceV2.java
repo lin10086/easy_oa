@@ -6,8 +6,8 @@ import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.TaskListPOMapper;
 import cn.gson.oasys.mappers.TaskUserPOMapper;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.taskVO2.TaskListVO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.taskVO2.TaskListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.util.StringUtil;
 import org.springframework.stereotype.Service;
@@ -30,11 +30,11 @@ public class TaskServiceV2 {
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
 
     /**
      * 根据用户找任务列表及各种排序
@@ -90,10 +90,10 @@ public class TaskServiceV2 {
         List<Map<String, Object>> mapList = new ArrayList<>();
         for (TaskListPO taskListPO : taskListPOList) {
             Map<String, Object> map = new HashMap<>();
-            DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(taskListPO.getStatusId().longValue());
+            DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(taskListPO.getStatusId().longValue());
             map.put("taskid", taskListPO.getTaskId());//任务表ID
-            map.put("typename", typeServiceV2.getTypePOByTypeId(taskListPO.getTypeId()).getTypeName());//类型名
+            map.put("typename", typePOServiceV2.getTypePOByTypeId(taskListPO.getTypeId()).getTypeName());//类型名
             map.put("statusname", statusPO.getStatusName());//状态名
             map.put("statuscolor", statusPO.getStatusColor());//状态颜色
             map.put("title", taskListPO.getTitle());//任务标题
@@ -192,8 +192,8 @@ public class TaskServiceV2 {
         StatusPO statusPO = null;
         UserPO userPO = null;
         if (title != null) {
-            typePO = typeServiceV2.getTypePOByTypeModelAndTypeName("aoa_task_list", title);
-            statusPO = statusServiceV2.getStatusPOByTypeModelAndStatusName("aoa_task_list", title);
+            typePO = typePOServiceV2.getTypePOByTypeModelAndTypeName("aoa_task_list", title);
+            statusPO = statusPOServiceV2.getStatusPOByTypeModelAndStatusName("aoa_task_list", title);
             userPO = userPOServiceV2.getUserPOByUsername(title);
         }
         if (StringUtil.isEmpty(title)) {
@@ -230,11 +230,11 @@ public class TaskServiceV2 {
                 Long taskId = taskListPO.getTaskId();// 查询任务id
                 Long statusId = taskUserServiceV2.getStatusIdByUserIdAndTaskListId(userId, taskId);// 查询接收人的任务状态id
                 UserPO pushUserPO = userPOServiceV2.getUserPOByUserId(taskListPO.getTaskPushUserId());// 查询发布人
-                String deptName = deptServiceV2.getDeptPOByDeptId(pushUserPO.getDeptId()).getDeptName();//发布人的部门名
+                String deptName = deptPOServiceV2.getDeptPOByDeptId(pushUserPO.getDeptId()).getDeptName();//发布人的部门名
                 result.put("taskid", taskId);//任务ID
-                result.put("typename", typeServiceV2.getTypePOByTypeId(taskListPO.getTypeId()).getTypeName());//类型名
-                result.put("statusname", statusServiceV2.getStatusPOByStatusId(statusId).getStatusName());//状态名
-                result.put("statuscolor", statusServiceV2.getStatusPOByStatusId(statusId).getStatusColor());//状态颜色
+                result.put("typename", typePOServiceV2.getTypePOByTypeId(taskListPO.getTypeId()).getTypeName());//类型名
+                result.put("statusname", statusPOServiceV2.getStatusPOByStatusId(statusId).getStatusName());//状态名
+                result.put("statuscolor", statusPOServiceV2.getStatusPOByStatusId(statusId).getStatusColor());//状态颜色
                 result.put("title", taskListPO.getTitle());//任务标题
                 result.put("publishtime", new Timestamp(taskListPO.getPublishTime().getTime()));//任务发布时间
                 result.put("zhiding", taskListPO.getIsTop() == 0 ? false : true);//是否置顶

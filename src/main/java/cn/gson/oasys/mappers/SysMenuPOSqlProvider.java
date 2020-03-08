@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.SysMenuPO;
-import cn.gson.oasys.model.po.SysMenuPOExample.Criteria;
-import cn.gson.oasys.model.po.SysMenuPOExample.Criterion;
-import cn.gson.oasys.model.po.SysMenuPOExample;
+import cn.gson.oasys.modelV2.po.SysMenuPO;
+import cn.gson.oasys.modelV2.po.SysMenuPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.SysMenuPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.SysMenuPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

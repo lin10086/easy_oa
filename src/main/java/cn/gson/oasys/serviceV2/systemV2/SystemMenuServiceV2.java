@@ -2,10 +2,10 @@ package cn.gson.oasys.serviceV2.systemV2;
 
 import cn.gson.oasys.serviceV2.rolemanage.RolePowerListServiceV2;
 import cn.gson.oasys.mappers.SysMenuPOMapper;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.systemmenuVO2.SystemMenuListFactoryVO;
-import cn.gson.oasys.vo.roleVO2.RolePowerMenuVO;
-import cn.gson.oasys.vo.systemmenuVO2.SystemMenuVO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.systemmenuVO2.SystemMenuListVOFactory;
+import cn.gson.oasys.voandfactory.roleVO2.RolePowerMenuVO;
+import cn.gson.oasys.voandfactory.systemmenuVO2.SystemMenuVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -88,7 +88,7 @@ public class SystemMenuServiceV2 {
         sysMenuPOExample.createCriteria().andParentIdEqualTo(parentId);//parentId是0就是父级菜单
         sysMenuPOExample.setOrderByClause("sort_id ASC");
         List<SysMenuPO> oneSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
-        List<SystemMenuVO> oneSysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(oneSysMenuPOListAll);
+        List<SystemMenuVO> oneSysMenuVOListAll = SystemMenuListVOFactory.createSystemMenuVOListBySysMenuPOList(oneSysMenuPOListAll);
         return oneSysMenuVOListAll;
     }
 
@@ -100,7 +100,7 @@ public class SystemMenuServiceV2 {
         sysMenuPOExample.createCriteria().andParentIdNotEqualTo(parentId);//parentId不是0就是父级菜单
         sysMenuPOExample.setOrderByClause("sort_id ASC");
         List<SysMenuPO> twoSysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
-        List<SystemMenuVO> twoSysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(twoSysMenuPOListAll);
+        List<SystemMenuVO> twoSysMenuVOListAll = SystemMenuListVOFactory.createSystemMenuVOListBySysMenuPOList(twoSysMenuPOListAll);
         return twoSysMenuVOListAll;
     }
 
@@ -114,7 +114,7 @@ public class SystemMenuServiceV2 {
         SysMenuPOExample sysMenuPOExample = new SysMenuPOExample();
         sysMenuPOExample.createCriteria().andMenuNameLike("%" + name + "%");
         List<SysMenuPO> sysMenuPOListAll = sysMenuPOMapper.selectByExample(sysMenuPOExample);
-        List<SystemMenuVO> sysMenuVOListAll = SystemMenuListFactoryVO.createSystemMenuVOList(sysMenuPOListAll);
+        List<SystemMenuVO> sysMenuVOListAll = SystemMenuListVOFactory.createSystemMenuVOListBySysMenuPOList(sysMenuPOListAll);
         return sysMenuVOListAll;
     }
 

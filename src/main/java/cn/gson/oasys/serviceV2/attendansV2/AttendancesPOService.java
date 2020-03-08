@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.attendansV2;
 
 import cn.gson.oasys.mappers.AttendsPOMapper;
-import cn.gson.oasys.model.po.AttendsPO;
-import cn.gson.oasys.model.po.AttendsPOExample;
+import cn.gson.oasys.modelV2.po.AttendsPO;
+import cn.gson.oasys.modelV2.po.AttendsPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

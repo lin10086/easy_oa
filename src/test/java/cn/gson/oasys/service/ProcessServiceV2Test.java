@@ -5,8 +5,8 @@ import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.ProcessListPOMapper;
 import cn.gson.oasys.mappers.ReviewedPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.processVO2.ProcessAuditVO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.processVO2.ProcessAuditVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class ProcessServiceV2Test {
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
     private UserPOMapper userPOMapper;
 

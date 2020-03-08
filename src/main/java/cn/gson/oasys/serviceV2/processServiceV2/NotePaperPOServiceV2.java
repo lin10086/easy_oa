@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.processServiceV2;
 
 import cn.gson.oasys.mappers.NotePaperPOMapper;
-import cn.gson.oasys.model.po.NotePaperPO;
-import cn.gson.oasys.model.po.NotePaperPOExample;
+import cn.gson.oasys.modelV2.po.NotePaperPO;
+import cn.gson.oasys.modelV2.po.NotePaperPOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

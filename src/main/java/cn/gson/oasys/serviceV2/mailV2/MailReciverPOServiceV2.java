@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.mailV2;
 
 import cn.gson.oasys.mappers.MailReciverPOMapper;
-import cn.gson.oasys.model.po.MailReciverPO;
-import cn.gson.oasys.model.po.MailReciverPOExample;
+import cn.gson.oasys.modelV2.po.MailReciverPO;
+import cn.gson.oasys.modelV2.po.MailReciverPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

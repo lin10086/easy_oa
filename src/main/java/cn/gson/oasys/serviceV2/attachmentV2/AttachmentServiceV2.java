@@ -1,7 +1,7 @@
 package cn.gson.oasys.serviceV2.attachmentV2;
 
 import cn.gson.oasys.mappers.AttachmentListPOMapper;
-import cn.gson.oasys.model.po.AttachmentListPO;
+import cn.gson.oasys.modelV2.po.AttachmentListPO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

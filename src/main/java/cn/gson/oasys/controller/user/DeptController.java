@@ -12,15 +12,15 @@ import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.PositionPOMapper;
-import cn.gson.oasys.model.po.DeptPO;
-import cn.gson.oasys.model.po.PositionPO;
-import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.deptVO2.DeptVO;
-import cn.gson.oasys.vo.positionVO2.PositionVO;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
-import cn.gson.oasys.vo.planVO2.PositionVOFactory;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
+import cn.gson.oasys.modelV2.po.DeptPO;
+import cn.gson.oasys.modelV2.po.PositionPO;
+import cn.gson.oasys.modelV2.po.UserPO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVOFactory;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,9 +38,9 @@ public class DeptController {
     @Resource
     private PositionPOMapper positionPOMapper;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
-    private PositionPOServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionPOServiceV2;
     @Resource
     private UserPOServiceV2 userPOServiceV2;
 
@@ -53,8 +53,8 @@ public class DeptController {
     @RequestMapping("deptmanage")
     public String deptManage(Model model) {
         //所有的部门列表
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
-        List<DeptVO> deptVOList = DeptVOFactory.createDeptVOList(deptPOList);
+        List<DeptPO> deptPOList = deptPOServiceV2.getDeptPOListAll();
+        List<DeptVO> deptVOList = DeptVOFactory.createDeptVOListByDeptPOList(deptPOList);
         model.addAttribute("depts", deptVOList);
         return "user/deptmanage";
     }
@@ -69,13 +69,13 @@ public class DeptController {
     @RequestMapping("deleteDept")
     public String deleteDept(@RequestParam("deleteDeptId") Long deleteDeptId) {
 //        根据部门ID获取部门里的职位列表
-        List<PositionPO> positionPOList = positionServiceV2.getPositionPOByDeptId(deleteDeptId);
+        List<PositionPO> positionPOList = positionPOServiceV2.getPositionPOByDeptId(deleteDeptId);
         //删除部门里的职位
         for (PositionPO positionPO : positionPOList) {
             positionPOMapper.deleteByPrimaryKey(positionPO.getPositionId());
         }
 //        根据部门ID删除部门
-        deptServiceV2.deleteDeptPOByDeptId(deleteDeptId);
+        deptPOServiceV2.deleteDeptPOByDeptId(deleteDeptId);
         return "/deptmanage";
     }
 
@@ -90,7 +90,7 @@ public class DeptController {
     public String changeDept(@RequestParam(value = "deptId", required = false) Long deptId, Model model) {
         if (deptId != null) {
             //根据部门ID获取部门信息
-            DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(deptId);
+            DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(deptId);
             DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
             model.addAttribute("dept", deptVO);
         }
@@ -109,7 +109,7 @@ public class DeptController {
     @RequestMapping(value = "deptedit", method = RequestMethod.POST)
     public String addOrUpdateDept(@Valid DeptVO deptVO, @RequestParam("xg") String xg, BindingResult br, Model model) {
         if (!br.hasErrors()) {
-            Integer rows = deptServiceV2.updateOrInsertDept(deptVO);
+            Integer rows = deptPOServiceV2.updateOrInsertDept(deptVO);
             if (rows == 1) {
                 model.addAttribute("success", 1);
                 return "/deptmanage";
@@ -130,7 +130,7 @@ public class DeptController {
      */
     @RequestMapping("readDept")
     public String readDept(@RequestParam(value = "deptId") Long deptId, Model model) {
-        DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(deptId);//根据部门ID获取部门信息
+        DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(deptId);//根据部门ID获取部门信息
         DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
         //领导信息
         UserVO deptVOManage = null;
@@ -138,18 +138,18 @@ public class DeptController {
         if (deptPO.getDeptmanager() != null) {
             //获取到的用户信息没有部门，职位信息，目前只需要他的职位信息
             UserPO deptManage = userPOServiceV2.getUserBydeptManager(deptPO.getDeptmanager());//部门领导的用户信息
-            deptVOManage = UserFactoryVO.createUserVO(deptManage);
+            deptVOManage = UserVOFactory.createUserVOByUserPO(deptManage);
             model.addAttribute("deptVOManage", deptVOManage);
         }
         //获取部门列表
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
-        List<DeptVO> deptVOList = DeptVOFactory.createDeptVOList(deptPOList);
+        List<DeptPO> deptPOList = deptPOServiceV2.getDeptPOListAll();
+        List<DeptVO> deptVOList = DeptVOFactory.createDeptVOListByDeptPOList(deptPOList);
         //根据职位名name不是以经理结尾的（返回职位列表，所有部门）
-        List<PositionPO> positionPOList = positionServiceV2.getPositionPOListByNameNotLike("%经理");
+        List<PositionPO> positionPOList = positionPOServiceV2.getPositionPOListByNameNotLike("%经理");
         List<PositionVO> positionVOList = PositionVOFactory.createPositionVOListByPositionPOList(positionPOList);
         //同一个部门的用户(即用户的部门ID相同）
         List<UserPO> userPOList = userPOServiceV2.getUserByDeptId(deptId);
-        List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
+        List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(userPOList);
 
         Map<Long, DeptPO> deptMap = userPOServiceV2.userPOListIdAndDeptPO(userPOList);
         Map<Long, PositionPO> positionMap = userPOServiceV2.userPOListIdAndPositionPO(userPOList);
@@ -218,22 +218,22 @@ public class DeptController {
             //查询老领导的用户信息
             UserPO oldUserPOManage = userPOServiceV2.getUserPOByUserId(oldManageId);
             //老经理的职位信息
-            PositionPO oldPositionPO = positionServiceV2.getPositionPOByPositionId(oldUserPOManage.getPositionId());
+            PositionPO oldPositionPO = positionPOServiceV2.getPositionPOByPositionId(oldUserPOManage.getPositionId());
             //更新老经理信息（老经理ID，要去的部门ID，要去的职位ID）
             userPOServiceV2.updateUserPOInDeptIdAndPositionIdByUserId(oldManageId, changeDeptId, changePositionId);
             if (newManageId != null) {//新领导是否存在
                 //根据部门ID更新领导ID
-                deptServiceV2.updateDeptManage(deptId, newManageId);
+                deptPOServiceV2.updateDeptManage(deptId, newManageId);
                 //更新用户的职位信息
                 userPOServiceV2.updateUserPOPositionId(newManageId, oldPositionPO.getPositionId());
             } else {
-                deptServiceV2.updateDeptManage(deptId, null);
+                deptPOServiceV2.updateDeptManage(deptId, null);
             }
         } else {
 //            根据职位名name不是以经理结尾的（返回职位列表）
-            PositionPO manage = positionServiceV2.getPositionPOListByDeptIdAndNameNotLike(deptId).get(0);
+            PositionPO manage = positionPOServiceV2.getPositionPOListByDeptIdAndNameNotLike(deptId).get(0);
             //根据部门ID更新部门领导（部门ID，新领导ID）
-            deptServiceV2.updateDeptManage(deptId, newManageId);
+            deptPOServiceV2.updateDeptManage(deptId, newManageId);
             //更新用户的职位信息（新领导ID，职位ID）
             userPOServiceV2.updateUserPOPositionId(newManageId, manage.getPositionId());
         }

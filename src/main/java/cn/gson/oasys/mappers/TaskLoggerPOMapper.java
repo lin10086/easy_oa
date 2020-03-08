@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.TaskLoggerPO;
-import cn.gson.oasys.model.po.TaskLoggerPOExample;
+import cn.gson.oasys.modelV2.po.TaskLoggerPO;
+import cn.gson.oasys.modelV2.po.TaskLoggerPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

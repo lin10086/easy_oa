@@ -1,9 +1,9 @@
 package cn.gson.oasys.serviceV2.fileV2;
 
 import cn.gson.oasys.mappers.FilePathPOMapper;
-import cn.gson.oasys.model.po.FilePathPO;
-import cn.gson.oasys.model.po.FilePathPOExample;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.modelV2.po.FilePathPO;
+import cn.gson.oasys.modelV2.po.FilePathPOExample;
+import cn.gson.oasys.modelV2.po.UserPO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

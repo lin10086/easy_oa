@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.directormanageV2;
 
 import cn.gson.oasys.mappers.DirectorPOMapper;
-import cn.gson.oasys.model.po.DirectorPO;
-import cn.gson.oasys.model.po.DirectorPOExample;
+import cn.gson.oasys.modelV2.po.DirectorPO;
+import cn.gson.oasys.modelV2.po.DirectorPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

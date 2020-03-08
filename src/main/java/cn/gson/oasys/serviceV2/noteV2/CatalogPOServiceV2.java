@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.noteV2;
 
 import cn.gson.oasys.mappers.CatalogPOMapper;
-import cn.gson.oasys.model.po.CatalogPO;
-import cn.gson.oasys.model.po.CatalogPOExample;
+import cn.gson.oasys.modelV2.po.CatalogPO;
+import cn.gson.oasys.modelV2.po.CatalogPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

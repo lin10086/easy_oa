@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.BursementPO;
-import cn.gson.oasys.model.po.BursementPOExample;
+import cn.gson.oasys.modelV2.po.BursementPO;
+import cn.gson.oasys.modelV2.po.BursementPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

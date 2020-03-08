@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.ResignPO;
-import cn.gson.oasys.model.po.ResignPOExample;
+import cn.gson.oasys.modelV2.po.ResignPO;
+import cn.gson.oasys.modelV2.po.ResignPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

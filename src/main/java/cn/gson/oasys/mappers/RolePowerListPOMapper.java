@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.RolePowerListPO;
-import cn.gson.oasys.model.po.RolePowerListPOExample;
+import cn.gson.oasys.modelV2.po.RolePowerListPO;
+import cn.gson.oasys.modelV2.po.RolePowerListPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

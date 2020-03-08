@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.UserLogPO;
-import cn.gson.oasys.model.po.UserLogPOExample;
+import cn.gson.oasys.modelV2.po.UserLogPO;
+import cn.gson.oasys.modelV2.po.UserLogPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

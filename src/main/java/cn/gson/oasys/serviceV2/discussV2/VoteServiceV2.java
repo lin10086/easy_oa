@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.discussV2;
 
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.userVO2.UserVO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 

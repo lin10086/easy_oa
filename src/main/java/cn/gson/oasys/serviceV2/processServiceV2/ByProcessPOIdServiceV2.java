@@ -1,7 +1,7 @@
 package cn.gson.oasys.serviceV2.processServiceV2;
 
 import cn.gson.oasys.mappers.*;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

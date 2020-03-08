@@ -11,18 +11,17 @@ import cn.gson.oasys.model.dao.plandao.TrafficDao;
 import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
 import cn.gson.oasys.services.process.ProcessService;
-import cn.gson.oasys.vo.factoryvo.*;
-import cn.gson.oasys.vo.factoryvo.processFactory.*;
-import cn.gson.oasys.vo.processVO2.*;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
-import cn.gson.oasys.vo.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.processVO2.StayVOFactory;
+import cn.gson.oasys.voandfactory.processVO2.*;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
@@ -1036,7 +1035,7 @@ public class ProcedureController {
     //		================================================================
 
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
     private ProcessServiceV2 processServiceV2;
     @Resource
@@ -1044,7 +1043,7 @@ public class ProcedureController {
     @Resource
     private RoleServiceV2 roleServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
     private ByProcessPOIdServiceV2 byProcessPOIdServiceV2;
     @Resource
@@ -1052,7 +1051,7 @@ public class ProcedureController {
     @Resource
     private EvectionMoneyServiceV2 evectionMoneyServiceV2;
     @Resource
-    private PositionPOServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionPOServiceV2;
     @Resource
     private AttendanceServiceV2 attendanceServiceV2;
     @Resource
@@ -1091,7 +1090,7 @@ public class ProcedureController {
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             @RequestParam(value = "size", defaultValue = "10") int size) {
         //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
-        List<TypePO> reimbursementTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_bursement");
+        List<TypePO> reimbursementTypePOList = typePOServiceV2.getTypePOByTypeModel("aoa_bursement");
         model.addAttribute("reimbursementTypePOList", reimbursementTypePOList);//报销方式
 
         //查找费用科目生成树(1L报销科目）(parentId=1L是主目录）
@@ -1119,7 +1118,7 @@ public class ProcedureController {
         UserPO applyUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据申请人ID获取申请人信息
         UserPO auditUserPO = userPOServiceV2.getUserPOByUsername(reimbursementVO.getAuditName());//根据审核人名获取审核人信息
         UserPO testifyUserPO = userPOServiceV2.getUserPOByUsername(reimbursementVO.getTestifyName());//根据证明人名获取证明人信息
-        UserVO testifyUserVO = UserFactoryVO.createUserVO(testifyUserPO);
+        UserVO testifyUserVO = UserVOFactory.createUserVOByUserPO(testifyUserPO);
         Integer allinvoice = 0;//票据总数
         Double allmoney = 0.0;//总计金额
         Long applyUserRoleId = applyUserPO.getRoleId();//申请人的角色ID
@@ -1196,14 +1195,14 @@ public class ProcedureController {
             for (TrafficVO trafficVO : trafficVOList) {
                 allmoney += trafficVO.getTrafficMoney();
                 UserPO u = userPOServiceV2.getUserPOByUsername(trafficVO.getUsername());// 出差人员
-                trafficVO.setUserVO(UserFactoryVO.createUserVO(u));
+                trafficVO.setUserVO(UserVOFactory.createUserVOByUserPO(u));
                 trafficVO.setEvectionMoneyVO(eve);
             }
             List<StayVO> stayVOList = eve.getStayVOList();//住宿申请表
             for (StayVO stayVO : stayVOList) {
                 allmoney += stayVO.getStayMoney() * stayVO.getDay();
                 UserPO u = userPOServiceV2.getUserPOByUsername(stayVO.getUsername());//住宿人员名
-                stayVO.setUserVO(UserFactoryVO.createUserVO(u));
+                stayVO.setUserVO(UserVOFactory.createUserVOByUserPO(u));
             }
             eve.setMoney(allmoney);
 
@@ -1244,7 +1243,7 @@ public class ProcedureController {
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
         //根据类型模板找出出差的类型列表（28销售拜访，29售前支持，30项目支持，31客服外出，32其他）
-        List<TypePO> evectionTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_evection");
+        List<TypePO> evectionTypePOList = typePOServiceV2.getTypePOByTypeModel("aoa_evection");
         model.addAttribute("evectionTypePOList", evectionTypePOList);// 出差类型
         //设置model还未封装
         processServiceV2.setModel(model, userId, page, size);
@@ -1294,7 +1293,7 @@ public class ProcedureController {
                            @RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "10") int size) {
         //根据类型模板找出加班的类型列表（33，34，35，36）
-        List<TypePO> overtimeTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_overtime");
+        List<TypePO> overtimeTypePOList = typePOServiceV2.getTypePOByTypeModel("aoa_overtime");
         model.addAttribute("overtimeTypePOList", overtimeTypePOList);//加班类型
         processServiceV2.setModel(model, userId, page, size);
         return "process/overtime";
@@ -1393,7 +1392,7 @@ public class ProcedureController {
                           @RequestParam(value = "page", defaultValue = "0") int page,
                           @RequestParam(value = "size", defaultValue = "10") int size) {
         //根据类型模板找出请假的类型列表（37年假，38事假，39病假，40婚假，41产假，42陪产假，43丧假）
-        List<TypePO> holidayTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_holiday");
+        List<TypePO> holidayTypePOList = typePOServiceV2.getTypePOByTypeModel("aoa_holiday");
         model.addAttribute("holidayTypePOList", holidayTypePOList);//请假类型
         processServiceV2.setModel(model, userId, page, size);
         return "process/holiday";
@@ -1423,7 +1422,7 @@ public class ProcedureController {
         Long applyUserFatherId = applyUserPO.getFatherId();//申请人的上司ID
         String val = req.getParameter("val");
         if (applyUserRoleId >= 3L && Objects.equals(applyUserFatherId, auditUserPOId)) {
-            TypePO typePO = typeServiceV2.getTypePOByTypeId(holidayVO.getTypeId());
+            TypePO typePO = typePOServiceV2.getTypePOByTypeId(holidayVO.getTypeId());
             if (holidayVO.getTypeId() == 37) {
                 if (typePO.getSortValue() < holidayVO.getLeaveDays()) {
                     model.addAttribute("error", "年假必须小于7天。");
@@ -1539,12 +1538,12 @@ public class ProcedureController {
                              @RequestParam(value = "size", defaultValue = "10") int size) {
         //根据流程主表里的用户ID找出流程主表列表
         List<ProcessListPO> processListPOList = processServiceV2.getProcessListPOListByUserId(userId, page, size);
-        List<ProcessListVO> processListVOList = ProcessListFactoryVO.createProcessListVOList(processListPOList);
+        List<ProcessListVO> processListVOList = ProcessListVOFactory.createProcessListVOSByProcessListPOS(processListPOList);
         PageInfo<ProcessListPO> pageInfo = new PageInfo<>(processListPOList);
         //23未处理,24处理中,25已批准,26未通过
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_process_list");
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_process_list");
         //22正常,23重要,24紧急
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_process_list");
         model.addAttribute("page", pageInfo);//分页信息
         model.addAttribute("processListVOList", processListVOList);//根据用户ID找出流程主表的信息
         model.addAttribute("statusPOList", statusPOList);
@@ -1582,18 +1581,18 @@ public class ProcedureController {
         model.addAttribute("map", map);
         if (("费用报销").equals(typeName)) {
             BursementPO bursementPO = byProcessPOIdServiceV2.getBursementPOByProcessPOId(processId);//根据流程主表获取费用报销表信息
-            ReimbursementVO reimbursementVO = BursementFactoryVO.createBursementVO(bursementPO);
+            ReimbursementVO reimbursementVO = ReimbursementVOFactory.createReimbursementVOByBursementPO(bursementPO);
             UserPO testifyUserPO = userPOServiceV2.getUserPOByUserId(bursementPO.getUserName());//证明人
-            UserVO proveUserVO = UserFactoryVO.createUserVO(testifyUserPO);
+            UserVO proveUserVO = UserVOFactory.createUserVOByUserPO(testifyUserPO);
             //费用报销表里面的报销人员是否为null
             if (!Objects.isNull(bursementPO.getOperationName())) {
                 bursementUserPO = userPOServiceV2.getUserPOByUserId(bursementPO.getOperationName());//费用报销人
             }
             //根据报销表ID找报销明细表
             List<DetailsbursePO> detailsbursePOList = detailsburseServiceV2.getDetailsBursePOListByBusementId(bursementPO.getBursementId());
-            List<DetailsReimburseVO> detailsBurseVOList = DetailsBurseFactoryVO.createDetailsBurseVOList(detailsbursePOList);
+            List<DetailsReimburseVO> detailsBurseVOList = DetailsReimburseVOFactory.createDetailsReimburseVOListByDetailsbursePOList(detailsbursePOList);
             // 根据费用报销表的类型ID找类型名
-            String reimbursementTypeName = typeServiceV2.getTypePOByTypeId(bursementPO.getTypeId()).getTypeName();
+            String reimbursementTypeName = typePOServiceV2.getTypePOByTypeId(bursementPO.getTypeId()).getTypeName();
             //获取报销表的总钱数
             String money = ProcessServiceV2.numbertocn(bursementPO.getAllMoney());
             model.addAttribute("testifyUserPO", testifyUserPO);//证明人
@@ -1611,18 +1610,18 @@ public class ProcedureController {
 
             String amountMoney = ProcessServiceV2.numbertocn(evectionMoneyPO.getMoney());//总费用大写
             List<StayPO> stayPOList = evectionMoneyServiceV2.getStayPOList(evectionMoneyPO.getEvectionmoneyId());//根据住宿表里的出差报销表的ID找住宿列表
-            List<StayVO> stayVOList = StayVOFactory.createStayVOList(stayPOList);
+            List<StayVO> stayVOList = StayVOFactory.createStayVOListByStayPOList(stayPOList);
             //根据stay表里的用户Id找用户名
             for (StayVO stayVO : stayVOList) {
-                stayVO.setUserVO(UserFactoryVO.createUserVO(evectionMoneyServiceV2.userPOByStayId(stayVO.getStayId())));
+                stayVO.setUserVO(UserVOFactory.createUserVOByUserPO(evectionMoneyServiceV2.userPOByStayId(stayVO.getStayId())));
                 stayMoneyAll += stayVO.getStayMoney() * stayVO.getDay();
             }
 
             List<TrafficPO> trafficPOList = evectionMoneyServiceV2.getTrafficPOList(evectionMoneyPO.getEvectionmoneyId());//根据交通表里的出差报销表的ID找交通列表
-            List<TrafficVO> trafficVOList = TrafficVOFactory.createTrafficVOList(trafficPOList);
+            List<TrafficVO> trafficVOList = TrafficVOFactory.createTrafficVOListByTrafficPOList(trafficPOList);
             for (TrafficVO trafficVO : trafficVOList) {
                 trafficMoneyAll += trafficVO.getTrafficMoney();
-                trafficVO.setUserVO(UserFactoryVO.createUserVO(evectionMoneyServiceV2.userPOByTrafficId(trafficVO.getTrafficId())));
+                trafficVO.setUserVO(UserVOFactory.createUserVOByUserPO(evectionMoneyServiceV2.userPOByTrafficId(trafficVO.getTrafficId())));
             }
             model.addAttribute("stayMoneyAll", stayMoneyAll);//住宿总费用
             model.addAttribute("trafficMoneyAll", trafficMoneyAll);//交通费总费用
@@ -1638,27 +1637,27 @@ public class ProcedureController {
             return "process/eveserach";
         } else if (("加班申请").equals(typeName)) {
             OvertimePO overtimePO = byProcessPOIdServiceV2.getOvertimePOByProcessPOId(processId);
-            OverTimeVO overTimeVO = OverTimeVOFactory.createOverTimeVO(overtimePO);
-            String overTimeType = typeServiceV2.getTypeNameByTypeId(overtimePO.getTypeId());
+            OverTimeVO overTimeVO = OverTimeVOFactory.createOverTimeVOByOvertimePO(overtimePO);
+            String overTimeType = typePOServiceV2.getTypeNameByTypeId(overtimePO.getTypeId());
             model.addAttribute("eve", overTimeVO);
             model.addAttribute("overTimeType", overTimeType);//加班类型名
             return "process/overserch";
         } else if (("请假申请").equals(typeName)) {
             HolidayPO holidayPO = byProcessPOIdServiceV2.getHolidayPOByProcessPOId(processId);
-            HolidayVO holidayVO = HolidayVOFactory.createHolidayVO(holidayPO);
-            String type = typeServiceV2.getTypeNameByTypeId(holidayPO.getTypeId());
+            HolidayVO holidayVO = HolidayVOFactory.createHolidayVOByHolidayPO(holidayPO);
+            String type = typePOServiceV2.getTypeNameByTypeId(holidayPO.getTypeId());
             model.addAttribute("eve", holidayVO);
             model.addAttribute("type", type);
             return "process/holiserch";
         } else if (("转正申请").equals(typeName)) {
             RegularPO regularPO = byProcessPOIdServiceV2.getRegularPOByProcessPOId(processId);
-            RegularVO regularVO = RegularVOFactory.createRegularVO(regularPO);
+            RegularVO regularVO = RegularVOFactory.createRegularVOByRegularPO(regularPO);
             model.addAttribute("eve", regularVO);
             return "process/reguserch";
         } else if (("离职申请").equals(typeName)) {
             ResignPO resignPO = byProcessPOIdServiceV2.getResignPOByProcessPOId(processId);
             String handUser = userPOServiceV2.getUsernameByUserId(resignPO.getHandUser());
-            ResignVO resignVO = ResignVOFactory.createResignVO(resignPO);
+            ResignVO resignVO = ResignVOFactory.createResignVOByResignPO(resignPO);
             resignVO.setHandUser(handUser);
             model.addAttribute("eve", resignVO);
             return "process/resserch";

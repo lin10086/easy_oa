@@ -13,21 +13,21 @@ import cn.gson.oasys.serviceV2.directormanageV2.DirectorManageServiceAllV2;
 import cn.gson.oasys.serviceV2.directormanageV2.DirectorPOServiceV2;
 import cn.gson.oasys.serviceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.serviceV2.directormanageV2.DirectorUserPOServiceV2;
-import cn.gson.oasys.model.bo.PageBO;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.bo.PageBO;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
-import cn.gson.oasys.vo.deptVO2.DeptVO;
-import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
-import cn.gson.oasys.vo.positionVO2.PositionVO;
-import cn.gson.oasys.vo.roleVO2.RoleVO;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.addressVO2.DirectorUserVO;
-import cn.gson.oasys.vo.addressVO2.DirectorUserVOFactory;
-import cn.gson.oasys.vo.addressVO2.DirectorVO;
-import cn.gson.oasys.vo.addressVO2.DirectoryVOFactory;
-import cn.gson.oasys.vo.planVO2.PositionVOFactory;
-import cn.gson.oasys.vo.roleVO2.RoleVOFactory;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVOFactory;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVO;
+import cn.gson.oasys.voandfactory.roleVO2.RoleVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.addressVO2.DirectorUserVO;
+import cn.gson.oasys.voandfactory.addressVO2.DirectorUserVOFactory;
+import cn.gson.oasys.voandfactory.addressVO2.DirectorVO;
+import cn.gson.oasys.voandfactory.addressVO2.DirectoryVOFactory;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVOFactory;
+import cn.gson.oasys.voandfactory.roleVO2.RoleVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -626,7 +626,7 @@ public class AddrController {
      * @param size
      */
     public void getSubUserVOList(Model model, int page, int size, List<UserPO> userPOListALl) {
-        List<UserVO> userVOListALL = UserFactoryVO.createUserVOList(userPOListALl);
+        List<UserVO> userVOListALL = UserVOFactory.createUserVOListByUserPOList(userPOListALl);
         for (UserPO userPO : userPOListALl) {
             for (UserVO userVO : userVOListALL) {
                 if (userPO.getUserId().equals(userVO.getUserId())) {
@@ -656,10 +656,10 @@ public class AddrController {
     @RequestMapping("inmessshow")
     public String inMessShow(Model model, @RequestParam(value = "userId") Long userId) {
         UserPO userPO = UserPOServiceV2.getUserPOByUserId(userId);//登录用户信息
-        UserVO userVO = UserFactoryVO.createUserVO(userPO);
+        UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
         PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()));
         DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()));
-        RoleVO roleVO = RoleVOFactory.createRoleVO(roleServiceV2.getRoleByRoleId(userPO.getRoleId()));
+        RoleVO roleVO = RoleVOFactory.createRoleVOByRolePO(roleServiceV2.getRoleByRoleId(userPO.getRoleId()));
         userVO.setPositionVO(positionVO);
         userVO.setDeptVO(deptVO);
         userVO.setRoleVO(roleVO);
@@ -878,7 +878,7 @@ public class AddrController {
     public String modalShare(@RequestParam(value = "page", defaultValue = "1") int page, Model model,
                              @RequestParam(value = "size", defaultValue = "10") int size) {
         List<UserPO> userPOList = UserPOServiceV2.getUserAll();
-        List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
+        List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(userPOList);
         for (UserPO userPO : userPOList) {
             for (UserVO userVO : userVOList) {
                 if (userPO.getUserId().equals(userVO.getUserId())) {
@@ -972,7 +972,7 @@ public class AddrController {
             end = userPOList.size();
         }
         List<UserPO> subUserPOList = userPOList.subList(start, end);//用户的页面信息
-        List<UserVO> subUserVOList = UserFactoryVO.createUserVOList(subUserPOList);
+        List<UserVO> subUserVOList = UserVOFactory.createUserVOListByUserPOList(subUserPOList);
         for (UserPO userPO : subUserPOList) {
             for (UserVO userVO : subUserVOList) {
                 if (userPO.getUserId().equals(userVO.getUserId())) {
@@ -1101,7 +1101,7 @@ public class AddrController {
             end = directorUsersPOList.size();
         }
         List<DirectorUsersPO> subDiretorUserPOList = directorUsersPOList.subList(start, end);
-        List<DirectorUserVO> subDirectorUserVOList = DirectorUserVOFactory.createDirectorUserVOSByDirectorUserPOS(subDiretorUserPOList);
+        List<DirectorUserVO> subDirectorUserVOList = DirectorUserVOFactory.createDirectorUserVOListByDirectorUserPOList(subDiretorUserPOList);
         for (DirectorUsersPO directorUsersPO : subDiretorUserPOList) {
             for (DirectorUserVO directorUserVO : subDirectorUserVOList) {
                 if (directorUsersPO.getDirectorUsersId().equals(directorUserVO.getDirectorUserId())) {

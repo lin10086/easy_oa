@@ -3,8 +3,8 @@ package cn.gson.oasys.serviceV2.noteV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.mappers.NoteListPOMapper;
-import cn.gson.oasys.model.po.NoteListPO;
-import cn.gson.oasys.model.po.NoteListPOExample;
+import cn.gson.oasys.modelV2.po.NoteListPO;
+import cn.gson.oasys.modelV2.po.NoteListPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,9 +15,9 @@ public class NoteListPOServiceV2 {
     @Resource
     private NoteListPOMapper noteListPOMapper;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
 
 
     /**
@@ -435,8 +435,8 @@ public class NoteListPOServiceV2 {
      * @return
      */
     public List<NoteListPO> getNoteListPOSByNoteIdInAndStatusInOrTypeId(String baseKey, List<Long> noteIds) {
-        List<Long> statusIds = statusServiceV2.getStatusPOIdListByStatusNameLike(baseKey);
-        List<Long> typeIds = typeServiceV2.getTypePOIdByTypeNameLike(baseKey);
+        List<Long> statusIds = statusPOServiceV2.getStatusPOIdListByStatusNameLike(baseKey);
+        List<Long> typeIds = typePOServiceV2.getTypePOIdByTypeNameLike(baseKey);
         NoteListPOExample noteListPOExample = new NoteListPOExample();
         if (typeIds.size() > 0) {
             noteListPOExample.createCriteria().andNoteIdIn(noteIds).andTypeIdIn(typeIds);
@@ -457,8 +457,8 @@ public class NoteListPOServiceV2 {
      * @return
      */
     public List<NoteListPO> getNoteListPOSByNoteIdInAndCatalogIdAndStatusInOrTypeId(String baseKey, List<Long> noteIds, Long catalogId) {
-        List<Long> statusIds = statusServiceV2.getStatusPOIdListByStatusNameLike(baseKey);
-        List<Long> typeIds = typeServiceV2.getTypePOIdByTypeNameLike(baseKey);
+        List<Long> statusIds = statusPOServiceV2.getStatusPOIdListByStatusNameLike(baseKey);
+        List<Long> typeIds = typePOServiceV2.getTypePOIdByTypeNameLike(baseKey);
         NoteListPOExample noteListPOExample = new NoteListPOExample();
         if (typeIds.size() > 0) {
             noteListPOExample.createCriteria().andNoteIdIn(noteIds).andTypeIdIn(typeIds).andCatalogIdEqualTo(catalogId);

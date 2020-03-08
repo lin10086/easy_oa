@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.LoveReplyUserPO;
-import cn.gson.oasys.model.po.LoveReplyUserPOExample;
+import cn.gson.oasys.modelV2.po.LoveReplyUserPO;
+import cn.gson.oasys.modelV2.po.LoveReplyUserPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.DirectorUsersPO;
-import cn.gson.oasys.model.po.DirectorUsersPOExample.Criteria;
-import cn.gson.oasys.model.po.DirectorUsersPOExample.Criterion;
-import cn.gson.oasys.model.po.DirectorUsersPOExample;
+import cn.gson.oasys.modelV2.po.DirectorUsersPO;
+import cn.gson.oasys.modelV2.po.DirectorUsersPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.DirectorUsersPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.DirectorUsersPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

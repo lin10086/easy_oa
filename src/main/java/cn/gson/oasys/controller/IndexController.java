@@ -25,9 +25,9 @@ import cn.gson.oasys.serviceV2.scheduleV2.ScheduleServiceV2;
 import cn.gson.oasys.serviceV2.systemV2.SystemMenuServiceV2;
 import cn.gson.oasys.serviceV2.taskV2.TaskUserServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserLogServiceV2;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.scheduleVO2.ScheduleListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -438,7 +438,7 @@ public class IndexController {
     @Resource
     private ProcessServiceV2 processServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
     private TypePOServiceV2 typePOServiceV2;
     @Resource
@@ -481,7 +481,7 @@ public class IndexController {
         List<PlanListPO> planListPOS = planListServiceV2.getPlanListPOSByPlanUserIdAndCreateTimeDESCAndEndTimeDESCAndFrontTwo(userId);
         model.addAttribute("planList", planListPOS);
         List<TypePO> planTypePOList = typePOServiceV2.getTypePOByTypeModel("aoa_plan_list");//计划的类型集合
-        List<StatusPO> planStatusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_plan_list");//计划的状态集合
+        List<StatusPO> planStatusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_plan_list");//计划的状态集合
         model.addAttribute("ptypelist", planTypePOList);
         model.addAttribute("pstatuslist", planStatusPOList);
 
@@ -495,7 +495,7 @@ public class IndexController {
         //列举几个流程记录( 根据流程申请人找流程并根据流程申请时间降序排列，只取前三条)
         List<ProcessListPO> processListPOS = processServiceV2.getProcessListPOSByProcessUserIdAndApplyTimeDESCAndFrontThree(userId);
         model.addAttribute("processlist", processListPOS);
-        List<StatusPO> processStatusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_process_list");//流程的状态集合
+        List<StatusPO> processStatusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_process_list");//流程的状态集合
         model.addAttribute("prostatuslist", processStatusPOList);
         return "systemcontrol/control";
     }

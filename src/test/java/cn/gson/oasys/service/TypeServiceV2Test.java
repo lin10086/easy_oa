@@ -1,7 +1,7 @@
 package cn.gson.oasys.service;
 
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
-import cn.gson.oasys.model.po.TypePO;
+import cn.gson.oasys.modelV2.po.TypePO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,11 +18,11 @@ import java.util.Map;
 @SpringBootTest
 public class TypeServiceV2Test {
     @Resource
-    TypePOServiceV2 typeServiceV2;
+    TypePOServiceV2 typePOServiceV2;
 
     @Test
     public void getTypeIdAndTypeNameByTypePoList() {
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_evection");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_evection");
         Map<Long, String> map = new HashMap<>();
         for (TypePO typePO : typePOList) {
             map.put(typePO.getTypeId(), typePO.getTypeName());

@@ -2,9 +2,9 @@ package cn.gson.oasys.serviceV2.scheduleV2;
 
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.SchedulePOMapper;
-import cn.gson.oasys.model.po.SchedulePO;
-import cn.gson.oasys.model.po.SchedulePOExample;
-import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
+import cn.gson.oasys.modelV2.po.SchedulePO;
+import cn.gson.oasys.modelV2.po.SchedulePOExample;
+import cn.gson.oasys.voandfactory.scheduleVO2.ScheduleListVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

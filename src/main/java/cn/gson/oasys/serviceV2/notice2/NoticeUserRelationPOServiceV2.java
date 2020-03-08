@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.notice2;
 
 import cn.gson.oasys.mappers.NoticeUserRelationPOMapper;
-import cn.gson.oasys.model.po.NoticeUserRelationPO;
-import cn.gson.oasys.model.po.NoticeUserRelationPOExample;
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPO;
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -1,8 +1,8 @@
 package cn.gson.oasys;
 
 import cn.gson.oasys.mappers.ReplyListPOMapper;
-import cn.gson.oasys.model.po.ReplyListPO;
-import cn.gson.oasys.model.po.ReplyListPOExample;
+import cn.gson.oasys.modelV2.po.ReplyListPO;
+import cn.gson.oasys.modelV2.po.ReplyListPOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

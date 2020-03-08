@@ -1,9 +1,9 @@
 package cn.gson.oasys.serviceV2.scheduleV2;
 
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.model.po.SchedulePO;
-import cn.gson.oasys.vo.scheduleVO2.ScheduleListVOFactory;
-import cn.gson.oasys.vo.scheduleVO2.ScheduleListVO;
+import cn.gson.oasys.modelV2.po.SchedulePO;
+import cn.gson.oasys.voandfactory.scheduleVO2.ScheduleListVOFactory;
+import cn.gson.oasys.voandfactory.scheduleVO2.ScheduleListVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,7 +35,7 @@ public class ScheduleServiceV2 {
         }
 
 
-        List<ScheduleListVO> scheduleListVOS = ScheduleListVOFactory.createScheduleListVOList(aboutSchedulePOList);
+        List<ScheduleListVO> scheduleListVOS = ScheduleListVOFactory.createScheduleListVOListBySchedulePOList(aboutSchedulePOList);
         for (ScheduleListVO scheduleListVO : scheduleListVOS) {
             for (SchedulePO schedulePO : aboutSchedulePOList) {
                 String username = userPOServiceV2.getUserPOByUserId(schedulePO.getUserId()).getUserName();

@@ -1,8 +1,8 @@
 package cn.gson.oasys.mapper;
 
 import cn.gson.oasys.mappers.UserPOMapper;
-import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.model.po.UserPOExample;
+import cn.gson.oasys.modelV2.po.UserPO;
+import cn.gson.oasys.modelV2.po.UserPOExample;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;

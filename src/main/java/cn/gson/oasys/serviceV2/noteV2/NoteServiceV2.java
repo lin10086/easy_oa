@@ -1,7 +1,7 @@
 package cn.gson.oasys.serviceV2.noteV2;
 
-import cn.gson.oasys.model.po.NoteListPO;
-import cn.gson.oasys.model.po.ReceiverNotePO;
+import cn.gson.oasys.modelV2.po.NoteListPO;
+import cn.gson.oasys.modelV2.po.ReceiverNotePO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

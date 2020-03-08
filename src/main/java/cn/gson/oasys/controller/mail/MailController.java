@@ -18,12 +18,12 @@ import cn.gson.oasys.serviceV2.mailV2.MailReciverPOServiceV2;
 import cn.gson.oasys.serviceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
 import cn.gson.oasys.serviceV2.processServiceV2.ProcessServiceV2;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.attachmentVO2.AttachmentVOFactory;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
-import cn.gson.oasys.vo.mailVO2.MailNumberVOFactory;
-import cn.gson.oasys.vo.mailVO2.InMailListVO;
-import cn.gson.oasys.vo.mailVO2.MailNumberVO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.attachmentVO2.AttachmentVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
+import cn.gson.oasys.voandfactory.mailVO2.MailNumberVOFactory;
+import cn.gson.oasys.voandfactory.mailVO2.InMailListVO;
+import cn.gson.oasys.voandfactory.mailVO2.MailNumberVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -893,9 +893,9 @@ public class MailController {
     @Resource
     private MailServiceV2 mailServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
     private MailReciverPOServiceV2 mailReciverServiceV2;
     @Resource
@@ -935,8 +935,8 @@ public class MailController {
 
         MailNumberPO mailNumberPO = null;
         if (StringUtil.isEmpty(req.getParameter("id"))) {
-            List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_mailnumber");
-            List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_mailnumber");
+            List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_mailnumber");
+            List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_mailnumber");
             model.addAttribute("typePOList", typePOList);
             model.addAttribute("statusPOList", statusPOList);
 
@@ -958,8 +958,8 @@ public class MailController {
         } else {
             Long id = Long.parseLong(req.getParameter("id"));
             MailNumberPO mailNumberPO1 = mailNumberServiceV2.getMailNumberPOByMailNumberPOId(id);
-            model.addAttribute("typeName", typeServiceV2.getTypePOByTypeId(mailNumberPO1.getMailNumUserId()).getTypeName());
-            model.addAttribute("statusName", statusServiceV2.getStatusPOByStatusId(mailNumberPO1.getStatus()).getStatusName());
+            model.addAttribute("typeName", typePOServiceV2.getTypePOByTypeId(mailNumberPO1.getMailNumUserId()).getTypeName());
+            model.addAttribute("statusName", statusPOServiceV2.getStatusPOByStatusId(mailNumberPO1.getStatus()).getStatusName());
             model.addAttribute("mails", mailNumberPO1);
         }
         return "mail/addaccounts";
@@ -1106,7 +1106,7 @@ public class MailController {
         if (("收件箱").equals(title) || ("垃圾箱").equals(title)) {
             pagemailList = mailServiceV2.recive(page, size, userId, title);
             for (Pagemail pagemail : pagemailList) {
-                typeName = typeServiceV2.getTypePOByTypeId(pagemail.getMailType()).getTypeName();
+                typeName = typePOServiceV2.getTypePOByTypeId(pagemail.getMailType()).getTypeName();
                 if (val.equals(typeName)) {
                     pagemailList2.add(pagemail);
                 }
@@ -1115,7 +1115,7 @@ public class MailController {
         } else if (("发件箱").equals(title) || ("草稿箱").equals(title)) {
             inMailListPOList = mailServiceV2.inmail(page, size, userId, title);
             for (InMailListPO inMailListPO : inMailListPOList) {
-                typeName = typeServiceV2.getTypePOByTypeId(inMailListPO.getMailType()).getTypeName();
+                typeName = typePOServiceV2.getTypePOByTypeId(inMailListPO.getMailType()).getTypeName();
                 if (val.equals(typeName)) {
                     inMailListPOList2.add(inMailListPO);
                 }
@@ -1169,11 +1169,11 @@ public class MailController {
                 model.addAttribute("attchmentListPO", attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(inMailListPO.getMailFileId()));
                 model.addAttribute("id", "转发");
             }
-            model.addAttribute("status", statusServiceV2.getStatusPOByStatusId(inMailListPO.getMailStatusId()));
-            model.addAttribute("type", typeServiceV2.getTypePOByTypeId(inMailListPO.getMailType()));
+            model.addAttribute("status", statusPOServiceV2.getStatusPOByStatusId(inMailListPO.getMailStatusId()));
+            model.addAttribute("type", typePOServiceV2.getTypePOByTypeId(inMailListPO.getMailType()));
         } else {
-            List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
-            List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
+            List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
+            List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
             model.addAttribute("typelist", typePOList);
             model.addAttribute("statuslist", statusPOList);
             model.addAttribute("id", "新发");
@@ -1225,7 +1225,7 @@ public class MailController {
             }
 
             inMailListVO.setMailCreateTime(new Date());
-            inMailListVO.setMailUserVOId(UserFactoryVO.createUserVO(userPO));
+            inMailListVO.setMailUserVOId(UserVOFactory.createUserVOByUserPO(userPO));
             if (!inMailListVO.getInmail().equals(0L)) {
                 mailNumberPO = mailNumberServiceV2.getMailNumberPOByMailNumberPOId(inMailListVO.getInmail());
                 inMailListVO.setMailNumberId(MailNumberVOFactory.createMailNumberVOByMailNumberPO(mailNumberPO));

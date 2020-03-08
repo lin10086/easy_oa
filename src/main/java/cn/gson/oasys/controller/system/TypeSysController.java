@@ -5,8 +5,8 @@ import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.MapToList;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
-import cn.gson.oasys.model.po.TypePO;
-import cn.gson.oasys.vo.typeVO2.TypeVO;
+import cn.gson.oasys.modelV2.po.TypePO;
+import cn.gson.oasys.voandfactory.typeVO2.TypeVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -26,7 +26,7 @@ import java.util.List;
 public class TypeSysController {
 
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
 
     /**
      * 进入类型管理表格界面
@@ -36,7 +36,7 @@ public class TypeSysController {
      */
     @RequestMapping("testsystype")
     public String typeManage(HttpServletRequest req) {
-        List<TypePO> typePOList = typeServiceV2.getTypePOListAll();//获取所有类型信息
+        List<TypePO> typePOList = typePOServiceV2.getTypePOListAll();//获取所有类型信息
         req.setAttribute("typeList", typePOList);
         return "systemcontrol/typemanage";
     }
@@ -51,7 +51,7 @@ public class TypeSysController {
     public String typeEdit(HttpServletRequest req) {
         if (!StringUtils.isEmpty(req.getParameter("typeid"))) {
             Long typeId = Long.parseLong(req.getParameter("typeid"));
-            TypePO typePO = typeServiceV2.getTypePOByTypeId(typeId);
+            TypePO typePO = typePOServiceV2.getTypePOByTypeId(typeId);
             req.setAttribute("typeObj", typePO);
             HttpSession session = req.getSession();
             session.setAttribute("typeid", typeId);
@@ -92,7 +92,7 @@ public class TypeSysController {
             typePO.setTypeModel(typeVO.getTypeModel());
             typePO.setTypeColor(typeVO.getTypeColor());
             typePO.setSortValue(typeVO.getTypeSortValue());
-            typeServiceV2.insertOrUpdateTypePO(typePO);
+            typePOServiceV2.insertOrUpdateTypePO(typePO);
             req.setAttribute("success", "后台验证成功");
         }
         return "systemcontrol/typeedit";
@@ -104,7 +104,7 @@ public class TypeSysController {
     @RequestMapping("deletetype")
     public String deleteType(HttpServletRequest req) {
         Long typeId = Long.parseLong(req.getParameter("id"));
-        typeServiceV2.deleteTypePOByTypeId(typeId);
+        typePOServiceV2.deleteTypePOByTypeId(typeId);
         return "forward:/testsystype";
     }
 
@@ -119,10 +119,10 @@ public class TypeSysController {
         if (!StringUtils.isEmpty(req.getParameter("name"))) {//模糊搜索的输入值
             String name = req.getParameter("name");
 //            根据类型名和类型模型查找
-            List<TypePO> typePOList = typeServiceV2.getTypePOListByTypeNameLikeOrTypeModelLike(name);
+            List<TypePO> typePOList = typePOServiceV2.getTypePOListByTypeNameLikeOrTypeModelLike(name);
             req.setAttribute("typeList", typePOList);
         } else {
-            List<TypePO> typePOList = typeServiceV2.getTypePOListAll();//无搜索字显示全部类表信息
+            List<TypePO> typePOList = typePOServiceV2.getTypePOListAll();//无搜索字显示全部类表信息
             req.setAttribute("typeList", typePOList);
         }
         return "systemcontrol/typetable";
@@ -138,7 +138,7 @@ public class TypeSysController {
     public String lookType(HttpServletRequest req) {
         if (!StringUtils.isEmpty(req.getParameter("typeid"))) {
             Long typeId = Long.parseLong(req.getParameter("typeid"));
-            TypePO typePO = typeServiceV2.getTypePOByTypeId(typeId);
+            TypePO typePO = typePOServiceV2.getTypePOByTypeId(typeId);
             req.setAttribute("typeObj", typePO);
         }
         return "systemcontrol/looktype";

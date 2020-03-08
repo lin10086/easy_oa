@@ -3,11 +3,11 @@ package cn.gson.oasys.serviceV2.mailV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.mappers.MailNumberPOMapper;
-import cn.gson.oasys.model.po.MailNumberPO;
-import cn.gson.oasys.model.po.MailNumberPOExample;
-import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.mailVO2.MailNumberVO;
+import cn.gson.oasys.modelV2.po.MailNumberPO;
+import cn.gson.oasys.modelV2.po.MailNumberPOExample;
+import cn.gson.oasys.modelV2.po.StatusPO;
+import cn.gson.oasys.modelV2.po.UserPO;
+import cn.gson.oasys.voandfactory.mailVO2.MailNumberVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.util.StringUtil;
 import org.springframework.stereotype.Service;
@@ -22,9 +22,9 @@ public class MailNumberServiceV2 {
     @Resource
     private MailNumberPOMapper mailNumberPOMapper;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
 
     /**
      * 根据邮箱账号ID找邮箱
@@ -60,9 +60,9 @@ public class MailNumberServiceV2 {
         List<Map<String, Object>> mapList = new ArrayList<>();
         for (MailNumberPO mailNumberPO : mailNumberPOList) {
             Map<String, Object> map = new HashMap<>();
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(mailNumberPO.getStatus());
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(mailNumberPO.getStatus());
             map.put("mailNumberPOId", mailNumberPO.getMailNumberId());
-            map.put("typeName", typeServiceV2.getTypePOByTypeId(mailNumberPO.getMailType()).getTypeName());
+            map.put("typeName", typePOServiceV2.getTypePOByTypeId(mailNumberPO.getMailType()).getTypeName());
             map.put("statusName", statusPO.getStatusName());
             map.put("statusColor", statusPO.getStatusColor());
             map.put("mailNumberPOName", mailNumberPO.getMailUserName());

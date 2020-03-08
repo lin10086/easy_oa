@@ -2,10 +2,10 @@ package cn.gson.oasys.serviceV2.discussV2;
 
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.LoveReplyUserPOMapper;
-import cn.gson.oasys.model.po.LoveReplyUserPO;
-import cn.gson.oasys.model.po.LoveReplyUserPOExample;
-import cn.gson.oasys.model.po.ReplyListPO;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.modelV2.po.LoveReplyUserPO;
+import cn.gson.oasys.modelV2.po.LoveReplyUserPOExample;
+import cn.gson.oasys.modelV2.po.ReplyListPO;
+import cn.gson.oasys.modelV2.po.UserPO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

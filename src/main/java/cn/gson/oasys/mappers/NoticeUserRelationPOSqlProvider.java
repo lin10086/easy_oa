@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.NoticeUserRelationPO;
-import cn.gson.oasys.model.po.NoticeUserRelationPOExample.Criteria;
-import cn.gson.oasys.model.po.NoticeUserRelationPOExample.Criterion;
-import cn.gson.oasys.model.po.NoticeUserRelationPOExample;
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPO;
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

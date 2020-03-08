@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.fileV2;
 
 import cn.gson.oasys.mappers.FileListPOMapper;
-import cn.gson.oasys.model.po.FileListPO;
-import cn.gson.oasys.model.po.FileListPOExample;
+import cn.gson.oasys.modelV2.po.FileListPO;
+import cn.gson.oasys.modelV2.po.FileListPOExample;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 

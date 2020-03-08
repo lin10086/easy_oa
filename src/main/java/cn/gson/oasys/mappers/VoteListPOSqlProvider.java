@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.VoteListPO;
-import cn.gson.oasys.model.po.VoteListPOExample.Criteria;
-import cn.gson.oasys.model.po.VoteListPOExample.Criterion;
-import cn.gson.oasys.model.po.VoteListPOExample;
+import cn.gson.oasys.modelV2.po.VoteListPO;
+import cn.gson.oasys.modelV2.po.VoteListPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.VoteListPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.VoteListPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

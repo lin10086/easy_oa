@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import cn.gson.oasys.model.po.UserPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

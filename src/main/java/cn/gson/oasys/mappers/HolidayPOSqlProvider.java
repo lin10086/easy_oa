@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.HolidayPO;
-import cn.gson.oasys.model.po.HolidayPOExample.Criteria;
-import cn.gson.oasys.model.po.HolidayPOExample.Criterion;
-import cn.gson.oasys.model.po.HolidayPOExample;
+import cn.gson.oasys.modelV2.po.HolidayPO;
+import cn.gson.oasys.modelV2.po.HolidayPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.HolidayPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.HolidayPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

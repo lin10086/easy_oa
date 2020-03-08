@@ -1,9 +1,9 @@
 package cn.gson.oasys.serviceV2.planV2;
 
 import cn.gson.oasys.mappers.PlanListPOMapper;
-import cn.gson.oasys.model.po.PlanListPO;
-import cn.gson.oasys.model.po.PlanListPOExample;
-import cn.gson.oasys.vo.planVO2.PlanListVO;
+import cn.gson.oasys.modelV2.po.PlanListPO;
+import cn.gson.oasys.modelV2.po.PlanListPOExample;
+import cn.gson.oasys.voandfactory.planVO2.PlanListVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

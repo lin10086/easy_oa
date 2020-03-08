@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.TaskUserPO;
-import cn.gson.oasys.model.po.TaskUserPOExample.Criteria;
-import cn.gson.oasys.model.po.TaskUserPOExample.Criterion;
-import cn.gson.oasys.model.po.TaskUserPOExample;
+import cn.gson.oasys.modelV2.po.TaskUserPO;
+import cn.gson.oasys.modelV2.po.TaskUserPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.TaskUserPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.TaskUserPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

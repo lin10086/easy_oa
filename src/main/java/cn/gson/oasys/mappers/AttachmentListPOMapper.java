@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.AttachmentListPO;
-import cn.gson.oasys.model.po.AttachmentListPOExample;
+import cn.gson.oasys.modelV2.po.AttachmentListPO;
+import cn.gson.oasys.modelV2.po.AttachmentListPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

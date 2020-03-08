@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.userV2;
 
 import cn.gson.oasys.mappers.UserLogPOMapper;
-import cn.gson.oasys.model.po.UserLogPO;
-import cn.gson.oasys.model.po.UserLogPOExample;
+import cn.gson.oasys.modelV2.po.UserLogPO;
+import cn.gson.oasys.modelV2.po.UserLogPOExample;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

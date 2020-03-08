@@ -20,10 +20,10 @@ import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.scheduleV2.ScheduleListServiceV2;
 import cn.gson.oasys.serviceV2.taskV2.TaskListServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserLogServiceV2;
-import cn.gson.oasys.model.bo.PageBO;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.userVO2.UserLoginRecordVO;
-import cn.gson.oasys.vo.userVO2.UserLoginRecordVOFactory;
+import cn.gson.oasys.modelV2.bo.PageBO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.userVO2.UserLoginRecordVO;
+import cn.gson.oasys.voandfactory.userVO2.UserLoginRecordVOFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -311,7 +311,7 @@ public class UserLogController {
             end = userLoginRecordPOList.size();
         }
         List<UserLoginRecordPO> subUserLoginRecordPOS = userLoginRecordPOList.subList(start, end);//每页的用户登录列表
-        List<UserLoginRecordVO> userLoginRecordVOList = UserLoginRecordVOFactory.createUserLoginRecordVOList(subUserLoginRecordPOS);
+        List<UserLoginRecordVO> userLoginRecordVOList = UserLoginRecordVOFactory.createUserLoginRecordVOListByUserLoginRecordPOList(subUserLoginRecordPOS);
         //补全用户登录表的用户信息
         for (UserLoginRecordPO userLoginRecordPO : subUserLoginRecordPOS) {
             for (UserLoginRecordVO userLoginRecordVO : userLoginRecordVOList) {

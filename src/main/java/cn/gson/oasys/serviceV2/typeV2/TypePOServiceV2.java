@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.typeV2;
 
 import cn.gson.oasys.mappers.TypePOMapper;
-import cn.gson.oasys.model.po.TypePO;
-import cn.gson.oasys.model.po.TypePOExample;
+import cn.gson.oasys.modelV2.po.TypePO;
+import cn.gson.oasys.modelV2.po.TypePOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

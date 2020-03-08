@@ -2,11 +2,11 @@ package cn.gson.oasys.serviceV2.taskV2;
 
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.TaskLoggerPOMapper;
-import cn.gson.oasys.model.po.TaskListPO;
-import cn.gson.oasys.model.po.TaskLoggerPO;
-import cn.gson.oasys.model.po.TaskLoggerPOExample;
-import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.vo.taskVO2.TaskLoggerVO;
+import cn.gson.oasys.modelV2.po.TaskListPO;
+import cn.gson.oasys.modelV2.po.TaskLoggerPO;
+import cn.gson.oasys.modelV2.po.TaskLoggerPOExample;
+import cn.gson.oasys.modelV2.po.UserPO;
+import cn.gson.oasys.voandfactory.taskVO2.TaskLoggerVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

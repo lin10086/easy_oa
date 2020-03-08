@@ -5,14 +5,14 @@ import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.mappers.*;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
-import cn.gson.oasys.vo.processVO2.*;
-import cn.gson.oasys.vo.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.processVO2.*;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
@@ -41,11 +41,11 @@ public class ProcessServiceV2 {
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
-    private PositionPOServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionPOServiceV2;
     @Resource
     private BursementPOMapper bursementPOMapper;
     @Resource
@@ -55,7 +55,7 @@ public class ProcessServiceV2 {
     @Resource
     private ProcessListPOMapper processListPOMapper;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
     private ReviewedPOMapper reviewedPOMapper;
     @Resource
@@ -238,7 +238,7 @@ public class ProcessServiceV2 {
         model.addAttribute("userVOList", userVOList);//用户信息
         model.addAttribute("page", pageInfo);//可以获取第几页之类的
         //22正常；23重要；24紧急
-        List<TypePO> exigenceTypePOList = typeServiceV2.getTypePOByTypeModel("aoa_process_list");
+        List<TypePO> exigenceTypePOList = typePOServiceV2.getTypePOByTypeModel("aoa_process_list");
         model.addAttribute("exigenceTypeVOList", exigenceTypePOList);//流程列表紧急程度
         UserPO loginUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据登录人id(userId)获取登录人的用户信息
         model.addAttribute("username", loginUserPO.getUserName());//登录人的用户名
@@ -529,7 +529,7 @@ public class ProcessServiceV2 {
     public Map<String, Object> resultMap(String name, UserPO userPO, ProcessListPO processListPO) {
         Map<String, Object> resultMap = new HashMap<>();
         //根据主表里面的紧急ID在类型表获取紧急名称
-        String exigencyName = typeServiceV2.getTypePOByTypeId(processListPO.getDeeplyId()).getTypeName();
+        String exigencyName = typePOServiceV2.getTypePOByTypeId(processListPO.getDeeplyId()).getTypeName();
 
         resultMap.put("processId", processListPO.getProcessId());//流程主表ID
         resultMap.put("exigencyName", exigencyName);//类型名（紧急程度）
@@ -537,7 +537,7 @@ public class ProcessServiceV2 {
         resultMap.put("processDescribe", processListPO.getProcessDes());//原因内容
 
         //根据流程主表的申请人ID找申请人部门名
-        String applyDeptName = deptServiceV2.getDeptNameByUserId(processListPO.getProcessUserId());
+        String applyDeptName = deptPOServiceV2.getDeptNameByUserId(processListPO.getProcessUserId());
         resultMap.put("deptName", applyDeptName);//申请人部门
         if (("审核").equals(name)) {
             String userName = userPOServiceV2.getUserPOByUserId(processListPO.getProcessUserId()).getUserName();//根据流程主表的申请人ID找申请人的名字
@@ -733,8 +733,8 @@ public class ProcessServiceV2 {
 
         for (ProcessAuditVO processAuditVO : processAuditVOList) {
 
-            String exigenceName = typeServiceV2.getTypeNameByTypeId(processAuditVO.getExigenceName());//紧急程度
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(processAuditVO.getStatusId());
+            String exigenceName = typePOServiceV2.getTypeNameByTypeId(processAuditVO.getExigenceName());//紧急程度
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(processAuditVO.getStatusId());
             // 创建map集合用于用于存放前端需要的数据
             Map<String, Object> result = new HashMap<>();
 
@@ -763,8 +763,8 @@ public class ProcessServiceV2 {
         PageHelper.startPage(page, size);
         List<UserPO> userPOList = userPOServiceV2.getUserAll();//获取所有用户信息
         PageInfo pageInfo = new PageInfo(userPOList);// 可以获取分页信息
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();//获取所有的部门信息
-        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();//获取所有的职位信息
+        List<DeptPO> deptPOList = deptPOServiceV2.getDeptPOListAll();//获取所有的部门信息
+        List<PositionPO> positionPOList = positionPOServiceV2.getPositionListAll();//获取所有的职位信息
         model.addAttribute("page", pageInfo);//可以用户的一些分页信息
         model.addAttribute("emplist", userPOList);//所有用户信息
         model.addAttribute("deptlist", deptPOList);//所有的部门信息
@@ -784,9 +784,9 @@ public class ProcessServiceV2 {
             //根据审核人ID获取审核人信息
             UserPO auditUserPO = userPOServiceV2.getUserPOByUserId(reviewedPOList.get(i).getUserId());
             //根据审核人的职位ID获取审核人的职位信息
-            PositionPO positionPO = positionServiceV2.getPositionPOByPositionId(auditUserPO.getPositionId());
+            PositionPO positionPO = positionPOServiceV2.getPositionPOByPositionId(auditUserPO.getPositionId());
             //根据审核人的状态ID获取审核人的状态信息
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(reviewedPOList.get(i).getStatusId());
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(reviewedPOList.get(i).getStatusId());
             result.put("auditUserPositionName", positionPO.getName());//获取审核人的职位名
             result.put("auditUsername", auditUserPO.getUserName());//获取审核人的用户名
             result.put("img", auditUserPO.getImgPath());//获取审核人图像路径

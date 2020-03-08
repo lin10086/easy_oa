@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.discussV2;
 
 import cn.gson.oasys.mappers.VoteTitlesPOMapper;
-import cn.gson.oasys.model.po.VoteTitlesPO;
-import cn.gson.oasys.model.po.VoteTitlesPOExample;
+import cn.gson.oasys.modelV2.po.VoteTitlesPO;
+import cn.gson.oasys.modelV2.po.VoteTitlesPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

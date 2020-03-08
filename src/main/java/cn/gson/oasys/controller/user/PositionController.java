@@ -4,12 +4,12 @@ import java.util.List;
 
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
-import cn.gson.oasys.model.po.DeptPO;
-import cn.gson.oasys.model.po.PositionPO;
-import cn.gson.oasys.vo.deptVO2.DeptVO;
-import cn.gson.oasys.vo.positionVO2.PositionVO;
-import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
-import cn.gson.oasys.vo.planVO2.PositionVOFactory;
+import cn.gson.oasys.modelV2.po.DeptPO;
+import cn.gson.oasys.modelV2.po.PositionPO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVOFactory;
+import cn.gson.oasys.voandfactory.positionVO2.PositionVOFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +26,9 @@ import javax.annotation.Resource;
 public class PositionController {
 
     @Resource
-    private PositionPOServiceV2 positionServiceV2;
+    private PositionPOServiceV2 positionPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
 
     /**
      * 用户管理》职位管理（显示职位列表）
@@ -38,7 +38,7 @@ public class PositionController {
      */
     @RequestMapping("positionmanage")
     public String positionManage(Model model) {
-        List<PositionPO> positionPOList = positionServiceV2.getPositionListAll();//获取所有职位
+        List<PositionPO> positionPOList = positionPOServiceV2.getPositionListAll();//获取所有职位
         List<PositionVO> positionVOList = PositionVOFactory.createPositionVOListByPositionPOList(positionPOList);
         model.addAttribute("positions", positionVOList);
         return "user/positionmanage";
@@ -54,16 +54,16 @@ public class PositionController {
     @RequestMapping(value = "positionedit", method = RequestMethod.GET)
     public String positionEditGet(@RequestParam(value = "positionId", required = false) Long positionId, Model model) {
         if (positionId != null) {
-            PositionPO positionPO = positionServiceV2.getPositionPOByPositionId(positionId);
+            PositionPO positionPO = positionPOServiceV2.getPositionPOByPositionId(positionId);
             PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(positionPO);
 
-            DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(positionPO.getDeptid());
+            DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(positionPO.getDeptid());
             DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
 
             model.addAttribute("positionDept", deptVO);
             model.addAttribute("position", positionVO);
         }
-        List<DeptPO> deptPOList = deptServiceV2.getDeptPOListAll();
+        List<DeptPO> deptPOList = deptPOServiceV2.getDeptPOListAll();
         model.addAttribute("depts", deptPOList);
         return "user/positionedit";
     }
@@ -76,7 +76,7 @@ public class PositionController {
     @RequestMapping(value = "positionedit", method = RequestMethod.POST)
     public String positionEditPost(PositionVO positionVO, Model model) {
         PositionPO positionPO = PositionVOFactory.createPositionPOByPositionVO(positionVO);
-        Integer rows = positionServiceV2.insertOrUpdatePositionPO(positionPO);
+        Integer rows = positionPOServiceV2.insertOrUpdatePositionPO(positionPO);
         if (rows == 1) {
             model.addAttribute("success", 1);
             return "/positionmanage";
@@ -94,7 +94,7 @@ public class PositionController {
      */
     @RequestMapping("removeposition")
     public String removeposition(@RequestParam("positionid") Long positionId, Model model) {
-        positionServiceV2.deletePosition(positionId);
+        positionPOServiceV2.deletePosition(positionId);
         model.addAttribute("success", 1);
         return "/positionmanage";
     }

@@ -5,8 +5,8 @@ import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.PlanListPOMapper;
-import cn.gson.oasys.model.po.PlanListPO;
-import cn.gson.oasys.model.po.PlanListPOExample;
+import cn.gson.oasys.modelV2.po.PlanListPO;
+import cn.gson.oasys.modelV2.po.PlanListPOExample;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,11 +27,11 @@ public class PlanListServiceV2 {
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
     private PlanServiceV2 planServiceV2;
 
@@ -47,12 +47,12 @@ public class PlanListServiceV2 {
         PlanListPOExample.Criteria criteria1 = planListPOExample.createCriteria().andTitleLike("%" + baseKey + "%").andPlanUserIdEqualTo(userId);
 
         //根据类型名模糊查找
-        List<Long> longList = typeServiceV2.getTypePOIdByTypeNameLike("%" + baseKey + "%");
+        List<Long> longList = typePOServiceV2.getTypePOIdByTypeNameLike("%" + baseKey + "%");
         PlanListPOExample.Criteria criteria2 = planListPOExample.createCriteria().andPlanUserIdEqualTo(userId).
                 andTypeIdIn(longList);
         //根据状态名模糊查找
         PlanListPOExample.Criteria criteria3 = planListPOExample.createCriteria().andPlanUserIdEqualTo(userId).
-                andStatusIdIn(statusServiceV2.getStatusPOIdListByStatusNameLike("%" + baseKey + "%"));
+                andStatusIdIn(statusPOServiceV2.getStatusPOIdListByStatusNameLike("%" + baseKey + "%"));
         if (criteria1 != null) {
             planListPOExample.or(criteria1);
         }
@@ -60,7 +60,7 @@ public class PlanListServiceV2 {
             planListPOExample.or(criteria2);
 
         }
-        if (statusServiceV2.getStatusPOIdListByStatusNameLike("%" + baseKey + "%").size() > 0) {
+        if (statusPOServiceV2.getStatusPOIdListByStatusNameLike("%" + baseKey + "%").size() > 0) {
             planListPOExample.or(criteria3);
         }
 //        PlanListPOExample.Criteria criteria3 = planListPOExample.createCriteria().andLabelLike("%" + baseKey + "%");
@@ -136,7 +136,7 @@ public class PlanListServiceV2 {
      * @return
      */
     public List<PlanListPO> getPlanListPOSByTypeName(int page, String selectTypeName) {
-        List<Long> longList = typeServiceV2.getTypePOIdByTypeNameLike(selectTypeName);
+        List<Long> longList = typePOServiceV2.getTypePOIdByTypeNameLike(selectTypeName);
         PageHelper.startPage(page, 10);
         PlanListPOExample planListPOExample = new PlanListPOExample();
         planListPOExample.createCriteria().andTypeIdIn(longList);
@@ -153,7 +153,7 @@ public class PlanListServiceV2 {
      * @return
      */
     public List<PlanListPO> getPlanListPOByStatusNameLike(int page, String selectStatusName) {
-        List<Long> longList = statusServiceV2.getStatusPOIdListByStatusNameLike(selectStatusName);
+        List<Long> longList = statusPOServiceV2.getStatusPOIdListByStatusNameLike(selectStatusName);
         PageHelper.startPage(page, 10);
         PlanListPOExample planListPOExample = new PlanListPOExample();
         planListPOExample.createCriteria().andStatusIdIn(longList);
@@ -225,7 +225,7 @@ public class PlanListServiceV2 {
 //    public List<PlanListPO> getPlanListPOByDeptNameLike(int page, String selectDeptName) {
 ////        PageHelper.startPage(page, 10);
 //        PlanListPOExample planListPOExample = new PlanListPOExample();
-//        List<Long> longList = deptServiceV2.getDeptPOListDeptNameLike(selectDeptName);
+//        List<Long> longList = deptPOServiceV2.getDeptPOListDeptNameLike(selectDeptName);
 //        for (Long list : longList){
 //        List<> = userPOServiceV2.getUserByDeptId(list);
 //
@@ -276,7 +276,7 @@ public class PlanListServiceV2 {
      * @return
      */
     public List<PlanListPO> getPlanListPOBySelectDeptName(int page, String selectDeptName) {
-        Long deptId = deptServiceV2.getDeptPOIdsByDeptNameLike(selectDeptName).get(0);//根据部门名找部门id
+        Long deptId = deptPOServiceV2.getDeptPOIdsByDeptNameLike(selectDeptName).get(0);//根据部门名找部门id
         List<Long> userIds = userPOServiceV2.getUserPOIdsByDeptPOId(deptId);//根据部门id找这个部门用户ids
         List<PlanListPO> planListPOSAll = planServiceV2.getPlanListPOSAll();//所有计划
         PageHelper.startPage(page, 10);

@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.NoticeUserRelationPO;
-import cn.gson.oasys.model.po.NoticeUserRelationPOExample;
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPO;
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

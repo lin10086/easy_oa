@@ -9,7 +9,7 @@ import cn.gson.oasys.model.dao.maildao.MailreciverDao;
 import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.entity.mail.Pagemail;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -60,9 +60,9 @@ public class MailServiceV2 {
     @Resource
     private MailNumberPOMapper mailNumberPOMapper;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
     private MailReciverPOServiceV2 mailReciverServiceV2;
     @Resource
@@ -178,8 +178,8 @@ public class MailServiceV2 {
 
         PageHelper.startPage(page, size);
         List<Pagemail> pageMailList = new ArrayList<>();
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
         List<MailReciverPO> mailReciverPOList = null;
 
         if ("收件箱".equals(title)) {
@@ -216,8 +216,8 @@ public class MailServiceV2 {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Pagemail pagemail : pageMailList) {
             Map<String, Object> result = new HashMap<>();
-            String typeName = typeServiceV2.getTypePOByTypeId(pagemail.getMailType()).getTypeName();//邮件的类型
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(pagemail.getMailStatusid());
+            String typeName = typePOServiceV2.getTypePOByTypeId(pagemail.getMailType()).getTypeName();//邮件的类型
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(pagemail.getMailStatusid());
             result.put("typeName", typeName);//类型名
             result.put("statusName", statusPO.getStatusName());// 状态名
             result.put("statusColor", statusPO.getStatusColor());//状态颜色
@@ -239,8 +239,8 @@ public class MailServiceV2 {
     public List<InMailListPO> inmail(int page, int size, Long userId, String title) {
         PageHelper.startPage(page, size);
         List<InMailListPO> inMailListPOList = null;
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_in_mail_list");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_in_mail_list");
         if ("发件箱".equals(title)) {
             inMailListPOList = inMailListServiceV2.getInMailListPOByMailCreateTimeDESCAndUserIdAndPushAndDel(userId, true, false);
         } else {
@@ -259,8 +259,8 @@ public class MailServiceV2 {
         List<Map<String, Object>> list = new ArrayList<>();
         for (InMailListPO inMailListPO : inMailListPOList) {
             Map<String, Object> result = new HashMap<>();
-            String typeName = typeServiceV2.getTypePOByTypeId(inMailListPO.getMailType()).getTypeName();
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(inMailListPO.getMailStatusId());
+            String typeName = typePOServiceV2.getTypePOByTypeId(inMailListPO.getMailType()).getTypeName();
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(inMailListPO.getMailStatusId());
             result.put("typeName", typeName);//类型名
             result.put("statusName", statusPO.getStatusName());//状态名
             result.put("statusColor", statusPO.getStatusColor());//状态颜色

@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.FileListPO;
-import cn.gson.oasys.model.po.FileListPOExample.Criteria;
-import cn.gson.oasys.model.po.FileListPOExample.Criterion;
-import cn.gson.oasys.model.po.FileListPOExample;
+import cn.gson.oasys.modelV2.po.FileListPO;
+import cn.gson.oasys.modelV2.po.FileListPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.FileListPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.FileListPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

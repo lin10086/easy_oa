@@ -5,9 +5,9 @@ import cn.gson.oasys.serviceV2.planV2.PlanServiceV2;
 import cn.gson.oasys.mappers.DeptPOMapper;
 import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
-import cn.gson.oasys.model.po.*;
+import cn.gson.oasys.modelV2.po.*;
 
-import cn.gson.oasys.vo.deptVO2.DeptVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

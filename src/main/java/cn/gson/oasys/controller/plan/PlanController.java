@@ -17,14 +17,14 @@ import cn.gson.oasys.serviceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.serviceV2.planV2.PlanListServiceV2;
 import cn.gson.oasys.serviceV2.planV2.PlanServiceV2;
 import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.deptVO2.DeptVO;
-import cn.gson.oasys.vo.SelectVO;
-import cn.gson.oasys.vo.userVO2.UserVO;
-import cn.gson.oasys.vo.deptVO2.DeptVOFactory;
-import cn.gson.oasys.vo.userVO2.UserFactoryVO;
-import cn.gson.oasys.vo.planVO2.PlanListVOFactory;
-import cn.gson.oasys.vo.planVO2.PlanListVO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
+import cn.gson.oasys.voandfactory.SelectVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.deptVO2.DeptVOFactory;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
+import cn.gson.oasys.voandfactory.planVO2.PlanListVOFactory;
+import cn.gson.oasys.voandfactory.planVO2.PlanListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -373,11 +373,11 @@ public class PlanController {
     @Resource
     private PlanListServiceV2 planListServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
-    private DeptPOServiceV2 deptServiceV2;
+    private DeptPOServiceV2 deptPOServiceV2;
     @Resource
     private MailServiceV2 mailServiceV2;
     @Resource
@@ -437,8 +437,8 @@ public class PlanController {
             for (PlanListVO planListVO : planListVOS) {
                 if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
                     UserPO userPO = userPOServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
-                    UserVO userVO = UserFactoryVO.createUserVO(userPO);
-                    DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+                    UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
+                    DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId());
                     DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
                     userVO.setDeptVO(deptVO);
                     planListVO.setUserVO(userVO);
@@ -453,8 +453,8 @@ public class PlanController {
     }
 */
     private void typestatus(Model model) {
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_plan_list");
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_plan_list");
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_plan_list");
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_plan_list");
         model.addAttribute("typelist", typePOList);
         model.addAttribute("statuslist", statusPOList);
     }
@@ -517,8 +517,8 @@ public class PlanController {
 
         String typeName = req.getParameter("type");//类型名
         String statusName = req.getParameter("status");//状态名
-        Long typeId = typeServiceV2.getTypePOByTypeModelAndTypeName("aoa_plan_list", typeName).getTypeId();//类型id
-        Long statusId = statusServiceV2.getStatusPOByTypeModelAndStatusName("aoa_plan_list", statusName).getStatusId();//状态id
+        Long typeId = typePOServiceV2.getTypePOByTypeModelAndTypeName("aoa_plan_list", typeName).getTypeId();//类型id
+        Long statusId = statusPOServiceV2.getStatusPOByTypeModelAndStatusName("aoa_plan_list", statusName).getStatusId();//状态id
         Long planId = Long.valueOf(req.getParameter("pid") + "");//计划id
         // 这里返回ResultVO对象，如果校验通过，ResultEnum.SUCCESS.getCode()返回的值为200；否则就是没有通过；
         ResultVO res = BindingResultVOUtil.hasErrors(br);
@@ -587,8 +587,8 @@ public class PlanController {
 //        String choose2=null;
 //        Date startDate = null;
 //        Date endDate=null;
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("aoa_plan_list");//根据类型模型找类型列表
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("aoa_plan_list");//根据状态模型找状态列表
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("aoa_plan_list");//根据类型模型找类型列表
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("aoa_plan_list");//根据状态模型找状态列表
         model.addAttribute("type", typePOList);
         model.addAttribute("status", statusPOList);
 
@@ -651,10 +651,10 @@ public class PlanController {
         Long userId = Long.valueOf(session.getAttribute("userId") + "");
         PageHelper.startPage(page, 10);
         List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, baseKey);//获取下属信息
-        List<UserVO> userVOList = UserFactoryVO.createUserVOList(userPOList);
+        List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(userPOList);
         for (UserVO userVO : userVOList) {
             for (UserPO userPO : userPOList) {
-                userVO.setDeptVO(DeptVOFactory.createDeptVOByDeptPO(deptServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
+                userVO.setDeptVO(DeptVOFactory.createDeptVOByDeptPO(deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
             }
         }
         PageInfo pageInfo = new PageInfo(userPOList);
@@ -775,8 +775,8 @@ public class PlanController {
             for (PlanListVO planListVO : planListVOS) {
                 if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
                     UserPO userPO = userPOServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
-                    UserVO userVO = UserFactoryVO.createUserVO(userPO);
-                    DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+                    UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
+                    DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId());
                     DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
                     userVO.setDeptVO(deptVO);
                     planListVO.setUserVO(userVO);
@@ -806,8 +806,8 @@ public class PlanController {
             for (PlanListVO planListVO : planListVOS) {
                 if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
                     UserPO userPO = userPOServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
-                    UserVO userVO = UserFactoryVO.createUserVO(userPO);
-                    DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+                    UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
+                    DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId());
                     DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
                     userVO.setDeptVO(deptVO);
                     planListVO.setUserVO(userVO);
@@ -888,8 +888,8 @@ public class PlanController {
             for (PlanListVO planListVO : planListVOS) {
                 if (planListPO.getPlanId().equals(planListVO.getPlanId())) {
                     UserPO userPO = userPOServiceV2.getUserPOByUserId(planListPO.getPlanUserId());
-                    UserVO userVO = UserFactoryVO.createUserVO(userPO);
-                    DeptPO deptPO = deptServiceV2.getDeptPOByDeptId(userPO.getDeptId());
+                    UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
+                    DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId());
                     DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(deptPO);
                     userVO.setDeptVO(deptVO);
                     planListVO.setUserVO(userVO);
@@ -898,7 +898,7 @@ public class PlanController {
         }
         PageInfo pageInfo = new PageInfo(planListPOS);
         model.addAttribute("page", pageInfo);
-        model.addAttribute("deptPOList", deptServiceV2.getDeptPOListAll());
+        model.addAttribute("deptPOList", deptPOServiceV2.getDeptPOListAll());
         typestatus(model);
         model.addAttribute("plist", planListVOS);
 //        model.addAttribute("url", "planviewtable");

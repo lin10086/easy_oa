@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.userV2;
 
 import cn.gson.oasys.mappers.UserLoginRecordPOMapper;
-import cn.gson.oasys.model.po.UserLoginRecordPO;
-import cn.gson.oasys.model.po.UserLoginRecordPOExample;
+import cn.gson.oasys.modelV2.po.UserLoginRecordPO;
+import cn.gson.oasys.modelV2.po.UserLoginRecordPOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

@@ -1,9 +1,9 @@
 package cn.gson.oasys.serviceV2.discussV2;
 
 import cn.gson.oasys.mappers.DiscussListPOMapper;
-import cn.gson.oasys.model.po.DiscussListPO;
-import cn.gson.oasys.model.po.DiscussListPOExample;
-import cn.gson.oasys.model.po.ReplyListPO;
+import cn.gson.oasys.modelV2.po.DiscussListPO;
+import cn.gson.oasys.modelV2.po.DiscussListPOExample;
+import cn.gson.oasys.modelV2.po.ReplyListPO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

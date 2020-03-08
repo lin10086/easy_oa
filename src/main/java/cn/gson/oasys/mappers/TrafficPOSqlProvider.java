@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.TrafficPO;
-import cn.gson.oasys.model.po.TrafficPOExample.Criteria;
-import cn.gson.oasys.model.po.TrafficPOExample.Criterion;
-import cn.gson.oasys.model.po.TrafficPOExample;
+import cn.gson.oasys.modelV2.po.TrafficPO;
+import cn.gson.oasys.modelV2.po.TrafficPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.TrafficPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.TrafficPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.MailNumberPO;
-import cn.gson.oasys.model.po.MailNumberPOExample;
+import cn.gson.oasys.modelV2.po.MailNumberPO;
+import cn.gson.oasys.modelV2.po.MailNumberPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

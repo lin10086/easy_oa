@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.ScheduleUserPO;
-import cn.gson.oasys.model.po.ScheduleUserPOExample.Criteria;
-import cn.gson.oasys.model.po.ScheduleUserPOExample.Criterion;
-import cn.gson.oasys.model.po.ScheduleUserPOExample;
+import cn.gson.oasys.modelV2.po.ScheduleUserPO;
+import cn.gson.oasys.modelV2.po.ScheduleUserPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.ScheduleUserPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.ScheduleUserPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.discussV2;
 
 import cn.gson.oasys.mappers.CommentListPOMapper;
-import cn.gson.oasys.model.po.CommentListPO;
-import cn.gson.oasys.model.po.CommentListPOExample;
+import cn.gson.oasys.modelV2.po.CommentListPO;
+import cn.gson.oasys.modelV2.po.CommentListPOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

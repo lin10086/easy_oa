@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.roleV2;
 
 import cn.gson.oasys.mappers.RolePOMapper;
-import cn.gson.oasys.model.po.RolePO;
-import cn.gson.oasys.model.po.RolePOExample;
+import cn.gson.oasys.modelV2.po.RolePO;
+import cn.gson.oasys.modelV2.po.RolePOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

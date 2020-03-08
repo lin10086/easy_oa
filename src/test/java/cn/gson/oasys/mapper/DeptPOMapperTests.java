@@ -1,8 +1,8 @@
 package cn.gson.oasys.mapper;
 
 import cn.gson.oasys.mappers.DeptPOMapper;
-import cn.gson.oasys.model.po.DeptPO;
-import cn.gson.oasys.model.po.DeptPOExample;
+import cn.gson.oasys.modelV2.po.DeptPO;
+import cn.gson.oasys.modelV2.po.DeptPOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

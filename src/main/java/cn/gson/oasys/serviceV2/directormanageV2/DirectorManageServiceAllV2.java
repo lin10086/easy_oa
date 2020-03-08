@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.directormanageV2;
 
 import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
-import cn.gson.oasys.model.po.DirectorPO;
-import cn.gson.oasys.model.po.DirectorUsersPO;
+import cn.gson.oasys.modelV2.po.DirectorPO;
+import cn.gson.oasys.modelV2.po.DirectorUsersPO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;

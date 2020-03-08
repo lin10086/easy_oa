@@ -1,7 +1,7 @@
 package cn.gson.oasys.mapper;
 
 import cn.gson.oasys.mappers.ScheduleUserPOMapper;
-import cn.gson.oasys.model.po.ScheduleUserPO;
+import cn.gson.oasys.modelV2.po.ScheduleUserPO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

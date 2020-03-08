@@ -1,40 +1,18 @@
 package cn.gson.oasys.controller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
-import cn.gson.oasys.vo.taskVO2.TaskListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
-import cn.gson.oasys.common.formValid.BindingResultVOUtil;
-import cn.gson.oasys.common.formValid.MapToList;
-import cn.gson.oasys.common.formValid.ResultEnum;
-import cn.gson.oasys.common.formValid.ResultVO;
 import cn.gson.oasys.model.dao.roledao.RoleDao;
 import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 
 import cn.gson.oasys.model.dao.user.DeptDao;
 import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.role.Role;
-import cn.gson.oasys.model.entity.system.SystemStatusList;
-import cn.gson.oasys.model.entity.system.SystemTypeList;
-import cn.gson.oasys.model.entity.task.Tasklist;
-import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.entity.user.User;
 
 
 @Controller

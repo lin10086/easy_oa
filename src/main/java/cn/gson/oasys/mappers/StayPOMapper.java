@@ -1,7 +1,7 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.StayPO;
-import cn.gson.oasys.model.po.StayPOExample;
+import cn.gson.oasys.modelV2.po.StayPO;
+import cn.gson.oasys.modelV2.po.StayPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;

@@ -1,9 +1,9 @@
 package cn.gson.oasys.mappers;
 
-import cn.gson.oasys.model.po.DiscussListPO;
-import cn.gson.oasys.model.po.DiscussListPOExample.Criteria;
-import cn.gson.oasys.model.po.DiscussListPOExample.Criterion;
-import cn.gson.oasys.model.po.DiscussListPOExample;
+import cn.gson.oasys.modelV2.po.DiscussListPO;
+import cn.gson.oasys.modelV2.po.DiscussListPOExample.Criteria;
+import cn.gson.oasys.modelV2.po.DiscussListPOExample.Criterion;
+import cn.gson.oasys.modelV2.po.DiscussListPOExample;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;

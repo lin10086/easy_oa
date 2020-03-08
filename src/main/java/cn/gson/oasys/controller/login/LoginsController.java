@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import cn.gson.oasys.serviceV2.userV2.UserLoginRecordServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.model.po.UserPO;
+import cn.gson.oasys.modelV2.po.UserPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

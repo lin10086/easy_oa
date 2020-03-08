@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.processServiceV2;
 
 import cn.gson.oasys.mappers.DetailsbursePOMapper;
-import cn.gson.oasys.model.po.DetailsbursePO;
-import cn.gson.oasys.model.po.DetailsbursePOExample;
+import cn.gson.oasys.modelV2.po.DetailsbursePO;
+import cn.gson.oasys.modelV2.po.DetailsbursePOExample;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

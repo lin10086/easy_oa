@@ -1,8 +1,8 @@
 package cn.gson.oasys.serviceV2.statusV2;
 
 import cn.gson.oasys.mappers.StatusPOMapper;
-import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.model.po.StatusPOExample;
+import cn.gson.oasys.modelV2.po.StatusPO;
+import cn.gson.oasys.modelV2.po.StatusPOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

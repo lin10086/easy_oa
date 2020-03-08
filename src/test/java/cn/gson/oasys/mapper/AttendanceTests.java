@@ -1,28 +1,19 @@
 package cn.gson.oasys.mapper;
 
-import cn.gson.oasys.factory.UserFactory;
 import cn.gson.oasys.mappers.AttendanceMapper;
 import cn.gson.oasys.mappers.AttendsPOMapper;
 import cn.gson.oasys.model.entity.AttendanceEntity;
-import cn.gson.oasys.model.entity.user.User;
-import cn.gson.oasys.model.po.AttendsPO;
-import cn.gson.oasys.model.po.AttendsPOExample;
-import cn.gson.oasys.model.po.UserPO;
-import cn.gson.oasys.model.po.UserPOExample;
-import freemarker.template.utility.DateUtil;
+import cn.gson.oasys.modelV2.po.AttendsPO;
+import cn.gson.oasys.modelV2.po.AttendsPOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

@@ -15,8 +15,8 @@ import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.notice2.NoticeServiceV2;
 import cn.gson.oasys.serviceV2.notice2.NoticeUserRelationPOServiceV2;
-import cn.gson.oasys.model.po.*;
-import cn.gson.oasys.vo.noticeVO2.NoticeListVO;
+import cn.gson.oasys.modelV2.po.*;
+import cn.gson.oasys.voandfactory.noticeVO2.NoticeListVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -309,9 +309,9 @@ public class InformManageController {
     @Resource
     private NoticeServiceV2 infromManageServiceV2;
     @Resource
-    private TypePOServiceV2 typeServiceV2;
+    private TypePOServiceV2 typePOServiceV2;
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
@@ -340,8 +340,8 @@ public class InformManageController {
     @RequestMapping("informedit")
     public String infromEdit(HttpServletRequest req, HttpSession session, Model model) {
         session.removeAttribute("noticeId");// 移除上次session里面的通知主表ID
-        List<TypePO> typePOList = typeServiceV2.getTypePOByTypeModel("inform");//根据类型模型找类型列表
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOByStatusModel("inform");//根据状态模型找状态列表
+        List<TypePO> typePOList = typePOServiceV2.getTypePOByTypeModel("inform");//根据类型模型找类型列表
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOByStatusModel("inform");//根据状态模型找状态列表
         if (!StringUtils.isEmpty(req.getAttribute("errormess"))) {
             req.setAttribute("errormess", req.getAttribute("errormess"));
         }
@@ -357,8 +357,8 @@ public class InformManageController {
             NoticeListPO noticeListPO = infromManageServiceV2.getNoticeListPOByNoticeListPOId(noticeId);//根据通知表ID找通知表信息
             model.addAttribute("noticeList", noticeListPO);//设置通知表信息
             model.addAttribute("top", noticeListPO.getIsTop() == 0 ? false : true);//是否置顶
-            model.addAttribute("typeName", typeServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());//类型名
-            model.addAttribute("statusName", statusServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName()); //状态名
+            model.addAttribute("typeName", typePOServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());//类型名
+            model.addAttribute("statusName", statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName()); //状态名
             session.setAttribute("noticeId", noticeId);//把通知表ID放进session里面
         }
 

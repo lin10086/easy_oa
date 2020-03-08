@@ -1,9 +1,9 @@
 package cn.gson.oasys.serviceV2.rolemanage;
 
 import cn.gson.oasys.mappers.RolePowerListPOMapper;
-import cn.gson.oasys.model.po.RolePowerListPO;
-import cn.gson.oasys.model.po.RolePowerListPOExample;
-import cn.gson.oasys.model.po.SysMenuPO;
+import cn.gson.oasys.modelV2.po.RolePowerListPO;
+import cn.gson.oasys.modelV2.po.RolePowerListPOExample;
+import cn.gson.oasys.modelV2.po.SysMenuPO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

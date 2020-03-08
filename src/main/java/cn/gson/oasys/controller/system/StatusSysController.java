@@ -6,8 +6,8 @@ import cn.gson.oasys.common.formValid.BindingResultVOUtil;
 import cn.gson.oasys.common.formValid.MapToList;
 import cn.gson.oasys.common.formValid.ResultEnum;
 import cn.gson.oasys.common.formValid.ResultVO;
-import cn.gson.oasys.model.po.StatusPO;
-import cn.gson.oasys.vo.statusVO2.StatusVO;
+import cn.gson.oasys.modelV2.po.StatusPO;
+import cn.gson.oasys.voandfactory.statusVO2.StatusVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -27,7 +27,7 @@ import java.util.List;
 public class StatusSysController {
 
     @Resource
-    private StatusPOServiceV2 statusServiceV2;
+    private StatusPOServiceV2 statusPOServiceV2;
 
     /**
      * 状态管理界面
@@ -37,7 +37,7 @@ public class StatusSysController {
      */
     @RequestMapping("testsysstatus")
     public String statusManage(HttpServletRequest req) {
-        List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//获取所有状态信息
+        List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOListAll();//获取所有状态信息
         req.setAttribute("statusList", statusPOList);
         return "systemcontrol/statusmanage";
     }
@@ -48,7 +48,7 @@ public class StatusSysController {
     @RequestMapping("deletestatus")
     public String deleteStatus(HttpServletRequest req) {
         Long statusId = Long.parseLong(req.getParameter("id"));
-        statusServiceV2.deleteStatusPOByStatusId(statusId);
+        statusPOServiceV2.deleteStatusPOByStatusId(statusId);
         return "forward:/testsysstatus";
     }
 
@@ -62,7 +62,7 @@ public class StatusSysController {
     public String typeEdit(HttpServletRequest req) {
         if (!StringUtils.isEmpty(req.getParameter("statusid"))) {
             Long statusId = Long.parseLong(req.getParameter("statusid"));
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);//状态信息
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(statusId);//状态信息
             req.setAttribute("status", statusPO);
             HttpSession session = req.getSession();
             session.setAttribute("statusid", statusId);
@@ -102,7 +102,7 @@ public class StatusSysController {
             statusPO.setSortPrecent(statusVO.getStatusPercent());
             statusPO.setSortValue(statusVO.getStatusSortValue());
             statusPO.setStatusModel(statusVO.getStatusModel());
-            statusServiceV2.insertOrUpdateStatusPOByStatusId(statusPO);
+            statusPOServiceV2.insertOrUpdateStatusPOByStatusId(statusPO);
             req.setAttribute("success", "后台验证成功");
         }
         return "systemcontrol/statusedit";
@@ -118,10 +118,10 @@ public class StatusSysController {
     public String statusTable(HttpServletRequest req) {
         if (!StringUtils.isEmpty(req.getParameter("name"))) {//模糊字是否存在
             String name = req.getParameter("name");
-            List<StatusPO> statusPOList = statusServiceV2.getStatusPOListByTypeModelLikeOrStatusNameLike(name);//根据类型名或类型模型模糊查询
+            List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOListByTypeModelLikeOrStatusNameLike(name);//根据类型名或类型模型模糊查询
             req.setAttribute("statusList", statusPOList);
         } else {
-            List<StatusPO> statusPOList = statusServiceV2.getStatusPOListAll();//模糊字不存在，获取所有状态
+            List<StatusPO> statusPOList = statusPOServiceV2.getStatusPOListAll();//模糊字不存在，获取所有状态
             req.setAttribute("statusList", statusPOList);
         }
         return "systemcontrol/statustable";
@@ -137,7 +137,7 @@ public class StatusSysController {
     public String lookStatus(HttpServletRequest req) {
         if (!StringUtils.isEmpty(req.getParameter("statusid"))) {
             Long statusId = Long.parseLong(req.getParameter("statusid"));
-            StatusPO statusPO = statusServiceV2.getStatusPOByStatusId(statusId);
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(statusId);
             req.setAttribute("status", statusPO);
         }
         return "systemcontrol/lookstatus";
