@@ -104,63 +104,63 @@ public class NoticeUserRelationPOExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andRelatinIdIsNull() {
-            addCriterion("relatin_id is null");
+        public Criteria andRelationIdIsNull() {
+            addCriterion("relation_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdIsNotNull() {
-            addCriterion("relatin_id is not null");
+        public Criteria andRelationIdIsNotNull() {
+            addCriterion("relation_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdEqualTo(Long value) {
-            addCriterion("relatin_id =", value, "relatinId");
+        public Criteria andRelationIdEqualTo(Long value) {
+            addCriterion("relation_id =", value, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdNotEqualTo(Long value) {
-            addCriterion("relatin_id <>", value, "relatinId");
+        public Criteria andRelationIdNotEqualTo(Long value) {
+            addCriterion("relation_id <>", value, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdGreaterThan(Long value) {
-            addCriterion("relatin_id >", value, "relatinId");
+        public Criteria andRelationIdGreaterThan(Long value) {
+            addCriterion("relation_id >", value, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("relatin_id >=", value, "relatinId");
+        public Criteria andRelationIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("relation_id >=", value, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdLessThan(Long value) {
-            addCriterion("relatin_id <", value, "relatinId");
+        public Criteria andRelationIdLessThan(Long value) {
+            addCriterion("relation_id <", value, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdLessThanOrEqualTo(Long value) {
-            addCriterion("relatin_id <=", value, "relatinId");
+        public Criteria andRelationIdLessThanOrEqualTo(Long value) {
+            addCriterion("relation_id <=", value, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdIn(List<Long> values) {
-            addCriterion("relatin_id in", values, "relatinId");
+        public Criteria andRelationIdIn(List<Long> values) {
+            addCriterion("relation_id in", values, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdNotIn(List<Long> values) {
-            addCriterion("relatin_id not in", values, "relatinId");
+        public Criteria andRelationIdNotIn(List<Long> values) {
+            addCriterion("relation_id not in", values, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdBetween(Long value1, Long value2) {
-            addCriterion("relatin_id between", value1, value2, "relatinId");
+        public Criteria andRelationIdBetween(Long value1, Long value2) {
+            addCriterion("relation_id between", value1, value2, "relationId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinIdNotBetween(Long value1, Long value2) {
-            addCriterion("relatin_id not between", value1, value2, "relatinId");
+        public Criteria andRelationIdNotBetween(Long value1, Long value2) {
+            addCriterion("relation_id not between", value1, value2, "relationId");
             return (Criteria) this;
         }
 
@@ -224,123 +224,123 @@ public class NoticeUserRelationPOExample {
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdIsNull() {
-            addCriterion("relatin_notice_id is null");
+        public Criteria andRelationNoticeIdIsNull() {
+            addCriterion("relation_notice_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdIsNotNull() {
-            addCriterion("relatin_notice_id is not null");
+        public Criteria andRelationNoticeIdIsNotNull() {
+            addCriterion("relation_notice_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdEqualTo(Long value) {
-            addCriterion("relatin_notice_id =", value, "relatinNoticeId");
+        public Criteria andRelationNoticeIdEqualTo(Long value) {
+            addCriterion("relation_notice_id =", value, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdNotEqualTo(Long value) {
-            addCriterion("relatin_notice_id <>", value, "relatinNoticeId");
+        public Criteria andRelationNoticeIdNotEqualTo(Long value) {
+            addCriterion("relation_notice_id <>", value, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdGreaterThan(Long value) {
-            addCriterion("relatin_notice_id >", value, "relatinNoticeId");
+        public Criteria andRelationNoticeIdGreaterThan(Long value) {
+            addCriterion("relation_notice_id >", value, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("relatin_notice_id >=", value, "relatinNoticeId");
+        public Criteria andRelationNoticeIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("relation_notice_id >=", value, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdLessThan(Long value) {
-            addCriterion("relatin_notice_id <", value, "relatinNoticeId");
+        public Criteria andRelationNoticeIdLessThan(Long value) {
+            addCriterion("relation_notice_id <", value, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdLessThanOrEqualTo(Long value) {
-            addCriterion("relatin_notice_id <=", value, "relatinNoticeId");
+        public Criteria andRelationNoticeIdLessThanOrEqualTo(Long value) {
+            addCriterion("relation_notice_id <=", value, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdIn(List<Long> values) {
-            addCriterion("relatin_notice_id in", values, "relatinNoticeId");
+        public Criteria andRelationNoticeIdIn(List<Long> values) {
+            addCriterion("relation_notice_id in", values, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdNotIn(List<Long> values) {
-            addCriterion("relatin_notice_id not in", values, "relatinNoticeId");
+        public Criteria andRelationNoticeIdNotIn(List<Long> values) {
+            addCriterion("relation_notice_id not in", values, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdBetween(Long value1, Long value2) {
-            addCriterion("relatin_notice_id between", value1, value2, "relatinNoticeId");
+        public Criteria andRelationNoticeIdBetween(Long value1, Long value2) {
+            addCriterion("relation_notice_id between", value1, value2, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinNoticeIdNotBetween(Long value1, Long value2) {
-            addCriterion("relatin_notice_id not between", value1, value2, "relatinNoticeId");
+        public Criteria andRelationNoticeIdNotBetween(Long value1, Long value2) {
+            addCriterion("relation_notice_id not between", value1, value2, "relationNoticeId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdIsNull() {
-            addCriterion("relatin_user_id is null");
+        public Criteria andRelationUserIdIsNull() {
+            addCriterion("relation_user_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdIsNotNull() {
-            addCriterion("relatin_user_id is not null");
+        public Criteria andRelationUserIdIsNotNull() {
+            addCriterion("relation_user_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdEqualTo(Long value) {
-            addCriterion("relatin_user_id =", value, "relatinUserId");
+        public Criteria andRelationUserIdEqualTo(Long value) {
+            addCriterion("relation_user_id =", value, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdNotEqualTo(Long value) {
-            addCriterion("relatin_user_id <>", value, "relatinUserId");
+        public Criteria andRelationUserIdNotEqualTo(Long value) {
+            addCriterion("relation_user_id <>", value, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdGreaterThan(Long value) {
-            addCriterion("relatin_user_id >", value, "relatinUserId");
+        public Criteria andRelationUserIdGreaterThan(Long value) {
+            addCriterion("relation_user_id >", value, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("relatin_user_id >=", value, "relatinUserId");
+        public Criteria andRelationUserIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("relation_user_id >=", value, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdLessThan(Long value) {
-            addCriterion("relatin_user_id <", value, "relatinUserId");
+        public Criteria andRelationUserIdLessThan(Long value) {
+            addCriterion("relation_user_id <", value, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdLessThanOrEqualTo(Long value) {
-            addCriterion("relatin_user_id <=", value, "relatinUserId");
+        public Criteria andRelationUserIdLessThanOrEqualTo(Long value) {
+            addCriterion("relation_user_id <=", value, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdIn(List<Long> values) {
-            addCriterion("relatin_user_id in", values, "relatinUserId");
+        public Criteria andRelationUserIdIn(List<Long> values) {
+            addCriterion("relation_user_id in", values, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdNotIn(List<Long> values) {
-            addCriterion("relatin_user_id not in", values, "relatinUserId");
+        public Criteria andRelationUserIdNotIn(List<Long> values) {
+            addCriterion("relation_user_id not in", values, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdBetween(Long value1, Long value2) {
-            addCriterion("relatin_user_id between", value1, value2, "relatinUserId");
+        public Criteria andRelationUserIdBetween(Long value1, Long value2) {
+            addCriterion("relation_user_id between", value1, value2, "relationUserId");
             return (Criteria) this;
         }
 
-        public Criteria andRelatinUserIdNotBetween(Long value1, Long value2) {
-            addCriterion("relatin_user_id not between", value1, value2, "relatinUserId");
+        public Criteria andRelationUserIdNotBetween(Long value1, Long value2) {
+            addCriterion("relation_user_id not between", value1, value2, "relationUserId");
             return (Criteria) this;
         }
     }

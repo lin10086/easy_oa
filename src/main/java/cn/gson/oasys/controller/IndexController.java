@@ -504,7 +504,7 @@ public class IndexController {
 
         AttendsPO attendsPO = attendanceServiceV2.getAttendsPOByAttendsUserIdAndAttendsTimeDESCFrontFirst(userId);
         if (attendsPO != null) {
-            String typeName = typePOServiceV2.getTypeNameByTypeId(attendsPO.getTypeId());
+            String typeName = typePOServiceV2.getTypePOByTypeId(attendsPO.getTypeId()).getTypeName();
             model.addAttribute("type", typeName);//根据考勤类型ID获取类型名
 //            attendsPO.setAttendHmtime((new Date()).getTime() + "");
         }

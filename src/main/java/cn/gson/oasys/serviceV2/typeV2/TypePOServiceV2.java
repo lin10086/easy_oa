@@ -102,18 +102,6 @@ public class TypePOServiceV2 {
     }
 
     /**
-     * 根据类型ID查找类型名
-     *
-     * @param typeId 类型ID
-     * @return
-     */
-    public String getTypeNameByTypeId(Long typeId) {
-        TypePO typePO = typePOMapper.selectByPrimaryKey(typeId);
-        String typeName = typePO.getTypeName();
-        return typeName;
-    }
-
-    /**
      * 根据ID找类型
      *
      * @param typeId

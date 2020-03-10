@@ -4,7 +4,7 @@ import java.util.List;
 
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
-import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.serviceV2.roleV2.RolePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.modelV2.bo.PageBO;
 import cn.gson.oasys.modelV2.po.DeptPO;
@@ -44,7 +44,7 @@ public class UserController {
     @Resource
     private PositionPOServiceV2 positionPOServiceV2;
     @Resource
-    private RoleServiceV2 roleServiceV2;
+    private RolePOServiceV2 rolePOServiceV2;
 
     /**
      * ----------
@@ -200,7 +200,7 @@ public class UserController {
         List<PositionPO> positionPOList = positionPOServiceV2.getPositionListAll();
         List<PositionVO> positionVOList = PositionVOFactory.createPositionVOListByPositionPOList(positionPOList);
         // 所有角色
-        List<RolePO> rolePOList = roleServiceV2.getRoleListAll();
+        List<RolePO> rolePOList = rolePOServiceV2.getRoleListAll();
         List<RoleVO> roleVOList = RoleVOFactory.createRoleVOListRolePOList(rolePOList);
         model.addAttribute("depts", deptVOList);
         model.addAttribute("positions", positionVOList);

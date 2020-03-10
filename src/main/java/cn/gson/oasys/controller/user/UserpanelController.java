@@ -2,6 +2,7 @@
 //再次测试
 package cn.gson.oasys.controller.user;
 
+import cn.gson.oasys.modelV2.po.NoticeUserRelationPO;
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
@@ -22,7 +23,6 @@ import cn.gson.oasys.model.dao.user.PositionDao;
 import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.modelV2.po.MailReciverPO;
 import cn.gson.oasys.modelV2.po.NotePaperPO;
-import cn.gson.oasys.modelV2.po.NoticeUserRelationPO;
 import cn.gson.oasys.modelV2.po.UserPO;
 import cn.gson.oasys.services.user.NotepaperService;
 import cn.gson.oasys.voandfactory.userVO2.UserVO;

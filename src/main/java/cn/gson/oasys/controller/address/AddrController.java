@@ -15,7 +15,7 @@ import cn.gson.oasys.serviceV2.mailV2.MailServiceV2;
 import cn.gson.oasys.serviceV2.directormanageV2.DirectorUserPOServiceV2;
 import cn.gson.oasys.modelV2.bo.PageBO;
 import cn.gson.oasys.modelV2.po.*;
-import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.serviceV2.roleV2.RolePOServiceV2;
 import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
 import cn.gson.oasys.voandfactory.deptVO2.DeptVOFactory;
 import cn.gson.oasys.voandfactory.positionVO2.PositionVO;
@@ -585,7 +585,7 @@ public class AddrController {
     @Resource
     private cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2 PositionPOServiceV2;
     @Resource
-    private RoleServiceV2 roleServiceV2;
+    private RolePOServiceV2 rolePOServiceV2;
     @Resource
     private DirectorManageServiceAllV2 directorManageServiceAllV2;
     @Resource
@@ -659,7 +659,7 @@ public class AddrController {
         UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
         PositionVO positionVO = PositionVOFactory.createPositionVOByPositionPO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId()));
         DeptVO deptVO = DeptVOFactory.createDeptVOByDeptPO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId()));
-        RoleVO roleVO = RoleVOFactory.createRoleVOByRolePO(roleServiceV2.getRoleByRoleId(userPO.getRoleId()));
+        RoleVO roleVO = RoleVOFactory.createRoleVOByRolePO(rolePOServiceV2.getRoleByRoleId(userPO.getRoleId()));
         userVO.setPositionVO(positionVO);
         userVO.setDeptVO(deptVO);
         userVO.setRoleVO(roleVO);

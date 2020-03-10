@@ -12,7 +12,7 @@ import cn.gson.oasys.model.dao.system.StatusDao;
 import cn.gson.oasys.model.dao.system.TypeDao;
 import cn.gson.oasys.model.dao.user.UserDao;
 import cn.gson.oasys.modelV2.po.*;
-import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.serviceV2.roleV2.RolePOServiceV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
@@ -1041,7 +1041,7 @@ public class ProcedureController {
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private RoleServiceV2 roleServiceV2;
+    private RolePOServiceV2 rolePOServiceV2;
     @Resource
     private StatusPOServiceV2 statusPOServiceV2;
     @Resource
@@ -1638,14 +1638,14 @@ public class ProcedureController {
         } else if (("加班申请").equals(typeName)) {
             OvertimePO overtimePO = byProcessPOIdServiceV2.getOvertimePOByProcessPOId(processId);
             OverTimeVO overTimeVO = OverTimeVOFactory.createOverTimeVOByOvertimePO(overtimePO);
-            String overTimeType = typePOServiceV2.getTypeNameByTypeId(overtimePO.getTypeId());
+            String overTimeType = typePOServiceV2.getTypePOByTypeId(overtimePO.getTypeId()).getTypeName();
             model.addAttribute("eve", overTimeVO);
             model.addAttribute("overTimeType", overTimeType);//加班类型名
             return "process/overserch";
         } else if (("请假申请").equals(typeName)) {
             HolidayPO holidayPO = byProcessPOIdServiceV2.getHolidayPOByProcessPOId(processId);
             HolidayVO holidayVO = HolidayVOFactory.createHolidayVOByHolidayPO(holidayPO);
-            String type = typePOServiceV2.getTypeNameByTypeId(holidayPO.getTypeId());
+            String type = typePOServiceV2.getTypePOByTypeId(holidayPO.getTypeId()).getTypeName();
             model.addAttribute("eve", holidayVO);
             model.addAttribute("type", type);
             return "process/holiserch";

@@ -5,10 +5,8 @@ import cn.gson.oasys.mappers.PositionPOMapper;
 import cn.gson.oasys.mappers.RolePOMapper;
 import cn.gson.oasys.mappers.UserPOMapper;
 import cn.gson.oasys.modelV2.po.*;
-
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
-import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
-import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.serviceV2.roleV2.RolePOServiceV2;
 import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
 import cn.gson.oasys.voandfactory.positionVO2.PositionVO;
 import cn.gson.oasys.voandfactory.roleVO2.RoleVO;
@@ -38,7 +36,7 @@ public class UserPOServiceV2 {
     @Resource
     private DeptPOServiceV2 DeptPOServiceV2;
     @Resource
-    private RoleServiceV2 roleServiceV2;
+    private RolePOServiceV2 rolePOServiceV2;
     @Resource
     private cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2 PositionPOServiceV2;
 
@@ -50,20 +48,6 @@ public class UserPOServiceV2 {
     public void updateUserPOByUserPO(UserPO userPO) {
         userPOMapper.updateByPrimaryKeySelective(userPO);
     }
-
-    /**
-     * 找到该用户的所有下属用户
-     *
-     * @param userId 上司ID
-     * @return
-     */
-    public List<UserPO> getUserPOByFatherId(Long userId) {
-        UserPOExample userPOExample = new UserPOExample();
-        userPOExample.createCriteria().andFatherIdEqualTo(userId);
-        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
-        return userPOList;
-    }
-
 
     /**
      * 获取所有用户
@@ -743,7 +727,7 @@ public class UserPOServiceV2 {
     public UserVO getUserVOByUserPO(UserPO userPO) {
         UserVO userVO = UserVOFactory.createUserVOByUserPO(userPO);
         userVO.setDeptVO(DeptVOFactory.createDeptVOByDeptPO(DeptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId())));
-        userVO.setRoleVO(RoleVOFactory.createRoleVOByRolePO(roleServiceV2.getRoleByRoleId(userPO.getRoleId())));
+        userVO.setRoleVO(RoleVOFactory.createRoleVOByRolePO(rolePOServiceV2.getRoleByRoleId(userPO.getRoleId())));
         userVO.setPositionVO(PositionVOFactory.createPositionVOByPositionPO(PositionPOServiceV2.getPositionPOByPositionId(userPO.getPositionId())));
         return userVO;
     }

@@ -26,45 +26,45 @@ public interface NoticeUserRelationPOMapper {
 
     @Delete({
         "delete from aoa_notice_user_relation",
-        "where relatin_id = #{relatinId,jdbcType=BIGINT}"
+        "where relation_id = #{relationId,jdbcType=BIGINT}"
     })
-    int deleteByPrimaryKey(Long relatinId);
+    int deleteByPrimaryKey(Long relationId);
 
     @Insert({
-        "insert into aoa_notice_user_relation (is_read, relatin_notice_id, ",
-        "relatin_user_id)",
-        "values (#{isRead,jdbcType=INTEGER}, #{relatinNoticeId,jdbcType=BIGINT}, ",
-        "#{relatinUserId,jdbcType=BIGINT})"
+        "insert into aoa_notice_user_relation (is_read, relation_notice_id, ",
+        "relation_user_id)",
+        "values (#{isRead,jdbcType=INTEGER}, #{relationNoticeId,jdbcType=BIGINT}, ",
+        "#{relationUserId,jdbcType=BIGINT})"
     })
-    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="relatinId", before=false, resultType=Long.class)
+    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="relationId", before=false, resultType=Long.class)
     int insert(NoticeUserRelationPO record);
 
     @InsertProvider(type=NoticeUserRelationPOSqlProvider.class, method="insertSelective")
-    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="relatinId", before=false, resultType=Long.class)
+    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="relationId", before=false, resultType=Long.class)
     int insertSelective(NoticeUserRelationPO record);
 
     @SelectProvider(type=NoticeUserRelationPOSqlProvider.class, method="selectByExample")
     @Results({
-        @Result(column="relatin_id", property="relatinId", jdbcType=JdbcType.BIGINT, id=true),
+        @Result(column="relation_id", property="relationId", jdbcType=JdbcType.BIGINT, id=true),
         @Result(column="is_read", property="isRead", jdbcType=JdbcType.INTEGER),
-        @Result(column="relatin_notice_id", property="relatinNoticeId", jdbcType=JdbcType.BIGINT),
-        @Result(column="relatin_user_id", property="relatinUserId", jdbcType=JdbcType.BIGINT)
+        @Result(column="relation_notice_id", property="relationNoticeId", jdbcType=JdbcType.BIGINT),
+        @Result(column="relation_user_id", property="relationUserId", jdbcType=JdbcType.BIGINT)
     })
     List<NoticeUserRelationPO> selectByExample(NoticeUserRelationPOExample example);
 
     @Select({
         "select",
-        "relatin_id, is_read, relatin_notice_id, relatin_user_id",
+        "relation_id, is_read, relation_notice_id, relation_user_id",
         "from aoa_notice_user_relation",
-        "where relatin_id = #{relatinId,jdbcType=BIGINT}"
+        "where relation_id = #{relationId,jdbcType=BIGINT}"
     })
     @Results({
-        @Result(column="relatin_id", property="relatinId", jdbcType=JdbcType.BIGINT, id=true),
+        @Result(column="relation_id", property="relationId", jdbcType=JdbcType.BIGINT, id=true),
         @Result(column="is_read", property="isRead", jdbcType=JdbcType.INTEGER),
-        @Result(column="relatin_notice_id", property="relatinNoticeId", jdbcType=JdbcType.BIGINT),
-        @Result(column="relatin_user_id", property="relatinUserId", jdbcType=JdbcType.BIGINT)
+        @Result(column="relation_notice_id", property="relationNoticeId", jdbcType=JdbcType.BIGINT),
+        @Result(column="relation_user_id", property="relationUserId", jdbcType=JdbcType.BIGINT)
     })
-    NoticeUserRelationPO selectByPrimaryKey(Long relatinId);
+    NoticeUserRelationPO selectByPrimaryKey(Long relationId);
 
     @UpdateProvider(type=NoticeUserRelationPOSqlProvider.class, method="updateByExampleSelective")
     int updateByExampleSelective(@Param("record") NoticeUserRelationPO record, @Param("example") NoticeUserRelationPOExample example);
@@ -78,9 +78,9 @@ public interface NoticeUserRelationPOMapper {
     @Update({
         "update aoa_notice_user_relation",
         "set is_read = #{isRead,jdbcType=INTEGER},",
-          "relatin_notice_id = #{relatinNoticeId,jdbcType=BIGINT},",
-          "relatin_user_id = #{relatinUserId,jdbcType=BIGINT}",
-        "where relatin_id = #{relatinId,jdbcType=BIGINT}"
+          "relation_notice_id = #{relationNoticeId,jdbcType=BIGINT},",
+          "relation_user_id = #{relationUserId,jdbcType=BIGINT}",
+        "where relation_id = #{relationId,jdbcType=BIGINT}"
     })
     int updateByPrimaryKey(NoticeUserRelationPO record);
 }

@@ -8,8 +8,8 @@ import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.voandfactory.noticeVO2.NoticeListVO;
-import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -18,6 +18,7 @@ import java.util.*;
 
 @Service
 public class NoticeServiceV2 {
+    
     @Resource
     private NoticeListPOMapper noticeListPOMapper;
     @Resource
@@ -31,33 +32,22 @@ public class NoticeServiceV2 {
     @Resource
     private NoticeUserRelationPOMapper noticeUserRelationPOMapper;
     @Resource
-    private NoticeUserRelationPOServiceV2 noticeUserRelationServiceV2;
+    private NoticeUserRelationPOServiceV2 noticeUserRelationPOServiceV2;
+    @Resource
+    private NoticePOServiceV2 noticePOServiceV2;
 
     /**
-     * 根据用户ID找通知公告
+     * 封装通知列表
      *
-     * @param page
-     * @param userId
+     * @param noticeListPOList 通知列表
      * @return
      */
-    public List<NoticeListPO> noticeListManageList(int page, Long userId) {
-        int size = 10;
-        PageHelper.startPage(page, size);
-        NoticeListPOExample noticeListPOExample = new NoticeListPOExample();
-        noticeListPOExample.setOrderByClause("is_top desc,modify_time desc");
-        noticeListPOExample.createCriteria().andUserIdEqualTo(userId);
-        List<NoticeListPO> noticeListManageList = noticeListPOMapper.selectByExample(noticeListPOExample);
-        return noticeListManageList;
-    }
-
-    // 封装
     public List<Map<String, Object>> encapsulationNoticeList(List<NoticeListPO> noticeListPOList) {
         List<Map<String, Object>> list = new ArrayList<>();
         for (int i = 0; i < noticeListPOList.size(); i++) {
-
             Map<String, Object> result = new HashMap<>();
             result.put("noticeId", noticeListPOList.get(i).getNoticeId());//公告ID
-            result.put("typename", typePOServiceV2.getTypeNameByTypeId(noticeListPOList.get(i).getTypeId()));//根据公告类型ID获取公告类型名
+            result.put("typename", typePOServiceV2.getTypePOByTypeId(noticeListPOList.get(i).getTypeId()).getTypeName());//根据公告类型ID获取公告类型名
             result.put("statusname", statusPOServiceV2.getStatusPOByStatusId(noticeListPOList.get(i).getStatusId()).getStatusName());// 根据公告状态ID获取公告状态名
             result.put("statuscolor", statusPOServiceV2.getStatusPOByStatusId(noticeListPOList.get(i).getStatusId()).getStatusColor());//根据公告状态ID获取公告状态颜色
             result.put("title", noticeListPOList.get(i).getTitle());//获取公告管理的标题
@@ -126,7 +116,7 @@ public class NoticeServiceV2 {
     }
 
     /**
-     * 插入一条新的日程通知
+     * 插入一条新的通知
      *
      * @param userId
      * @return
@@ -149,83 +139,53 @@ public class NoticeServiceV2 {
      * @param noticeId 通知表ID
      */
     public void deleteNoticeListPO(Long noticeId) {
-        NoticeUserRelationPOExample noticeUserRelationPOExample = new NoticeUserRelationPOExample();
-        noticeUserRelationPOExample.createCriteria().andRelatinNoticeIdEqualTo(noticeId);
-        noticeUserRelationPOMapper.deleteByExample(noticeUserRelationPOExample);//先删除附表
+        noticeUserRelationPOServiceV2.deleteNoticeUserRelationPOByRelationNoticeId(noticeId);//根据主表ID删除关系表信息
         noticeListPOMapper.deleteByPrimaryKey(noticeId);
     }
 
-    /**
-     * 通知与用户中间关联表，多一个字段，是否已读（告诉下属用户还有通知为读）
-     *
-     * @param noticeListPO 公告通知
-     * @param fatherId     上司ID
-     */
-    public void insertNoticeUserRelation(NoticeListPO noticeListPO, Long fatherId) {
-        List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherId(fatherId);
-
-        for (UserPO userPO : userPOList) {
-            NoticeUserRelationPO noticeUserRelationPO = new NoticeUserRelationPO();
-            noticeUserRelationPO.setIsRead(0);
-            noticeUserRelationPO.setRelatinUserId(userPO.getUserId());
-            noticeUserRelationPO.setRelatinNoticeId(noticeListPO.getNoticeId());
-            noticeUserRelationPOMapper.insertSelective(noticeUserRelationPO);
-        }
-    }
 
     /**
      * 更新通知关联表信息（把未读改为已读）
      *
      * @param relationId 通知用户是否已读表ID
      */
-    public void updateNoticeUserRelation(Long relationId) {
+    public void updateNoticeUserRelationInIsRead(Long relationId) {
         NoticeUserRelationPO noticeUserRelationPO = noticeUserRelationPOMapper.selectByPrimaryKey(relationId);//根据关联表ID查出关联表信息
         noticeUserRelationPO.setIsRead(1);//0未读1已读
         noticeUserRelationPOMapper.updateByPrimaryKeySelective(noticeUserRelationPO);
     }
 
+    /**
+     * 获取通知主表和通知用户关联表并进行封装
+     *
+     * @param userId 用户ID
+     * @return
+     */
     public List<Map<String, Object>> getNoticeUserRelationAndNoticeListPO(Long userId) {
         List<Map<String, Object>> list = new ArrayList<>();
-        NoticeUserRelationPOExample noticeUserRelationPOExample = new NoticeUserRelationPOExample();
-        noticeUserRelationPOExample.createCriteria().andRelatinUserIdEqualTo(userId);
-        // 根据登录人ID在关联表找关联表信息
-        List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationPOMapper.selectByExample(noticeUserRelationPOExample);
+//        根据登录人ID在关联表找关联表信息,并根据是否已读升序
+        List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationPOServiceV2.getNoticeUserRelationPOListByRelationUserIdOrderIsReadASC(userId);
         for (NoticeUserRelationPO noticeUserRelationPO : noticeUserRelationPOList) {
             Map<String, Object> map = new HashMap<>();
-            //根据关联表中的通知主表ID找通知主表信息
-            NoticeListPO noticeListPO = noticeListPOMapper.selectByPrimaryKey(noticeUserRelationPO.getRelatinNoticeId());
+            //根据通知公告ID找通知公告信息,并根据是否置顶修改时间排序
+            NoticeListPO noticeListPO = noticePOServiceV2.getNoticeListPOByNoticeIdOrderIsTopDESCAndModifyTimeDESC(noticeUserRelationPO.getRelationNoticeId());
             map.put("status", statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());//状态名
             map.put("type", typePOServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());//类型名
             map.put("statusColor", statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());//状态颜色
             map.put("userName", userPOServiceV2.getUserPOByUserId(noticeListPO.getUserId()).getUserName());//用户名
             map.put("deptName", deptPOServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());//部门名
-            map.put("contain", this.isForward(noticeListPO.getNoticeId(), noticeUserRelationPO.getRelatinUserId()));//
+            map.put("contain", this.isForward(noticeListPO.getNoticeId(), noticeUserRelationPO.getRelationUserId()));//
             map.put("is_read", noticeUserRelationPO.getIsRead());//是否已读
             map.put("notice_time", new Timestamp(noticeListPO.getNoticeTime().getTime()));//发布是时间
             map.put("is_top", noticeListPO.getIsTop());//是否置顶
             map.put("title", noticeListPO.getTitle());//通知标题
             map.put("url", noticeListPO.getUrl());//通知路径
             map.put("notice_id", noticeListPO.getNoticeId());//通知ID
-            map.put("relatin_id", noticeUserRelationPO.getRelatinId());// 通知用户关系表ID
+            map.put("relatin_id", noticeUserRelationPO.getRelationId());// 通知用户关系表ID
             list.add(map);
         }
         return list;
     }
-
-    // 封装对象，将List<Map<String, Object>>中的值进行封装，例如type_id封装成相对应的名字
-//    public List<Map<String, Object>> setNoticeListPOList(List<NoticeListPO> noticeListPOList) {
-//        List<Map<String,Object>> mapList = new ArrayList<>();
-//        Map<String,Object>map = new HashMap<>();
-//        for (NoticeListPO noticeListPO : noticeListPOList) {
-//            map.put("status",statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusName());
-//            map.put("type", typePOServiceV2.getTypePOByTypeId(noticeListPO.getTypeId()).getTypeName());
-//            map.put("statusColor", statusPOServiceV2.getStatusPOByStatusId(noticeListPO.getStatusId()).getStatusColor());
-//            map.put("userName", userPOServiceV2.getUserPOByUserId(noticeListPO.getUserId()).getUserName());
-//            map.put("deptName", deptPOServiceV2.getDeptPOByUserId(noticeListPO.getUserId()).getDeptName());
-//            map.put("contain",this.isForward(noticeListPO.getNoticeId(), noticeListPO.getUserId()));
-//        }
-//        return mapList;
-//    }
 
     /**
      * 用户判断是否已经转发了
@@ -236,13 +196,12 @@ public class NoticeServiceV2 {
      */
     private int isForward(Long noticeId, Long userId) {
         int count = 1;
-        if (userPOServiceV2.getUserPOListByFatherId(userId).size() > 0) {
-            List<Long> userListId = userPOServiceV2.getUserPOIdListByFatherId(userId);
-            if (noticeUserRelationServiceV2.getNoticeUserRelationPOListByNoticeId(noticeId) != null) {
-                List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationServiceV2.getNoticeUserRelationPOListByNoticeId(noticeId);
-
+        if (userPOServiceV2.getUserPOListByFatherId(userId).size() > 0) {//判断是否有下属用户
+            List<Long> userListId = userPOServiceV2.getUserPOIdListByFatherId(userId);//下属用户ID集合
+            if (noticeUserRelationPOServiceV2.getNoticeUserRelationPOListByNoticeId(noticeId) != null) {
+                List<NoticeUserRelationPO> noticeUserRelationPOList = noticeUserRelationPOServiceV2.getNoticeUserRelationPOListByNoticeId(noticeId);
                 for (NoticeUserRelationPO noticeUserRelationPO : noticeUserRelationPOList) {
-                    if (userListId.contains(noticeUserRelationPO.getRelatinUserId())) {
+                    if (userListId.contains(noticeUserRelationPO.getRelationUserId())) {
                         //下属用户ID包含了公告关联表用户ID，已经有此公告了已经转发了
                         count = 2;
                     }
@@ -255,5 +214,43 @@ public class NoticeServiceV2 {
         }
         return count;
     }
+
+
+    /**
+     * 根据用户ID和各种排序找通知列表
+     *
+     * @param userId  用户ID
+     * @param baseKey 模糊字
+     * @param type    类型
+     * @param status  状态
+     * @param time    修改时间
+     * @return
+     */
+    public List<NoticeListPO> noticeListPOSByUserIdAndOrders(Long userId, String baseKey, String type, String status, String time) {
+        String str = null;
+        if (!StringUtils.isEmpty(type)) {//根据类型排序
+            if ("1".equals(type)) {
+                str = "type_id DESC";
+            } else {
+                str = "type_id ASC";
+            }
+        } else if (!StringUtils.isEmpty(status)) {//根据状态排序
+            if ("1".equals(status)) {
+                str = "status_id DESC";
+            } else {
+                str = "status_id ASC";
+            }
+        } else if (!StringUtils.isEmpty(time)) {//根据时间排序
+            if ("1".equals(time)) {
+                str = "modify_time DESC";
+            } else {
+                str = "modify_time ASC";
+            }
+        } else if (!StringUtils.isEmpty(baseKey)) {
+            return noticePOServiceV2.noticeListPOSByUserIdAndTitleLikeOrderIsTopDESCAndModifyTimeDESC(userId, baseKey);
+        }
+        return noticePOServiceV2.noticeListPOSByUserIdAndOrders(userId, str);
+    }
+
 
 }

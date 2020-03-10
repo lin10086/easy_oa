@@ -733,7 +733,7 @@ public class ProcessServiceV2 {
 
         for (ProcessAuditVO processAuditVO : processAuditVOList) {
 
-            String exigenceName = typePOServiceV2.getTypeNameByTypeId(processAuditVO.getExigenceName());//紧急程度
+            String exigenceName = typePOServiceV2.getTypePOByTypeId(processAuditVO.getExigenceName()).getTypeName();//紧急程度
             StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(processAuditVO.getStatusId());
             // 创建map集合用于用于存放前端需要的数据
             Map<String, Object> result = new HashMap<>();

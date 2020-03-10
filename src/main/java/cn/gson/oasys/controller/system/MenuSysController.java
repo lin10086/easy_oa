@@ -1,6 +1,6 @@
 package cn.gson.oasys.controller.system;
 
-import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.serviceV2.roleV2.RolePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.rolemanage.RolePowerListServiceV2;
 import cn.gson.oasys.serviceV2.systemV2.SystemMenuServiceV2;
@@ -37,7 +37,7 @@ public class MenuSysController {
     @Resource
     private SystemMenuServiceV2 systemMenuServiceV2;
     @Resource
-    private RoleServiceV2 roleServiceV2;
+    private RolePOServiceV2 rolePOServiceV2;
     @Resource
     private RolePowerListServiceV2 rolePowerListServiceV2;
     @Resource
@@ -171,7 +171,7 @@ public class MenuSysController {
             } else {
                 //执行新增 的代码；
                 SysMenuPO sysMenuPO1 = systemMenuServiceV2.insertOrUpdateSysMenuPOId(sysMenuPO);
-                List<RolePO> rolePOListAll = roleServiceV2.getRoleListAll();// 所有角色信息
+                List<RolePO> rolePOListAll = rolePOServiceV2.getRoleListAll();// 所有角色信息
                 for (RolePO rolePO : rolePOListAll) {
                     if (rolePO.getRoleId() == 1) {//超级管理员
                         rolePowerListServiceV2.insertRolePowerListPOByIsShowAndMenuIdAndRoleId(true, sysMenuPO1.getMenuId(), rolePO.getRoleId());

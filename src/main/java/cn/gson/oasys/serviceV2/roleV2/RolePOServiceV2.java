@@ -11,7 +11,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class RoleServiceV2 {
+public class RolePOServiceV2 {
     @Resource
     private RolePOMapper rolePOMapper;
 

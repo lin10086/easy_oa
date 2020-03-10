@@ -32,12 +32,12 @@ public class NoticeUserRelationPOSqlProvider {
             sql.VALUES("is_read", "#{isRead,jdbcType=INTEGER}");
         }
         
-        if (record.getRelatinNoticeId() != null) {
-            sql.VALUES("relatin_notice_id", "#{relatinNoticeId,jdbcType=BIGINT}");
+        if (record.getRelationNoticeId() != null) {
+            sql.VALUES("relation_notice_id", "#{relationNoticeId,jdbcType=BIGINT}");
         }
         
-        if (record.getRelatinUserId() != null) {
-            sql.VALUES("relatin_user_id", "#{relatinUserId,jdbcType=BIGINT}");
+        if (record.getRelationUserId() != null) {
+            sql.VALUES("relation_user_id", "#{relationUserId,jdbcType=BIGINT}");
         }
         
         return sql.toString();
@@ -46,13 +46,13 @@ public class NoticeUserRelationPOSqlProvider {
     public String selectByExample(NoticeUserRelationPOExample example) {
         SQL sql = new SQL();
         if (example != null && example.isDistinct()) {
-            sql.SELECT_DISTINCT("relatin_id");
+            sql.SELECT_DISTINCT("relation_id");
         } else {
-            sql.SELECT("relatin_id");
+            sql.SELECT("relation_id");
         }
         sql.SELECT("is_read");
-        sql.SELECT("relatin_notice_id");
-        sql.SELECT("relatin_user_id");
+        sql.SELECT("relation_notice_id");
+        sql.SELECT("relation_user_id");
         sql.FROM("aoa_notice_user_relation");
         applyWhere(sql, example, false);
         
@@ -70,20 +70,20 @@ public class NoticeUserRelationPOSqlProvider {
         SQL sql = new SQL();
         sql.UPDATE("aoa_notice_user_relation");
         
-        if (record.getRelatinId() != null) {
-            sql.SET("relatin_id = #{record.relatinId,jdbcType=BIGINT}");
+        if (record.getRelationId() != null) {
+            sql.SET("relation_id = #{record.relationId,jdbcType=BIGINT}");
         }
         
         if (record.getIsRead() != null) {
             sql.SET("is_read = #{record.isRead,jdbcType=INTEGER}");
         }
         
-        if (record.getRelatinNoticeId() != null) {
-            sql.SET("relatin_notice_id = #{record.relatinNoticeId,jdbcType=BIGINT}");
+        if (record.getRelationNoticeId() != null) {
+            sql.SET("relation_notice_id = #{record.relationNoticeId,jdbcType=BIGINT}");
         }
         
-        if (record.getRelatinUserId() != null) {
-            sql.SET("relatin_user_id = #{record.relatinUserId,jdbcType=BIGINT}");
+        if (record.getRelationUserId() != null) {
+            sql.SET("relation_user_id = #{record.relationUserId,jdbcType=BIGINT}");
         }
         
         applyWhere(sql, example, true);
@@ -94,10 +94,10 @@ public class NoticeUserRelationPOSqlProvider {
         SQL sql = new SQL();
         sql.UPDATE("aoa_notice_user_relation");
         
-        sql.SET("relatin_id = #{record.relatinId,jdbcType=BIGINT}");
+        sql.SET("relation_id = #{record.relationId,jdbcType=BIGINT}");
         sql.SET("is_read = #{record.isRead,jdbcType=INTEGER}");
-        sql.SET("relatin_notice_id = #{record.relatinNoticeId,jdbcType=BIGINT}");
-        sql.SET("relatin_user_id = #{record.relatinUserId,jdbcType=BIGINT}");
+        sql.SET("relation_notice_id = #{record.relationNoticeId,jdbcType=BIGINT}");
+        sql.SET("relation_user_id = #{record.relationUserId,jdbcType=BIGINT}");
         
         NoticeUserRelationPOExample example = (NoticeUserRelationPOExample) parameter.get("example");
         applyWhere(sql, example, true);
@@ -112,15 +112,15 @@ public class NoticeUserRelationPOSqlProvider {
             sql.SET("is_read = #{isRead,jdbcType=INTEGER}");
         }
         
-        if (record.getRelatinNoticeId() != null) {
-            sql.SET("relatin_notice_id = #{relatinNoticeId,jdbcType=BIGINT}");
+        if (record.getRelationNoticeId() != null) {
+            sql.SET("relation_notice_id = #{relationNoticeId,jdbcType=BIGINT}");
         }
         
-        if (record.getRelatinUserId() != null) {
-            sql.SET("relatin_user_id = #{relatinUserId,jdbcType=BIGINT}");
+        if (record.getRelationUserId() != null) {
+            sql.SET("relation_user_id = #{relationUserId,jdbcType=BIGINT}");
         }
         
-        sql.WHERE("relatin_id = #{relatinId,jdbcType=BIGINT}");
+        sql.WHERE("relation_id = #{relationId,jdbcType=BIGINT}");
         
         return sql.toString();
     }

@@ -136,7 +136,7 @@ public class AttendancesController {
         AttendsPO attendsPO = attendanceServiceV2.getNewAttendancePOByUserId(nowDate, userId);
         AttendancesVO attendanceVO = AttendancesVOFactory.createAttendancesVOByAttendancesPO(attendsPO);
         if (attendanceVO != null) {
-            String typeName = typePOServiceV2.getTypeNameByTypeId(attendanceVO.getTypeId());//根据类型ID查找类型名
+            String typeName = typePOServiceV2.getTypePOByTypeId(attendanceVO.getTypeId()).getTypeName();//根据类型ID查找类型名
             model.addAttribute("type", typeName);
         }
         model.addAttribute("alist", attendanceVO);
@@ -530,7 +530,7 @@ public class AttendancesController {
         Date endDate = service.convert(endTime, Date.class);
         Long userId = Long.parseLong(session.getAttribute("userId").toString());//用户ID
         //获取用户的下属用户
-        List<UserPO> userPOList = userPOServiceV2.getUserPOByFatherId(userId);
+        List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherId(userId);
         List<UserPO> sunUserPOList = pageInformation.getUserPOListPage(page, 10, userPOList, request);
         List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(sunUserPOList);
         //获取下属用户ids

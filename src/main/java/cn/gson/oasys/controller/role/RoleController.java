@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import cn.gson.oasys.serviceV2.roleV2.RoleServiceV2;
+import cn.gson.oasys.serviceV2.roleV2.RolePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.rolemanage.RolePowerListServiceV2;
 import cn.gson.oasys.serviceV2.systemV2.SystemMenuServiceV2;
@@ -36,7 +36,7 @@ import com.github.pagehelper.util.StringUtil;
 public class RoleController {
 
     @Resource
-    private RoleServiceV2 roleServiceV2;
+    private RolePOServiceV2 rolePOServiceV2;
     @Resource
     private SystemMenuServiceV2 systemMenuServiceV2;
     @Resource
@@ -55,7 +55,7 @@ public class RoleController {
     public String roleManage(@RequestParam(value = "page", defaultValue = "1") int page,
                              @RequestParam(value = "size", defaultValue = "10") int size,
                              Model model) {
-        List<RolePO> rolePOList = roleServiceV2.getRoleListAll();//所有角色信息
+        List<RolePO> rolePOList = rolePOServiceV2.getRoleListAll();//所有角色信息
         getRolePOListPage(page, size, rolePOList, model);
         return "role/rolemanage";
     }
@@ -98,10 +98,10 @@ public class RoleController {
         }
 
         if (!StringUtil.isEmpty(val)) {
-            rolePOList = roleServiceV2.getRoleListByRoleNameLike(val);
+            rolePOList = rolePOServiceV2.getRoleListByRoleNameLike(val);
             model.addAttribute("sort", "&val=" + val);//记录了模糊字，&val用于连接页码和模糊字
         } else {
-            rolePOList = roleServiceV2.getRoleListAll();
+            rolePOList = rolePOServiceV2.getRoleListAll();
         }
         getRolePOListPage(page, size, rolePOList, model);
         return "role/roletable";
@@ -117,7 +117,7 @@ public class RoleController {
         RolePO rolePO = new RolePO();
         if (!StringUtil.isEmpty(req.getParameter("id"))) {
             Long rolePOId = Long.parseLong(req.getParameter("id"));
-            rolePO = roleServiceV2.getRoleByRoleId(rolePOId);
+            rolePO = rolePOServiceV2.getRoleByRoleId(rolePOId);
         }
         model.addAttribute("role", rolePO);
         return "role/addrole";
@@ -135,15 +135,15 @@ public class RoleController {
             rolePOId = Long.parseLong(req.getParameter("id"));//角色ID
         }
         if (rolePOId != null) {
-            RolePO rolePO = roleServiceV2.getRoleByRoleId(rolePOId);
+            RolePO rolePO = rolePOServiceV2.getRoleByRoleId(rolePOId);
             rolePO.setRoleName(roleVO.getRoleName());
             rolePO.setRoleValue(roleVO.getRoleValue());
-            roleServiceV2.updateOrInsertRolePO(rolePO, rolePOId);//更新角色信息
+            rolePOServiceV2.updateOrInsertRolePO(rolePO, rolePOId);//更新角色信息
         } else {
             RolePO rolePO = new RolePO();
             rolePO.setRoleName(roleVO.getRoleName());
             rolePO.setRoleValue(roleVO.getRoleValue());
-            RolePO newRolePO = roleServiceV2.updateOrInsertRolePO(rolePO, null);//插入角色信息
+            RolePO newRolePO = rolePOServiceV2.updateOrInsertRolePO(rolePO, null);//插入角色信息
             List<SysMenuPO> sysMenuPOList = systemMenuServiceV2.getSysMenuPOAll();//所有菜单
             rolePowerListServiceV2.insertRolePowerListPOBySystemMenuPOListAndRolePOId(sysMenuPOList, newRolePO.getRoleId());//插入角色权限信息
         }
@@ -158,7 +158,7 @@ public class RoleController {
     @RequestMapping("roleset")
     public String roleSet(HttpServletRequest req, Model model) {
         Long roleId = Long.parseLong(req.getParameter("id"));
-        RolePO rolePO = roleServiceV2.getRoleByRoleId(roleId);
+        RolePO rolePO = rolePOServiceV2.getRoleByRoleId(roleId);
         List<RolePowerMenuVO> oneRolePowerMenuVO = systemMenuServiceV2.getSysMenuPOListByParentAll(0L, roleId);
         List<RolePowerMenuVO> twoRolePowerMenuVO = systemMenuServiceV2.getSysMenuPOListBySonAll(0L, roleId);
         model.addAttribute("oneMenuAll", oneRolePowerMenuVO);//一级菜单
@@ -209,7 +209,7 @@ public class RoleController {
                 return "common/proce";
             } else {
                 //角色下没有职员，则可以直接删除角色
-                roleServiceV2.deleteRolePOByRoleId(roleId);
+                rolePOServiceV2.deleteRolePOByRoleId(roleId);
             }
         } else {
             model.addAttribute("error", "只有超级管理员才能操作。");

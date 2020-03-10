@@ -61,7 +61,7 @@ public class InformService {
 
     }
 
-    // 封装
+    // 封装1
     public List<Map<String, Object>> fengZhuang(List<NoticesList> noticelist) {
         List<Map<String, Object>> list = new ArrayList<>();
         for (int i = 0; i < noticelist.size(); i++) {
