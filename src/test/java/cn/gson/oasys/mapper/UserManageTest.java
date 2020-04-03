@@ -49,9 +49,18 @@ public class UserManageTest {
         }
         log.info("mapList={}", mapList);
         for (Map<String, UserPO> map1 : mapList) {
-            log.info("map1.get(\"userPO\")={}",map1.get("userPO"));
+            log.info("map1.get(\"userPO\")={}", map1.get("userPO"));
         }
 
+    }
+
+    @Test
+    public void getUserPOList() {
+        UserPOExample userPOExample = new UserPOExample();
+        userPOExample.createCriteria().andUserNameLike("%" + "罗" + "%");
+        userPOExample.or(userPOExample.createCriteria().andRealNameLike("%" + "明" + "%"));
+        List<UserPO> userPOList = userPOMapper.selectByExample(userPOExample);
+        log.info("userPOList={}", userPOList);
     }
 
 }

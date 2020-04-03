@@ -2,6 +2,9 @@ package cn.gson.oasys.controller.user;
 
 import java.util.List;
 
+import cn.gson.oasys.model.entity.user.Dept;
+import cn.gson.oasys.model.entity.user.Position;
+import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.roleV2.RolePOServiceV2;
@@ -11,6 +14,7 @@ import cn.gson.oasys.modelV2.po.DeptPO;
 import cn.gson.oasys.modelV2.po.PositionPO;
 import cn.gson.oasys.modelV2.po.RolePO;
 import cn.gson.oasys.modelV2.po.UserPO;
+import cn.gson.oasys.serviceV2.userV2.UserServiceV2;
 import cn.gson.oasys.voandfactory.deptVO2.DeptVO;
 import cn.gson.oasys.voandfactory.positionVO2.PositionVO;
 import cn.gson.oasys.voandfactory.roleVO2.RoleVO;
@@ -23,15 +27,15 @@ import com.github.pagehelper.util.StringUtil;
 import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/")
@@ -45,6 +49,8 @@ public class UserController {
     private PositionPOServiceV2 positionPOServiceV2;
     @Resource
     private RolePOServiceV2 rolePOServiceV2;
+    @Resource
+    private UserServiceV2 userServiceV2;
 
     /**
      * ----------
@@ -238,6 +244,67 @@ public class UserController {
         }
         model.addAttribute("success", 1);
         return "/usermanage";
+    }
+
+
+    /**
+     * 用户姓名查找（通讯录分页）
+     *
+     * @param model
+     * @param req
+     * @param userId
+     * @param page
+     * @param size
+     * @return
+     */
+    @RequestMapping("names")
+    public String addressList(Model model, HttpServletRequest req, @SessionAttribute("userId") Long userId,
+                              @RequestParam(value = "page", defaultValue = "1") int page,
+                              @RequestParam(value = "size", defaultValue = "10") int size) {
+        userServiceV2.setUserVOListAllAndPage(model, page, size);
+//        Pageable pa = new PageRequest(page, size);
+//        String name = null;
+//        String qufen = null;
+//        Page<User> pageuser = null;
+//        List<User> userlist = null;
+//
+//        if (!StringUtil.isEmpty(req.getParameter("title"))) {
+//            name = req.getParameter("title").trim();
+//        }
+//        if (!StringUtil.isEmpty(req.getParameter("qufen"))) {
+//            qufen = req.getParameter("qufen").trim();
+//
+//            System.out.println("111");
+//            if (StringUtil.isEmpty(name)) {
+                // 查询部门下面的员工
+//                pageuser = udao.findByFatherId(userId, pa);
+//            } else {
+                // 查询名字模糊查询员工
+//                pageuser = udao.findbyFatherId(name, userId, pa);
+//            }
+//
+//        } else {
+//            System.out.println("222");
+//            if (StringUtil.isEmpty(name)) {
+//                查看用户并分页
+//                pageuser = udao.findAll(pa);
+//            } else {
+//                pageuser = udao.findbyUserNameLike(name, pa);
+//            }
+//        }
+//        userlist = pageuser.getContent();
+        // 查询部门表
+//        Iterable<Dept> deptlist = ddao.findAll();
+        // 查职位表
+//        List<PositionPO> positionListAll = positionPOServiceV2.getPositionListAll();
+//        model.addAttribute("emplist", userlist);
+//        model.addAttribute("page", pageuser);
+//        model.addAttribute("deptlist", deptlist);
+//        model.addAttribute("poslist", positionListAll);
+        model.addAttribute("url", "names");
+
+        return "common/recivers";
+
     }
 
 }

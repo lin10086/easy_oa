@@ -1,3 +1,4 @@
+<#--任务管理的实际信息-->
 <div class="bgc-w box box-primary">
 	<!--盒子头-->
 	<div class="box-header">
@@ -9,7 +10,7 @@
 		<div class="box-tools">
 			<div class="input-group" style="width: 150px;">
 				<input type="text" class="form-control input-sm cha"
-					placeholder="查找..." />
+					placeholder="任务标题查找..." />
 				<div class="input-group-btn chazhao">
 					<a class="btn btn-sm btn-default"><span
 						class="glyphicon glyphicon-search"></span></a>
@@ -51,12 +52,12 @@
 						<#else>
 							<td> <span class="labels"><label><input type="checkbox" name="top" class="val" disabled><i>✓</i></label></span></td>
 						</#if>
-						<td><a  href="edittasks?id=${task.taskid}"
+						<td><a  href="edittask?id=${task.taskid}"
 							class="label xiugai"><span
 								class="glyphicon glyphicon-edit"></span> 修改</a> 
-								<a href="seetasks?id=${task.taskid}" class="label xiugai"><span
+								<a href="seetask?id=${task.taskid}" class="label xiugai"><span
 								class="glyphicon glyphicon-search"></span> 查看</a>
-								 <a href="shanchu?id=${task.taskid}" onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};"
+								 <a href="deletetask?id=${task.taskid}" onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};"
 							class="label shanchu"><span
 								class="glyphicon glyphicon-remove"></span> 删除</a></td>
 					</tr>
@@ -76,14 +77,14 @@
 		
 		$('.baseKetsubmit').on('click',function(){
 			var baseKey=$('.baseKey').val();
-			$('.thistable').load('${url}?baseKey=baseKey');
+			$('.thistableson').load('${url}?baseKey=baseKey');
 		});
 		
 
 		   $(function(){
 			   $(".chazhao").click(function(){
 				   var con=$(".cha").val();
-				   $(".thistable").load("paixu",{val:con});
+				   $(".thistableson").load("paixu",{val:con});
 			   });
 			   
 			   $(".commen").click(function(){
@@ -96,7 +97,7 @@
 					$("#img").appendTo(".mm span"); */	
 					var $val=$(this).text();
 					
-					 $(".thistable").load("paixu",{val:$val});
+					 $(".thistableson").load("paixu",{val:$val});
 					
 					
 				})

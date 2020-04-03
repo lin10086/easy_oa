@@ -23,7 +23,7 @@ import cn.gson.oasys.serviceV2.processServiceV2.NotePaperPOServiceV2;
 import cn.gson.oasys.serviceV2.processServiceV2.ProcessServiceV2;
 import cn.gson.oasys.serviceV2.scheduleV2.ScheduleServiceV2;
 import cn.gson.oasys.serviceV2.systemV2.SystemMenuServiceV2;
-import cn.gson.oasys.serviceV2.taskV2.TaskUserServiceV2;
+import cn.gson.oasys.serviceV2.taskV2.TaskUserPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserLogServiceV2;
 import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.voandfactory.userVO2.UserVO;
@@ -124,7 +124,7 @@ public class IndexController {
     @Resource
     private MailReciverPOServiceV2 mailReciverServiceV2;
     @Resource
-    private TaskUserServiceV2 taskUserServiceV2;
+    private TaskUserPOServiceV2 taskUserServiceV2;
     @Resource
     private UserLogServiceV2 userLogServiceV2;
     @Resource

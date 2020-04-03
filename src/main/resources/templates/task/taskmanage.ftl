@@ -1,3 +1,4 @@
+<#--任务管理页面-->
 <#include "/common/commoncss.ftl">
 
 <style type="text/css">
@@ -40,7 +41,7 @@ a:hover {
 	</div>
 </div>
 <div class="row" style="padding-top: 15px;">
-	<div class="col-md-12 thistable">
+	<div class="col-md-12 thistableson">
 		<!--id="container"-->
 		<#include "managetable.ftl">
 	</div>

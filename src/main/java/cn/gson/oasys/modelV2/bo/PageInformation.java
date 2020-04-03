@@ -2,6 +2,7 @@ package cn.gson.oasys.modelV2.bo;
 
 import cn.gson.oasys.modelV2.po.AttendsPO;
 import cn.gson.oasys.modelV2.po.NoticeListPO;
+import cn.gson.oasys.modelV2.po.TaskListPO;
 import cn.gson.oasys.modelV2.po.UserPO;
 import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
 import cn.gson.oasys.voandfactory.attendansVO2.AttendancesVO;
@@ -48,10 +49,10 @@ public class PageInformation {
      * @param page
      * @param size
      * @param userPOList
-     * @param request
+     * @param model
      * @return
      */
-    public List<UserPO> getUserPOListPage(int page, int size, List<UserPO> userPOList, HttpServletRequest request) {
+    public List<UserPO> getUserPOListPage(int page, int size, List<UserPO> userPOList, Model model) {
         PageBO pageBO = new PageBO(page, size);
         pageBO.setTotalCount(userPOList.size());
         int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
@@ -60,9 +61,10 @@ public class PageInformation {
             end = userPOList.size();
         }
         List<UserPO> subUserPOList = userPOList.subList(start, end);//用户的页面信息
-        request.setAttribute("page", pageBO);
+        model.addAttribute("page", pageBO);
         return subUserPOList;
     }
+
 
     /**
      * 对通知公告列表进行分页
@@ -106,6 +108,28 @@ public class PageInformation {
         List<Map<String, Object>> subMapList = mapList.subList(start, end);
         model.addAttribute("page", pageBO);
         return subMapList;
+    }
+
+    /**
+     * 任务分页
+     *
+     * @param page        第几页
+     * @param size        每页几条
+     * @param taskListPOS 任务列表
+     * @param model
+     * @return
+     */
+    public List<TaskListPO> getTaskListPOSPage(int page, int size, List<TaskListPO> taskListPOS, Model model) {
+        PageBO pageBO = new PageBO(page, size);
+        pageBO.setTotalCount(taskListPOS.size());
+        int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
+        int end = pageBO.getPageNo() * pageBO.getPageSize();
+        if (taskListPOS.size() < end) {
+            end = taskListPOS.size();
+        }
+        List<TaskListPO> subTaskListPOS = taskListPOS.subList(start, end);//用户的页面信息
+        model.addAttribute("page", pageBO);
+        return subTaskListPOS;
     }
 
 

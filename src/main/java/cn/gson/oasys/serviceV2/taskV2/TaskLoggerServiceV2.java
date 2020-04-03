@@ -53,8 +53,8 @@ public class TaskLoggerServiceV2 {
     /**
      * 插入日志
      *
-     * @param taskLoggerVO
-     * @param userPO
+     * @param taskLoggerVO 任务日志信息
+     * @param userPO       用户信息
      */
     public void insertTaskLoggerPO(TaskLoggerVO taskLoggerVO, UserPO userPO, Long taskId) {
         TaskLoggerPO taskLoggerPO = new TaskLoggerPO();
@@ -69,7 +69,7 @@ public class TaskLoggerServiceV2 {
     /**
      * 根据任务ID删除任务日志
      *
-     * @param taskId
+     * @param taskId 任务ID
      */
     public void deleteTaskLoggerPOByTaskId(Long taskId) {
         TaskLoggerPOExample taskLoggerPOExample = new TaskLoggerPOExample();

@@ -1,14 +1,13 @@
 package cn.gson.oasys.serviceV2.taskV2;
 
+import cn.gson.oasys.mappers.TaskListPOMapper;
+import cn.gson.oasys.mappers.TaskUserPOMapper;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.mappers.TaskListPOMapper;
-import cn.gson.oasys.mappers.TaskUserPOMapper;
-import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.voandfactory.taskVO2.TaskListVO;
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.util.StringUtil;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +15,18 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.*;
 
+/**
+ * 任务业务
+ */
 @Service
 public class TaskServiceV2 {
 
     @Resource
     private TaskListPOMapper taskListPOMapper;
     @Resource
-    private TaskUserServiceV2 taskUserServiceV2;
+    private TaskUserPOServiceV2 taskUserServiceV2;
     @Resource
-    private TaskListServiceV2 taskListServiceV2;
+    private TaskListPOServiceV2 taskListPOServiceV2;
     @Resource
     private TaskUserPOMapper taskUserPOMapper;
     @Resource
@@ -37,75 +39,43 @@ public class TaskServiceV2 {
     private StatusPOServiceV2 statusPOServiceV2;
 
     /**
-     * 根据用户找任务列表及各种排序
+     * 根据发布人ID找任务列表及各种排序
      *
-     * @param page
-     * @param size
-     * @param val
+     * @param val    排序条件
      * @param userId 登录人ID
      * @return
      */
-    public List<TaskListPO> selectTackListPO(int page, int size, String val, Long userId) {
-        PageHelper.startPage(page, size);
-        List<TaskListPO> taskListPOList = null;
+    public List<TaskListPO> selectTackListPOByTaskPushUserIdAndVal(String val, Long userId) {
+        List<TaskListPO> taskListPOS = null;
         if (StringUtil.isEmpty(val)) {
             TaskListPOExample taskListPOExample = new TaskListPOExample();
-            taskListPOExample.setOrderByClause("is_top DESC,modify_time DESC");
             taskListPOExample.createCriteria().andTaskPushUserIdEqualTo(userId);
-            taskListPOList = taskListPOMapper.selectByExample(taskListPOExample);
+            taskListPOExample.setOrderByClause("is_top DESC,publish_time DESC");
+            taskListPOS = taskListPOMapper.selectByExample(taskListPOExample);
         } else if (("类型").equals(val)) {
             TaskListPOExample taskListPOExample = new TaskListPOExample();
+            taskListPOExample.createCriteria().andTaskPushUserIdEqualTo(userId);
             taskListPOExample.setOrderByClause("type_id DESC");
             taskListPOExample.createCriteria().andTaskPushUserIdEqualTo(userId);
-            taskListPOList = taskListPOMapper.selectByExample(taskListPOExample);
+            taskListPOS = taskListPOMapper.selectByExample(taskListPOExample);
         } else if (("状态").equals(val)) {
             TaskListPOExample taskListPOExample = new TaskListPOExample();
-            taskListPOExample.setOrderByClause("is_cancel ASC,status_id DESC");
             taskListPOExample.createCriteria().andTaskPushUserIdEqualTo(userId);
-            taskListPOList = taskListPOMapper.selectByExample(taskListPOExample);
+            taskListPOExample.setOrderByClause("status_id DESC");
+            taskListPOS = taskListPOMapper.selectByExample(taskListPOExample);
         } else if (("发布时间").equals(val)) {
             TaskListPOExample taskListPOExample = new TaskListPOExample();
-            taskListPOExample.setOrderByClause("publish_time DESC");
             taskListPOExample.createCriteria().andTaskPushUserIdEqualTo(userId);
-            taskListPOList = taskListPOMapper.selectByExample(taskListPOExample);
+            taskListPOExample.setOrderByClause("publish_time DESC");
+            taskListPOS = taskListPOMapper.selectByExample(taskListPOExample);
         } else {
             TaskListPOExample taskListPOExample = new TaskListPOExample();
-            taskListPOExample.createCriteria().andTitleLike("%"+val+"%");
-            taskListPOExample.createCriteria().andTaskPushUserIdEqualTo(userId);
-            taskListPOList = taskListPOMapper.selectByExample(taskListPOExample);
+            taskListPOExample.createCriteria().andTaskPushUserIdEqualTo(userId).andTitleLike("%" + val + "%");
+            taskListPOS = taskListPOMapper.selectByExample(taskListPOExample);
         }
-        return taskListPOList;
+        return taskListPOS;
     }
 
-
-    /**
-     * 包装任务表
-     *
-     * @param taskListPOList 任务表
-     * @param userId         用户ID
-     * @return
-     */
-    public List<Map<String, Object>> packageTaskListPO(List<TaskListPO> taskListPOList, Long userId) {
-        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
-        List<Map<String, Object>> mapList = new ArrayList<>();
-        for (TaskListPO taskListPO : taskListPOList) {
-            Map<String, Object> map = new HashMap<>();
-            DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId());
-            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(taskListPO.getStatusId().longValue());
-            map.put("taskid", taskListPO.getTaskId());//任务表ID
-            map.put("typename", typePOServiceV2.getTypePOByTypeId(taskListPO.getTypeId()).getTypeName());//类型名
-            map.put("statusname", statusPO.getStatusName());//状态名
-            map.put("statuscolor", statusPO.getStatusColor());//状态颜色
-            map.put("title", taskListPO.getTitle());//任务标题
-            map.put("publishtime", new Timestamp(taskListPO.getPublishTime().getTime()));//任务发布时间
-            map.put("zhiding", taskListPO.getIsTop() == 0 ? false : true); // 任务是否置顶
-            map.put("cancel", taskListPO.getIsCancel() == 0 ? false : true);//是否取消任务
-            map.put("username", userPO.getUserName());//用户名
-            map.put("deptname", deptPO.getDeptName());//部门名
-            mapList.add(map);
-        }
-        return mapList;
-    }
 
     /**
      * 从前端获取到的任务表数据插入任务表或更新数据
@@ -179,15 +149,14 @@ public class TaskServiceV2 {
     /**
      * 排序
      *
-     * @param userId
-     * @param title
-     * @param page
-     * @param size
+     * @param userId 用户ID
+     * @param title  标题
      * @return
      */
-    public List<TaskListPO> sortTaskListPO(Long userId, String title, int page, int size) {
+    public List<TaskListPO> sortTaskListPO(Long userId, String title) {
         List<TaskListPO> taskListPOList = null;
-        List<Long> taskIdList = taskUserServiceV2.getTaskIdList(userId);// 根据接收人id查询任务id
+        // 根据接收人id查询任务id
+        List<Long> taskIdList = taskUserServiceV2.getTaskIdListByUserId(userId);
         TypePO typePO = null;
         StatusPO statusPO = null;
         UserPO userPO = null;
@@ -198,22 +167,51 @@ public class TaskServiceV2 {
         }
         if (StringUtil.isEmpty(title)) {
             if (taskIdList.size() > 0) {
-                taskListPOList = taskListServiceV2.getTaskListPOBySortAndTaskIdIn(taskIdList);
+                taskListPOList = taskListPOServiceV2.getTaskListPOBySortAndTaskIdIn(taskIdList);
             }
         } else if (!Objects.isNull(typePO)) {
-            taskListPOList = taskListServiceV2.getTaskListPOByTypeIdAndTaskIdIn(taskIdList, typePO.getTypeId());
+            taskListPOList = taskListPOServiceV2.getTaskListPOByTypeIdAndTaskIdIn(taskIdList, typePO.getTypeId());
         } else if (!Objects.isNull(statusPO)) {
-            taskListPOList = taskListServiceV2.getTaskListPOByStatusIdAndTaskIdIn(taskIdList, statusPO.getStatusId().intValue());
+            taskListPOList = taskListPOServiceV2.getTaskListPOByStatusIdAndTaskIdIn(taskIdList, statusPO.getStatusId().intValue());
         } else if (("已取消").equals(title)) {
-            taskListPOList = taskListServiceV2.getTaskListPOBycancelAndTaskIdIn(taskIdList, true);
+            taskListPOList = taskListPOServiceV2.getTaskListPOBycancelAndTaskIdIn(taskIdList, true);
         } else if (!Objects.isNull(userPO)) {
-            taskListPOList = taskListServiceV2.getTaskListPOByUserPOIdAndTaskIdIn(taskIdList, userPO);
+            taskListPOList = taskListPOServiceV2.getTaskListPOByUserPOIdAndTaskIdIn(taskIdList, userPO);
         } else {
-            taskListPOList = taskListServiceV2.getTaskListPOByTitleLikeAndTaskIdIn(taskIdList, title);
-            // 根据title和taskid进行模糊查询
+            taskListPOList = taskListPOServiceV2.getTaskListPOByTitleLikeAndTaskIdIn(taskIdList, title);
         }
         return taskListPOList;
     }
+
+    /**
+     * 包装任务表
+     *
+     * @param taskListPOList 任务表
+     * @param userId         用户ID
+     * @return
+     */
+    public List<Map<String, Object>> packageTaskListPO(List<TaskListPO> taskListPOList, Long userId) {
+        UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);// 用户信息
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        for (TaskListPO taskListPO : taskListPOList) {
+            Map<String, Object> map = new HashMap<>();
+            DeptPO deptPO = deptPOServiceV2.getDeptPOByDeptId(userPO.getDeptId());//用户的部门信息
+            StatusPO statusPO = statusPOServiceV2.getStatusPOByStatusId(taskListPO.getStatusId().longValue());//任务的状态信息
+            map.put("taskid", taskListPO.getTaskId());//任务表ID
+            map.put("typename", typePOServiceV2.getTypePOByTypeId(taskListPO.getTypeId()).getTypeName());//任务类型名
+            map.put("statusname", statusPO.getStatusName());//任务状态名
+            map.put("statuscolor", statusPO.getStatusColor());//任务状态颜色
+            map.put("title", taskListPO.getTitle());//任务标题
+            map.put("publishtime", new Timestamp(taskListPO.getPublishTime().getTime()));//任务发布时间
+            map.put("zhiding", taskListPO.getIsTop() == 0 ? false : true); // 任务是否置顶
+            map.put("cancel", taskListPO.getIsCancel() == 0 ? false : true);//是否取消任务
+            map.put("username", userPO.getUserName());//用户名
+            map.put("deptname", deptPO.getDeptName());//部门名
+            mapList.add(map);
+        }
+        return mapList;
+    }
+
 
     /**
      * 封装（index4)

@@ -9,16 +9,19 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * 任务列表业务
+ */
 @Service
-public class TaskListServiceV2 {
+public class TaskListPOServiceV2 {
     @Resource
     private TaskListPOMapper taskListPOMapper;
 
     /**
      * 根据任务ID修改状态ID
      *
-     * @param taskId
-     * @param statusId
+     * @param taskId   任务ID
+     * @param statusId 状态ID
      * @return
      */
     public Integer updateTaskListPOStatus(Long taskId, Long statusId) {
@@ -32,7 +35,7 @@ public class TaskListServiceV2 {
     /**
      * 根据是否取消，状态ID进行排序和任务ID是否在（根据用户找到的任务ID里面）
      *
-     * @param taskIdList
+     * @param taskIdList 任务ID集合
      * @return
      */
     public List<TaskListPO> getTaskListPOBySortAndTaskIdIn(List<Long> taskIdList) {
@@ -102,8 +105,8 @@ public class TaskListServiceV2 {
     /**
      * 根据任务标题和任务ID是否在（根据用户找到的任务ID里面）
      *
-     * @param taskIdList
-     * @param title
+     * @param taskIdList 任务ID集合
+     * @param title      标题模糊字
      * @return
      */
     public List<TaskListPO> getTaskListPOByTitleLikeAndTaskIdIn(List<Long> taskIdList, String title) {

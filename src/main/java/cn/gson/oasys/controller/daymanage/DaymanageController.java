@@ -21,7 +21,6 @@ import cn.gson.oasys.modelV2.po.UserPO;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
 import cn.gson.oasys.voandfactory.userVO2.UserVO;
 import cn.gson.oasys.voandfactory.scheduleVO2.ScheduleListVO;
 import com.github.pagehelper.PageHelper;
@@ -266,8 +265,6 @@ public class DaymanageController {
     @Resource
     private UserPOServiceV2 userPOServiceV2;
     @Resource
-    private UserVOListServiceV2 userVOListServiceV2;
-    @Resource
     private ScheduleListServiceV2 scheduleListServiceV2;
     @Resource
     private ScheduleUserServiceV2 scheduleUserServiceV2;
@@ -337,10 +334,10 @@ public class DaymanageController {
         }
 
         PageHelper.startPage(page, size);
-        List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
-        PageInfo pageInfo = new PageInfo(userVOList);
-        model.addAttribute("page", pageInfo);
-        model.addAttribute("userVOList", userVOList);
+//        List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
+//        PageInfo pageInfo = new PageInfo(userVOList);
+//        model.addAttribute("page", pageInfo);
+//        model.addAttribute("userVOList", userVOList);
         model.addAttribute("url", "names");
 
         model.addAttribute("types", typePOList);

@@ -82,6 +82,9 @@ public class StatusPOServiceV2 {
         StatusPOExample statusPOExample = new StatusPOExample();
         statusPOExample.createCriteria().andStatusModelEqualTo(statusModel).andStatusNameEqualTo(statusName);
         List<StatusPO> statusPOList = statusPOMapper.selectByExample(statusPOExample);
+        if (statusPOList.size() == 0) {
+            return null;
+        }
         return statusPOList.get(0);
 
     }

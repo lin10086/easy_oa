@@ -797,57 +797,57 @@ public class MailController {
     }
 */
 
-    /**
-     * 用户姓名查找
-     */
-    @RequestMapping("names")
-    public String serch(Model model, HttpServletRequest req, @SessionAttribute("userId") Long userId,
-                        @RequestParam(value = "page", defaultValue = "0") int page,
-                        @RequestParam(value = "size", defaultValue = "10") int size) {
-        Pageable pa = new PageRequest(page, size);
-        String name = null;
-        String qufen = null;
-        Page<User> pageuser = null;
-        List<User> userlist = null;
-
-        if (!StringUtil.isEmpty(req.getParameter("title"))) {
-            name = req.getParameter("title").trim();
-        }
-        if (!StringUtil.isEmpty(req.getParameter("qufen"))) {
-            qufen = req.getParameter("qufen").trim();
-
-            System.out.println("111");
-            if (StringUtil.isEmpty(name)) {
-                // 查询部门下面的员工
-                pageuser = udao.findByFatherId(userId, pa);
-            } else {
-                // 查询名字模糊查询员工
-                pageuser = udao.findbyFatherId(name, userId, pa);
-            }
-
-        } else {
-            System.out.println("222");
-            if (StringUtil.isEmpty(name)) {
-                //查看用户并分页
-                pageuser = udao.findAll(pa);
-            } else {
-                pageuser = udao.findbyUserNameLike(name, pa);
-            }
-        }
-        userlist = pageuser.getContent();
-        // 查询部门表
-        Iterable<Dept> deptlist = ddao.findAll();
-        // 查职位表
-        Iterable<Position> poslist = pdao.findAll();
-        model.addAttribute("emplist", userlist);
-        model.addAttribute("page", pageuser);
-        model.addAttribute("deptlist", deptlist);
-        model.addAttribute("poslist", poslist);
-        model.addAttribute("url", "names");
-
-        return "common/recivers";
-
-    }
+//    /**
+//     * 用户姓名查找（通讯录分页）
+//     */
+//    @RequestMapping("names")
+//    public String serch(Model model, HttpServletRequest req, @SessionAttribute("userId") Long userId,
+//                        @RequestParam(value = "page", defaultValue = "0") int page,
+//                        @RequestParam(value = "size", defaultValue = "10") int size) {
+//        Pageable pa = new PageRequest(page, size);
+//        String name = null;
+//        String qufen = null;
+//        Page<User> pageuser = null;
+//        List<User> userlist = null;
+//
+//        if (!StringUtil.isEmpty(req.getParameter("title"))) {
+//            name = req.getParameter("title").trim();
+//        }
+//        if (!StringUtil.isEmpty(req.getParameter("qufen"))) {
+//            qufen = req.getParameter("qufen").trim();
+//
+//            System.out.println("111");
+//            if (StringUtil.isEmpty(name)) {
+//                // 查询部门下面的员工
+//                pageuser = udao.findByFatherId(userId, pa);
+//            } else {
+//                // 查询名字模糊查询员工
+//                pageuser = udao.findbyFatherId(name, userId, pa);
+//            }
+//
+//        } else {
+//            System.out.println("222");
+//            if (StringUtil.isEmpty(name)) {
+//                //查看用户并分页
+//                pageuser = udao.findAll(pa);
+//            } else {
+//                pageuser = udao.findbyUserNameLike(name, pa);
+//            }
+//        }
+//        userlist = pageuser.getContent();
+//        // 查询部门表
+//        Iterable<Dept> deptlist = ddao.findAll();
+//        // 查职位表
+//        Iterable<Position> poslist = pdao.findAll();
+//        model.addAttribute("emplist", userlist);
+//        model.addAttribute("page", pageuser);
+//        model.addAttribute("deptlist", deptlist);
+//        model.addAttribute("poslist", poslist);
+//        model.addAttribute("url", "names");
+//
+//        return "common/recivers";
+//
+//    }
 
     /**
      * 恢复删除

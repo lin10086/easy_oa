@@ -16,7 +16,6 @@ import cn.gson.oasys.serviceV2.roleV2.RolePOServiceV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
 import cn.gson.oasys.services.process.ProcessService;
 import cn.gson.oasys.voandfactory.processVO2.StayVOFactory;
 import cn.gson.oasys.voandfactory.processVO2.*;
@@ -30,14 +29,12 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -70,6 +67,9 @@ import cn.gson.oasys.model.dao.processdao.ReviewedDao;
 import cn.gson.oasys.model.dao.processdao.StayDao;
 import cn.gson.oasys.model.dao.processdao.SubjectDao;
 
+/**
+ * 流程管理控制器
+ */
 @Slf4j
 @Controller
 @RequestMapping("/")
@@ -115,46 +115,46 @@ public class ProcedureController {
     private AttendceDao adao;
 
 
-//    	@Value("${attachment.roopath}")
+    //    	@Value("${attachment.roopath}")
     private String rootpath;
 
-    @PostConstruct
-    public void UserpanelController() {
-        try {
-            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
-        } catch (IOException e) {
-            System.out.println("获取项目路径异常");
-        }
-    }
+//    @PostConstruct
+//    public void UserpanelController() {
+//        try {
+//            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
+//        } catch (IOException e) {
+//            System.out.println("获取项目路径异常");
+//        }
+//    }
 
     //新增页面
-    @RequestMapping("xinxeng")
-    public String index() {
+    @RequestMapping("xinjian")
+    public String newProcess() {
         //直接返回流程管理页面
         return "process/procedure";
     }
 
     //------------------------------------
 
-   /* //费用报销表单（1）
-    @RequestMapping("burse")
-    public String bursement(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
-                            @RequestParam(value = "page", defaultValue = "0") int page,
-                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
-        List<SystemTypeList> uplist = tydao.findByTypeModel("aoa_bursement");
-        //查找费用科目生成树
-        List<Subject> second = sudao.findByParentId(1L);
-        List<Subject> sublist = sudao.findByParentIdNot(1L);
-        proservice.index6(model, userId, page, size);
+    //费用报销表单（1）
+//    @RequestMapping("burse")
+//    public String bursement(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
+//                            @RequestParam(value = "page", defaultValue = "0") int page,
+//                            @RequestParam(value = "size", defaultValue = "10") int size) {
+//        //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
+//        List<SystemTypeList> uplist = tydao.findByTypeModel("aoa_bursement");
+//        //查找费用科目生成树
+//        List<Subject> second = sudao.findByParentId(1L);
+//        List<Subject> sublist = sudao.findByParentIdNot(1L);
+//        proservice.index6(model, userId, page, size);
+//
+//        model.addAttribute("second", second);
+//        model.addAttribute("sublist", sublist);
+//        model.addAttribute("uplist", uplist);
+//        return "process/bursement";
+//    }
 
-        model.addAttribute("second", second);
-        model.addAttribute("sublist", sublist);
-        model.addAttribute("uplist", uplist);
-        return "process/bursement";
-    }
-
-    *//**
+    /**
      * 费用表单接收
      * @return
      * @throws IOException
@@ -1072,11 +1072,9 @@ public class ProcedureController {
     private ReviewedPOMapper reviewedPOMapper;
     @Resource
     private AttachmentServiceV2 attachmentServiceV2;
-    @Resource
-    private UserVOListServiceV2 userVOListServiceV2;
 
     /**
-     * 费用报销表单(1)
+     * 费用报销表单
      *
      * @param model
      * @param userId
@@ -1085,19 +1083,18 @@ public class ProcedureController {
      * @param size
      * @return
      */
-    @RequestMapping("burse")
-    public String bursement(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
-                            @RequestParam(value = "page", defaultValue = "0") int page,
-                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        //查找类型，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
+    @RequestMapping("reimbursement")
+    public String expenseReimbursement(Model model, @SessionAttribute("userId") Long userId, HttpServletRequest request,
+                                       @RequestParam(value = "page", defaultValue = "1") int page,
+                                       @RequestParam(value = "size", defaultValue = "10") int size) {
+        //根据类型模型找类型类表，type_mode:aoa_bursement(25：银行开，26：现金，27：其他）
         List<TypePO> reimbursementTypePOList = typePOServiceV2.getTypePOByTypeModel("aoa_bursement");
-        model.addAttribute("reimbursementTypePOList", reimbursementTypePOList);//报销方式
-
         //查找费用科目生成树(1L报销科目）(parentId=1L是主目录）
         List<SubjectPO> second = processServiceV2.getSubjectByParentId(1L);
         List<SubjectPO> sublist = processServiceV2.getSubjectByParentIdNot(1L);
         model.addAttribute("second", second);//报销明细的主目录
         model.addAttribute("sublist", sublist);//报销明细的子目录
+        model.addAttribute("reimbursementTypePOList", reimbursementTypePOList);//报销方式
         processServiceV2.setModel(model, userId, page, size);
         return "process/bursement";
     }
@@ -1738,11 +1735,11 @@ public class ProcedureController {
             UserPO applyUser = userPOServiceV2.getUserPOByUserId(processListPO.getProcessUserId());//根据主表里的申请人ID获取申请人信息
             model.addAttribute("position", applyUser);
         }
-        PageHelper.startPage(page,size);
-        List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
-        PageInfo pageInfo = new PageInfo(userVOList);
-        model.addAttribute("userVOList", userVOList);//用户信息
-        model.addAttribute("page", pageInfo);//用户信息
+        PageHelper.startPage(page, size);
+//        List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
+//        PageInfo pageInfo = new PageInfo(userVOList);
+//        model.addAttribute("userVOList", userVOList);//用户信息
+//        model.addAttribute("page", pageInfo);//用户信息
 //        processServiceV2.getUser(page, size, model);//用户封装
         List<Map<String, Object>> mapList = processServiceV2.getAuditUser(processListPO);//审核人封装
         model.addAttribute("mapList", mapList);//审核人的信息

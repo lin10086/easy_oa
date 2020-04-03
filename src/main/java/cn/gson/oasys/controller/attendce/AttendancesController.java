@@ -312,10 +312,10 @@ public class AttendancesController {
      * @return
      */
     @RequestMapping("attendceweek")
-    public String attendancesWeek(HttpServletRequest request, HttpSession session,
+    public String attendancesWeek(Model model,HttpServletRequest request, HttpSession session,
                                   @RequestParam(value = "page", defaultValue = "1") int page,
                                   @RequestParam(value = "baseKey", required = false) String baseKey) {
-        weekTablePage(request, session, page, baseKey);
+        weekTablePage(request, session, page, baseKey,model);
         return "attendce/weektable";
     }
 
@@ -329,10 +329,10 @@ public class AttendancesController {
      * @return
      */
     @RequestMapping("realweektable")
-    public String realWeekTable(HttpServletRequest request, HttpSession session,
+    public String realWeekTable(Model model,HttpServletRequest request, HttpSession session,
                                 @RequestParam(value = "page", defaultValue = "1") int page,
                                 @RequestParam(value = "baseKey", required = false) String baseKey) {
-        weekTablePage(request, session, page, baseKey);
+        weekTablePage(request, session, page, baseKey,model);
         return "attendce/realweektable";
 
     }
@@ -521,7 +521,7 @@ public class AttendancesController {
      * @param page
      * @param baseKey
      */
-    private void weekTablePage(HttpServletRequest request, HttpSession session, int page, String baseKey) {
+    private void weekTablePage(HttpServletRequest request, HttpSession session, int page, String baseKey,Model model) {
         String startTime = request.getParameter("starttime");//开始时间
         String endTime = request.getParameter("endtime");//结束时间
         // 格式转化
@@ -531,7 +531,7 @@ public class AttendancesController {
         Long userId = Long.parseLong(session.getAttribute("userId").toString());//用户ID
         //获取用户的下属用户
         List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherId(userId);
-        List<UserPO> sunUserPOList = pageInformation.getUserPOListPage(page, 10, userPOList, request);
+        List<UserPO> sunUserPOList = pageInformation.getUserPOListPage(page, 10, userPOList, model);
         List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(sunUserPOList);
         //获取下属用户ids
         List<Long> userIds = userServiceV2.getUserIdsByUserPOList(userPOList);
@@ -575,7 +575,7 @@ public class AttendancesController {
         Long userId = Long.parseLong(session.getAttribute("userId").toString());//用户ID
         //获取用户的下属用户并分页
         List<UserPO> userPOList = userPOServiceV2.getUserPOListByFatherIdAndUsernameLikeAndRealNameLike(userId, baseKey);
-        List<UserPO> sunUserPOList = pageInformation.getUserPOListPage(page, 10, userPOList, request);
+        List<UserPO> sunUserPOList = pageInformation.getUserPOListPage(page, 10, userPOList, model);
         List<UserVO> userVOList = UserVOFactory.createUserVOListByUserPOList(sunUserPOList);
 //        获取月份
         String month = request.getParameter("month");

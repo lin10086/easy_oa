@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import cn.gson.oasys.serviceV2.userV2.UserLoginRecordServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.scheduleV2.ScheduleListServiceV2;
-import cn.gson.oasys.serviceV2.taskV2.TaskListServiceV2;
+import cn.gson.oasys.serviceV2.taskV2.TaskListPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserLogServiceV2;
 import cn.gson.oasys.modelV2.bo.PageBO;
 import cn.gson.oasys.modelV2.po.*;
@@ -41,7 +41,7 @@ public class UserLogController {
     @Resource
     private UserLogServiceV2 userLogServiceV2;
     @Resource
-    private TaskListServiceV2 taskListServiceV2;
+    private TaskListPOServiceV2 taskListServiceV2;
     @Resource
     private UserLoginRecordServiceV2 userLoginRecordServiceV2;
     @Resource

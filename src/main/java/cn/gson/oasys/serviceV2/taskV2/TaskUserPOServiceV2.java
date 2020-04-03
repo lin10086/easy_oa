@@ -11,8 +11,11 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 任务用户业务
+ */
 @Service
-public class TaskUserServiceV2 {
+public class TaskUserPOServiceV2 {
     @Resource
     private TaskUserPOMapper taskUserPOMapper;
 
@@ -60,7 +63,7 @@ public class TaskUserServiceV2 {
     /**
      * 根据任务表ID删除任务用户表里的数据
      *
-     * @param taskListPOId
+     * @param taskListPOId 任务ID
      */
     public void deleteTaskUserPOByTaskListPOId(Long taskListPOId) {
         TaskUserPOExample taskUserPOExample = new TaskUserPOExample();
@@ -82,8 +85,8 @@ public class TaskUserServiceV2 {
     /**
      * 根据任务ID和接收人ID删除任务中间表
      *
-     * @param taskListPOId
-     * @param userId
+     * @param taskListPOId 任务ID
+     * @param userId       用户ID
      */
     public void deleteTaskUserPOByTaskListPOIdAndUserId(Long taskListPOId, Long userId) {
         TaskUserPOExample taskUserPOExample = new TaskUserPOExample();
@@ -108,7 +111,7 @@ public class TaskUserServiceV2 {
     /**
      * 根据任务ID找状态列表
      *
-     * @param taskId
+     * @param taskId 任务id
      * @return
      */
     public List<Long> getStatusIdList(Long taskId) {
@@ -125,9 +128,9 @@ public class TaskUserServiceV2 {
     /**
      * 根据接收人ID和任务ID在任务中间表，返回任务中间表ID
      *
-     * @param userId
-     * @param taskListPOId
-     * @return
+     * @param userId       任务接收人ID
+     * @param taskListPOId 任务表ID
+     * @return 任务用户中间表ID
      */
     public Long getPkIdByUserIdAndTaskListId(Long userId, Long taskListPOId) {
         TaskUserPOExample taskUserPOExample = new TaskUserPOExample();
@@ -137,12 +140,12 @@ public class TaskUserServiceV2 {
     }
 
     /**
-     * 根据接收人ID在找任务关联表里找任务ID
+     * 根据用户ID（即接收人ID）在任务用户关联表里找任务ID
      *
-     * @param userId
-     * @return
+     * @param userId 用户ID
+     * @return 任务ID集合
      */
-    public List<Long> getTaskIdList(Long userId) {
+    public List<Long> getTaskIdListByUserId(Long userId) {
         TaskUserPOExample taskUserPOExample = new TaskUserPOExample();
         taskUserPOExample.createCriteria().andTaskReciveUserIdEqualTo(userId);
         List<TaskUserPO> taskUserPOList = taskUserPOMapper.selectByExample(taskUserPOExample);

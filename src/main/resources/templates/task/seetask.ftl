@@ -90,7 +90,7 @@
                                             <#if logger.loggerStatusId==statu.statusId>
                                                 <div>
 										${logger.username}
-											<span style="font-size:8pt; color:#999; margin-left:3px;">${logger.createTime}</span>
+											<span style="font-size:8pt; color:#999; margin-left:3px;">${loggerlistcreatetime}</span>
 											：将状态改为【${statu.statusName}】
 									</div>
                                             </#if>
@@ -100,7 +100,7 @@
 									<#if logger.loggerTicking??>
                                     <div>
 										${logger.username}
-											<span style="font-size:8pt; color:#999; margin-left:3px;">${logger.createTime}</span>
+											<span style="font-size:8pt; color:#999; margin-left:3px;">${loggerlistcreatetime}</span>
 											：${logger.loggerTicking}
 									</div>
                                 </#if>

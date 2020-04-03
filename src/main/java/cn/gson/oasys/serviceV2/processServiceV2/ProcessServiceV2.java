@@ -1,5 +1,6 @@
 package cn.gson.oasys.serviceV2.processServiceV2;
 
+import cn.gson.oasys.modelV2.bo.PageInformation;
 import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
 import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
@@ -10,9 +11,10 @@ import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.statusV2.StatusPOServiceV2;
 import cn.gson.oasys.serviceV2.typeV2.TypePOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.serviceV2.userV2.UserVOListServiceV2;
+import cn.gson.oasys.serviceV2.userV2.UserServiceV2;
 import cn.gson.oasys.voandfactory.processVO2.*;
 import cn.gson.oasys.voandfactory.userVO2.UserVO;
+import cn.gson.oasys.voandfactory.userVO2.UserVOFactory;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,6 +43,8 @@ public class ProcessServiceV2 {
     private SubjectPOMapper subjectPOMapper;
     @Resource
     private UserPOServiceV2 userPOServiceV2;
+    @Resource
+    private UserServiceV2 userServiceV2;
     @Resource
     private TypePOServiceV2 typePOServiceV2;
     @Resource
@@ -81,9 +86,9 @@ public class ProcessServiceV2 {
     @Resource
     private AttendanceServiceV2 attendanceServiceV2;
     @Resource
-    private UserVOListServiceV2 userVOListServiceV2;
-    @Resource
     private ReviewedServiceV2 reviewedServiceV2;
+    @Resource
+    private PageInformation pageInformation;
 
     /**
      * 汉语中数字大写
@@ -223,7 +228,7 @@ public class ProcessServiceV2 {
 
 
     /**
-     * 设置model信息(index6)实际上是通讯录
+     * 设置model信息
      *
      * @param model
      * @param userId
@@ -231,21 +236,14 @@ public class ProcessServiceV2 {
      * @param size
      */
     public void setModel(Model model, Long userId, int page, int size) {
-
-        PageHelper.startPage(page, size);
-        List<UserVO> userVOList = userVOListServiceV2.setUserVOList();//获取通讯录信息
-        PageInfo pageInfo = new PageInfo(userVOList);
-        model.addAttribute("userVOList", userVOList);//用户信息
-        model.addAttribute("page", pageInfo);//可以获取第几页之类的
+        userServiceV2.setUserVOListAllAndPage(model, page, size);//获取通讯录信息并分页
         //22正常；23重要；24紧急
         List<TypePO> exigenceTypePOList = typePOServiceV2.getTypePOByTypeModel("aoa_process_list");
         model.addAttribute("exigenceTypeVOList", exigenceTypePOList);//流程列表紧急程度
         UserPO loginUserPO = userPOServiceV2.getUserPOByUserId(userId);//根据登录人id(userId)获取登录人的用户信息
         model.addAttribute("username", loginUserPO.getUserName());//登录人的用户名
         model.addAttribute("url", "names");
-
     }
-
 
     /**
      * 存审核表

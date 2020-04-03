@@ -77,21 +77,21 @@ public class UserpanelController {
     private NotepaperService nservice;
 
 
-    //	@Value("${img.rootpath}")
-    private String rootpath;
-    private String userRootPath;
-
-    @PostConstruct
-    public void UserpanelController() {
-        try {
-//            rootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
-            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
-            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources");
-
-        } catch (IOException e) {
-            System.out.println("获取项目路径异常");
-        }
-    }
+//    //	@Value("${img.rootpath}")
+//    private String rootpath;
+//    private String userRootPath;
+//
+//    @PostConstruct
+//    public void UserpanelController() {
+//        try {
+////            rootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
+//            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
+//            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources");
+//
+//        } catch (IOException e) {
+//            System.out.println("获取项目路径异常");
+//        }
+//    }
 /*
 	//用户面板
 	@RequestMapping("userpanel")
@@ -541,25 +541,25 @@ public class UserpanelController {
     }
 
 
-    @RequestMapping("image/**")
-    public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
-            throws Exception {
-        String projectPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-        System.out.println(projectPath);
-        String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
-
-        String path = startpath.replace("/image", "static/images/user");
-
-        File f = new File(userRootPath, path);
-
-        ServletOutputStream sos = response.getOutputStream();
-        FileInputStream input = new FileInputStream(f.getPath());
-        byte[] data = new byte[(int) f.length()];
-        IOUtils.readFully(input, data);
-        // 将文件流输出到浏览器
-        IOUtils.write(data, sos);
-        input.close();
-        sos.close();
-    }
+//    @RequestMapping("image/**")
+//    public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
+//            throws Exception {
+//        String projectPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+//        System.out.println(projectPath);
+//        String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
+//
+//        String path = startpath.replace("/image", "static/images/user");
+//
+//        File f = new File(userRootPath, path);
+//
+//        ServletOutputStream sos = response.getOutputStream();
+//        FileInputStream input = new FileInputStream(f.getPath());
+//        byte[] data = new byte[(int) f.length()];
+//        IOUtils.readFully(input, data);
+//        // 将文件流输出到浏览器
+//        IOUtils.write(data, sos);
+//        input.close();
+//        sos.close();
+//    }
 
 }

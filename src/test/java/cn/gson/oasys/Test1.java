@@ -161,4 +161,10 @@ public class Test1 {
         log.info("stringBuilder={}", stringBuilder);
     }
 
+    @Test
+    public void nullTest() {
+        System.err.println(null==null);
+        System.err.println(Objects.isNull(null));
+    }
+
 }

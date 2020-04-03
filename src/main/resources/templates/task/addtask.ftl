@@ -49,7 +49,7 @@ a:hover {
 			</div>
 			
 			<!--盒子身体-->
-			<form action="ck_addtask" method="post" onsubmit="return check();">
+			<form action="saveaddtask" method="post" onsubmit="return check();">
 			<div class="box-body no-padding">
 				<div class="box-body">
 						<!--錯誤信息提示  -->
