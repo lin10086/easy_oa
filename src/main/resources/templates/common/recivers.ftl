@@ -27,11 +27,11 @@
 														<#if userVO.imgPath?? && userVO.imgPath!=''  >
                                                             <img style="width: 30px;height: 30px;"
                                                                  class="profile-user-img img-responsive img-circle"
-                                                                 src="/images/${userVO.imgPath}"/>
+                                                                 src="/images/user/${userVO.imgPath}"/>
 														<#else>
                                                             <img style="width: 30px;height: 30px;"
                                                                  class="profile-user-img img-responsive img-circle"
-                                                                 src="images/timg.jpg" alt="images"/>
+                                                                 src="images/user/timg.jpg" alt="images"/>
 
                                                         </#if>
 															</span>

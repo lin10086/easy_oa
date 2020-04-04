@@ -1,9 +1,6 @@
 package cn.gson.oasys.modelV2.bo;
 
-import cn.gson.oasys.modelV2.po.AttendsPO;
-import cn.gson.oasys.modelV2.po.NoticeListPO;
-import cn.gson.oasys.modelV2.po.TaskListPO;
-import cn.gson.oasys.modelV2.po.UserPO;
+import cn.gson.oasys.modelV2.po.*;
 import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
 import cn.gson.oasys.voandfactory.attendansVO2.AttendancesVO;
 import org.springframework.stereotype.Service;
@@ -127,9 +124,31 @@ public class PageInformation {
         if (taskListPOS.size() < end) {
             end = taskListPOS.size();
         }
-        List<TaskListPO> subTaskListPOS = taskListPOS.subList(start, end);//用户的页面信息
+        List<TaskListPO> subTaskListPOS = taskListPOS.subList(start, end);
         model.addAttribute("page", pageBO);
         return subTaskListPOS;
+    }
+
+    /**
+     * 日程的分页信息
+     *
+     * @param page           第几页
+     * @param size           每页大小
+     * @param schedulePOList 日程列表
+     * @param model
+     * @return
+     */
+    public List<SchedulePO> getSchedulePOSPage(int page, int size, List<SchedulePO> schedulePOList, Model model) {
+        PageBO pageBO = new PageBO(page, size);
+        pageBO.setTotalCount(schedulePOList.size());
+        int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
+        int end = pageBO.getPageNo() * pageBO.getPageSize();
+        if (schedulePOList.size() < end) {
+            end = schedulePOList.size();
+        }
+        List<SchedulePO> schedulePOS = schedulePOList.subList(start, end);
+        model.addAttribute("page", pageBO);
+        return schedulePOS;
     }
 
 

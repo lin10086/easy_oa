@@ -11,17 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ScheduleUserServiceV2 {
+public class ScheduleUserPOServiceV2 {
     @Resource
     private ScheduleUserPOMapper scheduleUserPOMapper;
     @Resource
-    private ScheduleListServiceV2 scheduleListServiceV2;
+    private ScheduleListPOServiceV2 scheduleListServiceV2;
 
     /**
      * 根据日程表id和接收人id插入日程关联表
      *
-     * @param schedulePOId
-     * @param userId
+     * @param schedulePOId 日程ID
+     * @param userId       用户ID
      */
     public void insertScheduleUserPO(Long schedulePOId, Long userId) {
         ScheduleUserPO scheduleUserPO = new ScheduleUserPO();
@@ -33,7 +33,7 @@ public class ScheduleUserServiceV2 {
     /**
      * 根据日程id删除日程用户关联表信息
      *
-     * @param schedulePOId
+     * @param schedulePOId 日程ID
      */
     public void deleteScheduleUserPO(Long schedulePOId) {
         ScheduleUserPOExample scheduleUserPOExample = new ScheduleUserPOExample();

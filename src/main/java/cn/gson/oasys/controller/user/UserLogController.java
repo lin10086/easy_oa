@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import cn.gson.oasys.serviceV2.userV2.UserLoginRecordServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
-import cn.gson.oasys.serviceV2.scheduleV2.ScheduleListServiceV2;
+import cn.gson.oasys.serviceV2.scheduleV2.ScheduleListPOServiceV2;
 import cn.gson.oasys.serviceV2.taskV2.TaskListPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserLogServiceV2;
 import cn.gson.oasys.modelV2.bo.PageBO;
@@ -37,7 +37,7 @@ import com.alibaba.fastjson.JSONObject;
 public class UserLogController {
 
     @Resource
-    private ScheduleListServiceV2 scheduleListServiceV2;
+    private ScheduleListPOServiceV2 scheduleListServiceV2;
     @Resource
     private UserLogServiceV2 userLogServiceV2;
     @Resource

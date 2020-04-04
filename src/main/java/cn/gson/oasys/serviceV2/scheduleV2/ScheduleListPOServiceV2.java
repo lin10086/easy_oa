@@ -1,6 +1,5 @@
 package cn.gson.oasys.serviceV2.scheduleV2;
 
-import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.mappers.SchedulePOMapper;
 import cn.gson.oasys.modelV2.po.SchedulePO;
 import cn.gson.oasys.modelV2.po.SchedulePOExample;
@@ -11,43 +10,18 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class ScheduleListServiceV2 {
+public class ScheduleListPOServiceV2 {
     @Resource
     private SchedulePOMapper schedulePOMapper;
     @Resource
-    private ScheduleUserServiceV2 scheduleUserServiceV2;
-    @Resource
-    private UserPOServiceV2 userPOServiceV2;
+    private ScheduleUserPOServiceV2 scheduleUserServiceV2;
+
 
     /**
-     * 根据日程所属人找日程列表
+     * 插入或更新日程表
      *
-     * @param userId 用户ID
-     * @return
-     */
-    public List<SchedulePO> getSchedulePOListByUserId(Long userId) {
-        SchedulePOExample schedulePOExample = new SchedulePOExample();
-        schedulePOExample.createCriteria().andUserIdEqualTo(userId);
-        List<SchedulePO> schedulePOList = schedulePOMapper.selectByExample(schedulePOExample);
-        return schedulePOList;
-    }
-
-    /**
-     * 根据日程表ID找对应日程
-     *
-     * @param scheduleId
-     * @return
-     */
-    public SchedulePO getSchedulePOBySchedulePOId(Long scheduleId) {
-        SchedulePO schedulePO = schedulePOMapper.selectByPrimaryKey(scheduleId);
-        return schedulePO;
-    }
-
-    /**
-     * 插入日程表
-     *
-     * @param scheduleListVO
-     * @param userId
+     * @param scheduleListVO 日程信息
+     * @param userId         用户ID
      * @return
      */
     public SchedulePO insertOrUpdateSchedulePO(ScheduleListVO scheduleListVO, Long userId) {
@@ -75,11 +49,35 @@ public class ScheduleListServiceV2 {
     /**
      * 根据日程表id删除日程信息（先删除关联表信息，在删除主表信息）
      *
-     * @param schedulePOId
+     * @param schedulePOId 日程ID
      */
     public void deleteSchedulePO(Long schedulePOId) {
         scheduleUserServiceV2.deleteScheduleUserPO(schedulePOId);
         schedulePOMapper.deleteByPrimaryKey(schedulePOId);
+    }
+
+    /**
+     * 根据日程所属人找日程列表
+     *
+     * @param userId 用户ID
+     * @return
+     */
+    public List<SchedulePO> getSchedulePOListByUserId(Long userId) {
+        SchedulePOExample schedulePOExample = new SchedulePOExample();
+        schedulePOExample.createCriteria().andUserIdEqualTo(userId);
+        List<SchedulePO> schedulePOList = schedulePOMapper.selectByExample(schedulePOExample);
+        return schedulePOList;
+    }
+
+    /**
+     * 根据日程表ID找对应日程
+     *
+     * @param scheduleId
+     * @return
+     */
+    public SchedulePO getSchedulePOBySchedulePOId(Long scheduleId) {
+        SchedulePO schedulePO = schedulePOMapper.selectByPrimaryKey(scheduleId);
+        return schedulePO;
     }
 
 
