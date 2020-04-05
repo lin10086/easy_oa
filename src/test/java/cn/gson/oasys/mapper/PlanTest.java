@@ -1,6 +1,6 @@
 package cn.gson.oasys.mapper;
 
-import cn.gson.oasys.serviceV2.planV2.PlanListServiceV2;
+import cn.gson.oasys.serviceV2.planV2.PlanListPOServiceV2;
 import cn.gson.oasys.modelV2.po.PlanListPO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.List;
 public class PlanTest {
 
     @Resource
-    private PlanListServiceV2 planListServiceV2;
+    private PlanListPOServiceV2 planListServiceV2;
 
     @Test
     public void PlanTest1() {

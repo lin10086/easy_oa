@@ -13,48 +13,58 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 计划业务
+ */
 @Service
 public class PlanServiceV2 {
     @Resource
     private PlanListPOMapper planListPOMapper;
     @Resource
-    PlanListServiceV2 planListServiceV2;
+    PlanListPOServiceV2 planListPOServiceV2;
 
-
-    //分页
-    public List<PlanListPO> sortAndGetPlan(int page, String baseKey, long userId, Object type, Object status, Object time) {
-        PageHelper.startPage(page, 10);
+    /**
+     * 分页，排序
+     *
+     * @param baseKey 模糊字
+     * @param userId  用户ID
+     * @param type    类型
+     * @param status  状态
+     * @param time    时间
+     * @return
+     */
+    public List<PlanListPO> sortAndGetPlanListS(String baseKey, long userId, Object type, Object status, Object time) {
         if (!StringUtils.isEmpty(baseKey)) {
             System.out.println("进来了");
-            return planListServiceV2.getPlanListPOSByUserIdAndBaseKey(userId, baseKey);
+            return planListPOServiceV2.getPlanListPOSByUserIdAndBaseKey(userId, baseKey);
         }
 
         if (!StringUtils.isEmpty(type)) {
             if (type.toString().equals("0")) {
                 //降序
-                return planListServiceV2.getPlanListPOSByUserIdAndTypeId("type_id DESC", userId);
+                return planListPOServiceV2.getPlanListPOSByUserIdAndTypeId("type_id DESC", userId);
             } else {
                 //升序
-                return planListServiceV2.getPlanListPOSByUserIdAndTypeId("type_id ASC", userId);
+                return planListPOServiceV2.getPlanListPOSByUserIdAndTypeId("type_id ASC", userId);
             }
         }
 
         if (!StringUtils.isEmpty(status)) {
             if (status.toString().equals("0")) {
-                return planListServiceV2.getPlanListPOSByUserIdAndStatusId("status_id DESC", userId);
+                return planListPOServiceV2.getPlanListPOSByUserIdAndStatusId("status_id DESC", userId);
             } else {
-                return planListServiceV2.getPlanListPOSByUserIdAndStatusId("status_id ASC", userId);
+                return planListPOServiceV2.getPlanListPOSByUserIdAndStatusId("status_id ASC", userId);
             }
         }
 
         if (!StringUtils.isEmpty(time)) {
             if (time.toString().equals("0")) {
-                return planListServiceV2.getPlanListPOByUserIdAndCreateTime("create_time DESC", userId);
+                return planListPOServiceV2.getPlanListPOByUserIdAndCreateTime("create_time DESC", userId);
             } else {
-                return planListServiceV2.getPlanListPOByUserIdAndCreateTime("create_time ASC", userId);
+                return planListPOServiceV2.getPlanListPOByUserIdAndCreateTime("create_time ASC", userId);
             }
         } else {
-            return planListServiceV2.getPlanListPOByUserIdAndCreateTime("create_time DESC", userId);
+            return planListPOServiceV2.getPlanListPOByUserIdAndCreateTime("create_time DESC", userId);
         }
 
     }
@@ -62,22 +72,13 @@ public class PlanServiceV2 {
     public List<PlanListPO> dimSelect(int page, String selectTypeName) {
         List<PlanListPO> planListPOS = new ArrayList<>();
         if (!StringUtils.isEmpty(selectTypeName)) {
-            return planListServiceV2.getPlanListPOSByTypeName(page,selectTypeName);
+            return planListPOServiceV2.getPlanListPOSByTypeName(page, selectTypeName);
         }
         return planListPOS;
     }
 
 
     /**
-     * 根据计划主键找计划表
-     *
-     * @param planId
-     * @return
-     */
-    public PlanListPO getPlanListPOByPlanId(Long planId) {
-        PlanListPO planListPO = planListPOMapper.selectByPrimaryKey(planId);
-        return planListPO;
-    }
 
 
     /**
@@ -142,14 +143,6 @@ public class PlanServiceV2 {
     }
 
 
-    /**
-     * 根据计划表id删除计划表信息
-     *
-     * @param planListPOId
-     */
-    public void deletePlanListPOByPlanListPOId(Long planListPOId) {
-        planListPOMapper.deleteByPrimaryKey(planListPOId);
-    }
 
     /**
      * 找出所有计划并按时间排序
@@ -185,7 +178,6 @@ public class PlanServiceV2 {
         }
         return planListPOS.get(0);
     }
-
 
 
 }

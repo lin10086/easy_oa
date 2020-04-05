@@ -1208,7 +1208,7 @@ public class MailController {
             }
 
             if (!StringUtil.isEmpty(file.getOriginalFilename())) {
-                attachmentListPO = mailServiceV2.uploadAttachmentListPO(file, userPO);
+                attachmentListPO = attachmentServiceV2.uploadAttachmentListPO(file, userPO);
                 attachmentServiceV2.insertAttachmentListPOSetModel(attachmentListPO, "mail");
             }
             if (!StringUtil.isEmpty(name)) {

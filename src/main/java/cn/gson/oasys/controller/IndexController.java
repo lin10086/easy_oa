@@ -18,7 +18,7 @@ import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
 import cn.gson.oasys.serviceV2.mailV2.MailReciverPOServiceV2;
 import cn.gson.oasys.serviceV2.notice2.NoticeServiceV2;
 import cn.gson.oasys.serviceV2.notice2.NoticeUserRelationPOServiceV2;
-import cn.gson.oasys.serviceV2.planV2.PlanListServiceV2;
+import cn.gson.oasys.serviceV2.planV2.PlanListPOServiceV2;
 import cn.gson.oasys.serviceV2.processServiceV2.NotePaperPOServiceV2;
 import cn.gson.oasys.serviceV2.processServiceV2.ProcessServiceV2;
 import cn.gson.oasys.serviceV2.scheduleV2.ScheduleServiceV2;
@@ -444,7 +444,7 @@ public class IndexController {
     @Resource
     private NotePaperPOServiceV2 notePaperPOServiceV2;
     @Resource
-    private PlanListServiceV2 planListServiceV2;
+    private PlanListPOServiceV2 planListServiceV2;
     @Resource
     private AttendanceServiceV2 attendanceServiceV2;
 

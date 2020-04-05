@@ -151,5 +151,27 @@ public class PageInformation {
         return schedulePOS;
     }
 
+    /**
+     * 计划分页
+     *
+     * @param page
+     * @param size
+     * @param planListPOS 计划列表
+     * @param model
+     * @return
+     */
+    public List<PlanListPO> getPlanListPOSPage(int page, int size, List<PlanListPO> planListPOS, Model model) {
+        PageBO pageBO = new PageBO(page, size);
+        pageBO.setTotalCount(planListPOS.size());
+        int start = (pageBO.getPageNo() - 1) * pageBO.getPageSize();
+        int end = pageBO.getPageNo() * pageBO.getPageSize();
+        if (planListPOS.size() < end) {
+            end = planListPOS.size();
+        }
+        List<PlanListPO> subPlanListPOS = planListPOS.subList(start, end);
+        model.addAttribute("page", pageBO);
+        return subPlanListPOS;
+    }
+
 
 }

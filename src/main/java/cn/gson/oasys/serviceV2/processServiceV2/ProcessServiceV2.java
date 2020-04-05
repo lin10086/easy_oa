@@ -119,39 +119,6 @@ public class ProcessServiceV2 {
     private static final String CN_ZERO_FULL = "零元" + CN_FULL;
 
 
-    /**
-     * 写文件 方法
-     *
-     * @param response
-     * @param file
-     * @throws IOException
-     */
-    public void writefile(HttpServletResponse response, File file) {
-        ServletOutputStream sos = null;
-        FileInputStream aa = null;
-        try {
-            aa = new FileInputStream(file);
-            sos = response.getOutputStream();
-            // 读取文件问字节码
-            byte[] data = new byte[(int) file.length()];
-            IOUtils.readFully(aa, data);
-            // 将文件流输出到浏览器
-            IOUtils.write(data, sos);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-            try {
-                sos.close();
-                aa.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-
-    }
 
     /**
      * 更新主表信息
@@ -455,7 +422,7 @@ public class ProcessServiceV2 {
         //file.getOriginalFilename()是得到上传时的文件名。
         if (!StringUtil.isEmpty(filePath.getOriginalFilename())) {
             //上传附件
-            AttachmentListPO attachmentListPO = mailServiceV2.uploadAttachmentListPO(filePath, applyUserPO);
+            AttachmentListPO attachmentListPO = attachmentServiceV2.uploadAttachmentListPO(filePath, applyUserPO);
             attachmentServiceV2.insertAttachmentListPOSetModel(attachmentListPO, "aoa_bursement");
             return attachmentListPO;
         }

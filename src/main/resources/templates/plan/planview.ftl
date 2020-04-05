@@ -88,7 +88,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12 thistable">
+        <div class="col-md-12 thistableson">
             <#include "planviewtable.ftl">
         </div>
     </div>

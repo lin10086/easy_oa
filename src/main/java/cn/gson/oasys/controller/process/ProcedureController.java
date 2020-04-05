@@ -115,17 +115,7 @@ public class ProcedureController {
     private AttendceDao adao;
 
 
-    //    	@Value("${attachment.roopath}")
-    private String rootpath;
 
-//    @PostConstruct
-//    public void UserpanelController() {
-//        try {
-//            rootpath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/attachment");
-//        } catch (IOException e) {
-//            System.out.println("获取项目路径异常");
-//        }
-//    }
 
     //新增页面
     @RequestMapping("xinjian")
@@ -982,56 +972,7 @@ public class ProcedureController {
 
     }
 
-    *//**
-     * 下载文件
-     *
-     * @param response
-     * @param fileid
-     *//*
-    @RequestMapping("file")
-    public void downFile(HttpServletResponse response, @RequestParam("fileid") Long fileid) {
-        try {
-            Attachment attd = AttDao.findOne(fileid);
-            File file = new File(rootpath, attd.getAttachmentPath());
-            response.setContentLength(attd.getAttachmentSize().intValue());
-            response.setContentType(attd.getAttachmentType());
-            response.setHeader("Content-Disposition", "attachment;filename=" + new String(attd.getAttachmentName().getBytes("UTF-8"), "ISO8859-1"));
-            proservice.writefile(response, file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    */
-    /**
-     * 图片预览
-     *
-     * @param model
-     * @param response
-     * @param userId
-     * @param request
-     * @throws IOException
-     *//*
-    @RequestMapping("show/**")
-    public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
-            throws IOException {
-
-        String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
-
-        String path = startpath.replace("/show", "");
-
-        File f = new File(rootpath, path);
-        System.out.println(f.getAbsolutePath());
-        ServletOutputStream sos = response.getOutputStream();
-        FileInputStream input = new FileInputStream(f.getPath());
-        byte[] data = new byte[(int) f.length()];
-        IOUtils.readFully(input, data);
-         将文件流输出到浏览器
-        IOUtils.write(data, sos);
-        input.close();
-        sos.close();
-    }
-*/
+   */
     //		================================================================
 
     @Resource
@@ -1938,52 +1879,5 @@ public class ProcedureController {
 
     }
 
-    /**
-     * 下载文件
-     *
-     * @param response
-     * @param fileId
-     */
-    @RequestMapping("file")
-    public void downFile(HttpServletResponse response, @RequestParam("fileid") Long fileId) {
-        try {
-            AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(fileId);
-            File file = new File(rootpath, attachmentListPO.getAttachmentPath());
-            response.setContentLength(Integer.parseInt(attachmentListPO.getAttachmentSize()));
-            response.setHeader("Content-Disposition", "attachment;filename=" + new String(attachmentListPO.getAttachmentName().getBytes("UTF-8"), "ISO8859-1"));
-            processServiceV2.writefile(response, file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 图片预览
-     *
-     * @param model
-     * @param response
-     * @param userId
-     * @param request
-     * @throws IOException
-     */
-    @RequestMapping("show/**")
-    public void image(Model model, HttpServletResponse response, @SessionAttribute("userId") Long userId, HttpServletRequest request)
-            throws IOException {
-
-        String startpath = new String(URLDecoder.decode(request.getRequestURI(), "utf-8"));
-
-        String path = startpath.replace("/show", "");
-
-        File f = new File(rootpath, path);
-        System.out.println(f.getAbsolutePath());
-        ServletOutputStream sos = response.getOutputStream();
-        FileInputStream input = new FileInputStream(f.getPath());
-        byte[] data = new byte[(int) f.length()];
-        IOUtils.readFully(input, data);
-//        将文件流输出到浏览器
-        IOUtils.write(data, sos);
-        input.close();
-        sos.close();
-    }
 
 }

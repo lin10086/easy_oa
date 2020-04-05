@@ -3,6 +3,8 @@
 package cn.gson.oasys.controller.user;
 
 import cn.gson.oasys.modelV2.po.NoticeUserRelationPO;
+import cn.gson.oasys.serviceV2.attachmentV2.AttachmentServiceV2;
+import cn.gson.oasys.serviceV2.attendansV2.AttendanceServiceV2;
 import cn.gson.oasys.serviceV2.deptV2.DeptPOServiceV2;
 import cn.gson.oasys.serviceV2.positionV2.PositionPOServiceV2;
 import cn.gson.oasys.serviceV2.userV2.UserPOServiceV2;
@@ -357,6 +359,8 @@ public class UserpanelController {
     private NotePaperPOServiceV2 notePaperPOServiceV2;
     @Resource
     private MailServiceV2 mailServiceV2;
+    @Resource
+    private AttachmentServiceV2 attachmentServiceV2;
 
     //用户面板
     @RequestMapping("userpanel")
@@ -505,7 +509,7 @@ public class UserpanelController {
         Long filePathSize = filePath.getSize();
         UserPO userPO = userPOServiceV2.getUserPOByUserId(userId);
         if (filePathSize != 0) {
-            String imgPath = mailServiceV2.uploadAttachmentListPOByUserImg(filePath, userPO).getAttachmentPath();
+            String imgPath = attachmentServiceV2.uploadAttachmentListPOByUserImg(filePath, userPO).getAttachmentPath();
             userPO.setImgPath(imgPath);
         }
         userPO.setRealName(userVO.getRealName());

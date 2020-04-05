@@ -19,9 +19,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 计划PO列业务
+ */
 @Service
 @Slf4j
-public class PlanListServiceV2 {
+public class PlanListPOServiceV2 {
     @Resource
     private PlanListPOMapper planListPOMapper;
     @Resource
@@ -34,6 +37,16 @@ public class PlanListServiceV2 {
     private DeptPOServiceV2 deptPOServiceV2;
     @Resource
     private PlanServiceV2 planServiceV2;
+
+    /**
+     * 根据计划表id删除计划表信息
+     *
+     * @param planListPOId 计划ID
+     */
+    public void deletePlanListPOByPlanListPOId(Long planListPOId) {
+        planListPOMapper.deleteByPrimaryKey(planListPOId);
+    }
+
 
     /**
      * 根据用户id找用户在根据记录创建时间排序模糊查询未完成
@@ -63,10 +76,6 @@ public class PlanListServiceV2 {
         if (statusPOServiceV2.getStatusPOIdListByStatusNameLike("%" + baseKey + "%").size() > 0) {
             planListPOExample.or(criteria3);
         }
-//        PlanListPOExample.Criteria criteria3 = planListPOExample.createCriteria().andLabelLike("%" + baseKey + "%");
-//        planListPOExample.or().andLabelLike("%" + baseKey + "%");
-//        planListPOExample.or().andTitleLike("%" + baseKey + "%");
-
         List<PlanListPO> planListPOS = planListPOMapper.selectByExample(planListPOExample);
         return planListPOS;
     }
@@ -330,5 +339,17 @@ public class PlanListServiceV2 {
         }
         return subPlanListPOS;
     }
+
+    /**
+     * 根据计划主键找计划表
+     *
+     * @param planId 计划ID
+     * @return
+     */
+    public PlanListPO getPlanListPOByPlanId(Long planId) {
+        PlanListPO planListPO = planListPOMapper.selectByPrimaryKey(planId);
+        return planListPO;
+    }
+
 
 }

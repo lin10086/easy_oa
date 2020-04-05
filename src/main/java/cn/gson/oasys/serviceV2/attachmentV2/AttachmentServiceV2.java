@@ -2,13 +2,43 @@ package cn.gson.oasys.serviceV2.attachmentV2;
 
 import cn.gson.oasys.mappers.AttachmentListPOMapper;
 import cn.gson.oasys.modelV2.po.AttachmentListPO;
+import cn.gson.oasys.modelV2.po.UserPO;
+import com.github.pagehelper.util.StringUtil;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class AttachmentServiceV2 {
+    //附件路径
+    private String attachmentRootPath;
+    //图片路径
+    private String userRootPath;
+
+    @PostConstruct
+    public void UserpanelController() {
+        try {
+            attachmentRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static/attachment");
+            userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources");
+        } catch (IOException e) {
+            System.out.println("获取项目路径异常");
+        }
+    }
+
+
     @Resource
     private AttachmentListPOMapper attachmentListPOMapper;
 
@@ -77,6 +107,126 @@ public class AttachmentServiceV2 {
         AttachmentListPO attachmentListPO = attachmentListPOMapper.selectByPrimaryKey(attachmentListPOId);
         String attachmentPath = attachmentListPO.getAttachmentPath();
         return attachmentPath;
+    }
+
+
+    /**
+     * 上传附件
+     *
+     * @param file
+     * @param applyUserPO 登录人
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    public AttachmentListPO uploadAttachmentListPO(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM");
+        File root = new File(attachmentRootPath, simpleDateFormat.format(new Date()));
+        //用当前时间的年月和用户名做文件夹
+        File savePath = new File(root, applyUserPO.getUserName());
+
+        if (!savePath.exists()) {
+            savePath.mkdirs();
+        }
+        //获取原始文件名
+        String fileName = file.getOriginalFilename();
+        if (!StringUtil.isEmpty(fileName)) {
+            //获取文件后缀名
+            String suffix = FilenameUtils.getExtension(fileName);
+            //新文件名
+            String newFileName = UUID.randomUUID().toString().toLowerCase() + "." + suffix;
+            //文件夹 文件名
+            File targetFile = new File(savePath, newFileName);
+            file.transferTo(targetFile);
+
+            String str = targetFile.getPath().replace(attachmentRootPath, "");
+
+            AttachmentListPO attachmentPO = new AttachmentListPO();
+            attachmentPO.setAttachmentName(file.getOriginalFilename());
+            attachmentPO.setAttachmentPath(str);
+            attachmentPO.setAttachmentShuffix(suffix);
+            attachmentPO.setAttachmentSize(file.getSize() + "");
+            attachmentPO.setAttachmentType(file.getContentType());
+            attachmentPO.setUploadTime(new Date());
+            attachmentPO.setUserId(applyUserPO.getUserId() + "");
+            return attachmentPO;
+        }
+        return null;
+    }
+
+    /**
+     * 上传附件(用户图像）
+     *
+     * @param file
+     * @param applyUserPO 登录人
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    public AttachmentListPO uploadAttachmentListPOByUserImg(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
+        File filePath = new File(userRootPath + "/static/images/user");
+
+        if (!filePath.exists()) {
+            filePath.mkdirs();
+        }
+        File savePath = new File(userRootPath + "/static/images/user");
+        String fileSavePath = savePath.getAbsolutePath();
+        //获取原始文件名
+        String fileName = file.getOriginalFilename();
+        if (!StringUtil.isEmpty(fileName)) {
+            //获取文件后缀名
+            String suffix = FilenameUtils.getExtension(fileName);
+            //新文件名
+            String newFileName = UUID.randomUUID().toString().toLowerCase() + "." + suffix;
+            //文件夹 文件名
+            File targetFile = new File(savePath, newFileName);
+            file.transferTo(targetFile);
+
+            String str = targetFile.getPath().replace(fileSavePath, "");
+
+            AttachmentListPO attachmentPO = new AttachmentListPO();
+            attachmentPO.setAttachmentName(file.getOriginalFilename());
+            attachmentPO.setAttachmentPath(str);
+            attachmentPO.setAttachmentShuffix(suffix);
+            attachmentPO.setAttachmentSize(file.getSize() + "");
+            attachmentPO.setAttachmentType(file.getContentType());
+            attachmentPO.setUploadTime(new Date());
+            attachmentPO.setUserId(applyUserPO.getUserId() + "");
+            return attachmentPO;
+        }
+        return null;
+    }
+
+    /**
+     * 写文件 方法
+     *
+     * @param response
+     * @param file
+     * @throws IOException
+     */
+    public void writefile(HttpServletResponse response, File file) {
+        ServletOutputStream sos = null;
+        FileInputStream aa = null;
+        try {
+            aa = new FileInputStream(file);
+            sos = response.getOutputStream();
+            // 读取文件问字节码
+            byte[] data = new byte[(int) file.length()];
+            IOUtils.readFully(aa, data);
+            // 将文件流输出到浏览器
+            IOUtils.write(data, sos);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            try {
+                sos.close();
+                aa.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
 

@@ -17,69 +17,6 @@
         <div class="table" style="padding-top: 15px;">
             <div class="table-responsive">
                 <table class="table table-hover table-striped">
-
-                    <form action="dimSelect" method="post" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="col-md-1">
-                                类型名:
-                                <select class="form-control" name="selectTypeName">
-                                    <option selected></option>
-                                    <#list typelist as t>
-                                        <option ${(plan??&&plan.typeId==t.typeId)?string('selected','')}>${t.typeName}</option>
-                                    </#list>
-                                </select>
-                            </div>
-
-                            <div class="col-md-1">
-                                <input type="text" placeholder="标签搜索" name="selectLabel"/>
-                            </div>
-
-                            <div class="col-md-1">
-                                <input type="text" placeholder="标题搜索" name="selectTitle"/>
-                            </div>
-
-                            <div class="col-md-1">
-                                <input type="text" placeholder="发布人名搜索" name="selectPushUsername"/>
-                            </div>
-
-                            <div class="col-md-1">
-                                部门名：
-                                <select class="form-control" name="selectDeptName">
-                                    <option selected></option>
-                                    <#list deptPOList as d>
-                                        <option ${(plan??&&plan.userVO.deptVO.deptId==d.deptId)?string('selected','')} >${d.deptName}</option>
-                                    </#list>
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                状态名：
-                                <select class="form-control" name="selectStatusName">
-                                    <option selected></option>
-                                    <#list statuslist as s>
-                                        <option ${(plan??&&plan.statusId==s.statusId)?string('selected','')} >${s.statusName}</option>
-                                    </#list>
-                                </select>
-                            </div>
-
-                            <div class="col-md-1">
-                                <input type="submit" value="搜索"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-						<span>
-						<label class="control-label">开始时间</label>
-						</span>
-                                <input class="form-control" name="selectStartTime" value="" type="date"/>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label class="control-label">结束时间</label>
-                                <input class="form-control" name="selectEndTime" value="" type="date"/>
-                            </div>
-                        </div>
-                    </form>
-
-
                     <tr class="table-header">
                         <th scope="col" class="paixu thistype" style="color:blue;">类型
                             <#if type?? && icon??>
@@ -151,7 +88,7 @@
                                     <#--<a onclick="{return confirm('删除该记录将不能恢复，确定删除吗？');};"-->
                                     <#--<a onclick="{return alert('删除该记录将不能恢复，确定删除吗？');};"-->
                                     <#--<a onclick="{return del_sure('删除该记录将不能恢复，确定删除吗？');};"-->
-                                      <a href="plandelete?pid=${plan.planId}" class="label shanchu"><span
+                                    <a href="plandelete?pid=${plan.planId}" class="label shanchu"><span
                                                 class="glyphicon glyphicon-remove"></span> 删除</a>
                                 </td>
                             </tr>

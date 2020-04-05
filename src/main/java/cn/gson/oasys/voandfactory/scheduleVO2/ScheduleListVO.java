@@ -35,15 +35,5 @@ public class ScheduleListVO {
 
     private UserVO userVO;            //日程所属人user_id
 
-//    @ManyToMany
-//    @JsonIgnore
-//    @JoinTable(
-//            name = "aoa_schedule_user",            //日程联系人关联表
-//            joinColumns = {
-//                    @JoinColumn(name = "rcid")
-//            },
-//            inverseJoinColumns = {
-//                    @JoinColumn(name = "user_id")
-//            })
     private List<UserVO> userVOList;    //联系人集合
 }
