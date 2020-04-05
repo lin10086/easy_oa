@@ -86,7 +86,7 @@ public class FileController {
     public void imgshow(HttpServletResponse response, @RequestParam("fileid") Long fileid) {
         FileList filelist = fldao.findOne(fileid);
         File file = fs.getFile(filelist.getFilePath());
-        writefile(response, file);
+        writeFile(response, file);
     }
 
     */
@@ -99,7 +99,7 @@ public class FileController {
      * @param file
      * @throws IOException
      *//*
-    public void writefile(HttpServletResponse response, File file) {
+    public void writeFile(HttpServletResponse response, File file) {
         ServletOutputStream sos = null;
         FileInputStream aa = null;
         try {
@@ -140,7 +140,7 @@ public class FileController {
             response.setContentLength(filelist.getSize().intValue());
             response.setContentType(filelist.getContentType());
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(filelist.getFileName().getBytes("UTF-8"), "ISO8859-1"));
-            writefile(response, file);
+            writeFile(response, file);
         } catch (Exception e) {
             e.printStackTrace();
         }

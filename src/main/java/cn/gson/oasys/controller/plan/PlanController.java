@@ -334,10 +334,9 @@ public class PlanController {
                 if (Objects.equals(userPO.getUserId(), planListPO1.getPlanUserId())) {
                     uMap.put(userPO.getUserName(), planListPO1);
                     break;
+                } else {
+                    uMap.put(userPO.getUserName(), null);
                 }
-//                else {
-//                    uMap.put(userPO.getUserName(), null);
-//                }
             }
         }
 //可以根据下属用户id找出下属用户发布的计划（根据发布时间降序第一条）（下次改写）
@@ -360,7 +359,7 @@ public class PlanController {
                                 @RequestParam(value = "comment", required = false) String comment,
                                 @RequestParam(value = "page", defaultValue = "1") int page,
                                 @RequestParam(value = "baseKey", required = false) String baseKey) {
-//        Long planId = Long.valueOf(request.getParameter("pid"));
+        System.err.println(pid);
         planTablePaging(request, model, session, page, baseKey);
         if (!StringUtils.isEmpty(pid)) {
             PlanListPO planListPO = planListPOServiceV2.getPlanListPOByPlanId(Long.valueOf(pid));

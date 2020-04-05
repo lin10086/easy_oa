@@ -26,13 +26,13 @@ public class AttachmentController {
     @Resource
     AttachmentServiceV2 attachmentServiceV2;
 
-    private String rootPath;
+    private String attachmentRootPath;
     private String userRootPath;
 
     @PostConstruct
     public void UserpanelController() {
         try {
-            rootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static");
+            attachmentRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources/static/attachment");
             userRootPath = ResourceUtils.getURL("classpath:").getPath().replace("/target/classes/", "/src/main/resources");
         } catch (IOException e) {
             System.out.println("获取项目路径异常");
@@ -48,11 +48,14 @@ public class AttachmentController {
     @RequestMapping("file")
     public void downFile(HttpServletResponse response, @RequestParam("fileid") Long fileId) {
         try {
+            //获取附件信息
             AttachmentListPO attachmentListPO = attachmentServiceV2.getAttachmentListPOByAttachmentListPOId(fileId);
-            File file = new File(rootPath, attachmentListPO.getAttachmentPath());
+            //附件的全路径
+            File file = new File(attachmentRootPath, attachmentListPO.getAttachmentPath());
             response.setContentLength(Integer.parseInt(attachmentListPO.getAttachmentSize()));
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(attachmentListPO.getAttachmentName().getBytes("UTF-8"), "ISO8859-1"));
-            attachmentServiceV2.writefile(response, file);
+//            写文件
+            attachmentServiceV2.writeFile(response, file);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -75,7 +78,7 @@ public class AttachmentController {
 
         String path = startpath.replace("/show", "");
 
-        File f = new File(rootPath, path);
+        File f = new File(attachmentRootPath, path);
         System.out.println(f.getAbsolutePath());
         ServletOutputStream sos = response.getOutputStream();
         FileInputStream input = new FileInputStream(f.getPath());
@@ -102,7 +105,7 @@ public class AttachmentController {
             response.setContentLength(attd.getAttachmentSize().intValue());
             response.setContentType(attd.getAttachmentType());
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(attd.getAttachmentName().getBytes("UTF-8"), "ISO8859-1"));
-            proservice.writefile(response, file);
+            proservice.writeFile(response, file);
         } catch (Exception e) {
             e.printStackTrace();
         }

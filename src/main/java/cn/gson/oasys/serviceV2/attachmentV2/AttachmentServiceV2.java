@@ -121,10 +121,10 @@ public class AttachmentServiceV2 {
      */
     public AttachmentListPO uploadAttachmentListPO(MultipartFile file, UserPO applyUserPO) throws IllegalStateException, IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM");
-        File root = new File(attachmentRootPath, simpleDateFormat.format(new Date()));
-        //用当前时间的年月和用户名做文件夹
+        File root = new File(attachmentRootPath, simpleDateFormat.format(new Date()));//把年月作为附件路径
+        //用当前时间的年月和用户名做文件夹名
         File savePath = new File(root, applyUserPO.getUserName());
-
+        // 文件夹是否存在，不存在就创建
         if (!savePath.exists()) {
             savePath.mkdirs();
         }
@@ -137,8 +137,9 @@ public class AttachmentServiceV2 {
             String newFileName = UUID.randomUUID().toString().toLowerCase() + "." + suffix;
             //文件夹 文件名
             File targetFile = new File(savePath, newFileName);
+            //上传文件
             file.transferTo(targetFile);
-
+            //保存到数据库的附件路径
             String str = targetFile.getPath().replace(attachmentRootPath, "");
 
             AttachmentListPO attachmentPO = new AttachmentListPO();
@@ -204,7 +205,7 @@ public class AttachmentServiceV2 {
      * @param file
      * @throws IOException
      */
-    public void writefile(HttpServletResponse response, File file) {
+    public void writeFile(HttpServletResponse response, File file) {
         ServletOutputStream sos = null;
         FileInputStream aa = null;
         try {

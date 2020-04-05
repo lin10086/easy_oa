@@ -115,7 +115,7 @@ public class ProcessService {
      * @param file
      * @throws IOException
      */
-    public void writefile(HttpServletResponse response, File file) {
+    public void writeFile(HttpServletResponse response, File file) {
         ServletOutputStream sos = null;
         FileInputStream aa = null;
         try {
