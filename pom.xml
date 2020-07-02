@@ -95,7 +95,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.44</version>
+            <version>8.0.16</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -221,7 +221,7 @@
                     <dependency>
                         <groupId>mysql</groupId>
                         <artifactId>mysql-connector-java</artifactId>
-                        <version>5.1.44</version>  <!--使用5.x 的版本是因为6.x 的版本，不会生成 byPrimaryKey 的接口 -->
+                        <version>8.0.16</version>  <!--使用5.x 的版本是因为6.x 的版本，不会生成 byPrimaryKey 的接口 -->
                     </dependency>
                     <dependency>
                         <groupId>com.google.guava</groupId>
